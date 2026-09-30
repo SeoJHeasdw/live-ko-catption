@@ -274,9 +274,7 @@ final class CaptionModel {
                     Task { @MainActor in
                         guard let self, self.runID == token,
                               self.phase != .idle else { return }
-                        self.message = problem
-                        if !self.inputWarnings.contains(problem) { self.inputWarnings.append(problem) }
-                        if self.canStop { await self.stop(aborting: true) }
+                        await self.receiveAudioProblem(problem)
                     }
                 })
             // Analyze the live stream in its own task. Do not await a streaming
@@ -311,6 +309,13 @@ final class CaptionModel {
         guard runID == token, phase == .starting else { throw CancellationError() }
     }
 
+    func receiveAudioProblem(_ problem: String) async {
+        guard phase != .idle else { return }
+        message = problem
+        if !inputWarnings.contains(problem) { inputWarnings.append(problem) }
+        if canStop { await stop(aborting: true) }
+    }
+
     func stop(aborting: Bool = false) async {
         guard phase == .listening || phase == .starting else { return }
         let token = runID
@@ -324,9 +329,27 @@ final class CaptionModel {
         let closingAnalysis = analysisTask
         let closingResults = resultTask
         if aborting {
+            // Input failure is not a request to finalize a recording. Invalidate
+            // all producers before releasing controls; waiting for canceled
+            // framework tasks made the Start button unavailable for eight seconds.
+            runID = nil
             analysisTask?.cancel()
             resultTask?.cancel()
+            workerID = nil
+            workerTask?.cancel()
+            translationTask?.cancel()
+            contextTask?.cancel()
+            translationSession?.cancel()
+            contextSession?.cancel()
             if let closingAnalyzer { Task { await closingAnalyzer.cancelAndFinishNow() } }
+            do {
+                try await OperationDeadline.run(seconds: 0.8, name: "마이크 정지") {
+                    await closingCapture?.stop()
+                }
+            } catch { }
+            capture = nil
+            finishRun()
+            return
         }
         do {
             try await OperationDeadline.run(seconds: 8, name: "마지막 문장 정리", onTimeout: {

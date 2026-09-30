@@ -69,6 +69,9 @@ final class AudioPump: @unchecked Sendable {
     private var pending = 0
     private var pendingInputFrames: Int64 = 0
     private var receivedInput = false
+    static let startupInputWait: TimeInterval = 20
+    static let runningInputWait: TimeInterval = 20
+    private let startedAtUptime: TimeInterval
     private var lastInputUptime: TimeInterval
     private var finished = false
     private var closingScheduled = false
@@ -110,6 +113,7 @@ final class AudioPump: @unchecked Sendable {
         self.onProblem = onProblem
         self.copyBuffer = copyBuffer
         self.lastInputUptime = startedAtUptime
+        self.startedAtUptime = startedAtUptime
     }
 
     // AVAudioNodeTapBlock is nonsendable in the SDK. Creating it inside the
@@ -125,7 +129,11 @@ final class AudioPump: @unchecked Sendable {
     var hasReceivedInput: Bool { lock.withLock { receivedInput } }
 
     func hasStalledInput(at uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) -> Bool {
-        lock.withLock { !finished && uptime - lastInputUptime > 3 }
+        lock.withLock {
+            !finished && (receivedInput
+                ? uptime - lastInputUptime > Self.runningInputWait
+                : uptime - startedAtUptime > Self.startupInputWait)
+        }
     }
 
     func enqueue(_ original: AVAudioPCMBuffer, at uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) {
@@ -325,125 +333,74 @@ enum AudioCallbackBridge {
 @MainActor
 final class AudioCapture {
     private static let logger = Logger(subsystem: "io.javis.live-ko-caption", category: "audio")
-    private let engine = AVAudioEngine()
+    private let stopQueue = DispatchQueue(label: "io.javis.live-ko-caption.device-stop")
+    private var deviceCapture: AudioDeviceCapture?
     private var pump: AudioPump?
-    private var hasTap = false
-    private var configurationObserver: NSObjectProtocol?
-    private var configurationRestarts = 0
     private var watchdogTask: Task<Void, Never>?
 
     func start(deviceID: AudioDeviceID?, target: AVAudioFormat,
                onLevel: @escaping @Sendable (Double) -> Void,
                onProblem: @escaping @Sendable (String) -> Void) throws -> AsyncStream<AnalyzerInput> {
-        guard !hasTap, pump == nil else {
+        guard deviceCapture == nil, pump == nil else {
             throw CaptionError.message("마이크가 이미 실행 중입니다. 잠시 멈춘 뒤 다시 시작해 주세요.")
         }
-        configurationRestarts = 0
-        let input = engine.inputNode
-        if var deviceID {
-            guard let unit = input.audioUnit else {
-                throw CaptionError.message("선택한 마이크를 사용할 수 없습니다. 다른 입력 장치를 선택해 주세요.")
-            }
-            var currentDevice = AudioDeviceID(0)
-            var size = UInt32(MemoryLayout<AudioDeviceID>.size)
-            let readStatus = AudioUnitGetProperty(unit, kAudioOutputUnitProperty_CurrentDevice,
-                                                 kAudioUnitScope_Global, 0, &currentDevice, &size)
-            if readStatus != noErr || currentDevice != deviceID {
-                let status = AudioUnitSetProperty(unit, kAudioOutputUnitProperty_CurrentDevice,
-                                                 kAudioUnitScope_Global, 0, &deviceID,
-                                                 UInt32(MemoryLayout<AudioDeviceID>.size))
-                guard status == noErr else {
-                    throw CaptionError.message("선택한 마이크를 열 수 없습니다 (\(status)). 연결 상태를 확인해 주세요.")
-                }
-            }
-        }
-        let format = input.outputFormat(forBus: 0)
-        guard format.sampleRate > 0, format.channelCount > 0 else {
-            throw CaptionError.message("마이크에서 음성이 들어오지 않습니다. 연결 상태를 확인해 주세요.")
-        }
-        let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream(bufferingPolicy: .bufferingNewest(AudioPump.analyzerBufferLimit))
-        let audioPump = try AudioPump(source: format, target: target, continuation: continuation,
-                                     onLevel: onLevel, onProblem: onProblem)
+        // A dedicated input-only AudioUnit keeps the selected input independent
+        // of AVAudioEngine's default input/output aggregate-device rebuilding.
+        let source = try AudioDeviceCapture(deviceID: deviceID)
+        let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream(
+            bufferingPolicy: .bufferingNewest(AudioPump.analyzerBufferLimit))
+        let audioPump = try AudioPump(source: source.format, target: target,
+            continuation: continuation, onLevel: onLevel, onProblem: onProblem)
+        deviceCapture = source
         pump = audioPump
-        input.installTap(onBus: 0, bufferSize: 1024, format: format, block: audioPump.makeTapBlock())
-        hasTap = true
-        configurationObserver = NotificationCenter.default.addObserver(
-            forName: .AVAudioEngineConfigurationChange, object: engine, queue: nil,
-            using: AudioCallbackBridge.configurationBlock { [weak self] in
-                guard let self, self.hasTap, self.pump === audioPump else { return }
-                let current = self.engine.inputNode.outputFormat(forBus: 0)
-                if current.isEqual(format) {
-                    if self.engine.isRunning {
-                        Self.logger.debug("Ignored a settled configuration notification; input is unchanged and running.")
-                        return
-                    }
-                    // PCM timestamps count received frames. Restarting after
-                    // audio has begun would omit the interruption and compress
-                    // all later caption times, so expose the gap and stop.
-                    guard !audioPump.hasReceivedInput else {
-                        Self.logger.error("Microphone graph stopped after input began; preserving the interruption instead of compressing audio time.")
-                        onProblem("마이크 입력이 중단됐습니다. 일부 음성이 누락됐을 수 있으므로 입력 장치를 확인한 뒤 다시 시작해 주세요.")
-                        return
-                    }
-                    // AVAudioEngine stops itself when the I/O unit settles a
-                    // startup configuration. Before the first input, restarting
-                    // the same format can safely recover without hiding a gap.
-                    // Bound retries if hardware flaps.
-                    if self.configurationRestarts < 2 {
-                        do {
-                            try self.engine.start()
-                            self.configurationRestarts += 1
-                            Self.logger.notice("Microphone graph recovered after configuration notification.")
-                            return
-                        } catch {
-                            Self.logger.error("Microphone graph recovery failed: \(error.localizedDescription)")
-                        }
-                    }
-                }
-                Self.logger.error("Input configuration changed: running=\(self.engine.isRunning), rate=\(current.sampleRate), channels=\(current.channelCount)")
-                onProblem("마이크 연결 또는 음성 형식이 바뀌었습니다. 입력 장치를 확인한 뒤 다시 시작해 주세요.")
-            }
-        )
-        do {
-            engine.prepare()
-            try engine.start()
-        } catch {
-            watchdogTask?.cancel()
-            watchdogTask = nil
-            if let configurationObserver { NotificationCenter.default.removeObserver(configurationObserver) }
-            configurationObserver = nil
-            engine.inputNode.removeTap(onBus: 0)
-            hasTap = false
+        do { try source.start(pump: audioPump, onProblem: onProblem) }
+        catch {
+            deviceCapture = nil
+            source.stop()
             continuation.finish()
-            // stop() drains any callback that was accepted during startup.
             throw error
         }
         watchdogTask = Task { @MainActor [weak self] in
+            var reportedFirstInput = false
             while !Task.isCancelled {
-                do { try await Task.sleep(for: .milliseconds(500)) }
-                catch { return }
-                guard !Task.isCancelled, let self, self.hasTap, self.pump === audioPump else { return }
+                do { try await Task.sleep(for: .milliseconds(500)) } catch { return }
+                guard !Task.isCancelled, let self, self.deviceCapture === source,
+                      self.pump === audioPump else { return }
+                if audioPump.hasReceivedInput && !reportedFirstInput {
+                    reportedFirstInput = true
+                    Self.logger.notice("Selected microphone receiving input: device=\(source.deviceID), convertedBuffers=\(audioPump.bufferCount)")
+                }
+                if let problem = source.configurationProblem() {
+                    Self.logger.error("Selected microphone configuration changed: \(problem)")
+                    onProblem(problem)
+                    return
+                }
                 guard audioPump.hasStalledInput() else { continue }
-                Self.logger.error("Microphone tap has not delivered input for over three seconds; engineRunning=\(self.engine.isRunning)")
+                Self.logger.error("Selected microphone has not delivered buffers for over twenty seconds; running=\(source.isRunning)")
                 onProblem(audioPump.hasReceivedInput
-                    ? "마이크의 오디오 입력이 3초 이상 중단됐습니다. 입력 장치를 확인한 뒤 다시 시작해 주세요."
-                    : "마이크를 시작했지만 오디오 입력이 도착하지 않습니다. 입력 장치를 확인한 뒤 다시 시작해 주세요.")
+                    ? "마이크의 오디오 입력이 20초 이상 중단됐습니다. 입력 장치를 확인한 뒤 다시 시작해 주세요."
+                    : "마이크 입력을 20초 동안 기다렸지만 연결되지 않았습니다. 입력 장치를 확인한 뒤 다시 시작해 주세요.")
                 return
             }
         }
-        Self.logger.notice("Microphone started: rate=\(format.sampleRate), channels=\(format.channelCount), target=\(target.sampleRate)")
+        Self.logger.notice("Selected microphone started: device=\(source.deviceID), rate=\(source.format.sampleRate), channels=\(source.format.channelCount), target=\(target.sampleRate)")
         return stream
     }
 
     func stop() async {
-        watchdogTask?.cancel()
-        watchdogTask = nil
-        if let configurationObserver { NotificationCenter.default.removeObserver(configurationObserver) }
-        configurationObserver = nil
-        engine.stop()
-        if hasTap { engine.inputNode.removeTap(onBus: 0); hasTap = false }
-        await pump?.finish()
-        Self.logger.notice("Microphone stopped: convertedBuffers=\(self.pump?.bufferCount ?? 0), droppedBuffers=\(self.pump?.droppedBufferCount ?? 0)")
-        pump = nil
+        watchdogTask?.cancel(); watchdogTask = nil
+        let closingSource = deviceCapture
+        let closingPump = pump
+        deviceCapture = nil; pump = nil
+        // Hardware stop can wait for its callback. Keep it off the UI actor so
+        // input failure cannot freeze the Start button or the stop deadline.
+        await withCheckedContinuation { done in
+            stopQueue.async {
+                closingSource?.stop()
+                done.resume()
+            }
+        }
+        await closingPump?.finish()
+        Self.logger.notice("Microphone stopped: convertedBuffers=\(closingPump?.bufferCount ?? 0), droppedBuffers=\(closingPump?.droppedBufferCount ?? 0)")
     }
 }

@@ -150,6 +150,81 @@ struct AppModelChecks {
                 try expect(model.message?.contains("마이크 접근") == true, "New startup permission error was lost")
                 try expect(model.segments.isEmpty, "Startup cancellation invented caption content")
             }),
+            ("an empty audio-input failure immediately restores Start after repeated failures", {
+                let probe = TranslatorProbe()
+                let model = makeModel(probe)
+                let problem = "마이크를 시작했지만 오디오 입력이 도착하지 않습니다."
+                for _ in 0..<3 {
+                    try expect(model.canStart, "Empty run could not be started again")
+                    model.phase = .listening
+                    model.audioLevel = 0.4
+                    let began = ProcessInfo.processInfo.systemUptime
+                    await model.receiveAudioProblem(problem)
+                    try expect(ProcessInfo.processInfo.systemUptime - began < 0.5,
+                               "Empty audio failure kept the Start control blocked")
+                    try expect(model.phase == .idle && model.canStart && !model.canStop,
+                               "Empty audio failure did not restore idle controls")
+                    try expect(!model.hasPendingTranslations && model.queuedTranslations == 0,
+                               "Empty audio failure retained a phantom worker")
+                    try expect(model.audioLevel == 0 && model.segments.isEmpty,
+                               "Empty audio failure retained input or invented a caption")
+                    try expect(model.message == problem,
+                               "Input failure message was lost or overwritten by normal cleanup")
+                }
+                try expect(probe.calls.isEmpty, "Empty run unnecessarily called the translator")
+                try expect(model.transcriptText.components(separatedBy: problem).count == 2,
+                           "Repeated identical audio problems polluted the export warnings")
+                await model.receiveAudioProblem("Stale input failure")
+                try expect(model.canStart && model.message == problem,
+                           "A late input problem modified an already stopped run")
+            }),
+            ("repeated denied starts remain retryable after their asynchronous cleanup", {
+                let permission = PermissionProbe()
+                defer { permission.releaseAll() }
+                let model = CaptionModel(microphoneAccessOverride: { await permission.request() })
+                let savedInput = model.selectedDeviceUID
+                defer { model.selectedDeviceUID = savedInput }
+                model.selectedDeviceUID = ""
+                model.isChecking = false
+                model.assetsReady = true
+                for attempt in 1...3 {
+                    try expect(model.canStart, "A prior failed start left the Start control disabled")
+                    let start = Task { await model.start() }
+                    try await waitUntil("Retry did not invoke the permission path") {
+                        permission.calls == attempt && model.phase == .starting
+                    }
+                    permission.releaseFirst(false)
+                    await start.value
+                    try expect(model.canStart && model.phase == .idle && !model.hasPendingTranslations,
+                               "A denied start failed to restore retry controls")
+                }
+                try expect(permission.calls == 3, "Retry clicks did not enter startup independently")
+                try expect(model.segments.isEmpty, "Repeated startup failures invented caption content")
+            }),
+            ("an aborted run releases Start despite an uncooperative translation", {
+                let probe = TranslatorProbe()
+                probe.heldSources = ["Before input failure."]
+                defer { probe.releaseAll() }
+                let model = makeModel(probe)
+                model.phase = .listening
+                model.receive(source: "Before input failure.", audioStart: 0, audioEnd: 1, isFinal: true)
+                try await waitUntil("Abort fixture translation never started") { probe.calls.count == 1 }
+                let began = ProcessInfo.processInfo.systemUptime
+                await model.receiveAudioProblem("Injected audio-input failure")
+                try expect(ProcessInfo.processInfo.systemUptime - began < 1,
+                           "Input failure waited for an uncooperative translation before enabling Start")
+                try expect(model.canStart && model.phase == .idle && !model.hasPendingTranslations,
+                           "Input failure left Start disabled by a canceled worker")
+                try expect(model.queuedTranslations == 0, "Input failure left phantom queued translations")
+                try expect(model.segments.count == 1 && model.segments[0].source == "Before input failure.",
+                           "Input failure discarded recognized source")
+                try expect(model.segments[0].translationError != nil && !model.segments[0].isFinal,
+                           "Aborted translation was not preserved as retryable")
+                probe.release(source: "Before input failure.", translation: "Late aborted Korean")
+                try await Task.sleep(for: .milliseconds(50))
+                try expect(model.segments[0].translation == nil && model.canStart,
+                           "Late aborted output changed the caption or blocked Start again")
+            }),
             ("finals preempt a stuck draft, coalesce revisions, and beat queued drafts", {
                 let probe = TranslatorProbe()
                 probe.heldSources = ["Old draft", "First final."]

@@ -277,18 +277,18 @@ struct AudioCallbackChecks {
         let pump = try AudioPump(source: format, target: format, continuation: continuation,
                                  onLevel: { _ in }, onProblem: { state.report($0) },
                                  startedAtUptime: 100)
-        guard !pump.hasStalledInput(at: 102.9), !pump.hasStalledInput(at: 103),
-              pump.hasStalledInput(at: 103.001), !pump.hasReceivedInput else {
+        guard !pump.hasStalledInput(at: 103), !pump.hasStalledInput(at: 119.9), !pump.hasStalledInput(at: 120),
+              pump.hasStalledInput(at: 120.001), !pump.hasReceivedInput else {
             throw Failure("Never-started microphone does not become stale after its startup allowance")
         }
         // All-zero audio represents a quiet room, not a disconnected input.
-        pump.enqueue(buffer, at: 104)
-        guard pump.hasReceivedInput, !pump.hasStalledInput(at: 107), pump.hasStalledInput(at: 107.001) else {
+        pump.enqueue(buffer, at: 119)
+        guard pump.hasReceivedInput, !pump.hasStalledInput(at: 122), !pump.hasStalledInput(at: 139), pump.hasStalledInput(at: 139.001) else {
             throw Failure("Silent audio did not refresh the microphone heartbeat")
         }
         buffer.frameLength = 0
-        pump.enqueue(buffer, at: 107)
-        guard pump.hasStalledInput(at: 107.001) else {
+        pump.enqueue(buffer, at: 139)
+        guard pump.hasStalledInput(at: 139.001) else {
             throw Failure("An empty callback concealed a stalled microphone")
         }
         await pump.finish()
@@ -296,7 +296,7 @@ struct AudioCallbackChecks {
         guard !pump.hasStalledInput(at: 1000), state.errors.isEmpty else {
             throw Failure("A stopped microphone remained eligible for a watchdog error")
         }
-        print("PASS: never-started/stalled input expires after 3 s, silent input stays healthy, and stop disables heartbeat errors")
+        print("PASS: microphone waits at least 20 s, silent input stays healthy, and stop disables heartbeat errors")
     }
 
     private static func checkLiveStream(filePath: String) async throws {

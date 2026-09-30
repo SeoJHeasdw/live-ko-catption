@@ -12,6 +12,7 @@ xcrun swiftc -swift-version 6 -target arm64-apple-macos26.4 -parse-as-library \
     -I "$checks_path" -L "$checks_path" -lCaptionCore \
     -Xlinker -rpath -Xlinker "$checks_path" \
     Sources/LiveKoCaption/AudioCapture.swift \
+    Sources/LiveKoCaption/AudioDeviceCapture.swift \
     Sources/LiveKoCaption/OperationDeadline.swift \
     Sources/LiveKoCaption/CaptionModel.swift \
     Tests/RealtimePipelineChecks/RealtimePipelineChecks.swift \

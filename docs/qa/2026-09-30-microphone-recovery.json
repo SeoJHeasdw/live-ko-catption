@@ -1,0 +1,34 @@
+{
+  "mode": "actual 0.2.1 app: selected built-in microphone, quiet waiting, stop and restart",
+  "app_version": "0.2.1",
+  "selected_device_id": 89,
+  "selected_device_name": "MacBook Pro 마이크",
+  "system_default_input_device_id_observed_after_runs": 100,
+  "input_sample_rate": 48000,
+  "input_channels": 1,
+  "recognizer_sample_rate": 16000,
+  "runs": [
+    {
+      "started_at": "2026-09-30T13:52:40.242+09:00",
+      "first_input_observed_at": "2026-09-30T13:52:40.780+09:00",
+      "stopped_at": "2026-09-30T13:54:12.415+09:00",
+      "converted_buffers": 8641,
+      "dropped_buffers": 0,
+      "start_button_enabled_after_stop": true
+    },
+    {
+      "started_at": "2026-09-30T13:54:29.562+09:00",
+      "first_input_observed_at": "2026-09-30T13:54:30.095+09:00",
+      "stopped_at": "2026-09-30T13:56:21.124+09:00",
+      "converted_buffers": 10458,
+      "dropped_buffers": 0,
+      "start_button_enabled_after_stop": true
+    }
+  ],
+  "evidence": "App accessibility state and native application audio logs. Both runs stayed listening past 20 seconds and repeated UI Start succeeded.",
+  "limitations": [
+    "This checks selected-device binding, quiet waiting, PCM delivery and stop/restart, not English recognition or Korean semantic accuracy.",
+    "No microphone recording file or recognized transcript was saved.",
+    "Input-error recovery with an uncooperative translator is covered separately by production model regression checks."
+  ]
+}
