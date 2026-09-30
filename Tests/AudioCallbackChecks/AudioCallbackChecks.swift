@@ -54,8 +54,11 @@ struct AudioCallbackChecks {
             try await checkRightChannelMeter()
             try await checkCopyFailure()
             try await checkInputHeartbeat()
-            print("9 audio callback checks passed.")
-            if CommandLine.arguments.count == 2 {
+            try await checkSmallHardwareBuffers()
+            print("10 audio callback checks passed.")
+            if CommandLine.arguments.dropFirst().first == "--conversion-soak" {
+                try await checkConversionSoak()
+            } else if CommandLine.arguments.count == 2 {
                 try await checkLiveStream(filePath: CommandLine.arguments[1])
             }
         } catch {
@@ -192,11 +195,11 @@ struct AudioCallbackChecks {
         for _ in 0..<100 { pump.enqueue(buffer) }
         gate.release.signal()
         await pump.finish()
-        var retainedBuffers = 0
-        for await _ in stream { retainedBuffers += 1 }
+        var retainedFrames = 0
+        for await input in stream { retainedFrames += Int(input.buffer.frameLength) }
         try await waitForProblem(state)
-        guard retainedBuffers == 7, pump.droppedBufferCount == 94, state.errors.count == 1 else {
-            throw Failure("Conversion queue was not bounded by input duration, or errors flooded: retained=\(retainedBuffers), dropped=\(pump.droppedBufferCount), errors=\(state.errors.count)")
+        guard retainedFrames == 7 * 1024, pump.droppedBufferCount == 94, state.errors.count == 1 else {
+            throw Failure("Conversion queue was not bounded by input duration, or errors flooded: retainedFrames=\(retainedFrames), dropped=\(pump.droppedBufferCount), errors=\(state.errors.count)")
         }
         print("PASS: conversion backlog stays below 0.5 s and 94 dropped buffers produce one error")
     }
@@ -216,7 +219,7 @@ struct AudioCallbackChecks {
         for await _ in stream { retainedBuffers += 1 }
         try await waitForProblem(state)
         guard retainedBuffers == AudioPump.analyzerBufferLimit,
-              pump.droppedBufferCount == 20 - retainedBuffers, state.errors.count == 1 else {
+              pump.droppedBufferCount == pump.bufferCount - retainedBuffers, state.errors.count == 1 else {
             throw Failure("Analyzer overflow was not bounded/reported once: retained=\(retainedBuffers), dropped=\(pump.droppedBufferCount), errors=\(state.errors.count)")
         }
         print("PASS: slow analyzer retains at most \(retainedBuffers) buffers and reports dropped input once")
@@ -297,6 +300,115 @@ struct AudioCallbackChecks {
             throw Failure("A stopped microphone remained eligible for a watchdog error")
         }
         print("PASS: microphone waits at least 20 s, silent input stays healthy, and stop disables heartbeat errors")
+    }
+
+    private static func checkSmallHardwareBuffers() async throws {
+        // Reproduce the built-in microphone cadence, with a consumer paused
+        // for 0.6 s. Eight hardware buffers alone would lose ~0.5 s of input.
+        // 100 ms batches must retain it all and flush the unfilled final batch.
+        guard let source = AVAudioFormat(standardFormatWithSampleRate: 48000, channels: 1),
+              let target = AVAudioFormat(commonFormat: .pcmFormatInt16, sampleRate: 16000, channels: 1, interleaved: false),
+              let buffer = AVAudioPCMBuffer(pcmFormat: source, frameCapacity: 512) else {
+            throw Failure("Could not allocate hardware-sized fixture")
+        }
+        buffer.frameLength = 512
+        for frame in 0..<512 { buffer.floatChannelData![0][frame] = sin(Float(frame) * 0.04) * 0.25 }
+        let state = CallbackState()
+        let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream(bufferingPolicy: .bufferingNewest(AudioPump.analyzerBufferLimit))
+        let pump = try AudioPump(source: source, target: target, continuation: continuation,
+                                 onLevel: { _ in }, onProblem: { state.report($0) })
+        let invocation = TapInvocation(block: pump.makeTapBlock(), buffer: buffer)
+        for _ in 0..<56 {
+            await withCheckedContinuation { done in
+                DispatchQueue.global(qos: .userInitiated).async {
+                    invocation.invoke()
+                    done.resume()
+                }
+            }
+            try await Task.sleep(for: .milliseconds(11))
+        }
+        await pump.finish()
+        var frames: Int64 = 0
+        var buffers = 0
+        for await input in stream {
+            guard let start = input.bufferStartTime,
+                  abs(CMTimeGetSeconds(start) - Double(frames) / target.sampleRate) < 0.000001 else {
+                throw Failure("Batched hardware-sized audio lost timestamp continuity")
+            }
+            frames += Int64(input.buffer.frameLength)
+            buffers += 1
+        }
+        try await waitForProblem(state)
+        let expectedFrames = Double(56 * 512) * target.sampleRate / source.sampleRate
+        guard abs(Double(frames) - expectedFrames) <= 1, buffers <= AudioPump.analyzerBufferLimit,
+              pump.droppedBufferCount == 0, state.errors.isEmpty else {
+            throw Failure("Hardware-sized callbacks lost audio during bounded analyzer pause: frames=\(frames), buffers=\(buffers), dropped=\(pump.droppedBufferCount), errors=\(state.errors)")
+        }
+        print("PASS: 56 small hardware callbacks retain ~0.6 s input as \(buffers) analyzer buffers, with exact final tail")
+    }
+
+    private static func checkConversionSoak() async throws {
+        guard let source = AVAudioFormat(standardFormatWithSampleRate: 48000, channels: 1),
+              let target = AVAudioFormat(commonFormat: .pcmFormatInt16, sampleRate: 16000, channels: 1, interleaved: false),
+              let buffer = AVAudioPCMBuffer(pcmFormat: source, frameCapacity: 512) else {
+            throw Failure("Could not allocate conversion soak fixture")
+        }
+        buffer.frameLength = 512
+        for frame in 0..<512 { buffer.floatChannelData![0][frame] = sin(Float(frame) * 0.04) * 0.25 }
+        let state = CallbackState()
+        let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream(bufferingPolicy: .bufferingNewest(AudioPump.analyzerBufferLimit))
+        let pump = try AudioPump(source: source, target: target, continuation: continuation,
+                                 onLevel: { _ in }, onProblem: { state.report($0) })
+        let invocation = TapInvocation(block: pump.makeTapBlock(), buffer: buffer)
+        let reader = Task.detached { () throws -> (Int64, Int) in
+            var frames: Int64 = 0
+            var buffers = 0
+            for await input in stream {
+                guard let start = input.bufferStartTime,
+                      abs(CMTimeGetSeconds(start) - Double(frames) / target.sampleRate) < 0.000001 else {
+                    throw Failure("Long conversion stream lost timestamp continuity at buffer \(buffers)")
+                }
+                frames += Int64(input.buffer.frameLength)
+                buffers += 1
+            }
+            return (frames, buffers)
+        }
+        let producer = Task.detached {
+            var producedFrames = 0
+            let totalFrames = 48_000 * 30 * 60
+            while producedFrames < totalFrames {
+                let expectedBatches = producedFrames / 4800 + 1
+                repeat {
+                    invocation.invoke()
+                    producedFrames += 512
+                } while producedFrames < totalFrames && producedFrames / 4800 < expectedBatches
+                // Accelerate wall time while permitting the production queue
+                // to drain. This exercises 30 min of frame/timestamp state;
+                // it is explicitly not a 30 min hardware or recognition run.
+                let deadline = ProcessInfo.processInfo.systemUptime + 2
+                while pump.bufferCount < producedFrames / 4800 {
+                    guard ProcessInfo.processInfo.systemUptime < deadline else {
+                        throw Failure("Conversion soak failed to drain its bounded queue")
+                    }
+                    try await Task.sleep(for: .microseconds(100))
+                }
+            }
+        }
+        do { try await producer.value }
+        catch {
+            await pump.finish()
+            _ = try? await reader.value
+            throw error
+        }
+        await pump.finish()
+        let (frames, buffers) = try await reader.value
+        try await waitForProblem(state)
+        guard frames == 16_000 * 30 * 60, pump.droppedBufferCount == 0, state.errors.isEmpty,
+              buffers <= 18_002 else {
+            throw Failure("Accelerated 30 min conversion failed: frames=\(frames), buffers=\(buffers), dropped=\(pump.droppedBufferCount), errors=\(state.errors)")
+        }
+        print("PASS: accelerated 30 min / 168,750 small callbacks → \(frames) exact mono frames; \(buffers) analyzer buffers, no drops")
+        print("This accelerated conversion check does not prove 30 min hardware microphone or recognition stability.")
     }
 
     private static func checkLiveStream(filePath: String) async throws {

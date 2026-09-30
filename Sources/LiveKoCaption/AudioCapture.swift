@@ -63,6 +63,11 @@ enum CaptionError: LocalizedError {
 /// rather than performing recognition or translation on the audio callback.
 final class AudioPump: @unchecked Sendable {
     private enum FinishAction { case alreadyClosed, waitForDrain, closeNow }
+    // Analyzer queue capacity must represent time, not the hardware callback
+    // size. AUHAL commonly delivers 512 frames at 48 kHz (~94 callbacks/s).
+    // Eight of those tiny buffers leave less than 90 ms of scheduling slack.
+    // Accumulate 100 ms away from the callback before resampling/yielding.
+    static let analyzerChunkDuration: TimeInterval = 0.1
     static let analyzerBufferLimit = 8
     private let queue = DispatchQueue(label: "io.javis.live-ko-caption.audio", qos: .userInteractive)
     private let lock = NSLock()
@@ -82,6 +87,7 @@ final class AudioPump: @unchecked Sendable {
     private var convertedBuffers = 0
     private let converter: AVAudioConverter
     private let sourceFormat: AVAudioFormat
+    private let sourceBatch: AVAudioPCMBuffer
     private let maximumPendingInputFrames: Int64
     private let target: AVAudioFormat
     private let continuation: AsyncStream<AnalyzerInput>.Continuation
@@ -100,12 +106,17 @@ final class AudioPump: @unchecked Sendable {
         guard let converter = AVAudioConverter(from: source, to: target) else {
             throw CaptionError.message("이 마이크의 음성 형식을 변환할 수 없습니다.")
         }
+        let batchFrames = AVAudioFrameCount(max(1, (source.sampleRate * Self.analyzerChunkDuration).rounded()))
+        guard let sourceBatch = AVAudioPCMBuffer(pcmFormat: source, frameCapacity: batchFrames) else {
+            throw CaptionError.message("마이크 입력을 모을 메모리가 부족합니다.")
+        }
         // The converter defaults to remapping, which selects only channel 0
         // for mono output. A stereo receiver carrying the speaker on its right
         // channel must remain audible to recognition.
         converter.downmix = source.channelCount > target.channelCount
         self.converter = converter
         self.sourceFormat = source
+        self.sourceBatch = sourceBatch
         self.maximumPendingInputFrames = Int64(source.sampleRate / 2)
         self.target = target
         self.continuation = continuation
@@ -168,7 +179,7 @@ final class AudioPump: @unchecked Sendable {
 
         queue.async { [self, copy] in
             defer { decrementPending(frameCount: frameCount) }
-            convert(copy)
+            consume(copy)
         }
     }
 
@@ -211,6 +222,37 @@ final class AudioPump: @unchecked Sendable {
         DispatchQueue.global(qos: .userInitiated).async { [onProblem] in onProblem(message) }
     }
 
+    private func consume(_ source: AVAudioPCMBuffer) {
+        let sources = UnsafeMutableAudioBufferListPointer(source.mutableAudioBufferList)
+        let destinations = UnsafeMutableAudioBufferListPointer(sourceBatch.mutableAudioBufferList)
+        let bytesPerFrame = Int(sourceFormat.streamDescription.pointee.mBytesPerFrame)
+        var sourceOffset = 0
+        while sourceOffset < Int(source.frameLength) {
+            let destinationOffset = Int(sourceBatch.frameLength)
+            let frames = min(Int(source.frameLength) - sourceOffset,
+                             Int(sourceBatch.frameCapacity) - destinationOffset)
+            for index in sources.indices {
+                // copy() validated storage and formats before this queue owns
+                // the input. Both interleaved and planar PCM use their format's
+                // bytes-per-frame within each AudioBuffer plane.
+                memcpy(destinations[index].mData!.advanced(by: destinationOffset * bytesPerFrame),
+                       sources[index].mData!.advanced(by: sourceOffset * bytesPerFrame),
+                       frames * bytesPerFrame)
+            }
+            sourceBatch.frameLength += AVAudioFrameCount(frames)
+            sourceOffset += frames
+            if sourceBatch.frameLength == sourceBatch.frameCapacity {
+                convert(sourceBatch)
+                sourceBatch.frameLength = 0
+            }
+        }
+        let now = ProcessInfo.processInfo.systemUptime
+        if now - lastMeterTime > 0.10, let level = Self.level(of: source) {
+            lastMeterTime = now
+            onLevel(level)
+        }
+    }
+
     private func convert(_ source: AVAudioPCMBuffer) {
         let capacity = AVAudioFrameCount(ceil(Double(source.frameLength) * target.sampleRate / source.format.sampleRate)) + 64
         guard let output = AVAudioPCMBuffer(pcmFormat: target, frameCapacity: capacity) else {
@@ -232,11 +274,6 @@ final class AudioPump: @unchecked Sendable {
             return
         }
         yield(output)
-        let now = ProcessInfo.processInfo.systemUptime
-        if now - lastMeterTime > 0.10, let level = Self.level(of: source) {
-            lastMeterTime = now
-            onLevel(level)
-        }
     }
 
     private static func level(of buffer: AVAudioPCMBuffer) -> Double? {
@@ -274,6 +311,12 @@ final class AudioPump: @unchecked Sendable {
     }
 
     private func closeStream() {
+        // Stop preserves the short final batch instead of requiring another
+        // callback to fill it. Drain the resampler only after that source tail.
+        if sourceBatch.frameLength > 0 {
+            convert(sourceBatch)
+            sourceBatch.frameLength = 0
+        }
         // .noDataNow retains the resampler's trailing frames. End-of-stream
         // must be supplied after all accepted copies have been converted so
         // the final consonant is available to the speech analyzer.
