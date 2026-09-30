@@ -1,0 +1,28 @@
+{
+  "complete": {
+    "elapsedSeconds": 1800.5460089583648,
+    "event": "complete",
+    "maxMainActorPauseSeconds": 0.15603412492200733,
+    "nativeDocumentCharacters": 86824,
+    "nativeDocumentMatchesLatest": true,
+    "passed": true,
+    "rawSegments": 812,
+    "resizes": 120,
+    "ticks": 64953,
+    "transcriptCharacters": 279974,
+    "translatedSegments": 812,
+    "visibleSegments": 100
+  },
+  "wallSeconds": 1800.5460089583648,
+  "actualInputLevelHz": 36.07405735639936,
+  "sourceUpdateHz": 9.01851433909984,
+  "peakRSSMiB": 160.203125,
+  "lastRSSMiB": 156.3125,
+  "medianCPU": 32.2,
+  "processSamples": 357,
+  "heartbeatSamples": 1773,
+  "maxVisibleRows": 100,
+  "capReachedAtSeconds": 550.1028608750785,
+  "documentVisibleAllHeartbeats": true,
+  "wrapperStatus": "UI passed; shell parse error after completion because wrapper source was edited during its live run; current zsh -n passes"
+}

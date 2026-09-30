@@ -1,0 +1,19 @@
+{
+  "active_requests" : [
+
+  ],
+  "canceled_requests_returned" : 0,
+  "cancellation_mode" : "none",
+  "completed_before_cancellation" : 24,
+  "errors" : [
+    "Fresh request failed: fresh translation after cancellations 응답 시간이 초과됐습니다."
+  ],
+  "fresh_restart_korean" : null,
+  "mode" : "isolated installed Apple Translation, fresh session for each forcibly canceled request",
+  "passed" : false,
+  "requested_cancellations" : 24,
+  "returned_cancellation_errors" : [
+
+  ],
+  "wall_seconds" : 12.425827791681513
+}

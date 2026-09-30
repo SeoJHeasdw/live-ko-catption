@@ -45,6 +45,21 @@ open "dist/Live Korean Captions.app"
 
 ## 검증
 
+### 0.2.2 연속 사용 안정화
+
+1분 이상 사용 후 응답이 없던 앱을 종료하기 전에 조사했습니다. 화면 배치·자동 스크롤 계산이 반복되며 메모리가 커지는 상태를 확인해, 자막 표시를 고정된 영역의 네이티브 텍스트 화면으로 바꿨습니다. 최근 **100개 표시 구절**만 그리며, 전체 원문·번역은 모델과 **원문·자막 저장**에 보존합니다. 문맥 묶음은 중간에서 잘리지 않습니다. 과거 전체를 화면에서 탐색하는 기능은 아직 없습니다.
+
+원문 수정은 최신 상태로 합쳐 최대 초당 10회 갱신합니다. 마이크 레벨 변화가 창 전체를 다시 배치하지 않도록 분리했고, 알림을 닫은 뒤에도 실패한 번역을 다시 시도할 수 있습니다. 작은 마이크 입력은 변환 큐에서 약 100ms로 묶어 분석 큐의 여유를 늘렸습니다. 입력 콜백에서 인식·번역을 실행하지 않으며, 정지 때 마지막 짧은 입력도 배출합니다.
+
+실제 로컬 엔진의 **30분 입력 + 30초 재시작**, 별도 창의 **30분 합성 표시**, 최종 앱의 **내장 마이크 20분 40초 + 재시작**을 통과했습니다. 엔진 검사는 확정 원문 451개 보존, 입력 누락·번역 실패·종료 후 네이티브 응답 대기 0개를 확인했습니다. [원자료와 조건](docs/qa/continuous-stability.txt)에 초기 종료 실패, 수정, 검사별 범위와 한계를 함께 남겼습니다. 실제 화자·핀마이크의 30분 사용이나 의미 정확성을 대신하지 않습니다.
+
+```sh
+./scripts/check-continuous-pipeline.sh
+./scripts/check-ui-soak.sh
+```
+
+각 명령은 기본 30분 동안 실행됩니다. 첫 명령은 설치된 음성·번역 엔진을 사용해 합성 영어를 반복 입력한 뒤 정지·재시작합니다. 두 번째 명령은 별도 시험 앱에서 실제 창을 갱신하며 영어 표시·글씨 크기·창 크기도 변경합니다. 시험 앱은 합성 검사임을 표시하고 실제 번역 성능 수치를 표시하지 않습니다. 현재 실행 중인 사용자 앱과 대화는 시험 앱이 바꾸지 않습니다.
+
 ### 0.2.1 실제 마이크 시작·재시작 수정
 
 0.2.0의 첫 실제 실행에서 선택한 내장 마이크가 AVAudioEngine의 시스템 기본 Bluetooth 입력으로 바뀌고, 오디오 버퍼가 도착하지 않아 3초 뒤 정지하는 결함을 확인했습니다. 0.2.1은 출력 장치와 독립적인 입력 전용 AudioUnit에 선택한 마이크를 고정하고, 실제 장치 ID와 네이티브 음성 형식을 확인합니다.
@@ -73,11 +88,12 @@ swift run --build-system native TranslationSchedulingChecks
 ./scripts/check-lifecycle.sh
 ./scripts/check-app-model.sh
 ./scripts/check-audio-callbacks.sh
+./scripts/check-translation-leases.sh
 swift run --build-system native LocalPipelineCheck --translation-quality --compare-strategies
 ./scripts/check-realtime-pipeline.sh /absolute/path/to/english-audio.aiff --output /tmp/caption-report.json
 ```
 
-앱 모델 검사는 번역기를 주입해 오래 걸리는 작업, 회색→확정·문맥 보정, 취소·우선순위·재시도·미완료 원문 보존을 재현합니다. 합성 영어의 로컬 파일 검사에서도 최종 음성 인식 구절 6개를 모두 보존했습니다. 이 검사들은 실제 핀마이크, 사람의 발음·소음, 20~30분 연속 사용, 네트워크를 끈 실행을 대신하지 않습니다.
+앱 모델 검사는 번역기를 주입해 오래 걸리는 작업, 회색→확정·문맥 보정, 취소·우선순위·재시도·미완료 원문 보존을 재현합니다. 짧은 합성 영어의 로컬 파일 검사에서도 최종 음성 인식 구절 6개를 모두 보존했습니다. 이 짧은 검사들은 실제 핀마이크, 사람의 발음·소음, 20~30분 연속 사용, 네트워크를 끈 실행을 대신하지 않습니다. 별도의 장시간 검사 범위는 0.2.2 항목을 따릅니다.
 
 ### 0.1.1 마이크 충돌 수정
 
@@ -137,6 +153,8 @@ open "dist/Live Korean Captions.app" --args --preview
 | `Sources/LiveKoCaption/AudioCapture.swift` | 마이크 목록·장치 선택·입력 버퍼·형식 변환 |
 | `Sources/LiveKoCaption/CaptionModel.swift` | 모델 준비·음성 인식·번역 큐·대화 생명주기 |
 | `Sources/LiveKoCaption/CaptionView.swift` | 한국어 자막·회색 초안·조작 패널 |
+| `Sources/LiveKoCaption/NativeCaptionTranscript.swift` | 최근 100구절 네이티브 표시·자동 따라가기 |
 | `Tests/CaptionCoreChecks` | 상태 변경과 오래된 번역에 대한 검증 |
+| `Tests/ContinuousPipelineChecks` | 실제 시간에 맞춘 로컬 엔진 연속 입력·정지·재시작 검사 |
 
 첫 버전은 마이크 입력과 영어→한국어에 집중합니다. 이후 Mac 시스템 오디오 입력, 번역 용어집, 다른 로컬 번역 모델 비교를 추가할 수 있습니다. 한국어 화자가 가까이서 말할 때의 오인식과 전문 용어 번역도 실제 모임에서 확인해야 합니다.

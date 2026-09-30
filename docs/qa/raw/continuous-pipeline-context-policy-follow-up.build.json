@@ -1,0 +1,13 @@
+{
+  "recorded_at": "2026-09-30T07:03:23.555072+00:00",
+  "note": "60-second input +15-second restart follow-up: high-fidelity lease is freshly created/retired per context job exactly as production. No-argument script outputs are now timestamped. Production source hashes are unchanged from definitive full30minute run.",
+  "sha256": {
+    "Sources/LiveKoCaption/CaptionModel.swift": "e362bcd6396477306450e303a3d62887e6d12655bc4c0ef152419b7b4c47ddc9",
+    "Sources/LiveKoCaption/AudioCapture.swift": "c937818a011c55feabbe6a930fa0f2c9bc4a9328325163c82f99e9c5ea08bd80",
+    "Sources/CaptionCore/CaptionTimeline.swift": "6f3329f12e50032b317626529abd4fe495a7236815f1b9deab9e75e686389aad",
+    "Sources/LiveKoCaption/TranslationSessionLease.swift": "c4daeac4e6812c4a3b586df5076662a103761ba95835a0844e973bb5b3bc28b1",
+    "Tests/ContinuousPipelineChecks/ContinuousPipelineChecks.swift": "d8b30ef990ad571fd223d7a3bb0afe7ace8038bdc54d76d3a959b6500048b8f8",
+    ".build/continuous-checks/ContinuousPipelineChecks": "acf012f4dd1782a050f97312cba82dbb21edcd5c329086aa76a2f1a9d74532d5",
+    ".build/continuous-checks/libCaptionCore.dylib": "e1fbcf6843513505fab2aa71869003a3570c069f06d60991c762a8f5ee15c4dd"
+  }
+}

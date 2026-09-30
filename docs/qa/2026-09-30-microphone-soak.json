@@ -1,0 +1,133 @@
+{
+  "application": {
+    "binary_modified_kst": "2026-09-30T15:38:41.065269+09:00",
+    "binary_path": "dist/Live Korean Captions.app/Contents/MacOS/LiveKoCaption",
+    "binary_sha256": "bb5ba63ef8b1503724889169fe258e53f7edc434cce2be7682e6924d062c6b01",
+    "build": "5",
+    "bundle_identifier": "io.javis.live-ko-caption",
+    "bundle_info_plist_sha256": "bfe1c11e47b3f070276245d852b8faf80b110baa5c05fa71488df8bfde649b9d",
+    "pid": 45729,
+    "source_hashes_collected": "after capture; coordinating agent kept production sources and built binary frozen during both runs",
+    "source_sha256": {
+      "Package.swift": "c6ce94b68023fec24713a4a3e7185aa96701a8f0a6c5258d11d4b6c58e9c5e04",
+      "Resources/Info.plist": "bfe1c11e47b3f070276245d852b8faf80b110baa5c05fa71488df8bfde649b9d",
+      "Sources/CaptionCore/CaptionTimeline.swift": "6f3329f12e50032b317626529abd4fe495a7236815f1b9deab9e75e686389aad",
+      "Sources/CaptionCore/TranslationQueue.swift": "81ae9bbfbd7f603bb8e1f71e9462d776d7cecc913c3c92c5d37234fd2c674081",
+      "Sources/LiveKoCaption/AudioCapture.swift": "c937818a011c55feabbe6a930fa0f2c9bc4a9328325163c82f99e9c5ea08bd80",
+      "Sources/LiveKoCaption/AudioDeviceCapture.swift": "49caab5fc28a8f227acb0e71fc75f15f17c51d5c63ee3369afd3ed66825acdd7",
+      "Sources/LiveKoCaption/CaptionModel.swift": "e362bcd6396477306450e303a3d62887e6d12655bc4c0ef152419b7b4c47ddc9",
+      "Sources/LiveKoCaption/CaptionUISoakRunner.swift": "71857bb74044c3fc2fda62cc0371597c33e3d0d55b3629d38bcca12ddabeca5a",
+      "Sources/LiveKoCaption/CaptionView.swift": "6375c25abb62b3218d29777e37382775ed094e3268b51a187157f02f1def7136",
+      "Sources/LiveKoCaption/LiveKoCaptionApp.swift": "34dc3046a5375b7b384d251ccf5bdd1df9bd3976336b8e53e629ade1b6f79366",
+      "Sources/LiveKoCaption/NativeCaptionTranscript.swift": "b229a41f6d06bbcbdfb8915dc29d9ef3973a112ab3e642935a8ea1f5aaf22532",
+      "Sources/LiveKoCaption/OperationDeadline.swift": "cf9fb89f57df3672163e59cb315648a36ebf5fe4380916cbb04f692095b9dffe",
+      "Sources/LiveKoCaption/TranslationSessionLease.swift": "c4daeac4e6812c4a3b586df5076662a103761ba95835a0844e973bb5b3bc28b1",
+      "Sources/LiveKoCaption/ViewState.swift": "4ffbd06577d7995a8faa757d457efb97a00a3481e12b24cf581322505840cd80",
+      "scripts/build-app.sh": "a1c308e64a2ddf361c6f61d4fb792e59206d33a431edc97746137545f72ec382"
+    },
+    "source_snapshot_commit_at_report": "ebfc3c20200c82df038a8a8339adac8397d19701",
+    "source_snapshot_matches_committed_files_at_report": true,
+    "version": "0.2.2"
+  },
+  "audio_metadata": {
+    "dropped_buffers_total_reported_at_stop": 0,
+    "final_ui_state": "idle and ready with Start enabled",
+    "process_crash_or_exit_observed": false,
+    "source": "macOS unified logging; subsystem io.javis.live-ko-caption, category audio, PID45729",
+    "stop_events": 2,
+    "ui_verification_method": "native app UI inspection by coordinating agent",
+    "unexpected_stop_events": 0,
+    "watchdog_or_configuration_error_events_observed": 0
+  },
+  "environment": {
+    "architecture": "arm64",
+    "binary_linked_sdk_version": "27.0",
+    "binary_minimum_macos_version": "26.4",
+    "runtime_os_version": "26.7",
+    "timezone": "Asia/Seoul"
+  },
+  "input": {
+    "analyzer_sample_rate_hz": 16000,
+    "channels": 1,
+    "device_id": 89,
+    "kind": "built-in MacBook Pro microphone",
+    "sample_rate_hz": 48000
+  },
+  "kind": "actual-built-in-microphone-input-soak-and-restart",
+  "passed_for_stated_scope": true,
+  "process_resources": {
+    "audio_elapsed_clock": "monotonic, anchored once to microphone start wall time; small wall-clock adjustments can make elapsed values and time_kst differ",
+    "cpu_percent_method": "macOS ps pcpu observations, sampled every five seconds; mean is the arithmetic sample mean, not system CPU usage",
+    "cpu_percent_sample_max": 16.3,
+    "cpu_percent_sample_mean": 7.522767857142857,
+    "process_cumulative_cpu_time_first": "0:08.52",
+    "process_cumulative_cpu_time_last": "1:37.45",
+    "process_exit_observed_in_sampled_window": false,
+    "raw_log": "docs/qa/raw/microphone-soak-20260930.process.jsonl",
+    "raw_log_contains_only_metadata": true,
+    "raw_log_sha256": "119f3f3306f02ef16cc19bbd6923d13dbfaf0e6648d417a96dfb8c4e91e7514e",
+    "rss_mib_first": 137.84375,
+    "rss_mib_last": 141.78125,
+    "rss_mib_max": 156.515625,
+    "rss_mib_min": 137.84375,
+    "samples": 224,
+    "sampling_ended_kst": "2026-09-30T15:59:01.351254+09:00",
+    "sampling_first_audio_elapsed_seconds": 87.687307041022,
+    "sampling_interval_seconds": 5,
+    "sampling_last_audio_elapsed_seconds": 1200.005043250043,
+    "sampling_started_kst": "2026-09-30T15:40:29.078881+09:00",
+    "sampling_window_note": "Resource logging began 87.687 seconds after microphone start and ended at the 20-minute threshold; it excludes early startup, the last 40.618 seconds before first Stop and the restart run.",
+    "sampling_window_seconds": 1112.317736209021
+  },
+  "recorded_kst": "2026-09-30T16:04:15.176343+09:00",
+  "runs": [
+    {
+      "converted_buffers_at_first_input_notice": 5,
+      "converted_buffers_at_stop": 12408,
+      "dropped_buffers_at_stop": 0,
+      "first_input_notice_after_start_seconds": 0.535,
+      "first_input_notice_kst": "2026-09-30T15:39:01.921+09:00",
+      "native_ui_ready_after_stop": true,
+      "native_ui_start_enabled_after_stop": true,
+      "normal_stop_observed": true,
+      "run": 1,
+      "start_to_stop_seconds": 1240.618,
+      "started_kst": "2026-09-30T15:39:01.386+09:00",
+      "stopped_kst": "2026-09-30T15:59:42.004+09:00"
+    },
+    {
+      "converted_buffers_at_first_input_notice": 5,
+      "converted_buffers_at_stop": 552,
+      "dropped_buffers_at_stop": 0,
+      "first_input_notice_after_start_seconds": 0.512,
+      "first_input_notice_kst": "2026-09-30T16:00:14.285+09:00",
+      "native_ui_ready_after_stop": true,
+      "native_ui_start_enabled_after_stop": true,
+      "normal_stop_observed": true,
+      "run": 2,
+      "start_to_stop_seconds": 55.039,
+      "started_kst": "2026-09-30T16:00:13.773+09:00",
+      "stopped_kst": "2026-09-30T16:01:08.812+09:00"
+    }
+  ],
+  "schema_version": 1,
+  "scope": {
+    "audio_or_recognized_text_written_to_qa_artifacts": false,
+    "network_disabled_during_test": false,
+    "not_verified": [
+      "controlled continuous English speech",
+      "real-speaker recognition or translation accuracy",
+      "pin microphone or other external input devices",
+      "hardware speech-to-caption latency",
+      "network-disabled operation",
+      "running on macOS 26.4"
+    ],
+    "resource_scope": "LiveKoCaption parent process only; Apple language service subprocesses excluded",
+    "verified": [
+      "actual built-in microphone startup and input delivery",
+      "20 minutes 40.618 seconds of capture without an observed stop, stall, crash or dropped-buffer report",
+      "normal stop, enabled Start, 55.039-second restart and second normal stop",
+      "metadata-only main app process resource observations"
+    ]
+  }
+}

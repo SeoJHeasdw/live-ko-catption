@@ -1,0 +1,110 @@
+{
+  "active_requests" : [
+    {
+      "age_seconds" : 10.784516416606493,
+      "id" : 11
+    },
+    {
+      "age_seconds" : 10.759913333342411,
+      "id" : 12
+    },
+    {
+      "age_seconds" : 10.709879458416253,
+      "id" : 14
+    },
+    {
+      "age_seconds" : 10.63446591666434,
+      "id" : 17
+    },
+    {
+      "age_seconds" : 10.734846458304673,
+      "id" : 13
+    },
+    {
+      "age_seconds" : 10.684463958372362,
+      "id" : 15
+    },
+    {
+      "age_seconds" : 10.93460325000342,
+      "id" : 5
+    },
+    {
+      "age_seconds" : 11.007574083399959,
+      "id" : 2
+    },
+    {
+      "age_seconds" : 11.033256416674703,
+      "id" : 1
+    },
+    {
+      "age_seconds" : 10.809917166712694,
+      "id" : 10
+    },
+    {
+      "age_seconds" : 10.659872916643508,
+      "id" : 16
+    },
+    {
+      "age_seconds" : 10.611994666629471,
+      "id" : 18
+    },
+    {
+      "age_seconds" : 10.511533666634932,
+      "id" : 22
+    },
+    {
+      "age_seconds" : 10.884859833284281,
+      "id" : 7
+    },
+    {
+      "age_seconds" : 10.486192624899559,
+      "id" : 23
+    },
+    {
+      "age_seconds" : 10.959906833362766,
+      "id" : 4
+    },
+    {
+      "age_seconds" : 10.586642458336428,
+      "id" : 19
+    },
+    {
+      "age_seconds" : 10.561252500046976,
+      "id" : 20
+    },
+    {
+      "age_seconds" : 10.83527895831503,
+      "id" : 9
+    },
+    {
+      "age_seconds" : 10.536925041582435,
+      "id" : 21
+    },
+    {
+      "age_seconds" : 11.057559333392419,
+      "id" : 0
+    },
+    {
+      "age_seconds" : 10.909856958431192,
+      "id" : 6
+    },
+    {
+      "age_seconds" : 10.859479583334178,
+      "id" : 8
+    }
+  ],
+  "canceled_requests_returned" : 0,
+  "cancellation_mode" : "session_only",
+  "completed_before_cancellation" : 1,
+  "errors" : [
+
+  ],
+  "fresh_restart_korean" : "저희와 함께해 주셔서 감사합니다. 지금 대화를 계속하겠습니다.",
+  "mode" : "isolated installed Apple Translation, fresh session for each forcibly canceled request",
+  "passed" : false,
+  "requested_cancellations" : 24,
+  "returned_cancellation_errors" : [
+
+  ],
+  "wall_seconds" : 11.057852958329022
+}

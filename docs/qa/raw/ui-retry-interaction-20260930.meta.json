@@ -1,0 +1,21 @@
+{
+  "kind": "synthetic-ui-interaction",
+  "seconds": 120,
+  "bundleIdentifier": "io.javis.live-ko-caption.ui-failure",
+  "binarySHA256": "609a0abfdf530de8d7c716c0f6f7fb910a33a199183ca388b267a292321f4795",
+  "observations": {
+    "injectedFirstFinalTranslationFailure": true,
+    "bannerDismissed": true,
+    "persistentToolbarRetryRemained": true,
+    "retryClearedErrorAndRemovedButton": true,
+    "syntheticFooterSuppressedEngineTimings": true,
+    "pageUpSuspendedFollow": true,
+    "homeCommandExercisedWithoutFullLabelSnapshot": true,
+    "endCommandNotExercised": true
+  },
+  "uiSourceSHA256": {
+    "Sources/LiveKoCaption/CaptionView.swift": "6375c25abb62b3218d29777e37382775ed094e3268b51a187157f02f1def7136",
+    "Sources/LiveKoCaption/NativeCaptionTranscript.swift": "eea62038a18bf39331eac636ee1588c236bcac9715f05c17966af59cf2c86d4b",
+    "Sources/LiveKoCaption/CaptionUISoakRunner.swift": "8155ca429ced2092231044de5e148b85c968322c11b754b5973150b815ed06aa"
+  }
+}

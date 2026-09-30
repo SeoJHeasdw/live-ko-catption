@@ -3,3 +3,9 @@ dist/
 .swiftpm/
 .DS_Store
 *.xcuserstate
+# Live progress, interrupted runs and host stack samples stay local. Completed
+# QA reports and source fingerprints are committed explicitly.
+docs/qa/raw/*.progress.json
+docs/qa/raw/*.sample.txt
+docs/qa/raw/*-incomplete.json
+docs/qa/raw/continuous-pipeline-smoke*

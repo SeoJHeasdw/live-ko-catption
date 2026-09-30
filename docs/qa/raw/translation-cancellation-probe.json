@@ -1,0 +1,106 @@
+{
+  "active_requests" : [
+    {
+      "age_seconds" : 11.066828416660428,
+      "id" : 2
+    },
+    {
+      "age_seconds" : 10.585755750071257,
+      "id" : 22
+    },
+    {
+      "age_seconds" : 10.562764833332039,
+      "id" : 23
+    },
+    {
+      "age_seconds" : 10.828785208286718,
+      "id" : 12
+    },
+    {
+      "age_seconds" : 10.734856999944896,
+      "id" : 16
+    },
+    {
+      "age_seconds" : 10.70948979165405,
+      "id" : 17
+    },
+    {
+      "age_seconds" : 10.634794833371416,
+      "id" : 20
+    },
+    {
+      "age_seconds" : 10.805270374985412,
+      "id" : 13
+    },
+    {
+      "age_seconds" : 10.853040708345361,
+      "id" : 11
+    },
+    {
+      "age_seconds" : 10.659759041736834,
+      "id" : 19
+    },
+    {
+      "age_seconds" : 10.944537541712634,
+      "id" : 7
+    },
+    {
+      "age_seconds" : 11.041653999942355,
+      "id" : 3
+    },
+    {
+      "age_seconds" : 10.919146333355457,
+      "id" : 8
+    },
+    {
+      "age_seconds" : 11.115571749978699,
+      "id" : 0
+    },
+    {
+      "age_seconds" : 10.96822908334434,
+      "id" : 6
+    },
+    {
+      "age_seconds" : 11.017390083405189,
+      "id" : 4
+    },
+    {
+      "age_seconds" : 10.992553458316252,
+      "id" : 5
+    },
+    {
+      "age_seconds" : 10.898426666622981,
+      "id" : 9
+    },
+    {
+      "age_seconds" : 10.874953625025228,
+      "id" : 10
+    },
+    {
+      "age_seconds" : 10.783181249978952,
+      "id" : 14
+    },
+    {
+      "age_seconds" : 10.759624500060454,
+      "id" : 15
+    },
+    {
+      "age_seconds" : 10.685248541645706,
+      "id" : 18
+    },
+    {
+      "age_seconds" : 10.610115833347663,
+      "id" : 21
+    }
+  ],
+  "canceled_requests_returned" : 1,
+  "completed_before_cancellation" : 0,
+  "errors" : [
+
+  ],
+  "fresh_restart_korean" : "저희와 함께해 주셔서 감사합니다. 지금 대화를 계속하겠습니다.",
+  "mode" : "isolated installed Apple Translation, fresh session for each forcibly canceled request",
+  "passed" : false,
+  "requested_cancellations" : 24,
+  "wall_seconds" : 11.115844916668721
+}

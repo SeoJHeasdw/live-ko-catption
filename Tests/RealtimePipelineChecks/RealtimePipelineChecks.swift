@@ -26,12 +26,12 @@ private final class FileTapInvocation: @unchecked Sendable {
     }
 }
 
-/// TranslationSession.cancel() is synchronous and has no actor annotation in
-/// the SDK. The holder crosses only the cancellation handler's Sendable boundary.
+/// The cancellation handler is nonisolated. Bridge retirement to MainActor;
+/// the production lease defers SDK cleanup until the physical await has exited.
 private final class SessionCancellation: @unchecked Sendable {
-    let session: TranslationSession
-    init(_ session: TranslationSession) { self.session = session }
-    func cancel() { session.cancel() }
+    let session: TranslationSessionLease
+    init(_ session: TranslationSessionLease) { self.session = session }
+    func cancel() { Task { @MainActor in session.retire() } }
 }
 
 @MainActor private final class ActualTranslator {
@@ -41,7 +41,7 @@ private final class SessionCancellation: @unchecked Sendable {
     var streamBegan: Double = 0
 
     func translate(_ source: String, isContext: Bool) async throws -> String {
-        let session = TranslationSession(installedSource: Locale.Language(identifier: "en"),
+        let session = TranslationSessionLease(installedSource: Locale.Language(identifier: "en"),
             target: Locale.Language(identifier: "ko"), preferredStrategy: isContext ? .highFidelity : .lowLatency)
         let cancellation = SessionCancellation(session)
         let id = UUID()
@@ -52,7 +52,7 @@ private final class SessionCancellation: @unchecked Sendable {
                       "started_after_stream_seconds": began - streamBegan, "status": "in_flight"])
         active[id] = cancellation
         defer {
-            cancellation.cancel()
+            session.retire()
             active.removeValue(forKey: id)
             calls[index]["text_translation_seconds"] = ProcessInfo.processInfo.systemUptime - began
         }
@@ -61,7 +61,7 @@ private final class SessionCancellation: @unchecked Sendable {
                 try Task.checkCancellation()
                 let result = try await session.translate(source)
                 try Task.checkCancellation()
-                return result.targetText
+                return result
             } onCancel: { cancellation.cancel() }
             calls[index]["status"] = "completed"
             calls[index]["korean"] = target
@@ -354,6 +354,9 @@ struct RealtimePipelineChecks {
             }
             if !problems.messages.isEmpty || pump.droppedBufferCount != 0 { failures.append("Fixture input dropped audio or reported an audio error") }
             if translator.activeCount != 0 { failures.append("Actual local translation calls remained active after production stop") }
+            if TranslationSessionLease.activeLiveCount != 0 || TranslationSessionLease.activeContextCount != 0 {
+                failures.append("Production leases retained physical native awaits after stop")
+            }
             if recorder.firstKorean == nil { failures.append("No Korean translation was observed") }
             if hasEligibleContext && (!contextCalls.contains(where: { $0["status"] as? String == "completed" }) ||
                 !model.displaySegments.contains(where: { $0.contextSegmentCount > 1 })) {
@@ -380,7 +383,7 @@ struct RealtimePipelineChecks {
                                 "A translation matching an exact source revision can still be semantically wrong.",
                                 "Requested highFidelity may use Apple's documented traditional-model fallback.",
                                 "Model start/permission/device selection was bypassed; production receive, queues, context correction and stop were exercised.",
-                                "The injected real translator creates a cancellable installed-language session per call; the app normally reuses its lowLatency session.",
+                                "The injected real translator uses the production lease and creates/retires a session per call; the app normally reuses lowLatency and creates highFidelity per context job.",
                                 "This check does not verify network-disabled operation or real-speaker accuracy."],
                 "metrics": [
                     "first_english_after_stream_seconds": firstASR.map { $0 as Any } ?? NSNull(),
@@ -405,6 +408,8 @@ struct RealtimePipelineChecks {
                     "final_context_groups": model.displaySegments.filter { $0.contextSegmentCount > 1 }.count,
                     "dropped_audio_buffers": pump.droppedBufferCount,
                     "active_local_translation_calls_after_stop": translator.activeCount,
+                    "physical_live_awaits_after_stop": TranslationSessionLease.activeLiveCount,
+                    "physical_context_awaits_after_stop": TranslationSessionLease.activeContextCount,
                     "has_pending_translations_after_stop": model.hasPendingTranslations,
                     "dropped_state_snapshots": recorder.droppedSnapshots
                 ],
