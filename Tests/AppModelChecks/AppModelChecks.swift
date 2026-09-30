@@ -36,11 +36,13 @@ final class TranslatorProbe {
     var failuresRemaining: [String: Int] = [:]
     var cancellationsRemaining: [String: Int] = [:]
     var responseDelay: Duration?
+    var rejectsForCapacity = false
     private var held: [(Call, CheckedContinuation<String, any Error>)] = []
 
     func translate(_ source: String, context: Bool) async throws -> String {
         let call = Call(source: source, context: context)
         calls.append(call)
+        if rejectsForCapacity { throw TranslationSessionLease.CapacityReached(lane: .live) }
         if heldSources.contains(source) || (context && holdContexts) {
             return try await withCheckedThrowingContinuation { held.append((call, $0)) }
         }
@@ -441,6 +443,27 @@ struct AppModelChecks {
                 try expect(model.segments.map(\.source) == allSources, "Retry changed or dropped source text")
                 try expect(model.segments[0].translation == "KO: Final 0.", "Late timed-out final replaced retry output")
                 try expect(model.segments.allSatisfy { $0.translationError == nil }, "Retry left an incomplete error state")
+            }),
+            ("unfinished native capacity stops input, preserves sources and recovers retry", {
+                let probe = TranslatorProbe()
+                probe.rejectsForCapacity = true
+                let model = makeModel(probe)
+                model.phase = .listening
+                model.receive(source: "First retained.", audioStart: 0, audioEnd: 1, isFinal: true)
+                model.receive(source: "Second retained.", audioStart: 1, audioEnd: 2, isFinal: true)
+                try await waitUntil("Physical capacity failure left input or controls blocked", seconds: 1) {
+                    model.phase == .idle && !model.hasPendingTranslations
+                }
+                try expect(model.canStart, "Physical capacity failure did not restore Start")
+                try expect(model.message?.contains("이전 번역 작업") == true, "Physical capacity degradation was hidden")
+                try expect(model.segments.map(\.source) == ["First retained.", "Second retained."], "Physical capacity discarded sources")
+                try expect(model.segments.allSatisfy { !$0.isFinal && $0.translationError != nil }, "Physical capacity finalized missing translations")
+                probe.rejectsForCapacity = false
+                model.retryFailedTranslations()
+                try await waitUntil("Retry did not recover after native capacity became available") {
+                    model.segments.allSatisfy(\.isFinal) && !model.hasPendingTranslations
+                }
+                try expect(model.segments.allSatisfy { $0.translationError == nil }, "Recovered native capacity left source failures")
             }),
             ("stopping has an overall deadline and retains incomplete source", {
                 let probe = TranslatorProbe()

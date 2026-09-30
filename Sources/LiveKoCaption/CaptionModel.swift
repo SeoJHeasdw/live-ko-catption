@@ -27,7 +27,7 @@ final class CaptionModel {
             UserDefaults.standard.set(contextCorrectionEnabled, forKey: "contextCorrectionEnabled")
             if !contextCorrectionEnabled {
                 contextJobs.removeAll()
-                contextSession?.cancel(); contextTask?.cancel()
+                contextSession?.retire(); contextTask?.cancel()
                 activeContext = nil
                 queuedTranslations = translationQueue.count
             }
@@ -56,13 +56,13 @@ final class CaptionModel {
     private var resultTask: Task<Void, Never>?
     private var analysisTask: Task<Void, Never>?
     private var workerTask: Task<Void, Never>?
-    private var translationSession: TranslationSession?
+    private var translationSession: TranslationSessionLease?
     private var activeTranslation: TranslationJob?
     private var translationTask: Task<String, any Error>?
     private var translationQueue = TranslationQueue()
     private var workerID: UUID?
     private var contextJobs: [ContextTranslationJob] = []
-    private var contextSession: TranslationSession?
+    private var contextSession: TranslationSessionLease?
     private var activeContext: ContextTranslationJob?
     private var contextTask: Task<String, any Error>?
     private var contextTimedOut = false
@@ -233,10 +233,10 @@ final class CaptionModel {
                 throw CaptionError.message("음성 인식에 사용할 음성 형식을 찾지 못했습니다.")
             }
             try checkStarting(token)
-            let session = TranslationSession(installedSource: sourceLanguage, target: targetLanguage,
+            let session = TranslationSessionLease(installedSource: sourceLanguage, target: targetLanguage,
                                              preferredStrategy: .lowLatency)
             translationSession = session
-            try await OperationDeadline.run(seconds: 15, name: "번역 모델 준비", onTimeout: { session.cancel() }) {
+            try await OperationDeadline.run(seconds: 15, name: "번역 모델 준비", onTimeout: { session.retire() }) {
                 try await session.prepareTranslation()
             }
             try checkStarting(token)
@@ -348,8 +348,8 @@ final class CaptionModel {
             workerTask?.cancel()
             translationTask?.cancel()
             contextTask?.cancel()
-            translationSession?.cancel()
-            contextSession?.cancel()
+            translationSession?.retire()
+            contextSession?.retire()
             if let closingAnalyzer { Task { await closingAnalyzer.cancelAndFinishNow() } }
             do {
                 try await OperationDeadline.run(seconds: 0.8, name: "마이크 정지") {
@@ -393,8 +393,8 @@ final class CaptionModel {
         workerID = nil
         workerTask?.cancel(); workerTask = nil
         translationTask?.cancel(); translationTask = nil; activeTranslation = nil
-        translationSession?.cancel(); translationSession = nil
-        contextSession?.cancel(); contextSession = nil
+        translationSession?.retire(); translationSession = nil
+        contextSession?.retire(); contextSession = nil
         contextTask?.cancel(); contextTask = nil
         activeContext = nil
         contextJobs.removeAll()
@@ -415,8 +415,8 @@ final class CaptionModel {
         workerID = nil
         workerTask?.cancel(); workerTask = nil
         translationTask?.cancel(); translationTask = nil; activeTranslation = nil
-        translationSession?.cancel(); translationSession = nil
-        contextSession?.cancel(); contextSession = nil
+        translationSession?.retire(); translationSession = nil
+        contextSession?.retire(); contextSession = nil
         contextTask?.cancel(); contextTask = nil
         activeContext = nil
         contextJobs.removeAll()
@@ -454,7 +454,7 @@ final class CaptionModel {
     func retryFailedTranslations() {
         guard !isPreview, phase == .idle || phase == .listening else { return }
         guard let _ = translationSession else {
-            translationSession = TranslationSession(installedSource: sourceLanguage, target: targetLanguage,
+            translationSession = TranslationSessionLease(installedSource: sourceLanguage, target: targetLanguage,
                                                     preferredStrategy: .lowLatency)
             enqueueFailedTranslations()
             return
@@ -499,7 +499,7 @@ final class CaptionModel {
         }
         if isFinal {
             if let activeContext, !timeline.needsContextTranslation(activeContext) {
-                contextSession?.cancel()
+                contextSession?.retire()
                 contextTask?.cancel()
             }
             enqueueContextIfAvailable()
@@ -520,14 +520,14 @@ final class CaptionModel {
            activeTranslation.segmentID != job.segmentID || activeTranslation.revision != job.revision {
             if timeline.needsTranslation(activeTranslation) { translationQueue.enqueue(activeTranslation) }
             translationTask?.cancel()
-            translationSession?.cancel()
+            translationSession?.retire()
             if translationOverride == nil {
-                translationSession = TranslationSession(installedSource: sourceLanguage,
+                translationSession = TranslationSessionLease(installedSource: sourceLanguage,
                     target: targetLanguage, preferredStrategy: .lowLatency)
             }
         }
         if job.isSourceFinal, activeContext != nil {
-            contextSession?.cancel(); contextTask?.cancel()
+            contextSession?.retire(); contextTask?.cancel()
         }
         translationQueue.prune(using: timeline)
         if job.isSourceFinal && translationQueue.finalCount >= 12 && isListening {
@@ -552,8 +552,8 @@ final class CaptionModel {
             self.workerTask = nil
             self.workerID = nil
             if self.phase == .idle {
-                self.translationSession = nil
-                self.contextSession = nil
+                self.translationSession?.retire(); self.translationSession = nil
+                self.contextSession?.retire(); self.contextSession = nil
             }
         }
     }
@@ -575,7 +575,7 @@ final class CaptionModel {
                 if let contextJob = contextJobs.first, !contextTimedOut, contextCorrectionEnabled {
                     contextJobs.removeFirst()
                     activeContext = contextJob
-                    let contextSession = TranslationSession(installedSource: sourceLanguage,
+                    let contextSession = TranslationSessionLease(installedSource: sourceLanguage,
                         target: targetLanguage, preferredStrategy: .highFidelity)
                     self.contextSession = contextSession
                     queuedTranslations = contextJobs.count
@@ -583,9 +583,9 @@ final class CaptionModel {
                         let override = translationOverride
                         let task = Task {
                             try await OperationDeadline.run(seconds: 4, name: "문맥 보정",
-                                onTimeout: { contextSession.cancel() }) {
+                                onTimeout: { contextSession.retire() }) {
                                 if let override { return try await override(contextJob.source, true) }
-                                return try await contextSession.translate(contextJob.source).targetText
+                                return try await contextSession.translate(contextJob.source)
                             }
                         }
                         contextTask = task
@@ -596,7 +596,7 @@ final class CaptionModel {
                         guard workerID == token, !Task.isCancelled else { return }
                         // Context is optional: retain the already translated exact
                         // source revisions and prioritize subsequent live speech.
-                        if error is OperationDeadline.Expired {
+                        if error is OperationDeadline.Expired || error is TranslationSessionLease.CapacityReached {
                             contextTimedOut = true
                             contextJobs.removeAll()
                             message = "문맥 보정이 지연돼 이번 실행에서는 문장별 번역을 유지합니다. 다시 시작하면 문맥 보정을 다시 시도합니다."
@@ -604,7 +604,7 @@ final class CaptionModel {
                     }
                     activeContext = nil
                     contextTask = nil
-                    self.contextSession = nil
+                    self.contextSession?.retire(); self.contextSession = nil
                     continue
                 }
                 break
@@ -619,10 +619,10 @@ final class CaptionModel {
             do {
                 let override = translationOverride
                 let task = Task {
-                    try await OperationDeadline.run(seconds: 6, name: "자막 번역", onTimeout: { session?.cancel() }) {
+                    try await OperationDeadline.run(seconds: 6, name: "자막 번역", onTimeout: { session?.retire() }) {
                         if let override { return try await override(job.source, false) }
                         guard let session else { throw CancellationError() }
-                        return try await session.translate(job.source).targetText
+                        return try await session.translate(job.source)
                     }
                 }
                 translationTask = task
@@ -650,10 +650,13 @@ final class CaptionModel {
                     timeline.fail(job, message: error.localizedDescription)
                     message = "일부 자막을 번역하지 못했습니다. 다시 번역하거나 원문을 확인해 주세요."
                 }
-                if error is OperationDeadline.Expired {
-                        // A canceled framework session must not be reused.
+                if error is OperationDeadline.Expired || error is TranslationSessionLease.CapacityReached {
+                        // Retired native work stays counted across runs. Stop
+                        // admission if the physical-work cap is exhausted.
                         if isListening {
-                            message = "번역 응답이 지연돼 입력을 멈춥니다. 미완료 원문은 보존했습니다. 다시 번역하거나 새로 시작해 주세요."
+                            message = error is TranslationSessionLease.CapacityReached
+                                ? "이전 번역 작업이 아직 정리되지 않아 입력을 멈춥니다. 원문을 저장하고 잠시 후 다시 시도해 주세요. 계속되면 앱을 다시 열어 주세요."
+                                : "번역 응답이 지연돼 입력을 멈춥니다. 미완료 원문은 보존했습니다. 다시 번역하거나 새로 시작해 주세요."
                             Task { await self.stop(aborting: true) }
                         }
                         for segment in segments where segment.translatedRevision != segment.revision {

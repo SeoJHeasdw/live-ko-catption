@@ -15,6 +15,7 @@ xcrun swiftc -swift-version 6 -target arm64-apple-macos26.4 -parse-as-library \
     Sources/LiveKoCaption/AudioCapture.swift \
     Sources/LiveKoCaption/AudioDeviceCapture.swift \
     Sources/LiveKoCaption/OperationDeadline.swift \
+    Sources/LiveKoCaption/TranslationSessionLease.swift \
     Sources/LiveKoCaption/CaptionModel.swift \
     Tests/AppModelChecks/AppModelChecks.swift \
     -o "$checks_path/AppModelChecks"
