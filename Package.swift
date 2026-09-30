@@ -6,11 +6,13 @@ let package = Package(
     platforms: [.macOS("26.4")],
     products: [
         .executable(name: "LiveKoCaption", targets: ["LiveKoCaption"]),
-        .executable(name: "CaptionCoreChecks", targets: ["CaptionCoreChecks"])
+        .executable(name: "CaptionCoreChecks", targets: ["CaptionCoreChecks"]),
+        .executable(name: "LocalPipelineCheck", targets: ["LocalPipelineCheck"])
     ],
     targets: [
         .target(name: "CaptionCore"),
         .executableTarget(name: "LiveKoCaption", dependencies: ["CaptionCore"]),
-        .executableTarget(name: "CaptionCoreChecks", dependencies: ["CaptionCore"], path: "Tests/CaptionCoreChecks")
+        .executableTarget(name: "CaptionCoreChecks", dependencies: ["CaptionCore"], path: "Tests/CaptionCoreChecks"),
+        .executableTarget(name: "LocalPipelineCheck", dependencies: ["CaptionCore"], path: "Tests/LocalPipelineCheck")
     ]
 )
