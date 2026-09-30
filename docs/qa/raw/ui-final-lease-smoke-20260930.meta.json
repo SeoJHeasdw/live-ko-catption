@@ -1,0 +1,19 @@
+{
+  "kind": "final-lease-ui-smoke-and-keyboard-preview",
+  "scope": "synthetic UI only; no Apple inference or microphone capture",
+  "wrapperExitCode": 0,
+  "keyObservations": {
+    "PageUpSuspendsFollowing": "verified in prior live failure fixture",
+    "HomeSuspendsFollowingAndReachesStart": true,
+    "EndSuspendsFollowingAndReachesEnd": true,
+    "PageDownSuspendsFollowing": true,
+    "scrollbarMouseInputSuspendsFollowing": "verified in prior preview"
+  },
+  "binarySHA256": "459992e61595626786a5d5f7cbb30f75ce17454f993266c880cc1baf6879b22f",
+  "uiSourceSHA256": {
+    "Sources/LiveKoCaption/CaptionView.swift": "6375c25abb62b3218d29777e37382775ed094e3268b51a187157f02f1def7136",
+    "Sources/LiveKoCaption/NativeCaptionTranscript.swift": "b229a41f6d06bbcbdfb8915dc29d9ef3973a112ab3e642935a8ea1f5aaf22532",
+    "Sources/LiveKoCaption/CaptionUISoakRunner.swift": "71857bb74044c3fc2fda62cc0371597c33e3d0d55b3629d38bcca12ddabeca5a",
+    "scripts/check-ui-soak.sh": "c11a97ef2eaebf5b930cc20ca8f728dc129a4aa4dd656121b07d55d29e620d9e"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "completion": {
+    "elapsedSeconds": 150.63754783326294,
+    "event": "complete",
+    "maxMainActorPauseSeconds": 0.107448666729033,
+    "nativeDocumentCharacters": 57730,
+    "nativeDocumentMatchesLatest": true,
+    "passed": true,
+    "rawSegments": 665,
+    "resizes": 10,
+    "ticks": 5316,
+    "transcriptCharacters": 245288,
+    "translatedSegments": 665,
+    "visibleSegments": 100
+  },
+  "wrapperExitCode": 0,
+  "stableViewportRuns": [
+    {
+      "segmentID": "E32E2A59-1246-4B76-A93E-895D688EC52C",
+      "firstSeconds": 58.042444666614756,
+      "lastSeconds": 89.61279608332552,
+      "ASRRecordsAdded": 135,
+      "samples": 32
+    },
+    {
+      "segmentID": "75DA442A-4BAF-466C-B45B-4789F2EAAA70",
+      "firstSeconds": 133.09300995827653,
+      "lastSeconds": 142.1910238333512,
+      "ASRRecordsAdded": 41,
+      "samples": 10
+    },
+    {
+      "segmentID": "FB28951E-9B31-4EC0-BAD8-87B020C99EB8",
+      "firstSeconds": 90.62584604159929,
+      "lastSeconds": 91.64643554168288,
+      "ASRRecordsAdded": 5,
+      "samples": 2
+    },
+    {
+      "segmentID": "E32E2A59-1246-4B76-A93E-895D688EC52C",
+      "firstSeconds": 92.6579958749935,
+      "lastSeconds": 92.6579958749935,
+      "ASRRecordsAdded": 0,
+      "samples": 1
+    }
+  ],
+  "selectionStartID": "063ED96A-073A-4F51-BCB9-75CBEB35798C",
+  "selectionLastID": "063ED96A-073A-4F51-BCB9-75CBEB35798C",
+  "selectionFirstSeconds": 133.09300995827653,
+  "selectionLastSeconds": 142.1910238333512,
+  "selectionASRRecordsAdded": 41
+}

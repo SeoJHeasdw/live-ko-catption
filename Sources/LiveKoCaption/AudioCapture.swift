@@ -62,31 +62,69 @@ enum CaptionError: LocalizedError {
 /// Owns buffers copied out of the audio tap. Conversion runs on one bounded queue,
 /// rather than performing recognition or translation on the audio callback.
 final class AudioPump: @unchecked Sendable {
+    private enum FinishAction { case alreadyClosed, waitForDrain, closeNow }
+    // Analyzer queue capacity must represent time, not the hardware callback
+    // size. AUHAL commonly delivers 512 frames at 48 kHz (~94 callbacks/s).
+    // Eight of those tiny buffers leave less than 90 ms of scheduling slack.
+    // Accumulate 100 ms away from the callback before resampling/yielding.
+    static let analyzerChunkDuration: TimeInterval = 0.1
+    static let analyzerBufferLimit = 8
     private let queue = DispatchQueue(label: "io.javis.live-ko-caption.audio", qos: .userInteractive)
     private let lock = NSLock()
     private var pending = 0
+    private var pendingInputFrames: Int64 = 0
+    private var receivedInput = false
+    static let startupInputWait: TimeInterval = 20
+    static let runningInputWait: TimeInterval = 20
+    private let startedAtUptime: TimeInterval
+    private var lastInputUptime: TimeInterval
     private var finished = false
+    private var closingScheduled = false
+    private var closed = false
+    private var finishWaiters: [CheckedContinuation<Void, Never>] = []
+    private var reportedProblem = false
+    private var droppedBuffers = 0
     private var convertedBuffers = 0
     private let converter: AVAudioConverter
+    private let sourceFormat: AVAudioFormat
+    private let sourceBatch: AVAudioPCMBuffer
+    private let maximumPendingInputFrames: Int64
     private let target: AVAudioFormat
     private let continuation: AsyncStream<AnalyzerInput>.Continuation
     private let onLevel: @Sendable (Double) -> Void
     private let onProblem: @Sendable (String) -> Void
+    private let copyBuffer: @Sendable (AVAudioPCMBuffer) -> AVAudioPCMBuffer?
     private var nextFrame: Int64 = 0
     private var lastMeterTime: TimeInterval = 0
 
     init(source: AVAudioFormat, target: AVAudioFormat,
          continuation: AsyncStream<AnalyzerInput>.Continuation,
          onLevel: @escaping @Sendable (Double) -> Void,
-         onProblem: @escaping @Sendable (String) -> Void) throws {
+         onProblem: @escaping @Sendable (String) -> Void,
+         copyBuffer: @escaping @Sendable (AVAudioPCMBuffer) -> AVAudioPCMBuffer? = AudioPump.copy,
+         startedAtUptime: TimeInterval = ProcessInfo.processInfo.systemUptime) throws {
         guard let converter = AVAudioConverter(from: source, to: target) else {
             throw CaptionError.message("이 마이크의 음성 형식을 변환할 수 없습니다.")
         }
+        let batchFrames = AVAudioFrameCount(max(1, (source.sampleRate * Self.analyzerChunkDuration).rounded()))
+        guard let sourceBatch = AVAudioPCMBuffer(pcmFormat: source, frameCapacity: batchFrames) else {
+            throw CaptionError.message("마이크 입력을 모을 메모리가 부족합니다.")
+        }
+        // The converter defaults to remapping, which selects only channel 0
+        // for mono output. A stereo receiver carrying the speaker on its right
+        // channel must remain audible to recognition.
+        converter.downmix = source.channelCount > target.channelCount
         self.converter = converter
+        self.sourceFormat = source
+        self.sourceBatch = sourceBatch
+        self.maximumPendingInputFrames = Int64(source.sampleRate / 2)
         self.target = target
         self.continuation = continuation
         self.onLevel = onLevel
         self.onProblem = onProblem
+        self.copyBuffer = copyBuffer
+        self.lastInputUptime = startedAtUptime
+        self.startedAtUptime = startedAtUptime
     }
 
     // AVAudioNodeTapBlock is nonsendable in the SDK. Creating it inside the
@@ -98,44 +136,130 @@ final class AudioPump: @unchecked Sendable {
     }
 
     var bufferCount: Int { lock.withLock { convertedBuffers } }
+    var droppedBufferCount: Int { lock.withLock { droppedBuffers } }
+    var hasReceivedInput: Bool { lock.withLock { receivedInput } }
 
-    func enqueue(_ original: AVAudioPCMBuffer) {
-        lock.lock()
-        if finished { lock.unlock(); return }
-        guard pending < 32 else {
-            lock.unlock()
-            onProblem("음성 처리가 밀려 일부 입력이 누락됐습니다. 잠시 멈춘 뒤 다시 시작해 주세요.")
-            return
-        }
-        pending += 1
-        lock.unlock()
-
-        guard let copy = AVAudioPCMBuffer(pcmFormat: original.format, frameCapacity: original.frameLength) else {
-            decrementPending()
-            onProblem("마이크 입력을 읽을 수 없습니다.")
-            return
-        }
-        copy.frameLength = original.frameLength
-        let sources = UnsafeMutableAudioBufferListPointer(original.mutableAudioBufferList)
-        let destinations = UnsafeMutableAudioBufferListPointer(copy.mutableAudioBufferList)
-        for index in sources.indices {
-            if let source = sources[index].mData, let destination = destinations[index].mData {
-                memcpy(destination, source, Int(sources[index].mDataByteSize))
-            }
-        }
-        queue.async { [self, copy] in
-            defer { decrementPending() }
-            convert(copy)
+    func hasStalledInput(at uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) -> Bool {
+        lock.withLock {
+            !finished && (receivedInput
+                ? uptime - lastInputUptime > Self.runningInputWait
+                : uptime - startedAtUptime > Self.startupInputWait)
         }
     }
 
-    private func decrementPending() {
-        lock.lock(); pending -= 1; lock.unlock()
+    func enqueue(_ original: AVAudioPCMBuffer, at uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) {
+        guard original.frameLength > 0 else { return }
+        lock.lock()
+        if finished { lock.unlock(); return }
+        // Silence is healthy input. Only missing nonempty tap buffers indicate
+        // a stalled device; the watchdog never depends on speech or loudness.
+        lastInputUptime = uptime
+        let frameCount = Int64(original.frameLength)
+        // Tap sizes can differ from the requested 1024 frames. Bound queued
+        // audio by duration as well as count so a slow device does not create
+        // several seconds of stale captions before overflow is noticed.
+        guard pending < 32,
+              pendingInputFrames + frameCount <= maximumPendingInputFrames else {
+            droppedBuffers += 1
+            lock.unlock()
+            reportProblem("음성 처리가 밀려 일부 입력이 누락됐습니다. 잠시 멈춘 뒤 다시 시작해 주세요.")
+            return
+        }
+        pending += 1
+        pendingInputFrames += frameCount
+        receivedInput = true
+        lock.unlock()
+
+        guard original.format.isEqual(sourceFormat), let copy = copyBuffer(original) else {
+            lock.withLock { droppedBuffers += 1 }
+            decrementPending(frameCount: frameCount)
+            reportProblem("마이크 입력을 읽을 수 없습니다. 입력 장치의 연결과 음성 형식을 확인해 주세요.")
+            return
+        }
+
+        queue.async { [self, copy] in
+            defer { decrementPending(frameCount: frameCount) }
+            consume(copy)
+        }
+    }
+
+    // A copied buffer is exclusively owned by the conversion queue. The
+    // injectable copier lets the callback checks reproduce an in-flight copy
+    // during stop without needing hardware timing or oversized allocations.
+    static func copy(_ original: AVAudioPCMBuffer) -> AVAudioPCMBuffer? {
+        guard let copy = AVAudioPCMBuffer(pcmFormat: original.format, frameCapacity: original.frameLength) else { return nil }
+        copy.frameLength = original.frameLength
+        let sources = UnsafeMutableAudioBufferListPointer(original.mutableAudioBufferList)
+        let destinations = UnsafeMutableAudioBufferListPointer(copy.mutableAudioBufferList)
+        guard sources.count == destinations.count else { return nil }
+        for index in sources.indices {
+            guard sources[index].mDataByteSize <= destinations[index].mDataByteSize,
+                  let source = sources[index].mData, let destination = destinations[index].mData else { return nil }
+            memcpy(destination, source, Int(sources[index].mDataByteSize))
+        }
+        return copy
+    }
+
+    private func decrementPending(frameCount: Int64) {
+        let shouldClose = lock.withLock {
+            pending -= 1
+            pendingInputFrames -= frameCount
+            guard finished, pending == 0, !closingScheduled else { return false }
+            closingScheduled = true
+            return true
+        }
+        if shouldClose { queue.async { [self] in closeStream() } }
+    }
+
+    private func reportProblem(_ message: String) {
+        let shouldReport = lock.withLock {
+            guard !reportedProblem else { return false }
+            reportedProblem = true
+            return true
+        }
+        guard shouldReport else { return }
+        // Do not create a MainActor Task or invoke client work from the tap.
+        DispatchQueue.global(qos: .userInitiated).async { [onProblem] in onProblem(message) }
+    }
+
+    private func consume(_ source: AVAudioPCMBuffer) {
+        let sources = UnsafeMutableAudioBufferListPointer(source.mutableAudioBufferList)
+        let destinations = UnsafeMutableAudioBufferListPointer(sourceBatch.mutableAudioBufferList)
+        let bytesPerFrame = Int(sourceFormat.streamDescription.pointee.mBytesPerFrame)
+        var sourceOffset = 0
+        while sourceOffset < Int(source.frameLength) {
+            let destinationOffset = Int(sourceBatch.frameLength)
+            let frames = min(Int(source.frameLength) - sourceOffset,
+                             Int(sourceBatch.frameCapacity) - destinationOffset)
+            for index in sources.indices {
+                // copy() validated storage and formats before this queue owns
+                // the input. Both interleaved and planar PCM use their format's
+                // bytes-per-frame within each AudioBuffer plane.
+                memcpy(destinations[index].mData!.advanced(by: destinationOffset * bytesPerFrame),
+                       sources[index].mData!.advanced(by: sourceOffset * bytesPerFrame),
+                       frames * bytesPerFrame)
+            }
+            sourceBatch.frameLength += AVAudioFrameCount(frames)
+            sourceOffset += frames
+            if sourceBatch.frameLength == sourceBatch.frameCapacity {
+                convert(sourceBatch)
+                sourceBatch.frameLength = 0
+            }
+        }
+        let now = ProcessInfo.processInfo.systemUptime
+        if now - lastMeterTime > 0.10, let level = Self.level(of: source) {
+            lastMeterTime = now
+            onLevel(level)
+        }
     }
 
     private func convert(_ source: AVAudioPCMBuffer) {
         let capacity = AVAudioFrameCount(ceil(Double(source.frameLength) * target.sampleRate / source.format.sampleRate)) + 64
-        guard let output = AVAudioPCMBuffer(pcmFormat: target, frameCapacity: capacity) else { return }
+        guard let output = AVAudioPCMBuffer(pcmFormat: target, frameCapacity: capacity) else {
+            lock.withLock { droppedBuffers += 1 }
+            reportProblem("마이크 입력을 변환할 메모리가 부족합니다.")
+            return
+        }
         var supplied = false
         var error: NSError?
         let status = converter.convert(to: output, error: &error) { _, inputStatus in
@@ -145,34 +269,97 @@ final class AudioPump: @unchecked Sendable {
             return source
         }
         guard status != .error, error == nil else {
-            onProblem("마이크 입력을 변환하지 못했습니다. 입력 장치를 다시 선택해 주세요.")
+            lock.withLock { droppedBuffers += 1 }
+            reportProblem("마이크 입력을 변환하지 못했습니다. 입력 장치를 다시 선택해 주세요.")
             return
         }
+        yield(output)
+    }
+
+    private static func level(of buffer: AVAudioPCMBuffer) -> Double? {
+        guard buffer.floatChannelData != nil || buffer.int16ChannelData != nil else { return nil }
+        let channels = Int(buffer.format.channelCount)
+        let interleaved = buffer.format.isInterleaved
+        var largestRMS: Double = 0
+        for channel in 0..<channels {
+            var squares: Double = 0
+            var sampled = 0
+            for frame in stride(from: 0, to: Int(buffer.frameLength), by: 4) {
+                let index = interleaved ? frame * channels + channel : frame
+                let plane = interleaved ? 0 : channel
+                let sample: Double
+                if let floats = buffer.floatChannelData { sample = Double(floats[plane][index]) }
+                else if let integers = buffer.int16ChannelData { sample = Double(integers[plane][index]) / 32768 }
+                else { continue }
+                squares += sample * sample
+                sampled += 1
+            }
+            largestRMS = max(largestRMS, sqrt(squares / Double(max(1, sampled))))
+        }
+        return min(1, max(0, (20 * log10(max(largestRMS, 0.00001)) + 60) / 60))
+    }
+
+    private func yield(_ output: AVAudioPCMBuffer) {
         guard output.frameLength > 0 else { return }
         lock.withLock { convertedBuffers += 1 }
         let startTime = CMTime(value: nextFrame, timescale: CMTimeScale(target.sampleRate))
         nextFrame += Int64(output.frameLength)
         if case .dropped = continuation.yield(AnalyzerInput(buffer: output, bufferStartTime: startTime)) {
-            onProblem("음성 인식이 입력 속도를 따라가지 못했습니다. 잠시 멈춘 뒤 다시 시작해 주세요.")
-        }
-        let now = ProcessInfo.processInfo.systemUptime
-        if now - lastMeterTime > 0.10, let samples = source.floatChannelData?[0] {
-            lastMeterTime = now
-            let count = Int(source.frameLength)
-            var squares: Float = 0
-            for index in stride(from: 0, to: count, by: 4) { squares += samples[index] * samples[index] }
-            let rms = sqrt(Double(squares) / Double(max(1, count / 4)))
-            onLevel(min(1, max(0, (20 * log10(max(rms, 0.00001)) + 60) / 60)))
+            lock.withLock { droppedBuffers += 1 }
+            reportProblem("음성 인식이 입력 속도를 따라가지 못해 일부 입력이 누락됐습니다. 잠시 멈춘 뒤 다시 시작해 주세요.")
         }
     }
 
-    func finish() async {
-        lock.withLock { finished = true }
-        await withCheckedContinuation { done in
-            queue.async { [self] in
-                continuation.finish()
-                done.resume()
+    private func closeStream() {
+        // Stop preserves the short final batch instead of requiring another
+        // callback to fill it. Drain the resampler only after that source tail.
+        if sourceBatch.frameLength > 0 {
+            convert(sourceBatch)
+            sourceBatch.frameLength = 0
+        }
+        // .noDataNow retains the resampler's trailing frames. End-of-stream
+        // must be supplied after all accepted copies have been converted so
+        // the final consonant is available to the speech analyzer.
+        let capacity = AVAudioFrameCount(max(1, target.sampleRate / 10))
+        while true {
+            guard let output = AVAudioPCMBuffer(pcmFormat: target, frameCapacity: capacity) else {
+                reportProblem("마지막 마이크 입력을 변환할 메모리가 부족합니다.")
+                break
             }
+            var error: NSError?
+            let status = converter.convert(to: output, error: &error) { _, inputStatus in
+                inputStatus.pointee = .endOfStream
+                return nil
+            }
+            if status == .error || error != nil {
+                reportProblem("마지막 마이크 입력을 변환하지 못했습니다.")
+                break
+            }
+            yield(output)
+            if status == .endOfStream || output.frameLength == 0 { break }
+        }
+        continuation.finish()
+        let waiters = lock.withLock {
+            closed = true
+            let waiting = finishWaiters
+            finishWaiters.removeAll()
+            return waiting
+        }
+        for waiter in waiters { waiter.resume() }
+    }
+
+    func finish() async {
+        await withCheckedContinuation { done in
+            let action = lock.withLock {
+                finished = true
+                guard !closed else { return FinishAction.alreadyClosed }
+                finishWaiters.append(done)
+                guard pending == 0, !closingScheduled else { return FinishAction.waitForDrain }
+                closingScheduled = true
+                return FinishAction.closeNow
+            }
+            if action == .alreadyClosed { done.resume() }
+            else if action == .closeNow { queue.async { [self] in closeStream() } }
         }
     }
 }
@@ -189,92 +376,74 @@ enum AudioCallbackBridge {
 @MainActor
 final class AudioCapture {
     private static let logger = Logger(subsystem: "io.javis.live-ko-caption", category: "audio")
-    private let engine = AVAudioEngine()
+    private let stopQueue = DispatchQueue(label: "io.javis.live-ko-caption.device-stop")
+    private var deviceCapture: AudioDeviceCapture?
     private var pump: AudioPump?
-    private var hasTap = false
-    private var configurationObserver: NSObjectProtocol?
-    private var configurationRestarts = 0
+    private var watchdogTask: Task<Void, Never>?
 
     func start(deviceID: AudioDeviceID?, target: AVAudioFormat,
                onLevel: @escaping @Sendable (Double) -> Void,
                onProblem: @escaping @Sendable (String) -> Void) throws -> AsyncStream<AnalyzerInput> {
-        let input = engine.inputNode
-        if var deviceID {
-            guard let unit = input.audioUnit else {
-                throw CaptionError.message("선택한 마이크를 사용할 수 없습니다. 다른 입력 장치를 선택해 주세요.")
-            }
-            var currentDevice = AudioDeviceID(0)
-            var size = UInt32(MemoryLayout<AudioDeviceID>.size)
-            let readStatus = AudioUnitGetProperty(unit, kAudioOutputUnitProperty_CurrentDevice,
-                                                 kAudioUnitScope_Global, 0, &currentDevice, &size)
-            if readStatus != noErr || currentDevice != deviceID {
-                let status = AudioUnitSetProperty(unit, kAudioOutputUnitProperty_CurrentDevice,
-                                                 kAudioUnitScope_Global, 0, &deviceID,
-                                                 UInt32(MemoryLayout<AudioDeviceID>.size))
-                guard status == noErr else {
-                    throw CaptionError.message("선택한 마이크를 열 수 없습니다 (\(status)). 연결 상태를 확인해 주세요.")
-                }
-            }
+        guard deviceCapture == nil, pump == nil else {
+            throw CaptionError.message("마이크가 이미 실행 중입니다. 잠시 멈춘 뒤 다시 시작해 주세요.")
         }
-        let format = input.outputFormat(forBus: 0)
-        guard format.sampleRate > 0, format.channelCount > 0 else {
-            throw CaptionError.message("마이크에서 음성이 들어오지 않습니다. 연결 상태를 확인해 주세요.")
-        }
-        let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream(bufferingPolicy: .bufferingNewest(128))
-        let audioPump = try AudioPump(source: format, target: target, continuation: continuation,
-                                     onLevel: onLevel, onProblem: onProblem)
+        // A dedicated input-only AudioUnit keeps the selected input independent
+        // of AVAudioEngine's default input/output aggregate-device rebuilding.
+        let source = try AudioDeviceCapture(deviceID: deviceID)
+        let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream(
+            bufferingPolicy: .bufferingNewest(AudioPump.analyzerBufferLimit))
+        let audioPump = try AudioPump(source: source.format, target: target,
+            continuation: continuation, onLevel: onLevel, onProblem: onProblem)
+        deviceCapture = source
         pump = audioPump
-        input.installTap(onBus: 0, bufferSize: 1024, format: format, block: audioPump.makeTapBlock())
-        hasTap = true
-        do {
-            engine.prepare()
-            try engine.start()
-        } catch {
-            engine.inputNode.removeTap(onBus: 0)
-            hasTap = false
+        do { try source.start(pump: audioPump, onProblem: onProblem) }
+        catch {
+            deviceCapture = nil
+            source.stop()
             continuation.finish()
             throw error
         }
-        configurationObserver = NotificationCenter.default.addObserver(
-            forName: .AVAudioEngineConfigurationChange, object: engine, queue: nil,
-            using: AudioCallbackBridge.configurationBlock { [weak self] in
-                guard let self, self.hasTap else { return }
-                let current = self.engine.inputNode.outputFormat(forBus: 0)
-                if current.isEqual(format) {
-                    if self.engine.isRunning {
-                        Self.logger.debug("Ignored a settled configuration notification; input is unchanged and running.")
-                        return
-                    }
-                    // AVAudioEngine stops itself when the I/O unit settles a
-                    // device configuration. If the tap format is still valid,
-                    // restarting the same graph is sufficient and preserves
-                    // the analyzer stream. Bound retries if hardware flaps.
-                    if self.configurationRestarts < 2 {
-                        do {
-                            try self.engine.start()
-                            self.configurationRestarts += 1
-                            Self.logger.notice("Microphone graph recovered after configuration notification.")
-                            return
-                        } catch {
-                            Self.logger.error("Microphone graph recovery failed: \(error.localizedDescription)")
-                        }
-                    }
+        watchdogTask = Task { @MainActor [weak self] in
+            var reportedFirstInput = false
+            while !Task.isCancelled {
+                do { try await Task.sleep(for: .milliseconds(500)) } catch { return }
+                guard !Task.isCancelled, let self, self.deviceCapture === source,
+                      self.pump === audioPump else { return }
+                if audioPump.hasReceivedInput && !reportedFirstInput {
+                    reportedFirstInput = true
+                    Self.logger.notice("Selected microphone receiving input: device=\(source.deviceID), convertedBuffers=\(audioPump.bufferCount)")
                 }
-                Self.logger.error("Input configuration changed: running=\(self.engine.isRunning), rate=\(current.sampleRate), channels=\(current.channelCount)")
-                onProblem("마이크 연결 또는 음성 형식이 바뀌었습니다. 입력 장치를 확인한 뒤 다시 시작해 주세요.")
+                if let problem = source.configurationProblem() {
+                    Self.logger.error("Selected microphone configuration changed: \(problem)")
+                    onProblem(problem)
+                    return
+                }
+                guard audioPump.hasStalledInput() else { continue }
+                Self.logger.error("Selected microphone has not delivered buffers for over twenty seconds; running=\(source.isRunning)")
+                onProblem(audioPump.hasReceivedInput
+                    ? "마이크의 오디오 입력이 20초 이상 중단됐습니다. 입력 장치를 확인한 뒤 다시 시작해 주세요."
+                    : "마이크 입력을 20초 동안 기다렸지만 연결되지 않았습니다. 입력 장치를 확인한 뒤 다시 시작해 주세요.")
+                return
             }
-        )
-        Self.logger.notice("Microphone started: rate=\(format.sampleRate), channels=\(format.channelCount), target=\(target.sampleRate)")
+        }
+        Self.logger.notice("Selected microphone started: device=\(source.deviceID), rate=\(source.format.sampleRate), channels=\(source.format.channelCount), target=\(target.sampleRate)")
         return stream
     }
 
     func stop() async {
-        if let configurationObserver { NotificationCenter.default.removeObserver(configurationObserver) }
-        configurationObserver = nil
-        engine.stop()
-        if hasTap { engine.inputNode.removeTap(onBus: 0); hasTap = false }
-        await pump?.finish()
-        Self.logger.notice("Microphone stopped: convertedBuffers=\(self.pump?.bufferCount ?? 0)")
-        pump = nil
+        watchdogTask?.cancel(); watchdogTask = nil
+        let closingSource = deviceCapture
+        let closingPump = pump
+        deviceCapture = nil; pump = nil
+        // Hardware stop can wait for its callback. Keep it off the UI actor so
+        // input failure cannot freeze the Start button or the stop deadline.
+        await withCheckedContinuation { done in
+            stopQueue.async {
+                closingSource?.stop()
+                done.resume()
+            }
+        }
+        await closingPump?.finish()
+        Self.logger.notice("Microphone stopped: convertedBuffers=\(closingPump?.bufferCount ?? 0), droppedBuffers=\(closingPump?.droppedBufferCount ?? 0)")
     }
 }

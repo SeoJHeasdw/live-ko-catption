@@ -1,0 +1,92 @@
+{
+  "full_run": {
+    "passed": true,
+    "uninterrupted_input_seconds": 1800,
+    "restart_input_seconds": 30,
+    "wall_seconds": 1831.53918683331,
+    "final_sources_retained_exactly": 451,
+    "translation_calls": 3392,
+    "completed_calls": 3380,
+    "returned_cancellations": 12,
+    "failed_calls": 0,
+    "physical_live_awaits_after_both_stops": [
+      0,
+      0
+    ],
+    "physical_context_awaits_after_both_stops": [
+      0,
+      0
+    ],
+    "dropped_audio_buffers": 0,
+    "maximum_translation_queue": 3,
+    "raw_current_revision_korean_lag_p50_seconds": 0.87763883331138,
+    "raw_current_revision_korean_lag_p95_seconds": 1.5116220833174339,
+    "raw_current_revision_korean_lag_max_seconds": 1.949748874977331,
+    "rss_first_minute_median_mb": 25.96875,
+    "rss_last_minute_median_mb": 27.40625,
+    "rss_peak_observed_mb": 29.765625,
+    "cpu_median_percent_of_one_core": 2.894178202467041,
+    "cpu_p95_percent_of_one_core": 3.6702011971506634
+  },
+  "session_policy_followup": {
+    "passed": true,
+    "input_seconds": 75,
+    "passes": [
+      {
+        "can_start_after_stop": true,
+        "completed_wall_seconds": 60.28709254169371,
+        "dropped_audio_buffers": 0,
+        "duration_seconds": 60,
+        "idle_after_stop": true,
+        "input_problems": [],
+        "last_message": null,
+        "physical_context_awaits_after_stop": 0,
+        "physical_live_awaits_after_stop": 0
+      },
+      {
+        "can_start_after_stop": true,
+        "completed_wall_seconds": 15.203985999920405,
+        "dropped_audio_buffers": 0,
+        "duration_seconds": 15,
+        "idle_after_stop": true,
+        "input_problems": [],
+        "last_message": null,
+        "physical_context_awaits_after_stop": 0,
+        "physical_live_awaits_after_stop": 0
+      }
+    ],
+    "translation_calls": 139,
+    "context_calls": 11
+  },
+  "full_run_session_lifetime_difference": "Production lowLatency reuse, exact production lease/deadlines/admission counts are exercised. The full run injector reused highFidelity leases across completed context jobs; production creates/retires a highFidelity lease per context job. The 60+15 follow-up now uses the production context lifetime policy.",
+  "source_hash_comparison": {
+    "Sources/LiveKoCaption/CaptionModel.swift": {
+      "matches_followup": true,
+      "matches_current": true
+    },
+    "Sources/LiveKoCaption/AudioCapture.swift": {
+      "matches_followup": true,
+      "matches_current": true
+    },
+    "Sources/CaptionCore/CaptionTimeline.swift": {
+      "matches_followup": true,
+      "matches_current": true
+    },
+    "Sources/LiveKoCaption/TranslationSessionLease.swift": {
+      "matches_followup": true,
+      "matches_current": true
+    }
+  },
+  "scope_and_limits": [
+    "Actual installed Apple SpeechAnalyzer and TranslationSession calls, paced 100ms looping synthetic English audio, production CaptionModel state/scheduling and exact production TranslationSessionLease.",
+    "No microphone or system-audio device was opened by these runs. Permission/device selection and physical microphone callbacks/start path were bypassed.",
+    "No SwiftUI/AppKit drawing was exercised. UI and physical-microphone evidence must come from the separate test reports.",
+    "RSS/CPU are the harness process only; Apple out-of-process language services are excluded.",
+    "Observed model-state lag is sampled every200ms; display states every5seconds. It is not hardware/UI latency or translation semantic accuracy.",
+    "ASR/source revision retention and matching responses do not prove semantic correctness, real-speaker accuracy or network-disabled use.",
+    "Models had to be installed; the check never downloads assets, but network connectivity was not deliberately disabled.",
+    "Restart inserts an artificial3-second source-time context boundary. Pooled lag samples include restart observations; first30minute progress establishes the representative ~1.5second p95 independently.",
+    "Original continuous-pipeline-30m.json passed continuous input/source retention but failed shutdown with1 native call stranded. That failure was preserved and triggered the lease fix; it must not be described as a full pass.",
+    "Long/burst cancellation probe fresh-query timeouts included workload contention. Sequential controlled80/1620-character probes established deferred cancellation recovery, including128 consecutive preemptions."
+  ]
+}

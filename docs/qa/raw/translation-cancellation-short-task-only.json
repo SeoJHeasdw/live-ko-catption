@@ -1,0 +1,141 @@
+{
+  "active_requests" : [
+
+  ],
+  "canceled_requests_returned" : 24,
+  "cancellation_mode" : "task_only",
+  "completed_before_cancellation" : 0,
+  "errors" : [
+
+  ],
+  "fresh_restart_korean" : "저희와 함께해 주셔서 감사합니다. 지금 대화를 계속하겠습니다.",
+  "maximum_between_round_recovery_seconds" : 0.088408874929882586,
+  "mode" : "isolated installed Apple Translation, fresh session for each forcibly canceled request",
+  "passed" : true,
+  "requested_cancellations" : 24,
+  "returned_cancellation_errors" : [
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 0,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 1,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 2,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 3,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 4,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 5,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 6,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 7,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 8,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 9,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 10,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 11,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 12,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 13,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 14,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 15,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 16,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 17,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 18,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 19,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 20,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 21,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 22,
+      "task_is_canceled" : true
+    },
+    {
+      "error" : "The operation couldn’t be completed. (Swift.CancellationError error 1.)",
+      "id" : 23,
+      "task_is_canceled" : true
+    }
+  ],
+  "source_character_count" : 80,
+  "successful_between_round_recoveries" : 24,
+  "wall_seconds" : 1.4227706666570157
+}

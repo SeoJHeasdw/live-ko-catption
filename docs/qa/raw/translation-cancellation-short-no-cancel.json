@@ -1,0 +1,22 @@
+{
+  "active_requests" : [
+
+  ],
+  "canceled_requests_returned" : 0,
+  "cancellation_mode" : "none",
+  "completed_before_cancellation" : 24,
+  "errors" : [
+
+  ],
+  "fresh_restart_korean" : "저희와 함께해 주셔서 감사합니다. 지금 대화를 계속하겠습니다.",
+  "maximum_between_round_recovery_seconds" : 0.088041541632264853,
+  "mode" : "isolated installed Apple Translation, fresh session for each forcibly canceled request",
+  "passed" : true,
+  "requested_cancellations" : 24,
+  "returned_cancellation_errors" : [
+
+  ],
+  "source_character_count" : 80,
+  "successful_between_round_recoveries" : 24,
+  "wall_seconds" : 1.385897499974817
+}

@@ -1,0 +1,23 @@
+{
+  "audio_fixture_filename": "english-fixture.aiff",
+  "english": "The meeting starts at 3.30.  We cannot approve this plan yet.  I thought the launch was on Tuesday, but let me correct that.  It is on Thursday, October 15.  If we miss the deadline, do not ship the unfinished version.  The light platform reduces the cost.",
+  "fixture_origin": "Agent-generated synthetic speech: built-in macOS Samantha voice at 165 words/minute; no microphone opened.",
+  "fixture_seconds": 15.62748299319728,
+  "korean": "회의는 3시 30분에 시작합니다. 아직 이 계획을 승인할 수 없습니다. 출시가 화요일인 줄 알았는데, 정정하겠습니다. 10월 15일 목요일입니다. 마감일을 놓치면, 미완성 버전을 배송하지 마십시오. 라이트 플랫폼은 비용을 절감합니다.",
+  "mode": "local audio-file integration check; not live microphone latency",
+  "operating_system": "Version 26.7 (Build 25G229)",
+  "provisional_events": 64,
+  "recognition_seconds": 0.20575866661965847,
+  "recorded_at": "2026-09-30T03:58:45Z",
+  "retained_sources": [
+    "The meeting starts at 3.30.",
+    "We cannot approve this plan yet.",
+    "I thought the launch was on Tuesday, but let me correct that.",
+    "It is on Thursday, October 15.",
+    "If we miss the deadline, do not ship the unfinished version.",
+    "The light platform reduces the cost."
+  ],
+  "scripted_english": "The meeting starts at three thirty. We cannot approve this plan yet. I thought the launch was on Tuesday, but let me correct that. It is on Thursday, October fifteenth. If we miss the deadline, do not ship the unfinished version. The light platform reduces the cost.",
+  "translation_mode": "all final recognized text joined into one request after recognition; not the app's concurrent scheduler",
+  "translation_seconds": 0.14512833335902542
+}

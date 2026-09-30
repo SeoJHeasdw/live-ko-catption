@@ -1,0 +1,13 @@
+{
+  "recorded_at": "2026-09-30T05:51:20.545646+00:00",
+  "note": "User resumed stabilization. Corrected real local-engine 1800-second input plus 30-second restart harness compiled from current sources. File hashes sampled shortly after launch; executable hashes identify actual running build. Earlier paused runs remain labeled incomplete.",
+  "sha256": {
+    "Sources/LiveKoCaption/CaptionModel.swift": "390f94406f4c61b446511eb322599ad2df8491ca1d588c4f754e8c830432e3a5",
+    "Sources/LiveKoCaption/AudioCapture.swift": "c937818a011c55feabbe6a930fa0f2c9bc4a9328325163c82f99e9c5ea08bd80",
+    "Sources/CaptionCore/CaptionTimeline.swift": "5287a94874ff8274f2d4503377b41918707cb60f681733e6655464f14b6b0b99",
+    "Tests/ContinuousPipelineChecks/ContinuousPipelineChecks.swift": "9e4401a96cc8d4150c7863b6e52cc8a98ccbad2cea0986af1eae9458dab11ab6",
+    ".build/continuous-checks/ContinuousPipelineChecks": "1b1e8e52a318d98a93ef1ac282d18723846adaf5f3b8d2be1e05d7420ec01125",
+    ".build/continuous-checks/libCaptionCore.dylib": "d8f549794a80bdb038da0c2608fab8c33e4f1489232b8221438c1d6914323318",
+    ".build/continuous-checks/continuous-english.aiff": "6b97aaa8a57ad260f1b7c42d6e5ab9b8a13106c2a30039b8cc18f172247f5f37"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "kind": "synthetic-ui-only",
+  "microphoneCapture": false,
+  "appleSpeechEngine": false,
+  "appleTranslationEngine": false,
+  "requestedSeconds": 1800,
+  "bundleIdentifier": "io.javis.live-ko-caption.ui-soak",
+  "pid": 32256,
+  "gitCommit": "fb4e273e5a56672774a86a458a3efce556a8cfd0",
+  "binarySHA256": "c5b868c4dcb7350d661feca11f06292c2864ea6f39f72e2c448b09d2095f6cdb",
+  "system": "ProductName:\t\tmacOS\nProductVersion:\t\t26.7\nBuildVersion:\t\t25G229\n",
+  "uiSourceSHA256": {
+    "Sources/LiveKoCaption/CaptionView.swift": "8569442a62d2183342e0c0ab701d90e87e1b533710ac638f9ed70953496a9e7a",
+    "Sources/LiveKoCaption/NativeCaptionTranscript.swift": "7c75cbd36c343f6bd55b98e572eff0bea363125a4dcb2cf9f6666dda1de42121",
+    "Sources/LiveKoCaption/CaptionUISoakRunner.swift": "d37b0a53d156e919e55965f71b2c9c34cedd349aed87ce7d9bdb7a668c6e9254"
+  }
+}

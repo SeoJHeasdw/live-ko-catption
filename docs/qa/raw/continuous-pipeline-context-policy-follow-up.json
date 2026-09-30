@@ -1,0 +1,592 @@
+{
+  "complete" : true,
+  "failures" : [
+
+  ],
+  "final_source_segments" : [
+    {
+      "audio_end" : 2.2200000000000002,
+      "audio_start" : 0,
+      "final" : true,
+      "korean" : "오늘 토론에 참여해 주셔서 감사합니다.",
+      "revision" : 11,
+      "source" : "Thank you for joining today's discussion.",
+      "translated_revision" : 11
+    },
+    {
+      "audio_end" : 5.8799999999999999,
+      "audio_start" : 2.2200000000000002,
+      "final" : true,
+      "korean" : "간단한 예시부터 시작한 뒤 세부 사항을 살펴보겠습니다.",
+      "revision" : 15,
+      "source" : "We will begin with a simple example and then look at the details.",
+      "translated_revision" : 15
+    },
+    {
+      "audio_end" : 11.640000000000001,
+      "audio_start" : 5.8799999999999999,
+      "final" : true,
+      "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+      "revision" : 21,
+      "source" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+      "translated_revision" : 21
+    },
+    {
+      "audio_end" : 14.52,
+      "audio_start" : 11.640000000000001,
+      "final" : true,
+      "korean" : "첫 번째 열차는 아침 9시 15분에 출발합니다.",
+      "revision" : 14,
+      "source" : "The 1st train leaves at 9.15 in the morning.",
+      "translated_revision" : 14
+    },
+    {
+      "audio_end" : 18.359999999999999,
+      "audio_start" : 14.52,
+      "final" : true,
+      "korean" : "그 열차를 놓치면 다음 열차가 20분 늦게 도착합니다.",
+      "revision" : 15,
+      "source" : "If we miss that train, the next one arrives 20 minutes later.",
+      "translated_revision" : 15
+    },
+    {
+      "audio_end" : 22.5,
+      "audio_start" : 18.359999999999999,
+      "final" : true,
+      "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision" : 16,
+      "source" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision" : 16
+    },
+    {
+      "audio_end" : 26.100000000000001,
+      "audio_start" : 22.5,
+      "final" : true,
+      "korean" : "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "revision" : 14,
+      "source" : "We should not cancel the appointment unless someone confirms the change.",
+      "translated_revision" : 14
+    },
+    {
+      "audio_end" : 33.719999999999999,
+      "audio_start" : 26.100000000000001,
+      "final" : true,
+      "korean" : "저는 은행이 문을 닫은 줄 알았지만, 강가 옆에 있는 은행을 의미했습니다. 이번 주말에 그곳에 작은 자원봉사자 그룹이 나무를 심고 있습니다.",
+      "revision" : 34,
+      "source" : "I thought the bank was closed, but I meant the bank beside the river, a small group of volunteers is planting trees there this weekend.",
+      "translated_revision" : 34
+    },
+    {
+      "audio_end" : 40.560000000000002,
+      "audio_start" : 33.719999999999999,
+      "final" : true,
+      "korean" : "그들은 자신의 도구를 가져올 것이며, 우리는 물과 점심을 제공하겠습니다. 비가 오면 행사를 다음 주로 옮기겠습니다.",
+      "revision" : 32,
+      "source" : "They will bring their own tools, and we will provide water and lunch. If it rains, we will move the event to the following week.",
+      "translated_revision" : 32
+    },
+    {
+      "audio_end" : 44.280000000000001,
+      "audio_start" : 40.560000000000002,
+      "final" : true,
+      "korean" : "작년에는 팀이 매일 약 300개의 소포를 배달했습니다.",
+      "revision" : 16,
+      "source" : "Last year, the team delivered about 300 packages each day.",
+      "translated_revision" : 16
+    },
+    {
+      "audio_end" : 47.399999999999999,
+      "audio_start" : 44.280000000000001,
+      "final" : true,
+      "korean" : "올해는 그 수치가 약 12% 증가했습니다.",
+      "revision" : 16,
+      "source" : "This year, the number has increased by roughly 12%.",
+      "translated_revision" : 16
+    },
+    {
+      "audio_end" : 56.219999999999999,
+      "audio_start" : 47.399999999999999,
+      "final" : true,
+      "korean" : "그것이 모든 동네가 동일한 수요를 가지고 있다는 뜻은 아닙니다. 일부 지역은 배달이 적게 필요하고, 다른 지역은 더 많이 필요합니다. 제가 이전에 말한 것을 정정하겠습니다.",
+      "revision" : 37,
+      "source" : "That does not mean every neighborhood has the same demand. Some areas need fewer deliveries, while others need more. Let me correct something I said earlier.",
+      "translated_revision" : 37
+    },
+    {
+      "audio_end" : 58.68,
+      "audio_start" : 56.219999999999999,
+      "final" : true,
+      "korean" : "새 시스템은 대기 시간을 단축합니다.",
+      "revision" : 9,
+      "source" : "The new system reduces waiting time.",
+      "translated_revision" : 9
+    },
+    {
+      "audio_end" : 60,
+      "audio_start" : 58.68,
+      "final" : true,
+      "korean" : "그것은 감소시키지 않습니다.",
+      "revision" : 6,
+      "source" : "It does not reduce the.",
+      "translated_revision" : 6
+    },
+    {
+      "audio_end" : 65.220000000000582,
+      "audio_start" : 63.000000000000583,
+      "final" : true,
+      "korean" : "오늘 토론에 참여해 주셔서 감사합니다.",
+      "revision" : 11,
+      "source" : "Thank you for joining today's discussion.",
+      "translated_revision" : 11
+    },
+    {
+      "audio_end" : 68.880000000000578,
+      "audio_start" : 65.220000000000582,
+      "final" : true,
+      "korean" : "간단한 예시부터 시작한 뒤 세부 사항을 살펴보겠습니다.",
+      "revision" : 15,
+      "source" : "We will begin with a simple example and then look at the details.",
+      "translated_revision" : 15
+    },
+    {
+      "audio_end" : 74.640000000000583,
+      "audio_start" : 68.880000000000578,
+      "final" : true,
+      "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+      "revision" : 21,
+      "source" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+      "translated_revision" : 21
+    },
+    {
+      "audio_end" : 77.520000000000579,
+      "audio_start" : 74.640000000000583,
+      "final" : true,
+      "korean" : "첫 번째 열차는 아침 9시 15분에 출발합니다.",
+      "revision" : 14,
+      "source" : "The 1st train leaves at 9.15 in the morning.",
+      "translated_revision" : 14
+    },
+    {
+      "audio_end" : 78.000000000000583,
+      "audio_start" : 77.520000000000579,
+      "final" : true,
+      "korean" : "우리가 놓치면...",
+      "revision" : 4,
+      "source" : "If we miss...",
+      "translated_revision" : 4
+    }
+  ],
+  "limitations" : [
+    "No microphone or system-audio device was opened; synthetic file input does not establish real-speaker accuracy or microphone hardware stability.",
+    "The production microphone permission/start path and SwiftUI rendering are not exercised.",
+    "Timing observes state at 200ms and display state at 5 seconds; it excludes SwiftUI draw latency.",
+    "No language assets are downloaded. Network connectivity is not deliberately disabled by this test.",
+    "Exact source-revision matching does not establish semantic correctness.",
+    "CPU/RSS are this harness process; Apple's out-of-process language services are excluded.",
+    "Live sessions are reused and context sessions are created/retired per job, matching the production lease lifetime policy; microphone/start remains bypassed.",
+    "Restart source timestamps include a three-second artificial context boundary; pooled lag statistics include these restart observations."
+  ],
+  "metrics" : {
+    "asr_lag_p50_seconds" : 0.19698270833399079,
+    "asr_lag_p95_seconds" : 0.24132554169558063,
+    "current_rss_mb" : 28.09375,
+    "final_asr_segments" : 19,
+    "gray_korean_observations" : 324,
+    "input_seconds" : 75.000000000000014,
+    "lag_samples" : 93,
+    "maximum_asr_event_gap_seconds" : 1.4424997500609607,
+    "maximum_observer_tick_gap_seconds" : 0.21864562504924834,
+    "maximum_queue_count" : 2,
+    "maximum_rss_mb" : 28.03125,
+    "observed_final_to_gray_transitions" : 0,
+    "provisional_asr_events" : 313,
+    "raw_current_revision_korean_lag_max_seconds" : 1.8043338333349652,
+    "raw_current_revision_korean_lag_p50_seconds" : 0.55636270832549783,
+    "raw_current_revision_korean_lag_p95_seconds" : 1.4416109167272211,
+    "translation" : {
+      "active_call_details" : [
+
+      ],
+      "active_calls" : 0,
+      "calls" : 139,
+      "canceled_calls" : 0,
+      "completed_calls" : 139,
+      "context_calls" : 11,
+      "errors" : [
+
+      ],
+      "failed_calls" : 0,
+      "maximum_active_calls" : 1,
+      "maximum_call_seconds" : 0.12915262498427182,
+      "physical_context_awaits" : 0,
+      "physical_live_awaits" : 0
+    },
+    "wall_seconds" : 75.743800291675143
+  },
+  "mode" : "100ms real-paced looping synthetic audio → real SpeechAnalyzer → production CaptionModel → reused local TranslationSession",
+  "operating_system" : "Version 26.7 (Build 25G229)",
+  "passed" : true,
+  "passes" : [
+    {
+      "can_start_after_stop" : true,
+      "completed_wall_seconds" : 60.28709254169371,
+      "dropped_audio_buffers" : 0,
+      "duration_seconds" : 60,
+      "idle_after_stop" : true,
+      "input_problems" : [
+
+      ],
+      "last_message" : null,
+      "physical_context_awaits_after_stop" : 0,
+      "physical_live_awaits_after_stop" : 0
+    },
+    {
+      "can_start_after_stop" : true,
+      "completed_wall_seconds" : 15.203985999920405,
+      "dropped_audio_buffers" : 0,
+      "duration_seconds" : 15,
+      "idle_after_stop" : true,
+      "input_problems" : [
+
+      ],
+      "last_message" : null,
+      "physical_context_awaits_after_stop" : 0,
+      "physical_live_awaits_after_stop" : 0
+    }
+  ],
+  "recorded_at" : "2026-09-30T07:04:08Z",
+  "resource_time_series" : [
+    {
+      "audio_input_seconds" : 0,
+      "caption_count" : 0,
+      "cpu_percent_of_one_core" : 0.19055606340833345,
+      "elapsed_seconds" : 0.050565041718073189,
+      "last_asr_seconds_ago" : 0.050565541721880436,
+      "message" : null,
+      "pass" : 0,
+      "phase" : "idle",
+      "queue_count" : 0,
+      "rss_mb" : 15.015625,
+      "translation_calls" : 0,
+      "visual_final_tail_count" : 0
+    },
+    {
+      "audio_input_seconds" : 4.9999999999999982,
+      "caption_count" : 2,
+      "cpu_percent_of_one_core" : 2.1960779220071869,
+      "elapsed_seconds" : 5.2348399166949093,
+      "last_asr_seconds_ago" : 0.13688095833640546,
+      "message" : null,
+      "pass" : 1,
+      "phase" : "listening",
+      "queue_count" : 1,
+      "rss_mb" : 25.453125,
+      "translation_calls" : 8,
+      "visual_final_tail_count" : 1
+    },
+    {
+      "audio_input_seconds" : 10.19999999999998,
+      "caption_count" : 3,
+      "cpu_percent_of_one_core" : 2.3281447612474646,
+      "elapsed_seconds" : 10.43696337507572,
+      "last_asr_seconds_ago" : 0.53973120835144073,
+      "message" : null,
+      "pass" : 1,
+      "phase" : "listening",
+      "queue_count" : 0,
+      "rss_mb" : 25.796875,
+      "translation_calls" : 17,
+      "visual_final_tail_count" : 1
+    },
+    {
+      "audio_input_seconds" : 15.199999999999962,
+      "caption_count" : 4,
+      "cpu_percent_of_one_core" : 2.5517334321456828,
+      "elapsed_seconds" : 15.448799125035293,
+      "last_asr_seconds_ago" : 0.75110554171260446,
+      "message" : null,
+      "pass" : 1,
+      "phase" : "listening",
+      "queue_count" : 0,
+      "rss_mb" : 25.890625,
+      "translation_calls" : 26,
+      "visual_final_tail_count" : 1
+    },
+    {
+      "audio_input_seconds" : 20.40000000000002,
+      "caption_count" : 6,
+      "cpu_percent_of_one_core" : 2.5526235633276912,
+      "elapsed_seconds" : 20.658562208409421,
+      "last_asr_seconds_ago" : 0.16589525004383177,
+      "message" : null,
+      "pass" : 1,
+      "phase" : "listening",
+      "queue_count" : 1,
+      "rss_mb" : 25.953125,
+      "translation_calls" : 37,
+      "visual_final_tail_count" : 2
+    },
+    {
+      "audio_input_seconds" : 25.400000000000091,
+      "caption_count" : 7,
+      "cpu_percent_of_one_core" : 1.9245543215037002,
+      "elapsed_seconds" : 25.675897000008263,
+      "last_asr_seconds_ago" : 0.38323237502481788,
+      "message" : null,
+      "pass" : 1,
+      "phase" : "listening",
+      "queue_count" : 0,
+      "rss_mb" : 25.96875,
+      "translation_calls" : 47,
+      "visual_final_tail_count" : 2
+    },
+    {
+      "audio_input_seconds" : 30.600000000000165,
+      "caption_count" : 8,
+      "cpu_percent_of_one_core" : 2.2512056575181711,
+      "elapsed_seconds" : 30.882955000037327,
+      "last_asr_seconds_ago" : 0.78482929163146764,
+      "message" : null,
+      "pass" : 1,
+      "phase" : "listening",
+      "queue_count" : 0,
+      "rss_mb" : 26.03125,
+      "translation_calls" : 56,
+      "visual_final_tail_count" : 3
+    },
+    {
+      "audio_input_seconds" : 35.800000000000239,
+      "caption_count" : 9,
+      "cpu_percent_of_one_core" : 2.7961719378636078,
+      "elapsed_seconds" : 36.086962833418511,
+      "last_asr_seconds_ago" : 0.29592291661538184,
+      "message" : null,
+      "pass" : 1,
+      "phase" : "listening",
+      "queue_count" : 1,
+      "rss_mb" : 26.1875,
+      "translation_calls" : 66,
+      "visual_final_tail_count" : 3
+    },
+    {
+      "audio_input_seconds" : 40.900000000000311,
+      "caption_count" : 9,
+      "cpu_percent_of_one_core" : 2.4637862124837748,
+      "elapsed_seconds" : 41.107313000014983,
+      "last_asr_seconds_ago" : 0.51340995833743364,
+      "message" : null,
+      "pass" : 1,
+      "phase" : "listening",
+      "queue_count" : 0,
+      "rss_mb" : 26.1875,
+      "translation_calls" : 74,
+      "visual_final_tail_count" : 3
+    },
+    {
+      "audio_input_seconds" : 45.900000000000382,
+      "caption_count" : 11,
+      "cpu_percent_of_one_core" : 2.8208642245048288,
+      "elapsed_seconds" : 46.115569125046022,
+      "last_asr_seconds_ago" : 0.67499400000087917,
+      "message" : null,
+      "pass" : 1,
+      "phase" : "listening",
+      "queue_count" : 0,
+      "rss_mb" : 26.234375,
+      "translation_calls" : 85,
+      "visual_final_tail_count" : 4
+    },
+    {
+      "audio_input_seconds" : 51.100000000000456,
+      "caption_count" : 12,
+      "cpu_percent_of_one_core" : 2.580217966469406,
+      "elapsed_seconds" : 51.311861291760579,
+      "last_asr_seconds_ago" : 0.11531337501946837,
+      "message" : null,
+      "pass" : 1,
+      "phase" : "listening",
+      "queue_count" : 1,
+      "rss_mb" : 26.234375,
+      "translation_calls" : 94,
+      "visual_final_tail_count" : 5
+    },
+    {
+      "audio_input_seconds" : 56.100000000000527,
+      "caption_count" : 12,
+      "cpu_percent_of_one_core" : 2.3759336325553417,
+      "elapsed_seconds" : 56.329693291685544,
+      "last_asr_seconds_ago" : 0.34011520841158926,
+      "message" : null,
+      "pass" : 1,
+      "phase" : "listening",
+      "queue_count" : 0,
+      "rss_mb" : 26.234375,
+      "translation_calls" : 102,
+      "visual_final_tail_count" : 5
+    },
+    {
+      "audio_input_seconds" : 60.900000000000595,
+      "caption_count" : 14,
+      "cpu_percent_of_one_core" : 3.4973175540309258,
+      "elapsed_seconds" : 61.528808041708544,
+      "last_asr_seconds_ago" : 1.3115850416943431,
+      "message" : null,
+      "pass" : 2,
+      "phase" : "listening",
+      "queue_count" : 0,
+      "rss_mb" : 28.03125,
+      "translation_calls" : 111,
+      "visual_final_tail_count" : 6
+    },
+    {
+      "audio_input_seconds" : 66.000000000000526,
+      "caption_count" : 16,
+      "cpu_percent_of_one_core" : 2.6800225855209656,
+      "elapsed_seconds" : 66.549701041658409,
+      "last_asr_seconds_ago" : 0.096710958401672542,
+      "message" : null,
+      "pass" : 2,
+      "phase" : "listening",
+      "queue_count" : 1,
+      "rss_mb" : 28.03125,
+      "translation_calls" : 120,
+      "visual_final_tail_count" : 7
+    },
+    {
+      "audio_input_seconds" : 71.000000000000242,
+      "caption_count" : 17,
+      "cpu_percent_of_one_core" : 1.7890642770315732,
+      "elapsed_seconds" : 71.560313875088468,
+      "last_asr_seconds_ago" : 0.30576324998401105,
+      "message" : null,
+      "pass" : 2,
+      "phase" : "listening",
+      "queue_count" : 1,
+      "rss_mb" : 28.03125,
+      "translation_calls" : 129,
+      "visual_final_tail_count" : 7
+    }
+  ],
+  "translation_examples" : [
+    {
+      "context" : false,
+      "english" : "Thank",
+      "korean" : "감사"
+    },
+    {
+      "context" : false,
+      "english" : "Thank you for join",
+      "korean" : "가입해 주셔서 감사합니다."
+    },
+    {
+      "context" : false,
+      "english" : "Thank you for joining today's discuss",
+      "korean" : "오늘 토론에 참여해 주셔서 감사합니다."
+    },
+    {
+      "context" : false,
+      "english" : "Thank you for joining today's discussion",
+      "korean" : "오늘 토론에 참여해 주셔서 감사합니다."
+    },
+    {
+      "context" : false,
+      "english" : "Thank you for joining today's discussion.",
+      "korean" : "오늘 토론에 참여해 주셔서 감사합니다."
+    },
+    {
+      "context" : false,
+      "english" : "We will",
+      "korean" : "우리는 할 것입니다"
+    },
+    {
+      "context" : false,
+      "english" : "We will begin with a simple",
+      "korean" : "간단한 것부터 시작하겠습니다."
+    },
+    {
+      "context" : false,
+      "english" : "We will begin with a simple example",
+      "korean" : "간단한 예시부터 시작하겠습니다."
+    },
+    {
+      "context" : false,
+      "english" : "We will begin with a simple example and then look",
+      "korean" : "우리는 간단한 예시로 시작한 뒤에 살펴보겠습니다."
+    },
+    {
+      "context" : false,
+      "english" : "We will begin with a simple example and then look at the details",
+      "korean" : "간단한 예시로 시작한 뒤 세부 사항을 살펴보겠습니다."
+    },
+    {
+      "context" : false,
+      "english" : "We will begin with a simple example and then look at the details.",
+      "korean" : "간단한 예시부터 시작한 뒤 세부 사항을 살펴보겠습니다."
+    },
+    {
+      "context" : true,
+      "english" : "Thank you for joining today's discussion. We will begin with a simple example and then look at the details.",
+      "korean" : "오늘 토론에 참여해 주셔서 감사합니다. 간단한 예시부터 시작한 뒤 세부 사항을 살펴보겠습니다."
+    },
+    {
+      "context" : false,
+      "english" : "The proposal",
+      "korean" : "제안서"
+    },
+    {
+      "context" : false,
+      "english" : "The proposal sounds promising",
+      "korean" : "그 제안은 유망해 보입니다."
+    },
+    {
+      "context" : false,
+      "english" : "The proposal sounds promising, but",
+      "korean" : "그 제안은 유망해 보이지만"
+    },
+    {
+      "context" : false,
+      "english" : "The proposal sounds promising, but we need enough",
+      "korean" : "그 제안은 유망해 보이지만, 우리는 충분한 것이 필요합니다."
+    },
+    {
+      "context" : false,
+      "english" : "The proposal sounds promising, but we need enough time to understand",
+      "korean" : "그 제안은 유망해 보이지만, 이해하기 위해서는 충분한 시간이 필요합니다."
+    },
+    {
+      "context" : false,
+      "english" : "The proposal sounds promising, but we need enough time to understand what",
+      "korean" : "제안은 유망해 보이지만, 우리는 무엇을 이해할 충분한 시간이 필요합니다."
+    },
+    {
+      "context" : false,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when",
+      "korean" : "제안은 유망해 보이지만, 어떤 일이 일어나는지 이해하기 위해서는 충분한 시간이 필요합니다."
+    },
+    {
+      "context" : false,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change",
+      "korean" : "제안은 유망해 보이지만, 상황이 변할 때 무슨 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다."
+    },
+    {
+      "context" : false,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+      "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다."
+    },
+    {
+      "context" : true,
+      "english" : "Thank you for joining today's discussion. We will begin with a simple example and then look at the details. The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+      "korean" : "오늘 토론에 참여해 주셔서 감사합니다. 간단한 예시부터 시작한 뒤 세부 사항을 살펴보겠습니다. 그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다."
+    },
+    {
+      "context" : false,
+      "english" : "The 1st",
+      "korean" : "첫 번째"
+    },
+    {
+      "context" : false,
+      "english" : "The 1st train leaves at 9",
+      "korean" : "첫 번째 열차는 9시에 출발합니다."
+    }
+  ]
+}
