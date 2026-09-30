@@ -78,22 +78,24 @@ struct CaptionView: View {
             if presentationMode {
                 Button {
                     Task {
-                        if model.isListening { await model.stop() } else { await model.start() }
+                        if model.canStop { await model.stop() } else { await model.start() }
                     }
                 } label: {
-                    Label(model.isListening ? "멈추기" : "시작",
-                          systemImage: model.isListening ? "pause.fill" : "play.fill")
+                    Label(model.phase == .starting ? "시작 취소" : model.isListening ? "멈추기" : "시작",
+                          systemImage: model.canStop ? "pause.fill" : "play.fill")
                 }.buttonStyle(.bordered).controlSize(.small)
-                    .disabled(!model.canStart && !model.isListening)
+                    .disabled(!model.canStart && !model.canStop)
                     .keyboardShortcut(.space, modifiers: [])
             }
             Button { presentationMode.toggle() } label: {
                 Image(systemName: presentationMode ? "sidebar.left" : "rectangle.expand.vertical")
                     .frame(width: 32, height: 32)
-            }.buttonStyle(.plain).help(presentationMode ? "조작 패널 보기" : "자막만 보기")
+            }.buttonStyle(.plain)
+                .accessibilityLabel(presentationMode ? "조작 패널 보기" : "자막만 보기")
+                .help(presentationMode ? "조작 패널 보기" : "자막만 보기")
             Button { NSApp.keyWindow?.toggleFullScreen(nil) } label: {
                 Image(systemName: "arrow.up.left.and.arrow.down.right").frame(width: 32, height: 32)
-            }.buttonStyle(.plain).help("전체 화면")
+            }.buttonStyle(.plain).accessibilityLabel("전체 화면 전환").help("전체 화면")
         }.padding(.horizontal, 26).padding(.top, 28).padding(.bottom, 23)
     }
 
@@ -108,11 +110,15 @@ struct CaptionView: View {
                     Text("마이크").font(.system(size: 13, weight: .medium))
                     Spacer()
                     Button { model.refreshDevices() } label: { Image(systemName: "arrow.clockwise") }
-                        .buttonStyle(.plain).help("마이크 목록 새로고침").disabled(model.phase != .idle)
+                        .buttonStyle(.plain).accessibilityLabel("마이크 목록 새로고침")
+                        .help("마이크 목록 새로고침").disabled(model.phase != .idle)
                 }
                 Picker("입력 장치", selection: $model.selectedDeviceUID) {
                     Text("시스템 기본 마이크").tag("")
                     ForEach(model.devices) { device in Text(device.name).tag(device.uid) }
+                    if !model.selectedDeviceUID.isEmpty && !model.devices.contains(where: { $0.uid == model.selectedDeviceUID }) {
+                        Text("저장된 마이크 · 연결 안 됨").tag(model.selectedDeviceUID)
+                    }
                 }.labelsHidden().pickerStyle(.menu).disabled(model.phase != .idle)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 HStack(spacing: 3) {
@@ -130,22 +136,22 @@ struct CaptionView: View {
             }
             Button {
                 Task {
-                    if model.isListening { await model.stop() } else { await model.start() }
+                    if model.canStop { await model.stop() } else { await model.start() }
                 }
             } label: {
                 HStack(spacing: 9) {
                     if model.isBusy && !model.isPreparing { ProgressView().controlSize(.small) }
                     else { Image(systemName: model.isListening ? "pause.fill" : "play.fill") }
-                    Text(model.isListening ? "잠시 멈추기" : "자막 시작")
+                    Text(model.phase == .starting ? "시작 취소" : model.isListening ? "잠시 멈추기" : "자막 시작")
                         .font(.system(size: 14, weight: .semibold))
                     Spacer()
                     Text("␣").font(.system(size: 14)).opacity(0.55)
                 }.padding(.horizontal, 16).frame(height: 47)
             }.buttonStyle(.plain)
-                .background(model.isListening ? Color.white.opacity(0.11) : CaptionPalette.blue.opacity(model.canStart ? 0.88 : 0.18),
+                .background(model.canStop ? Color.white.opacity(0.11) : CaptionPalette.blue.opacity(model.canStart ? 0.88 : 0.18),
                             in: RoundedRectangle(cornerRadius: 10))
-                .foregroundStyle(model.canStart ? CaptionPalette.background : CaptionPalette.ink.opacity(model.isListening ? 1 : 0.55))
-                .disabled(!model.canStart && !model.isListening)
+                .foregroundStyle(model.canStart ? CaptionPalette.background : CaptionPalette.ink.opacity(model.canStop ? 1 : 0.55))
+                .disabled(!model.canStart && !model.canStop)
                 .keyboardShortcut(.space, modifiers: [])
 
             Rectangle().fill(CaptionPalette.border).frame(height: 1)
@@ -153,6 +159,10 @@ struct CaptionView: View {
                 sectionLabel("자막 보기")
                 Toggle("영어 원문 함께 보기", isOn: $model.showEnglish).toggleStyle(.checkbox)
                     .font(.system(size: 12))
+                Toggle("최근 구절을 문맥으로 함께 번역", isOn: $model.contextCorrectionEnabled)
+                    .toggleStyle(.checkbox).font(.system(size: 12))
+                    .disabled(model.phase != .idle)
+                    .help("최근 인접한 구절을 제한된 묶음으로 번역합니다. 이어지는 말에 따라 최근 자막이 회색으로 돌아가 수정될 수 있습니다. 번역의 정확성을 보장하지는 않습니다.")
                 HStack {
                     Text("글자 크기").font(.system(size: 12))
                     Spacer()
@@ -161,9 +171,11 @@ struct CaptionView: View {
                 Slider(value: $model.fontSize, in: 24...52, step: 1)
                 HStack(spacing: 7) {
                     Circle().fill(CaptionPalette.draft).frame(width: 6, height: 6)
-                    Text("회색 자막은 말이 이어지면서 바뀝니다.")
+                    Text("회색 자막은 생성·수정 중입니다.")
                         .font(.system(size: 11)).foregroundStyle(CaptionPalette.secondary).lineSpacing(4)
                 }
+                Text("진한 자막도 번역 의미가 검증된 것은 아닙니다. 숫자·부정·이름·전문 용어는 원문을 함께 확인해 주세요.")
+                    .font(.system(size: 11)).foregroundStyle(CaptionPalette.secondary).lineSpacing(4)
             }
             Spacer(minLength: 12)
             VStack(spacing: 12) {
@@ -220,9 +232,12 @@ struct CaptionView: View {
                     Text(message).font(.system(size: 12)).lineSpacing(4)
                     Spacer()
                     if model.segments.contains(where: { $0.translationError != nil }) {
-                        Button("다시 번역") { model.retryFailedTranslations() }.controlSize(.small)
+                        Button("다시 번역") { model.retryFailedTranslations() }
+                            .controlSize(.small)
+                            .disabled(model.isPreview || (model.phase != .idle && model.phase != .listening))
                     }
-                    Button { model.message = nil } label: { Image(systemName: "xmark") }.buttonStyle(.plain)
+                    Button { model.message = nil } label: { Image(systemName: "xmark") }
+                        .buttonStyle(.plain).accessibilityLabel("알림 닫기")
                 }.padding(13).background(Color.orange.opacity(0.07), in: RoundedRectangle(cornerRadius: 10))
                     .padding(.horizontal, 34).padding(.bottom, 12)
             }
@@ -230,13 +245,19 @@ struct CaptionView: View {
                 ScrollViewReader { proxy in
                     ScrollView {
                         LazyVStack(alignment: .leading, spacing: 30) {
-                            ForEach(model.segments) { segment in
+                            ForEach(model.displaySegments) { segment in
                                 captionRow(segment)
                             }
                             Color.clear.frame(height: 10).id("caption-end")
                         }.padding(.horizontal, 34).padding(.top, 13).padding(.bottom, 25)
                     }
-                    .onChange(of: model.segments) {
+                    .onChange(of: model.displaySegments) {
+                        if followsLatest { proxy.scrollTo("caption-end", anchor: .bottom) }
+                    }
+                    .onChange(of: followsLatest) {
+                        if followsLatest { proxy.scrollTo("caption-end", anchor: .bottom) }
+                    }
+                    .onAppear {
                         if followsLatest { proxy.scrollTo("caption-end", anchor: .bottom) }
                     }
                     .onScrollPhaseChange { _, phase in
@@ -264,21 +285,45 @@ struct CaptionView: View {
                 Text(String(format: "%02d:%02d", Int(segment.audioStart) / 60, Int(segment.audioStart) % 60))
                     .font(.system(size: 10, weight: .medium, design: .monospaced))
                 if !segment.isFinal {
-                    Text(segment.translationError == nil ? "이어지는 중" : "번역 확인 필요")
+                    Text(captionState(segment)).font(.system(size: 10))
+                }
+                if segment.contextSegmentCount > 1 {
+                    Label("문맥 묶음", systemImage: "text.append")
                         .font(.system(size: 10))
+                        .help("최근 \(segment.contextSegmentCount)개 구절을 함께 번역했습니다. 최대 4개·12초·500자 안에서만 추가 문맥을 반영합니다.")
+                }
+                if segment.translationError != nil {
+                    Button("다시 번역") { model.retryFailedTranslations() }
+                        .buttonStyle(.bordered).controlSize(.mini)
+                        .disabled(model.isPreview || (model.phase != .idle && model.phase != .listening))
+                        .help("번역하지 못한 자막을 다시 번역합니다.")
                 }
             }.foregroundStyle(CaptionPalette.secondary.opacity(0.8))
-            Text(segment.translation ?? "한국어 자막을 준비하고 있습니다…")
+            Text(segment.translation ?? (segment.translationError == nil
+                ? "한국어 자막을 준비하고 있습니다…"
+                : "번역하지 못했습니다. 영어 원문을 확인해 주세요."))
                 .font(.system(size: model.fontSize, weight: segment.isFinal ? .medium : .regular))
                 .foregroundStyle(segment.isFinal ? CaptionPalette.ink : CaptionPalette.draft)
                 .lineSpacing(8).fixedSize(horizontal: false, vertical: true)
                 .textSelection(.enabled)
-            if model.showEnglish {
+            if model.showEnglish || segment.translationError != nil {
                 Text(segment.source).font(.system(size: 14))
                     .foregroundStyle(CaptionPalette.secondary.opacity(segment.isFinal ? 0.9 : 0.7))
-                    .lineSpacing(5).fixedSize(horizontal: false, vertical: true).textSelection(.enabled)
+                .lineSpacing(5).fixedSize(horizontal: false, vertical: true).textSelection(.enabled)
             }
         }.frame(maxWidth: .infinity, alignment: .leading).id(segment.id)
+    }
+
+    private func captionState(_ segment: CaptionSegment) -> String {
+        if segment.translationError != nil { return "번역 실패 · 원문 확인" }
+        if segment.contextIsPending { return "문맥 확인 중" }
+        if segment.translation != nil && segment.translatedRevision != segment.revision {
+            return "이전 번역 · 갱신 중"
+        }
+        if !segment.sourceIsFinal {
+            return model.phase == .idle && !model.isPreview ? "인식 미확정" : "듣고 수정하는 중"
+        }
+        return "번역 중"
     }
 
     private var footer: some View {
@@ -289,6 +334,10 @@ struct CaptionView: View {
                 Text(model.elapsed(at: context.date)).monospacedDigit().foregroundStyle(CaptionPalette.secondary)
             }
             Spacer()
+            if let delay = model.captionDelaySeconds {
+                Text("자막 도착 약 \(delay, specifier: "%.1f")초")
+                    .help("이 자막에 대응하는 음성 구간의 끝부터 현재 한국어 번역이 화면에 반영될 때까지의 추정 시간입니다. 마이크 하드웨어 지연은 포함하지 않습니다.")
+            }
             if let delay = model.speechDelaySeconds {
                 Text("인식 지연 약 \(delay, specifier: "%.1f")초")
                     .help("오디오의 끝 시점부터 인식 결과가 도착할 때까지의 추정 시간입니다. 번역 지연과는 별개입니다.")
@@ -298,6 +347,7 @@ struct CaptionView: View {
                     .help("마지막 번역 호출에 걸린 시간입니다. 전체 자막 지연은 아닙니다.")
             }
             if model.queuedTranslations > 0 { Text("번역 대기 \(model.queuedTranslations)개") }
+            else if model.hasPendingTranslations { Text("번역 중") }
         }.font(.system(size: 11)).foregroundStyle(CaptionPalette.secondary)
             .padding(.horizontal, 26).frame(height: 41)
     }
