@@ -182,7 +182,7 @@ public struct CaptionTimeline: Sendable {
     }
 
     /// Only a recent, fully translated final passage can be reconsidered. Extend
-    /// a pair once, then freeze it so older captions do not keep changing.
+    /// a pair up to four ASR chunks, then freeze it so older captions do not keep changing.
     public func contextJob(endingAt segmentID: UUID) -> ContextTranslationJob? {
         guard let index = segments.firstIndex(where: { $0.id == segmentID }),
               index > 0, segments[index].isFinal,
@@ -194,7 +194,7 @@ public struct CaptionTimeline: Sendable {
         guard preceding.isFinal, !contextBoundary.contains(preceding.id) else { return nil }
         var members: [CaptionSegment]
         if let group = contextGroups.first(where: { $0.members.last?.segmentID == preceding.id }) {
-            guard group.members.count < 3 else { return nil }
+            guard group.members.count < 4 else { return nil }
             let ids = Set(group.members.map(\.segmentID))
             members = segments.filter { ids.contains($0.id) }
         } else {
@@ -206,7 +206,7 @@ public struct CaptionTimeline: Sendable {
             members = [preceding]
         }
         members.append(segments[index])
-        guard members.count >= 2, members.count <= 3, members.allSatisfy(\.isFinal),
+        guard members.count >= 2, members.count <= 4, members.allSatisfy(\.isFinal),
               let first = members.first, let last = members.last,
               last.audioEnd - first.audioStart <= 12,
               members.map(\.source).joined(separator: " ").count <= 500,
@@ -217,7 +217,7 @@ public struct CaptionTimeline: Sendable {
     }
 
     public func needsContextTranslation(_ job: ContextTranslationJob) -> Bool {
-        guard job.members.count >= 2, job.members.count <= 3,
+        guard job.members.count >= 2, job.members.count <= 4,
               job.contextRevision == contextRevision,
               let last = job.members.last,
               let current = contextJob(endingAt: last.segmentID) else { return false }

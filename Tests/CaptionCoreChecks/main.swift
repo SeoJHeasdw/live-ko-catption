@@ -149,7 +149,7 @@ let checks: [(String, () throws -> Void)] = [
         try expect(export.contains("KO: 조종사는 비행기를 기울여 왼쪽으로 선회했습니다."), "Export omitted corrected Korean")
         try expect(!export.contains("KO: 그는 은행을 만들었습니다."), "Export presented superseded isolated translation")
     }),
-    ("context extends a pair once and then freezes the completed passage", {
+    ("context extends a pair through four chunks then freezes the completed passage", {
         var timeline = CaptionTimeline()
         _ = try appendFinal(&timeline, source: "First.", translation: "첫째.", start: 0, end: 1)
         let second = try appendFinal(&timeline, source: "Second.", translation: "둘째.", start: 1, end: 2)
@@ -160,13 +160,52 @@ let checks: [(String, () throws -> Void)] = [
         try expect(triple.members.count == 3, "Existing pair was detached while extending")
         timeline.applyContext(translation: "첫째, 둘째, 셋째.", for: triple)
         let fourth = try appendFinal(&timeline, source: "Fourth.", translation: "넷째.", start: 3, end: 4)
-        try expect(timeline.contextJob(endingAt: fourth.segmentID) == nil, "Frozen group reopened for a fourth member")
+        let four = try requireContext(timeline.contextJob(endingAt: fourth.segmentID))
+        try expect(four.members.count == 4, "Existing triple was detached before the fourth chunk")
+        timeline.applyContext(translation: "첫째, 둘째, 셋째, 넷째.", for: four)
         let fifth = try appendFinal(&timeline, source: "Fifth.", translation: "다섯째.", start: 4, end: 5)
-        let next = try requireContext(timeline.contextJob(endingAt: fifth.segmentID))
-        try expect(next.members.map(\.segmentID) == [fourth.segmentID, fifth.segmentID], "New group reused frozen captions")
-        timeline.applyContext(translation: "넷째와 다섯째.", for: next)
+        try expect(timeline.contextJob(endingAt: fifth.segmentID) == nil, "Frozen group reopened for a fifth member")
+        let sixth = try appendFinal(&timeline, source: "Sixth.", translation: "여섯째.", start: 5, end: 6)
+        let next = try requireContext(timeline.contextJob(endingAt: sixth.segmentID))
+        try expect(next.members.map(\.segmentID) == [fifth.segmentID, sixth.segmentID], "New group reused frozen captions")
+        timeline.applyContext(translation: "다섯째와 여섯째.", for: next)
         try expect(timeline.displaySegments.count == 2, "Frozen and new group were not separate")
-        try expect(timeline.displaySegments[0].translation == "첫째, 둘째, 셋째.", "Older stable Korean changed")
+        try expect(timeline.displaySegments[0].translation == "첫째, 둘째, 셋째, 넷째.", "Older stable Korean changed")
+    }),
+    ("an observed correction in the fourth ASR chunk can update the whole recent passage", {
+        // These four source texts/ranges came from the paced local pipeline.
+        // The injected Korean below checks state transitions, not engine quality.
+        var timeline = CaptionTimeline()
+        let first = try appendFinal(&timeline, source: "The meeting starts at 3.30.",
+                                    translation: "회의는 3시 30분에 시작합니다.", start: 0, end: 2.04)
+        let second = try appendFinal(&timeline, source: "We cannot approve this plan yet.",
+                                     translation: "아직 이 계획을 승인할 수 없습니다.", start: 2.04, end: 3.54)
+        timeline.applyContext(translation: "회의는 3시 30분에 시작하며 아직 이 계획을 승인할 수 없습니다.",
+                              for: try requireContext(timeline.contextJob(endingAt: second.segmentID)))
+        let third = try appendFinal(&timeline,
+                                    source: "I thought the launch was on Tuesday, but let me correct that.",
+                                    translation: "출시가 화요일인 줄 알았는데 정정하겠습니다.", start: 3.54, end: 7.02)
+        timeline.applyContext(translation: "회의는 3시 30분에 시작합니다. 아직 이 계획을 승인할 수 없습니다. 출시는 화요일인 줄 알았는데 정정하겠습니다.",
+                              for: try requireContext(timeline.contextJob(endingAt: third.segmentID)))
+        let fourth = try appendFinal(&timeline, source: "It is on Thursday, October 15.",
+                                     translation: "10월 15일 목요일입니다.", start: 7.02, end: 9.78)
+        let originals = timeline.segments
+        let context = try requireContext(timeline.contextJob(endingAt: fourth.segmentID))
+        try expect(context.members.count == 4, "Correction was excluded after an already translated triple")
+        try expect(context.members.map(\.segmentID) == [first.segmentID, second.segmentID, third.segmentID, fourth.segmentID],
+                   "Correcting fourth chunk was detached from earlier source context")
+        try expect(context.source.contains("Tuesday, but let me correct that. It is on Thursday, October 15."),
+                   "Correction and corrected date did not reach the same translation request")
+        let corrected = "회의는 3시 30분에 시작하며 아직 이 계획을 승인할 수 없습니다. 출시일은 화요일인 줄 알았지만 정정하겠습니다. 10월 15일 목요일입니다."
+        try expect(timeline.applyContext(translation: corrected, for: context), "Fourth-chunk context update rejected")
+        try expect(timeline.segments == originals, "Correction rewrote original ASR records")
+        try expect(timeline.displaySegments.count == 1 && timeline.displaySegments[0].contextSegmentCount == 4,
+                   "Corrected four-chunk passage was not displayed together")
+        try expect(timeline.displaySegments[0].translation == corrected && timeline.displaySegments[0].isFinal,
+                   "Corrected translation was missing or still provisional")
+        let fifth = try appendFinal(&timeline, source: "Next topic.", translation: "다음 주제입니다.", start: 9.78, end: 10.8)
+        try expect(timeline.contextJob(endingAt: fifth.segmentID) == nil, "Completed four-chunk passage reopened for a fifth")
+        try expect(timeline.displaySegments[0].translation == corrected, "A new topic destabilized corrected Korean")
     }),
     ("new final source invalidates in-flight context while drafts do not", {
         var timeline = CaptionTimeline()
