@@ -34,6 +34,7 @@ final class CaptionModel {
         }
     }
     var isPreview = false
+    var isUISoak = false
     var isChecking = true
     var isPreparing = false
     var assetsReady = false
@@ -79,10 +80,17 @@ final class CaptionModel {
 
     var segments: [CaptionSegment] { timeline.segments }
     var displaySegments: [CaptionSegment] {
+        markPendingContext(in: timeline.displaySegments)
+    }
+    func recentDisplaySegments(limit: Int = 100) -> [CaptionSegment] {
+        markPendingContext(in: timeline.recentDisplaySegments(limit: limit))
+    }
+    var displayHistoryCount: Int { timeline.displaySegmentCount }
+    private func markPendingContext(in segments: [CaptionSegment]) -> [CaptionSegment] {
         let pending = contextJobs.filter { timeline.needsContextTranslation($0) } +
             (activeContext.map { timeline.needsContextTranslation($0) ? [$0] : [] } ?? [])
         let pendingIDs = Set(pending.flatMap { $0.members.map(\.segmentID) })
-        return timeline.displaySegments.map { segment in
+        return segments.map { segment in
             var display = segment
             display.contextIsPending = pendingIDs.contains(segment.id)
             return display
@@ -100,6 +108,7 @@ final class CaptionModel {
     var canStop: Bool { phase == .listening || phase == .starting }
     var hasPendingTranslations: Bool { queuedTranslations > 0 || workerTask != nil }
     var statusText: String {
+        if isUISoak { return "화면 안정성 검사 · 합성 자막" }
         if isPreview { return "화면 미리보기" }
         if isPreparing { return "처음 한 번 준비 중" }
         if isChecking { return "사용 가능 여부 확인 중" }
@@ -131,7 +140,7 @@ final class CaptionModel {
     }
 
     func checkReadiness() async {
-        guard !isPreview else { return }
+        guard !isPreview, !isUISoak else { return }
         isChecking = true
         assetsReady = false
         defer { isChecking = false }

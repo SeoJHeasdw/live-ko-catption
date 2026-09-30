@@ -4,7 +4,9 @@ import SwiftUI
 @main @MainActor
 struct LiveKoCaptionApp: App {
     @NSApplicationDelegateAdaptor(CaptionAppDelegate.self) private var delegate
-    @ViewState private var model = CaptionModel(preview: CommandLine.arguments.contains("--preview") || CommandLine.arguments.contains("--snapshot"))
+    @ViewState private var model = CaptionUISoakRunner.requestedSeconds != nil
+        ? CaptionUISoakRunner.makeModel()
+        : CaptionModel(preview: CommandLine.arguments.contains("--preview") || CommandLine.arguments.contains("--snapshot"))
 
     var body: some Scene {
         Window("한글 라이브 자막", id: "captions") {
@@ -30,6 +32,14 @@ final class CaptionAppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
+        if CaptionUISoakRunner.requestedSeconds != nil {
+            Task { @MainActor in
+                for _ in 0..<30 {
+                    if let model = Self.model { CaptionUISoakRunner.start(model: model); return }
+                    try? await Task.sleep(for: .milliseconds(100))
+                }
+            }
+        }
         if let index = CommandLine.arguments.firstIndex(of: "--snapshot"),
            CommandLine.arguments.indices.contains(index + 1) {
             let path = CommandLine.arguments[index + 1]

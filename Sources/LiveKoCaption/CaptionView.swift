@@ -3,7 +3,7 @@ import CaptionCore
 import SwiftUI
 import Translation
 
-private enum CaptionPalette {
+enum CaptionPalette {
     static let background = Color(red: 0.040, green: 0.054, blue: 0.076)
     static let panel = Color(red: 0.065, green: 0.083, blue: 0.111)
     static let ink = Color(red: 0.94, green: 0.96, blue: 0.99)
@@ -17,22 +17,21 @@ private enum CaptionPalette {
 struct CaptionView: View {
     @Bindable var model: CaptionModel
     @ViewState private var presentationMode = false
-    @ViewState private var followsLatest = true
     @ViewState private var confirmsNewSession = false
 
     var body: some View {
         VStack(spacing: 0) {
-            header
+            CaptionHeader(model: model, presentationMode: $presentationMode)
             Rectangle().fill(CaptionPalette.border).frame(height: 1)
             HStack(spacing: 0) {
                 if !presentationMode {
-                    sidebar.frame(width: 252)
+                    CaptionSidebar(model: model) { confirmsNewSession = true }.frame(width: 252)
                     Rectangle().fill(CaptionPalette.border).frame(width: 1)
                 }
-                captionArea
-            }
+                CaptionArea(model: model)
+            }.frame(maxHeight: .infinity)
             Rectangle().fill(CaptionPalette.border).frame(height: 1)
-            footer
+            CaptionFooter(model: model)
         }
         .background(CaptionPalette.background)
         .foregroundStyle(CaptionPalette.ink)
@@ -43,7 +42,10 @@ struct CaptionView: View {
         .translationTask(model.translationConfiguration) { session in
             await model.prepareModels(using: session)
         }
-        .onAppear { CaptionAppDelegate.model = model }
+        .onAppear {
+            CaptionAppDelegate.model = model
+            CaptionUISoakRunner.start(model: model)
+        }
         .alert("새 대화를 시작할까요?", isPresented: $confirmsNewSession) {
             Button("취소", role: .cancel) {}
             Button("기록 저장 후 새로 시작") {
@@ -52,8 +54,14 @@ struct CaptionView: View {
             Button("현재 자막 지우기", role: .destructive) { model.newSession() }
         } message: { Text("현재 자막은 자동 저장되지 않습니다. 필요한 기록은 먼저 저장해 주세요.") }
     }
+}
 
-    private var header: some View {
+// Keep frequently changing observation scopes out of the window's root layout.
+// An input-level tick must not re-evaluate captions, controls or the sidebar.
+private struct CaptionHeader: View {
+    @Bindable var model: CaptionModel
+    @Binding var presentationMode: Bool
+    var body: some View {
         HStack(spacing: 14) {
             Image(systemName: "captions.bubble.fill")
                 .font(.system(size: 23, weight: .medium)).foregroundStyle(CaptionPalette.blue)
@@ -99,9 +107,13 @@ struct CaptionView: View {
         }.padding(.horizontal, 26).padding(.top, 28).padding(.bottom, 23)
     }
 
-    private var sidebar: some View {
-        GeometryReader { geometry in
-            ScrollView {
+}
+
+private struct CaptionSidebar: View {
+    @Bindable var model: CaptionModel
+    var requestNewSession: () -> Void
+    var body: some View {
+        ScrollView {
                 VStack(alignment: .leading, spacing: 26) {
             VStack(alignment: .leading, spacing: 14) {
                 sectionLabel("오디오 입력")
@@ -121,13 +133,7 @@ struct CaptionView: View {
                     }
                 }.labelsHidden().pickerStyle(.menu).disabled(model.phase != .idle)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                HStack(spacing: 3) {
-                    ForEach(0..<26) { index in
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(Double(index) / 26 < model.audioLevel ? CaptionPalette.green : Color.white.opacity(0.09))
-                            .frame(height: 12)
-                    }
-                }.accessibilityLabel("마이크 입력 크기").accessibilityValue("\(Int(model.audioLevel * 100))퍼센트")
+                CaptionAudioMeter(model: model)
                 Text(model.isListening ? "영어 화자 가까이에 마이크를 두세요." : "시작하면 마이크 입력을 확인할 수 있습니다.")
                     .font(.system(size: 11)).foregroundStyle(CaptionPalette.secondary).lineSpacing(4)
             }
@@ -184,16 +190,16 @@ struct CaptionView: View {
                         .font(.system(size: 12)).frame(maxWidth: .infinity, alignment: .leading)
                 }.buttonStyle(.plain).disabled(!model.hasContent)
                 Button {
-                    if model.hasContent { confirmsNewSession = true } else { model.newSession() }
+                    if model.hasContent { requestNewSession() } else { model.newSession() }
                 } label: {
                     Label("새 대화", systemImage: "plus.bubble")
                         .font(.system(size: 12)).frame(maxWidth: .infinity, alignment: .leading)
                 }.buttonStyle(.plain).disabled(model.phase != .idle || model.isPreparing)
             }.foregroundStyle(CaptionPalette.secondary)
                 }.padding(.horizontal, 23).padding(.vertical, 27)
-                    .frame(minHeight: geometry.size.height, alignment: .top)
-            }.scrollIndicators(.hidden)
-        }.background(CaptionPalette.panel)
+        }.scrollIndicators(.hidden)
+            .frame(maxHeight: .infinity, alignment: .top)
+            .background(CaptionPalette.panel)
     }
 
     private var setupCard: some View {
@@ -214,10 +220,42 @@ struct CaptionView: View {
             .padding(13).background(Color.white.opacity(0.035), in: RoundedRectangle(cornerRadius: 10))
     }
 
-    private var captionArea: some View {
+    private func sectionLabel(_ title: String) -> some View {
+        Text(title).font(.system(size: 11, weight: .semibold))
+            .foregroundStyle(CaptionPalette.secondary)
+    }
+}
+
+private struct CaptionAudioMeter: View {
+    let model: CaptionModel
+
+    var body: some View {
+        HStack(spacing: 3) {
+            ForEach(0..<26) { index in
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Double(index) / 26 < model.audioLevel ? CaptionPalette.green : Color.white.opacity(0.09))
+                    .frame(height: 12)
+            }
+        }.accessibilityLabel("마이크 입력 크기")
+            .accessibilityValue("\(Int(model.audioLevel * 100))퍼센트")
+    }
+}
+
+private struct CaptionArea: View {
+    @Bindable var model: CaptionModel
+    @ViewState private var followsLatest = true
+    private let visibleLimit = 100
+
+    var body: some View {
         VStack(spacing: 0) {
             HStack {
                 Text("한국어 자막").font(.system(size: 12, weight: .medium)).foregroundStyle(CaptionPalette.secondary)
+                if model.segments.contains(where: { $0.translationError != nil }) {
+                    Button("다시 번역") { model.retryFailedTranslations() }
+                        .controlSize(.small)
+                        .disabled(model.isPreview || (model.phase != .idle && model.phase != .listening))
+                        .help("알림을 닫아도 실패한 번역을 다시 시도할 수 있습니다.")
+                }
                 Spacer()
                 Button { followsLatest.toggle() } label: {
                     HStack(spacing: 6) {
@@ -226,51 +264,22 @@ struct CaptionView: View {
                     }.font(.system(size: 11)).foregroundStyle(followsLatest ? CaptionPalette.blue : CaptionPalette.secondary)
                 }.buttonStyle(.plain)
             }.padding(.horizontal, 34).padding(.top, 25).padding(.bottom, 14)
-            if let message = model.message {
-                HStack(alignment: .top, spacing: 10) {
-                    Image(systemName: "exclamationmark.circle").foregroundStyle(.orange)
-                    Text(message).font(.system(size: 12)).lineSpacing(4)
-                    Spacer()
-                    if model.segments.contains(where: { $0.translationError != nil }) {
-                        Button("다시 번역") { model.retryFailedTranslations() }
-                            .controlSize(.small)
-                            .disabled(model.isPreview || (model.phase != .idle && model.phase != .listening))
-                    }
-                    Button { model.message = nil } label: { Image(systemName: "xmark") }
-                        .buttonStyle(.plain).accessibilityLabel("알림 닫기")
-                }.padding(13).background(Color.orange.opacity(0.07), in: RoundedRectangle(cornerRadius: 10))
-                    .padding(.horizontal, 34).padding(.bottom, 12)
-            }
+            CaptionMessage(model: model)
             if model.hasContent {
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        LazyVStack(alignment: .leading, spacing: 30) {
-                            ForEach(model.displaySegments) { segment in
-                                captionRow(segment)
-                            }
-                            Color.clear.frame(height: 10).id("caption-end")
-                        }.padding(.horizontal, 34).padding(.top, 13).padding(.bottom, 25)
-                    }
-                    .onChange(of: model.displaySegments) {
-                        if followsLatest { proxy.scrollTo("caption-end", anchor: .bottom) }
-                    }
-                    .onChange(of: followsLatest) {
-                        if followsLatest { proxy.scrollTo("caption-end", anchor: .bottom) }
-                    }
-                    .onAppear {
-                        if followsLatest { proxy.scrollTo("caption-end", anchor: .bottom) }
-                    }
-                    .onScrollPhaseChange { _, phase in
-                        if phase == .interacting { followsLatest = false }
-                    }
-                }
+                NativeCaptionTranscript(segments: model.recentDisplaySegments(limit: visibleLimit),
+                    fontSize: model.fontSize, showEnglish: model.showEnglish,
+                    isIdle: model.phase == .idle && !model.isPreview, followsLatest: $followsLatest)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                Text("화면에는 최근 100개 자막을 표시합니다. 전체 대화는 ‘원문·자막 저장’으로 보관할 수 있습니다.")
+                    .font(.system(size: 10)).foregroundStyle(CaptionPalette.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 34).padding(.vertical, 8)
             } else {
                 VStack(spacing: 17) {
                     Spacer()
                     Image(systemName: "waveform").font(.system(size: 39, weight: .light))
                         .foregroundStyle(CaptionPalette.blue.opacity(0.55))
-                    Text("영어를 듣고, 한글로 함께 읽습니다.")
-                        .font(.system(size: 23, weight: .medium))
+                    Text("영어를 듣고, 한글로 함께 읽습니다.").font(.system(size: 23, weight: .medium))
                     Text(model.assetsReady ? "마이크를 선택하고 ‘자막 시작’을 눌러 주세요." : "왼쪽에서 언어 모델을 준비한 뒤 시작해 주세요.")
                         .font(.system(size: 13)).foregroundStyle(CaptionPalette.secondary)
                     Spacer()
@@ -278,62 +287,44 @@ struct CaptionView: View {
             }
         }.frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+}
 
-    private func captionRow(_ segment: CaptionSegment) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                Text(String(format: "%02d:%02d", Int(segment.audioStart) / 60, Int(segment.audioStart) % 60))
-                    .font(.system(size: 10, weight: .medium, design: .monospaced))
-                if !segment.isFinal {
-                    Text(captionState(segment)).font(.system(size: 10))
-                }
-                if segment.contextSegmentCount > 1 {
-                    Label("문맥 묶음", systemImage: "text.append")
-                        .font(.system(size: 10))
-                        .help("최근 \(segment.contextSegmentCount)개 구절을 함께 번역했습니다. 최대 4개·12초·500자 안에서만 추가 문맥을 반영합니다.")
-                }
-                if segment.translationError != nil {
+private struct CaptionMessage: View {
+    @Bindable var model: CaptionModel
+    var body: some View {
+        if let message = model.message {
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: "exclamationmark.circle").foregroundStyle(.orange)
+                Text(message).font(.system(size: 12)).lineSpacing(4)
+                Spacer()
+                if model.segments.contains(where: { $0.translationError != nil }) {
                     Button("다시 번역") { model.retryFailedTranslations() }
-                        .buttonStyle(.bordered).controlSize(.mini)
+                        .controlSize(.small)
                         .disabled(model.isPreview || (model.phase != .idle && model.phase != .listening))
-                        .help("번역하지 못한 자막을 다시 번역합니다.")
                 }
-            }.foregroundStyle(CaptionPalette.secondary.opacity(0.8))
-            Text(segment.translation ?? (segment.translationError == nil
-                ? "한국어 자막을 준비하고 있습니다…"
-                : "번역하지 못했습니다. 영어 원문을 확인해 주세요."))
-                .font(.system(size: model.fontSize, weight: segment.isFinal ? .medium : .regular))
-                .foregroundStyle(segment.isFinal ? CaptionPalette.ink : CaptionPalette.draft)
-                .lineSpacing(8).fixedSize(horizontal: false, vertical: true)
-                .textSelection(.enabled)
-            if model.showEnglish || segment.translationError != nil {
-                Text(segment.source).font(.system(size: 14))
-                    .foregroundStyle(CaptionPalette.secondary.opacity(segment.isFinal ? 0.9 : 0.7))
-                .lineSpacing(5).fixedSize(horizontal: false, vertical: true).textSelection(.enabled)
-            }
-        }.frame(maxWidth: .infinity, alignment: .leading).id(segment.id)
-    }
-
-    private func captionState(_ segment: CaptionSegment) -> String {
-        if segment.translationError != nil { return "번역 실패 · 원문 확인" }
-        if segment.contextIsPending { return "문맥 확인 중" }
-        if segment.translation != nil && segment.translatedRevision != segment.revision {
-            return "이전 번역 · 갱신 중"
+                Button { model.message = nil } label: { Image(systemName: "xmark") }
+                    .buttonStyle(.plain).accessibilityLabel("알림 닫기")
+            }.padding(13).background(Color.orange.opacity(0.07), in: RoundedRectangle(cornerRadius: 10))
+                .padding(.horizontal, 34).padding(.bottom, 12)
         }
-        if !segment.sourceIsFinal {
-            return model.phase == .idle && !model.isPreview ? "인식 미확정" : "듣고 수정하는 중"
-        }
-        return "번역 중"
     }
+}
 
-    private var footer: some View {
+private struct CaptionFooter: View {
+    let model: CaptionModel
+    var body: some View {
         HStack(spacing: 18) {
             Label("이 Mac에서 처리", systemImage: "desktopcomputer")
                 .foregroundStyle(CaptionPalette.green.opacity(0.9))
-            TimelineView(.periodic(from: .now, by: 1)) { context in
-                Text(model.elapsed(at: context.date)).monospacedDigit().foregroundStyle(CaptionPalette.secondary)
+            if model.isUISoak {
+                Text("화면 안정성 검사 · 합성 입력")
+            } else {
+                TimelineView(.periodic(from: .now, by: 1)) { context in
+                    Text(model.elapsed(at: context.date)).monospacedDigit().foregroundStyle(CaptionPalette.secondary)
+                }
             }
             Spacer()
+            if !model.isUISoak {
             if let delay = model.captionDelaySeconds {
                 Text("자막 도착 약 \(delay, specifier: "%.1f")초")
                     .help("이 자막에 대응하는 음성 구간의 끝부터 현재 한국어 번역이 화면에 반영될 때까지의 추정 시간입니다. 마이크 하드웨어 지연은 포함하지 않습니다.")
@@ -348,12 +339,9 @@ struct CaptionView: View {
             }
             if model.queuedTranslations > 0 { Text("번역 대기 \(model.queuedTranslations)개") }
             else if model.hasPendingTranslations { Text("번역 중") }
+            }
         }.font(.system(size: 11)).foregroundStyle(CaptionPalette.secondary)
             .padding(.horizontal, 26).frame(height: 41)
     }
 
-    private func sectionLabel(_ title: String) -> some View {
-        Text(title).font(.system(size: 11, weight: .semibold))
-            .foregroundStyle(CaptionPalette.secondary)
-    }
 }

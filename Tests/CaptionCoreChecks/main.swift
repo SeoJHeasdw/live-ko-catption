@@ -27,6 +27,60 @@ func requireContext(_ job: ContextTranslationJob?) throws -> ContextTranslationJ
     return job
 }
 
+func checkLateContextGapInsertion(isFinal: Bool) throws {
+    var timeline = CaptionTimeline()
+    _ = try appendFinal(&timeline, source: "First.", translation: "첫째.", start: 0, end: 1)
+    let second = try appendFinal(&timeline, source: "Second.", translation: "둘째.", start: 2, end: 3)
+    let firstContext = try requireContext(timeline.contextJob(endingAt: second.segmentID))
+    try expect(timeline.applyContext(translation: "이미 합친 첫째와 둘째.", for: firstContext),
+        "Could not create the context group interrupted by late input")
+    let firstRecords = timeline.segments
+
+    // A separate accepted group must survive an insertion into the earlier gap.
+    timeline.resetContext()
+    _ = try appendFinal(&timeline, source: "Unrelated first.", translation: "별도 첫째.", start: 10, end: 11)
+    let unrelatedEnd = try appendFinal(&timeline, source: "Unrelated second.", translation: "별도 둘째.", start: 11, end: 12)
+    let unrelatedContext = try requireContext(timeline.contextJob(endingAt: unrelatedEnd.segmentID))
+    try expect(timeline.applyContext(translation: "바뀌면 안 되는 별도 문맥.", for: unrelatedContext),
+        "Could not create the unrelated context group")
+    let stableUnrelated = try { () throws -> CaptionSegment in
+        guard let row = timeline.displaySegments.last else { throw CheckFailure(description: "Missing unrelated group") }
+        return row
+    }()
+
+    let inserted = try require(timeline.accept(source: "Inserted between.", audioStart: 1.1,
+        audioEnd: 1.9, isFinal: isFinal))
+    try expect(timeline.apply(translation: "중간에 들어온 구절.", for: inserted), "Late source translation was rejected")
+    try expect(timeline.segments.map(\.source) == ["First.", "Inserted between.", "Second.",
+        "Unrelated first.", "Unrelated second."], "Late input did not preserve chronological raw sources")
+    try expect(timeline.segments.first == firstRecords[0] && timeline.segments[2] == firstRecords[1],
+        "Late insertion changed existing final source revisions")
+    try expect(timeline.displaySegments.last == stableUnrelated, "Late insertion changed an unrelated accepted context group")
+
+    let expectedSources = ["First.", "Inserted between.", "Second.", "Unrelated first. Unrelated second."]
+    let display = timeline.displaySegments
+    try expect(display.map(\.source) == expectedSources,
+        "An interrupted context group reordered the late source in display/export")
+    try expect(display[0].isFinal && display[2].isFinal && display[1].isFinal == isFinal,
+        "Invalidating context changed exact isolated final/provisional state")
+    try expect(display[0].translation == "첫째." && display[2].translation == "둘째.",
+        "Invalidating context discarded the valid isolated translations")
+    try expect(timeline.displaySegmentCount == display.count, "Invalidated context left an incorrect history count")
+    for limit in [1, 2, 3, 4] {
+        try expect(timeline.recentDisplaySegments(limit: limit) == Array(display.suffix(limit)),
+            "Bounded display retained the interrupted group at limit \(limit)")
+    }
+    let exported = timeline.exportText()
+    try expect(!exported.contains("이미 합친 첫째와 둘째."), "Export retained an aggregate across the inserted source")
+    guard let firstRange = exported.range(of: "EN: First.\n"),
+          let insertedRange = exported.range(of: "EN: Inserted between.\n"),
+          let secondRange = exported.range(of: "EN: Second.\n") else {
+        throw CheckFailure(description: "Export omitted the isolated chronological sources after insertion")
+    }
+    try expect(firstRange.lowerBound < insertedRange.lowerBound && insertedRange.lowerBound < secondRange.lowerBound,
+        "Export moved a late source after the later final source")
+}
+
 let checks: [(String, () throws -> Void)] = [
     ("late translation cannot overwrite a revised sentence", {
         var timeline = CaptionTimeline()
@@ -279,6 +333,40 @@ let checks: [(String, () throws -> Void)] = [
         try expect(!timeline.applyContext(translation: "첫째와 둘째.", for: context), "Previous run context applied after reset")
         try expect(timeline.displaySegments.count == 2 && timeline.segments.allSatisfy(\.isFinal), "Reset erased valid captions")
     }),
+    ("late final inside an accepted context gap restores chronological rows and preserves unrelated groups", {
+        try checkLateContextGapInsertion(isFinal: true)
+    }),
+    ("late draft inside an accepted context gap stays gray and preserves unrelated groups", {
+        try checkLateContextGapInsertion(isFinal: false)
+    }),
+    ("bounded live windows preserve context groups and the complete long transcript", {
+        var timeline = CaptionTimeline()
+        for index in 0..<1_201 {
+            let current = try appendFinal(&timeline, source: "Statement \(index).",
+                translation: "확정 \(index).", start: Double(index) * 2, end: Double(index) * 2 + 1.5)
+            if let context = timeline.contextJob(endingAt: current.segmentID) {
+                try expect(timeline.applyContext(translation: "문맥: " + context.source, for: context),
+                    "Long-running context was rejected")
+            }
+        }
+        let stableFirst = timeline.segments[0]
+        let draft = try require(timeline.accept(source: "Still speaking", audioStart: 2_402,
+            audioEnd: 2_403, isFinal: false))
+        timeline.apply(translation: "이어지는 중", for: draft)
+        let full = timeline.displaySegments
+        try expect(timeline.displaySegmentCount == full.count, "Display history count drifted")
+        for limit in [0, 1, 2, 7, 99, 100, 201, Int.max] {
+            let visible = timeline.recentDisplaySegments(limit: limit)
+            let expected = limit == 0 ? [] : Array(full.suffix(min(limit, full.count)))
+            try expect(visible == expected, "Live suffix split a context group at limit \(limit)")
+        }
+        try expect(timeline.recentDisplaySegments(limit: -1).isEmpty, "Negative limit rendered history")
+        try expect(timeline.segments.count == 1_202 && timeline.segments[0] == stableFirst,
+            "Render cap changed or discarded ASR history")
+        let text = timeline.exportText()
+        try expect(text.contains("Statement 0.") && text.contains("Statement 1200.") && text.contains("Still speaking"),
+            "Bounded live window truncated exported history")
+    }),
     ("exports identify unfinished translations", {
         var timeline = CaptionTimeline()
         _ = timeline.accept(source: "Still speaking", audioStart: 65, audioEnd: 66, isFinal: false)
@@ -288,13 +376,19 @@ let checks: [(String, () throws -> Void)] = [
     })
 ]
 
-do {
-    for (name, check) in checks {
+var failureCount = 0
+for (name, check) in checks {
+    do {
         try check()
         print("PASS: \(name)")
+    } catch {
+        failureCount += 1
+        FileHandle.standardError.write(Data("FAIL: \(name): \(error)\n".utf8))
     }
+}
+if failureCount == 0 {
     print("\(checks.count) caption checks passed.")
-} catch {
-    FileHandle.standardError.write(Data("FAIL: \(error)\n".utf8))
+} else {
+    FileHandle.standardError.write(Data("\(failureCount) of \(checks.count) caption checks failed.\n".utf8))
     exit(1)
 }

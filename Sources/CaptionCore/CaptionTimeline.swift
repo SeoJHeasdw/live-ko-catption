@@ -134,6 +134,15 @@ public struct CaptionTimeline: Sendable {
         if (currentIndex > 0 && segments[currentIndex - 1].audioStart > segments[currentIndex].audioStart) ||
             (currentIndex + 1 < segments.count && segments[currentIndex + 1].audioStart < segments[currentIndex].audioStart) {
             segments.sort { $0.audioStart < $1.audioStart }
+            // A late disjoint result can fill the gap inside an accepted passage.
+            // Its aggregate Korean no longer describes consecutive sources; use
+            // their valid individual translations and keep unrelated groups.
+            let indicesByID = Dictionary(uniqueKeysWithValues: segments.enumerated().map { ($0.element.id, $0.offset) })
+            contextGroups.removeAll { group in
+                let positions = group.members.compactMap { indicesByID[$0.segmentID] }
+                return positions.count != group.members.count ||
+                    zip(positions, positions.dropFirst()).contains { previous, next in next != previous + 1 }
+            }
         }
         guard let segment = segments.first(where: { $0.id == id }) else { return nil }
         // A provisional translation can become final without another translation
@@ -238,12 +247,34 @@ public struct CaptionTimeline: Sendable {
     /// Caption rows may combine a small passage; ASR sources and timestamps in
     /// `segments` stay unchanged and can still be inspected or validated.
     public var displaySegments: [CaptionSegment] {
-        let segmentsByID = Dictionary(uniqueKeysWithValues: segments.map { ($0.id, $0) })
-        let groups = Dictionary(uniqueKeysWithValues: contextGroups.compactMap { group in
-            group.members.first.map { ($0.segmentID, group) }
+        makeDisplaySegments(from: segments[...])
+    }
+
+    public var displaySegmentCount: Int {
+        segments.count - contextGroups.reduce(0) { $0 + $1.members.count - 1 }
+    }
+
+    /// Live rendering only needs a bounded suffix. Align the first raw member
+    /// with its context group so a window boundary cannot expose old isolated
+    /// Korean in place of the accepted aggregate translation.
+    public func recentDisplaySegments(limit: Int = 100) -> [CaptionSegment] {
+        guard limit > 0, !segments.isEmpty else { return [] }
+        var start = max(0, segments.count - min(segments.count, limit > Int.max / 4 ? segments.count : limit * 4))
+        let firstID = segments[start].id
+        if let group = contextGroups.first(where: { $0.members.contains { $0.segmentID == firstID } }),
+           let leadingID = group.members.first?.segmentID,
+           let leadingIndex = segments.firstIndex(where: { $0.id == leadingID }) { start = leadingIndex }
+        return Array(makeDisplaySegments(from: segments[start...]).suffix(limit))
+    }
+
+    private func makeDisplaySegments(from visible: ArraySlice<CaptionSegment>) -> [CaptionSegment] {
+        let segmentsByID = Dictionary(uniqueKeysWithValues: visible.map { ($0.id, $0) })
+        let groups: [UUID: ContextGroup] = Dictionary(uniqueKeysWithValues: contextGroups.compactMap { group in
+            guard let first = group.members.first, segmentsByID[first.segmentID] != nil else { return nil }
+            return (first.segmentID, group)
         })
-        let groupedIDs = Set(contextGroups.flatMap { $0.members.dropFirst().map(\.segmentID) })
-        return segments.compactMap { segment in
+        let groupedIDs = Set(groups.values.flatMap { $0.members.dropFirst().map(\.segmentID) })
+        return visible.compactMap { segment in
             guard !groupedIDs.contains(segment.id) else { return nil }
             guard let group = groups[segment.id],
                   let lastID = group.members.last?.segmentID,
