@@ -15,6 +15,18 @@ func require(_ job: TranslationJob?) throws -> TranslationJob {
     return job
 }
 
+func appendFinal(_ timeline: inout CaptionTimeline, source: String, translation: String,
+                 start: Double, end: Double) throws -> TranslationJob {
+    let job = try require(timeline.accept(source: source, audioStart: start, audioEnd: end, isFinal: true))
+    try expect(timeline.apply(translation: translation, for: job), "Final translation was rejected")
+    return job
+}
+
+func requireContext(_ job: ContextTranslationJob?) throws -> ContextTranslationJob {
+    guard let job else { throw CheckFailure(description: "Expected a context translation job") }
+    return job
+}
+
 let checks: [(String, () throws -> Void)] = [
     ("late translation cannot overwrite a revised sentence", {
         var timeline = CaptionTimeline()
@@ -63,6 +75,170 @@ let checks: [(String, () throws -> Void)] = [
         try expect(timeline.segments.count == 2, "Revised range duplicated a draft")
         try expect(timeline.segments[0].translation == "환영합니다.", "Final prefix replaced")
         try expect(timeline.segments.allSatisfy(\.isFinal), "Completed captions stayed gray")
+    }),
+    ("shifted late ranges cannot duplicate or reopen a final caption", {
+        var timeline = CaptionTimeline()
+        _ = try appendFinal(&timeline, source: "We cannot approve it.", translation: "승인할 수 없습니다.", start: 0, end: 2)
+        try expect(timeline.accept(source: "We can approve it", audioStart: 0.03, audioEnd: 1.9, isFinal: false) == nil,
+                   "Shifted draft duplicated finalized audio")
+        try expect(timeline.accept(source: "We can approve it.", audioStart: 0.04, audioEnd: 2.1, isFinal: true) == nil,
+                   "Shifted final duplicated finalized audio")
+        let next = try require(timeline.accept(source: "Let's revisit tomorrow.", audioStart: 2, audioEnd: 4, isFinal: true))
+        try expect(timeline.segments.count == 2, "Adjacent final range was lost or overlap duplicated")
+        try expect(next.source == "Let's revisit tomorrow.", "Adjacent source changed")
+    }),
+    ("a final prefix replaces a spanning draft and protects it from later combined drafts", {
+        var timeline = CaptionTimeline()
+        let old = try require(timeline.accept(source: "First part and the next part", audioStart: 0, audioEnd: 4, isFinal: false))
+        let prefix = try require(timeline.accept(source: "First part.", audioStart: 0, audioEnd: 2, isFinal: true))
+        try expect(!timeline.apply(translation: "첫 부분과 다음 부분", for: old), "Spanning draft overwrote final prefix")
+        timeline.apply(translation: "첫 부분입니다.", for: prefix)
+        try expect(timeline.accept(source: "First part and next", audioStart: 0.02, audioEnd: 4, isFinal: false) == nil,
+                   "Late combined draft reopened final prefix")
+        _ = try require(timeline.accept(source: "The next part", audioStart: 2, audioEnd: 4, isFinal: false))
+        try expect(timeline.segments.count == 2, "Suffix was unable to continue after finalized prefix")
+    }),
+    ("jobs must match source text as well as ID and revision", {
+        var timeline = CaptionTimeline()
+        let current = try require(timeline.accept(source: "We cannot proceed.", audioStart: 0, audioEnd: 2, isFinal: true))
+        let forged = TranslationJob(segmentID: current.segmentID, revision: current.revision,
+                                    source: "We can proceed.", isSourceFinal: true)
+        try expect(!timeline.isCurrent(forged), "Different source considered current")
+        try expect(!timeline.needsTranslation(forged), "Different source queued for translation")
+        try expect(!timeline.apply(translation: "진행할 수 있습니다.", for: forged), "Different source translation accepted")
+        timeline.fail(forged, message: "Wrong job")
+        try expect(timeline.segments[0].translationError == nil, "Different source job changed error state")
+    }),
+    ("invalid text and times do not create captions or final translations", {
+        var timeline = CaptionTimeline()
+        try expect(timeline.accept(source: " \n", audioStart: 0, audioEnd: 1, isFinal: true) == nil, "Blank source accepted")
+        try expect(timeline.accept(source: "Hello", audioStart: -1, audioEnd: 1, isFinal: true) == nil, "Negative start accepted")
+        try expect(timeline.accept(source: "Hello", audioStart: .infinity, audioEnd: .infinity, isFinal: true) == nil,
+                   "Infinite range accepted")
+        try expect(timeline.accept(source: "Hello", audioStart: 2, audioEnd: 1, isFinal: true) == nil, "Reversed range accepted")
+        let job = try require(timeline.accept(source: "Hello", audioStart: 0, audioEnd: 1, isFinal: true))
+        try expect(!timeline.apply(translation: " \n", for: job), "Empty translation accepted")
+        try expect(!timeline.segments[0].isFinal, "Empty translation finalized a caption")
+        timeline.fail(job, message: "Retry needed")
+        try expect(timeline.segments[0].translationError == "Retry needed", "Current failure lost")
+        timeline.apply(translation: "안녕하세요", for: job)
+        timeline.fail(job, message: "Late redundant failure")
+        try expect(timeline.segments[0].isFinal, "Redundant failure invalidated successful caption")
+    }),
+    ("following context can correct a final passage without changing ASR records", {
+        var timeline = CaptionTimeline()
+        let first = try appendFinal(&timeline, source: "He made a bank.", translation: "그는 은행을 만들었습니다.", start: 0, end: 2)
+        try expect(timeline.contextJob(endingAt: first.segmentID) == nil, "Single caption requested context")
+        let second = try appendFinal(&timeline, source: "The pilot turned the plane left.",
+                                     translation: "조종사는 비행기를 왼쪽으로 돌렸습니다.", start: 2, end: 4)
+        let originals = timeline.segments
+        let context = try requireContext(timeline.contextJob(endingAt: second.segmentID))
+        try expect(context.members.count == 2, "Context has wrong member count")
+        try expect(context.source == "He made a bank. The pilot turned the plane left.", "Context lost or duplicated source")
+        try expect(timeline.applyContext(translation: "조종사는 비행기를 기울여 왼쪽으로 선회했습니다.", for: context),
+                   "Current contextual translation rejected")
+        try expect(timeline.segments == originals, "Context mutated original ASR or isolated translations")
+        try expect(timeline.displaySegments.count == 1, "Grouped context duplicated display rows")
+        try expect(timeline.displaySegments[0].contextSegmentCount == 2, "Group size missing")
+        try expect(timeline.displaySegments[0].isFinal, "Exact final context group stayed provisional")
+        try expect(timeline.displaySegments[0].audioStart == 0 && timeline.displaySegments[0].audioEnd == 4,
+                   "Context group lost audio range")
+        try expect(!timeline.needsContextTranslation(context), "Completed context queued again")
+        try expect(!timeline.applyContext(translation: "다른 결과", for: context), "Duplicate context overwrote stable result")
+        let export = timeline.exportText()
+        try expect(export.contains("KO: 조종사는 비행기를 기울여 왼쪽으로 선회했습니다."), "Export omitted corrected Korean")
+        try expect(!export.contains("KO: 그는 은행을 만들었습니다."), "Export presented superseded isolated translation")
+    }),
+    ("context extends a pair once and then freezes the completed passage", {
+        var timeline = CaptionTimeline()
+        _ = try appendFinal(&timeline, source: "First.", translation: "첫째.", start: 0, end: 1)
+        let second = try appendFinal(&timeline, source: "Second.", translation: "둘째.", start: 1, end: 2)
+        let pair = try requireContext(timeline.contextJob(endingAt: second.segmentID))
+        timeline.applyContext(translation: "첫 번째와 두 번째.", for: pair)
+        let third = try appendFinal(&timeline, source: "Third.", translation: "셋째.", start: 2, end: 3)
+        let triple = try requireContext(timeline.contextJob(endingAt: third.segmentID))
+        try expect(triple.members.count == 3, "Existing pair was detached while extending")
+        timeline.applyContext(translation: "첫째, 둘째, 셋째.", for: triple)
+        let fourth = try appendFinal(&timeline, source: "Fourth.", translation: "넷째.", start: 3, end: 4)
+        try expect(timeline.contextJob(endingAt: fourth.segmentID) == nil, "Frozen group reopened for a fourth member")
+        let fifth = try appendFinal(&timeline, source: "Fifth.", translation: "다섯째.", start: 4, end: 5)
+        let next = try requireContext(timeline.contextJob(endingAt: fifth.segmentID))
+        try expect(next.members.map(\.segmentID) == [fourth.segmentID, fifth.segmentID], "New group reused frozen captions")
+        timeline.applyContext(translation: "넷째와 다섯째.", for: next)
+        try expect(timeline.displaySegments.count == 2, "Frozen and new group were not separate")
+        try expect(timeline.displaySegments[0].translation == "첫째, 둘째, 셋째.", "Older stable Korean changed")
+    }),
+    ("new final source invalidates in-flight context while drafts do not", {
+        var timeline = CaptionTimeline()
+        _ = try appendFinal(&timeline, source: "It happened.", translation: "일어났습니다.", start: 0, end: 1)
+        let second = try appendFinal(&timeline, source: "Yesterday.", translation: "어제.", start: 1, end: 2)
+        let pair = try requireContext(timeline.contextJob(endingAt: second.segmentID))
+        _ = timeline.accept(source: "At", audioStart: 2, audioEnd: 3, isFinal: false)
+        try expect(timeline.needsContextTranslation(pair), "Unrelated draft invalidated current final context")
+        _ = try appendFinal(&timeline, source: "At noon.", translation: "정오에.", start: 2, end: 3)
+        try expect(!timeline.applyContext(translation: "어제 일어났습니다.", for: pair), "Superseded context was applied")
+        try expect(timeline.displaySegments.count == 3, "Rejected context changed display")
+    }),
+    ("context waits for exact isolated revisions and rejects forged snapshots", {
+        var timeline = CaptionTimeline()
+        _ = try appendFinal(&timeline, source: "The cost is", translation: "비용은", start: 0, end: 1)
+        let draft = try require(timeline.accept(source: "fifteen", audioStart: 1, audioEnd: 2, isFinal: false))
+        timeline.apply(translation: "15", for: draft)
+        let final = try require(timeline.accept(source: "fifty.", audioStart: 1, audioEnd: 2, isFinal: true))
+        try expect(timeline.contextJob(endingAt: final.segmentID) == nil, "Stale isolated translation used as finalized context")
+        timeline.apply(translation: "50입니다.", for: final)
+        let context = try requireContext(timeline.contextJob(endingAt: final.segmentID))
+        var forgedMembers = context.members
+        let member = forgedMembers[0]
+        forgedMembers[0] = TranslationJob(segmentID: member.segmentID, revision: member.revision,
+                                           source: "The cost is not", isSourceFinal: true)
+        let forged = ContextTranslationJob(members: forgedMembers, contextRevision: context.contextRevision)
+        try expect(!timeline.applyContext(translation: "비용은 50이 아닙니다.", for: forged), "Forged context source applied")
+        try expect(!timeline.applyContext(translation: " ", for: context), "Blank context applied")
+        try expect(timeline.displaySegments.count == 2, "Failed optional context erased valid translations")
+    }),
+    ("context is bounded by pause, silence, duration, and source length", {
+        var paused = CaptionTimeline()
+        _ = try appendFinal(&paused, source: "Before pause.", translation: "멈추기 전.", start: 0, end: 1)
+        paused.resetContext()
+        let after = try appendFinal(&paused, source: "After pause.", translation: "재개 후.", start: 1, end: 2)
+        try expect(paused.contextJob(endingAt: after.segmentID) == nil, "Context crossed a pause boundary")
+        var silent = CaptionTimeline()
+        _ = try appendFinal(&silent, source: "Before silence.", translation: "무음 전.", start: 0, end: 1)
+        let later = try appendFinal(&silent, source: "After silence.", translation: "무음 후.", start: 3.1, end: 4)
+        try expect(silent.contextJob(endingAt: later.segmentID) == nil, "Context crossed long silence")
+        var long = CaptionTimeline()
+        _ = try appendFinal(&long, source: "A long statement.", translation: "긴 문장.", start: 0, end: 7)
+        let longer = try appendFinal(&long, source: "Another long statement.", translation: "또 긴 문장.", start: 7, end: 13)
+        try expect(long.contextJob(endingAt: longer.segmentID) == nil, "Context exceeded duration limit")
+        var verbose = CaptionTimeline()
+        _ = try appendFinal(&verbose, source: String(repeating: "a", count: 300), translation: "첫 문장.", start: 0, end: 1)
+        let verboseEnd = try appendFinal(&verbose, source: String(repeating: "b", count: 300), translation: "다음 문장.", start: 1, end: 2)
+        try expect(verbose.contextJob(endingAt: verboseEnd.segmentID) == nil, "Context exceeded character limit")
+    }),
+    ("pending context presentation stays gray without reopening finalized ASR", {
+        var timeline = CaptionTimeline()
+        _ = try appendFinal(&timeline, source: "First.", translation: "첫째.", start: 0, end: 1)
+        let second = try appendFinal(&timeline, source: "Second.", translation: "둘째.", start: 1, end: 2)
+        let context = try requireContext(timeline.contextJob(endingAt: second.segmentID))
+        let pendingIDs = Set(context.members.map(\.segmentID))
+        let pendingDisplay = timeline.displaySegments.map { segment in
+            var display = segment
+            display.contextIsPending = pendingIDs.contains(segment.id)
+            return display
+        }
+        try expect(pendingDisplay.allSatisfy { !$0.isFinal && $0.contextIsPending }, "Pending context showed completed color")
+        try expect(timeline.segments.allSatisfy(\.isFinal), "Display pending state reopened ASR")
+        try expect(timeline.displaySegments.allSatisfy(\.isFinal), "Clearing pending presentation lost validated translations")
+    }),
+    ("resetting context rejects an outstanding job and preserves completed display", {
+        var timeline = CaptionTimeline()
+        _ = try appendFinal(&timeline, source: "First.", translation: "첫째.", start: 0, end: 1)
+        let second = try appendFinal(&timeline, source: "Second.", translation: "둘째.", start: 1, end: 2)
+        let context = try requireContext(timeline.contextJob(endingAt: second.segmentID))
+        timeline.resetContext()
+        try expect(!timeline.applyContext(translation: "첫째와 둘째.", for: context), "Previous run context applied after reset")
+        try expect(timeline.displaySegments.count == 2 && timeline.segments.allSatisfy(\.isFinal), "Reset erased valid captions")
     }),
     ("exports identify unfinished translations", {
         var timeline = CaptionTimeline()
