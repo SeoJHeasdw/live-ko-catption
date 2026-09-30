@@ -53,7 +53,8 @@ struct AudioCallbackChecks {
             try await checkAnalyzerOverflow()
             try await checkRightChannelMeter()
             try await checkCopyFailure()
-            print("8 audio callback checks passed.")
+            try await checkInputHeartbeat()
+            print("9 audio callback checks passed.")
             if CommandLine.arguments.count == 2 {
                 try await checkLiveStream(filePath: CommandLine.arguments[1])
             }
@@ -266,6 +267,36 @@ struct AudioCallbackChecks {
             throw Failure("Failed audio copy was hidden or prevented stream shutdown")
         }
         print("PASS: failed microphone copy is counted/reported and still permits shutdown")
+    }
+
+    private static func checkInputHeartbeat() async throws {
+        let (format, buffer) = try fixture()
+        for frame in 0..<Int(buffer.frameLength) { buffer.floatChannelData![0][frame] = 0 }
+        let state = CallbackState()
+        let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
+        let pump = try AudioPump(source: format, target: format, continuation: continuation,
+                                 onLevel: { _ in }, onProblem: { state.report($0) },
+                                 startedAtUptime: 100)
+        guard !pump.hasStalledInput(at: 102.9), !pump.hasStalledInput(at: 103),
+              pump.hasStalledInput(at: 103.001), !pump.hasReceivedInput else {
+            throw Failure("Never-started microphone does not become stale after its startup allowance")
+        }
+        // All-zero audio represents a quiet room, not a disconnected input.
+        pump.enqueue(buffer, at: 104)
+        guard pump.hasReceivedInput, !pump.hasStalledInput(at: 107), pump.hasStalledInput(at: 107.001) else {
+            throw Failure("Silent audio did not refresh the microphone heartbeat")
+        }
+        buffer.frameLength = 0
+        pump.enqueue(buffer, at: 107)
+        guard pump.hasStalledInput(at: 107.001) else {
+            throw Failure("An empty callback concealed a stalled microphone")
+        }
+        await pump.finish()
+        for await _ in stream {}
+        guard !pump.hasStalledInput(at: 1000), state.errors.isEmpty else {
+            throw Failure("A stopped microphone remained eligible for a watchdog error")
+        }
+        print("PASS: never-started/stalled input expires after 3 s, silent input stays healthy, and stop disables heartbeat errors")
     }
 
     private static func checkLiveStream(filePath: String) async throws {

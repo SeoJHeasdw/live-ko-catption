@@ -69,6 +69,7 @@ final class AudioPump: @unchecked Sendable {
     private var pending = 0
     private var pendingInputFrames: Int64 = 0
     private var receivedInput = false
+    private var lastInputUptime: TimeInterval
     private var finished = false
     private var closingScheduled = false
     private var closed = false
@@ -91,7 +92,8 @@ final class AudioPump: @unchecked Sendable {
          continuation: AsyncStream<AnalyzerInput>.Continuation,
          onLevel: @escaping @Sendable (Double) -> Void,
          onProblem: @escaping @Sendable (String) -> Void,
-         copyBuffer: @escaping @Sendable (AVAudioPCMBuffer) -> AVAudioPCMBuffer? = AudioPump.copy) throws {
+         copyBuffer: @escaping @Sendable (AVAudioPCMBuffer) -> AVAudioPCMBuffer? = AudioPump.copy,
+         startedAtUptime: TimeInterval = ProcessInfo.processInfo.systemUptime) throws {
         guard let converter = AVAudioConverter(from: source, to: target) else {
             throw CaptionError.message("이 마이크의 음성 형식을 변환할 수 없습니다.")
         }
@@ -107,6 +109,7 @@ final class AudioPump: @unchecked Sendable {
         self.onLevel = onLevel
         self.onProblem = onProblem
         self.copyBuffer = copyBuffer
+        self.lastInputUptime = startedAtUptime
     }
 
     // AVAudioNodeTapBlock is nonsendable in the SDK. Creating it inside the
@@ -121,10 +124,17 @@ final class AudioPump: @unchecked Sendable {
     var droppedBufferCount: Int { lock.withLock { droppedBuffers } }
     var hasReceivedInput: Bool { lock.withLock { receivedInput } }
 
-    func enqueue(_ original: AVAudioPCMBuffer) {
+    func hasStalledInput(at uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) -> Bool {
+        lock.withLock { !finished && uptime - lastInputUptime > 3 }
+    }
+
+    func enqueue(_ original: AVAudioPCMBuffer, at uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) {
         guard original.frameLength > 0 else { return }
         lock.lock()
         if finished { lock.unlock(); return }
+        // Silence is healthy input. Only missing nonempty tap buffers indicate
+        // a stalled device; the watchdog never depends on speech or loudness.
+        lastInputUptime = uptime
         let frameCount = Int64(original.frameLength)
         // Tap sizes can differ from the requested 1024 frames. Bound queued
         // audio by duration as well as count so a slow device does not create
@@ -320,6 +330,7 @@ final class AudioCapture {
     private var hasTap = false
     private var configurationObserver: NSObjectProtocol?
     private var configurationRestarts = 0
+    private var watchdogTask: Task<Void, Never>?
 
     func start(deviceID: AudioDeviceID?, target: AVAudioFormat,
                onLevel: @escaping @Sendable (Double) -> Void,
@@ -397,6 +408,8 @@ final class AudioCapture {
             engine.prepare()
             try engine.start()
         } catch {
+            watchdogTask?.cancel()
+            watchdogTask = nil
             if let configurationObserver { NotificationCenter.default.removeObserver(configurationObserver) }
             configurationObserver = nil
             engine.inputNode.removeTap(onBus: 0)
@@ -405,11 +418,26 @@ final class AudioCapture {
             // stop() drains any callback that was accepted during startup.
             throw error
         }
+        watchdogTask = Task { @MainActor [weak self] in
+            while !Task.isCancelled {
+                do { try await Task.sleep(for: .milliseconds(500)) }
+                catch { return }
+                guard !Task.isCancelled, let self, self.hasTap, self.pump === audioPump else { return }
+                guard audioPump.hasStalledInput() else { continue }
+                Self.logger.error("Microphone tap has not delivered input for over three seconds; engineRunning=\(self.engine.isRunning)")
+                onProblem(audioPump.hasReceivedInput
+                    ? "마이크의 오디오 입력이 3초 이상 중단됐습니다. 입력 장치를 확인한 뒤 다시 시작해 주세요."
+                    : "마이크를 시작했지만 오디오 입력이 도착하지 않습니다. 입력 장치를 확인한 뒤 다시 시작해 주세요.")
+                return
+            }
+        }
         Self.logger.notice("Microphone started: rate=\(format.sampleRate), channels=\(format.channelCount), target=\(target.sampleRate)")
         return stream
     }
 
     func stop() async {
+        watchdogTask?.cancel()
+        watchdogTask = nil
         if let configurationObserver { NotificationCenter.default.removeObserver(configurationObserver) }
         configurationObserver = nil
         engine.stop()
