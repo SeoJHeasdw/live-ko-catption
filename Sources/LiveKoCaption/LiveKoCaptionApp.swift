@@ -4,13 +4,14 @@ import SwiftUI
 @main @MainActor
 struct LiveKoCaptionApp: App {
     @NSApplicationDelegateAdaptor(CaptionAppDelegate.self) private var delegate
+    @ViewState private var windows = CaptionWindowCoordinator()
     @ViewState private var model = CaptionUISoakRunner.requestedSeconds != nil
         ? CaptionUISoakRunner.makeModel()
         : CaptionModel(preview: CommandLine.arguments.contains("--preview") || CommandLine.arguments.contains("--snapshot"))
 
     var body: some Scene {
         Window("한글 라이브 자막", id: "captions") {
-            CaptionView(model: model)
+            CaptionView(model: model, windows: windows)
         }
         .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 1120, height: 820)
@@ -21,6 +22,19 @@ struct LiveKoCaptionApp: App {
                 Button("원문·자막 저장…") { model.exportTranscript() }
                     .keyboardShortcut("s", modifiers: .command).disabled(!model.hasContent)
             }
+            CommandMenu("자막 보기") {
+                Button("자세히 보기") { windows.showDetailed() }
+                    .keyboardShortcut("1", modifiers: .command)
+                Button("간략히 보기") { windows.showCompact() }
+                    .keyboardShortcut("2", modifiers: .command)
+                Divider()
+                Button(model.canStop ? "일시정지" : "자막 재개") {
+                    Task { await windows.pauseOrResume() }
+                }.disabled(!model.canStart && !model.canStop)
+                Button("중지하고 자세히 보기") {
+                    Task { await windows.stopAndShowDetailed() }
+                }.keyboardShortcut(".", modifiers: .command)
+            }
         }
     }
 }
@@ -28,6 +42,7 @@ struct LiveKoCaptionApp: App {
 @MainActor
 final class CaptionAppDelegate: NSObject, NSApplicationDelegate {
     static weak var model: CaptionModel?
+    static weak var windows: CaptionWindowCoordinator?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.regular)
@@ -61,7 +76,14 @@ final class CaptionAppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        Self.windows?.isCompact != true
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        Self.windows?.showDetailed()
+        return true
+    }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         guard let model = Self.model, model.isListening else { return .terminateNow }

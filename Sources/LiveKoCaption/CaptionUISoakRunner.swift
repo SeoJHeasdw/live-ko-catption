@@ -63,6 +63,10 @@ enum CaptionUISoakRunner {
         defer { try? file.close() }
         let initialFontSize = model.fontSize
         let initialShowEnglish = model.showEnglish
+        let compactState = CommandLine.arguments.contains("--ui-soak-compact") ? CompactSoakState() : nil
+        if let compactState {
+            await compactState.prepare(model: model)
+        }
         let began = ProcessInfo.processInfo.systemUptime
         var lastTick = began
         var lastReport = began
@@ -75,10 +79,13 @@ enum CaptionUISoakRunner {
            (8...80).contains(parsed), parsed.isMultiple(of: 4) { phraseTicks = parsed }
         else { phraseTicks = 80 }
         let sourceWords = "Before we continue with the next part let us review the plan carefully and make sure everyone understands the context of this discussion".split(separator: " ")
-        write(["event": "begin", "kind": "synthetic-ui-only", "requestedSeconds": seconds,
+        var begin: [String: Any] = ["event": "begin", "kind": "synthetic-ui-only", "requestedSeconds": seconds,
                "pid": ProcessInfo.processInfo.processIdentifier, "output": output,
                "phraseTicks": phraseTicks, "nominalInputLevelHz": 40,
-               "nominalSourceUpdateHz": 10, "nominalFinalPeriodSeconds": Double(phraseTicks) / 40], to: file)
+               "nominalSourceUpdateHz": 10, "nominalFinalPeriodSeconds": Double(phraseTicks) / 40]
+        if compactState != nil { begin["compactModeExercise"] = true }
+        write(begin, to: file)
+        compactState?.showCompact(model: model, reason: "initial", file: file)
         while !Task.isCancelled, ProcessInfo.processInfo.systemUptime - began < seconds {
             try? await Task.sleep(for: .milliseconds(25))
             guard !Task.isCancelled else { break }
@@ -100,12 +107,13 @@ enum CaptionUISoakRunner {
                     audioEnd: start + Double(final ? phraseTicks : partial) * 2 / Double(phraseTicks), isFinal: final)
                 if final { segmentNumber += 1 }
             }
+            compactState?.exercise(model: model, elapsed: now - began, file: file)
             if now - lastReport >= 1 {
                 var usage = rusage()
                 getrusage(RUSAGE_SELF, &usage)
                 let document = nativeDocument()
                 let viewport = (document as? CaptionTextView)?.viewportInspection?()
-                write(["event": "heartbeat", "elapsedSeconds": now - began, "ticks": tick,
+                var heartbeat: [String: Any] = ["event": "heartbeat", "elapsedSeconds": now - began, "ticks": tick,
                        "rawSegments": model.segments.count,
                        "visibleSegments": model.recentDisplaySegments(limit: 100).count,
                        "queuedTranslations": model.queuedTranslations,
@@ -114,13 +122,19 @@ enum CaptionUISoakRunner {
                        "firstVisibleSegmentID": viewport?.segmentID?.uuidString ?? "",
                        "followsLatest": viewport?.followsLatest ?? true,
                        "selectedStartSegmentID": viewport?.selectedStartSegmentID?.uuidString ?? "",
-                       "selectedCharacters": document?.selectedRange().length ?? 0], to: file)
+                       "selectedCharacters": document?.selectedRange().length ?? 0]
+                if let compactState {
+                    compactState.inspect(model: model)
+                    heartbeat.merge(compactState.report) { _, new in new }
+                }
+                write(heartbeat, to: file)
                 lastReport = now
             }
             let resizeIndex = Int((now - began) / 15)
             if resizeIndex > resized {
                 resized = resizeIndex
-                if let window = NSApp.windows.first(where: { $0.isVisible && $0.canBecomeMain }) {
+                if let window = compactState?.windows?.detailWindow ??
+                    NSApp.windows.first(where: { $0.isVisible && $0.canBecomeMain }) {
                     window.setContentSize(resizeIndex.isMultiple(of: 2)
                         ? NSSize(width: 1120, height: 820) : NSSize(width: 950, height: 660))
                 }
@@ -139,6 +153,16 @@ enum CaptionUISoakRunner {
         while model.hasPendingTranslations && ProcessInfo.processInfo.systemUptime - drainStart < 10 {
             try? await Task.sleep(for: .milliseconds(100))
         }
+        if let compactState {
+            // Inspect a settled tail so a SwiftUI transaction in progress is not
+            // mistaken for a missing translation during synthetic ASR churn.
+            compactState.showCompact(model: model, reason: "final-tail-inspection", file: file)
+            try? await Task.sleep(for: .milliseconds(300))
+            await compactState.exerciseNativeResize(model: model, file: file)
+            try? await Task.sleep(for: .milliseconds(300))
+            compactState.inspect(model: model, verifyLatest: true, file: file)
+            compactState.showDetailed(model: model, reason: "restore-detail", file: file)
+        }
         model.phase = .idle
         model.audioLevel = 0
         model.fontSize = initialFontSize
@@ -154,12 +178,15 @@ enum CaptionUISoakRunner {
         let documentMatchesLatest = visible.last.map { document?.string.contains($0.translation ?? "") == true } ?? false
         let passed = maxPause < 2 && visible.count <= 100 && !model.hasPendingTranslations
             && translated == model.segments.count && documentMatchesLatest
-        write(["event": "complete", "passed": passed, "elapsedSeconds": now - began,
+            && (compactState?.passed ?? true)
+        var complete: [String: Any] = ["event": "complete", "passed": passed, "elapsedSeconds": now - began,
                "rawSegments": model.segments.count, "translatedSegments": translated,
                "visibleSegments": visible.count, "maxMainActorPauseSeconds": maxPause,
                "ticks": tick, "resizes": resized, "transcriptCharacters": model.transcriptText.count,
                "nativeDocumentCharacters": document?.string.count ?? 0,
-               "nativeDocumentMatchesLatest": documentMatchesLatest], to: file)
+               "nativeDocumentMatchesLatest": documentMatchesLatest]
+        if let compactState { complete.merge(compactState.report) { _, new in new } }
+        write(complete, to: file)
         try? file.synchronize()
         fputs("UI soak \(passed ? "passed" : "failed"): \(output)\n", stderr)
         // Leave the tested window alive for native UI inspection unless asked to
@@ -168,6 +195,13 @@ enum CaptionUISoakRunner {
     }
 
     private static func nativeDocument() -> NSTextView? {
+        for window in NSApp.windows where window.isVisible {
+            if let content = window.contentView, let text = nativeDocument(in: content) { return text }
+        }
+        return nil
+    }
+
+    private static func nativeDocument(in view: NSView) -> NSTextView? {
         func find(in view: NSView) -> NSTextView? {
             if let text = view as? NSTextView, text.enclosingScrollView is CaptionScrollView { return text }
             for child in view.subviews {
@@ -175,10 +209,365 @@ enum CaptionUISoakRunner {
             }
             return nil
         }
-        for window in NSApp.windows where window.isVisible {
-            if let content = window.contentView, let text = find(in: content) { return text }
+        return find(in: view)
+    }
+
+    /// Optional window-mode checks do not change the original transcript soak.
+    /// These gates concern synthetic rendering and window lifetime only.
+    @MainActor
+    private final class CompactSoakState {
+        private let requiredMinimumSize = NSSize(width: 420, height: 144)
+        var windows: CaptionWindowCoordinator?
+        private var detailContentID: ObjectIdentifier?
+        private var detailDocumentID: ObjectIdentifier?
+        private var modelID: ObjectIdentifier?
+        private var lastToggleIndex = 0
+        private var lastResizeIndex = 0
+        private var switches = 0
+        private var compactResizes = 0
+        private var compactInspections = 0
+        private var maxRenderedRows = 0
+        private var documentCharacters = 0
+        private var coordinatorAvailable = false
+        private var switchesPreserveModel = true
+        private var switchesPreservePhase = true
+        private var switchesPreserveHistory = true
+        private var hiddenDetailStaysMounted = true
+        private var compactRowsBounded = true
+        private var compactRespectsMinimumSize = true
+        private var compactDocumentPresent = true
+        private var compactMatchesLatest = false
+        private var compactTailVisible = false
+        private var tailGlyphRect = NSRect.zero
+        private var tailVisibleRect = NSRect.zero
+        private var nativeResizeChecks = 0
+        private var nativeResizeChecksPassed = true
+
+        func prepare(model: CaptionModel) async {
+            for _ in 0..<40 {
+                if let candidate = CaptionAppDelegate.windows,
+                   let content = candidate.detailWindow?.contentView {
+                    windows = candidate
+                    detailContentID = ObjectIdentifier(content)
+                    detailDocumentID = nativeDocument(in: content).map { ObjectIdentifier($0) }
+                    modelID = ObjectIdentifier(model)
+                    coordinatorAvailable = true
+                    return
+                }
+                try? await Task.sleep(for: .milliseconds(50))
+            }
         }
-        return nil
+
+        func showCompact(model: CaptionModel, reason: String, file: FileHandle) {
+            switchMode(model: model, compact: true, reason: reason, file: file)
+        }
+
+        func showDetailed(model: CaptionModel, reason: String, file: FileHandle) {
+            switchMode(model: model, compact: false, reason: reason, file: file)
+        }
+
+        private func switchMode(model: CaptionModel, compact: Bool, reason: String, file: FileHandle) {
+            guard let windows, windows.isCompact != compact else { return }
+            let phase = String(describing: model.phase)
+            let rawSegments = model.segments.count
+            if compact { windows.showCompact() }
+            else { windows.showDetailed() }
+            switches += 1
+            switchesPreserveModel = switchesPreserveModel && modelID == ObjectIdentifier(model)
+                && CaptionAppDelegate.model === model && CaptionAppDelegate.windows === windows
+            switchesPreservePhase = switchesPreservePhase && String(describing: model.phase) == phase
+            switchesPreserveHistory = switchesPreserveHistory && model.segments.count == rawSegments
+            inspectMountedDetail()
+            write(["event": "compact-mode-switch", "reason": reason,
+                   "isCompact": windows.isCompact, "rawSegments": model.segments.count,
+                   "phase": String(describing: model.phase),
+                   "modelIdentityPreserved": switchesPreserveModel,
+                   "phasePreserved": switchesPreservePhase,
+                   "rawHistoryPreserved": switchesPreserveHistory,
+                   "hiddenDetailMounted": hiddenDetailStaysMounted], to: file)
+        }
+
+        func exercise(model: CaptionModel, elapsed: Double, file: FileHandle) {
+            let toggleIndex = Int(elapsed / 5)
+            if toggleIndex > lastToggleIndex {
+                lastToggleIndex = toggleIndex
+                if windows?.isCompact == true { showDetailed(model: model, reason: "periodic", file: file) }
+                else { showCompact(model: model, reason: "periodic", file: file) }
+            }
+            let resizeIndex = Int(elapsed / 3)
+            guard resizeIndex > lastResizeIndex else { return }
+            lastResizeIndex = resizeIndex
+            guard let windows, windows.isCompact, let panel = windows.compactPanel else { return }
+            let frameMinimum = panel.contentRect(forFrameRect: NSRect(origin: .zero, size: panel.minSize)).size
+            // The expected usable minimum is independent of live AppKit
+            // getters, which can themselves be reset by hosting layout.
+            let minimum = NSSize(width: max(requiredMinimumSize.width,
+                max(panel.contentMinSize.width, frameMinimum.width)),
+                height: max(requiredMinimumSize.height,
+                    max(panel.contentMinSize.height, frameMinimum.height)))
+            let sizes = [minimum,
+                NSSize(width: max(minimum.width, 900), height: minimum.height),
+                NSSize(width: minimum.width, height: max(minimum.height, 320)),
+                NSSize(width: max(minimum.width, 620), height: max(minimum.height, 210))]
+            let requested = sizes[compactResizes % sizes.count]
+            panel.setContentSize(requested)
+            compactResizes += 1
+            let actual = panel.contentRect(forFrameRect: panel.frame).size
+            compactRespectsMinimumSize = compactRespectsMinimumSize
+                && actual.width >= minimum.width - 0.5 && actual.height >= minimum.height - 0.5
+            write(["event": "compact-resize", "requestedWidth": requested.width,
+                   "requestedHeight": requested.height, "actualWidth": actual.width,
+                   "actualHeight": actual.height, "minimumWidth": minimum.width,
+                   "minimumHeight": minimum.height,
+                   "reportedFrameMinWidth": panel.minSize.width,
+                   "reportedFrameMinHeight": panel.minSize.height,
+                   "reportedContentMinWidth": panel.contentMinSize.width,
+                   "reportedContentMinHeight": panel.contentMinSize.height,
+                   "minimumSizeRespected": compactRespectsMinimumSize], to: file)
+        }
+
+        private func inspectMountedDetail() {
+            guard let windows, windows.isCompact else { return }
+            let content = windows.detailWindow?.contentView
+            let document = content.flatMap { nativeDocument(in: $0) }
+            // The empty initial detail has no transcript document. Capture its
+            // identity when synthetic input first causes that view to mount.
+            if detailDocumentID == nil, let document {
+                detailDocumentID = ObjectIdentifier(document)
+            }
+            hiddenDetailStaysMounted = hiddenDetailStaysMounted
+                && content.map { ObjectIdentifier($0) } == detailContentID
+                && (detailDocumentID == nil || document.map { ObjectIdentifier($0) } == detailDocumentID)
+                && windows.detailWindow?.isVisible == false
+        }
+
+        func exerciseNativeResize(model: CaptionModel, file: FileHandle) async {
+            guard let windows, windows.isCompact, let panel = windows.compactPanel else { return }
+            let original = panel.frame
+            let phase = String(describing: model.phase)
+            let historyCount = model.segments.count
+            defer {
+                panel.setFrame(original, display: true)
+                panel.saveFrame(usingName: "CompactCaptionPanel")
+            }
+            panel.contentView?.layoutSubtreeIfNeeded()
+            // Exercise the actual overlay returned by the live view hierarchy,
+            // without posting pointer events to the OS or moving the mouse.
+            nativeResizeProbe(panel: panel, name: "right-bottom-grow",
+                start: NSPoint(x: panel.frame.maxX - 3, y: panel.frame.minY + 3),
+                delta: NSPoint(x: 80, y: -50), clampToMinimum: false, file: file)
+            try? await Task.sleep(for: .milliseconds(200))
+            panel.contentView?.layoutSubtreeIfNeeded()
+            nativeResizeProbe(panel: panel, name: "left-top-minimum",
+                start: NSPoint(x: panel.frame.minX + 3, y: panel.frame.maxY - 3),
+                delta: NSPoint(x: panel.frame.width + 100, y: -panel.frame.height - 100),
+                clampToMinimum: true, file: file)
+            switchesPreserveModel = switchesPreserveModel && modelID == ObjectIdentifier(model)
+                && CaptionAppDelegate.model === model && CaptionAppDelegate.windows === windows
+            switchesPreservePhase = switchesPreservePhase && String(describing: model.phase) == phase
+            switchesPreserveHistory = switchesPreserveHistory && model.segments.count == historyCount
+            inspectMountedDetail()
+        }
+
+        private func nativeResizeProbe(panel: NSPanel, name: String, start: NSPoint,
+                                       delta: NSPoint, clampToMinimum: Bool, file: FileHandle) {
+            nativeResizeChecks += 1
+            let before = panel.frame
+            let windowPoint = panel.convertPoint(fromScreen: start)
+            let content = panel.contentView
+            let localPoint = content?.convert(windowPoint, from: nil)
+            // NSView.hitTest receives coordinates in the receiver's superview.
+            let hitPoint = localPoint.flatMap { content?.convert($0, to: content?.superview) }
+            let hit = hitPoint.flatMap { content?.hitTest($0) }
+            let hitType = hit.map { String(describing: type(of: $0)) } ?? "none"
+            guard let hit, hitType.contains("ResizeView"),
+                  let down = mouseEvent(.leftMouseDown, at: start, in: panel),
+                  let dragged = mouseEvent(.leftMouseDragged,
+                    at: NSPoint(x: start.x + delta.x, y: start.y + delta.y), in: panel) else {
+                nativeResizeChecksPassed = false
+                var failure: [String: Any] = ["event": "compact-native-resize", "probe": name, "hitView": hitType,
+                    "passed": false, "reason": "Live border did not hit the native resize view",
+                    "probeScreenPoint": [start.x, start.y],
+                    "probeWindowPoint": [windowPoint.x, windowPoint.y]]
+                if let localPoint { failure["probeContentLocalPoint"] = [localPoint.x, localPoint.y] }
+                if let hitPoint { failure["probeContentSuperviewPoint"] = [hitPoint.x, hitPoint.y] }
+                failure.merge(hierarchyDiagnostics(panel: panel)) { _, new in new }
+                write(failure, to: file)
+                return
+            }
+            hit.mouseDown(with: down)
+            hit.mouseDragged(with: dragged)
+            var didRelease = false
+            if let up = mouseEvent(.leftMouseUp,
+                at: NSPoint(x: start.x + delta.x, y: start.y + delta.y), in: panel) {
+                hit.mouseUp(with: up)
+                didRelease = true
+            }
+            let after = panel.frame
+            let expectedWidth = clampToMinimum ? requiredMinimumSize.width : before.width + delta.x
+            let expectedHeight = clampToMinimum ? requiredMinimumSize.height : before.height - delta.y
+            let sizeMatches = abs(after.width - expectedWidth) <= 1
+                && abs(after.height - expectedHeight) <= 1
+            let anchorsMatch = clampToMinimum
+                ? abs(after.maxX - before.maxX) <= 1 && abs(after.minY - before.minY) <= 1
+                : abs(after.minX - before.minX) <= 1 && abs(after.maxY - before.maxY) <= 1
+            let frameChanged = abs(after.width - before.width) > 1 || abs(after.height - before.height) > 1
+            let passed = didRelease && frameChanged && sizeMatches && anchorsMatch
+            compactRespectsMinimumSize = compactRespectsMinimumSize
+                && after.width >= requiredMinimumSize.width - 0.5
+                && after.height >= requiredMinimumSize.height - 0.5
+            nativeResizeChecksPassed = nativeResizeChecksPassed && passed
+            write(["event": "compact-native-resize", "probe": name, "hitView": hitType,
+                   "frameChanged": frameChanged, "sizeMatches": sizeMatches,
+                   "oppositeEdgesAnchored": anchorsMatch, "clampsToMinimum": clampToMinimum,
+                   "expectedWidth": expectedWidth, "expectedHeight": expectedHeight,
+                   "actualWidth": after.width, "actualHeight": after.height, "passed": passed], to: file)
+        }
+
+        private func mouseEvent(_ type: NSEvent.EventType, at screenPoint: NSPoint,
+                                in panel: NSPanel) -> NSEvent? {
+            NSEvent.mouseEvent(with: type, location: panel.convertPoint(fromScreen: screenPoint),
+                modifierFlags: [], timestamp: ProcessInfo.processInfo.systemUptime,
+                windowNumber: panel.windowNumber, context: nil, eventNumber: nativeResizeChecks,
+                clickCount: 1, pressure: type == .leftMouseUp ? 0 : 1)
+        }
+
+        func inspect(model: CaptionModel, verifyLatest: Bool = false, file: FileHandle? = nil) {
+            inspectMountedDetail()
+            guard let windows, windows.isCompact else { return }
+            compactInspections += 1
+            if let panel = windows.compactPanel {
+                let size = panel.contentRect(forFrameRect: panel.frame).size
+                compactRespectsMinimumSize = compactRespectsMinimumSize
+                    && size.width >= requiredMinimumSize.width - 0.5
+                    && size.height >= requiredMinimumSize.height - 0.5
+            }
+            let document = windows.compactPanel?.contentView.flatMap { compactDocument(in: $0) }
+            compactDocumentPresent = compactDocumentPresent && document != nil
+            let text = document?.string ?? ""
+            documentCharacters = text.count
+            let rows = text.components(separatedBy: .newlines).filter {
+                !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            }.count
+            maxRenderedRows = max(maxRenderedRows, rows)
+            compactRowsBounded = compactRowsBounded && rows <= 2
+                && model.recentDisplaySegments(limit: 2).count <= 2
+            if verifyLatest {
+                let tail = model.recentDisplaySegments(limit: 2)
+                compactMatchesLatest = !tail.isEmpty && tail.allSatisfy {
+                    guard let translation = $0.translation,
+                          !translation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
+                    return text.contains(translation)
+                }
+                compactTailVisible = document.map { latestGlyphIsVisible(in: $0) } ?? false
+                if !compactTailVisible, let panel = windows.compactPanel, let file {
+                    var failure: [String: Any] = ["event": "compact-tail-visibility-failure",
+                        "tailGlyphRect": rectValues(tailGlyphRect), "tailVisibleRect": rectValues(tailVisibleRect)]
+                    failure.merge(hierarchyDiagnostics(panel: panel)) { _, new in new }
+                    write(failure, to: file)
+                }
+            }
+        }
+
+        private func rectValues(_ rect: NSRect) -> [CGFloat] {
+            [rect.origin.x, rect.origin.y, rect.width, rect.height]
+        }
+
+        private func viewDiagnostics(_ view: NSView) -> [String: Any] {
+            ["type": String(describing: type(of: view)), "frame": rectValues(view.frame),
+             "bounds": rectValues(view.bounds), "visibleRect": rectValues(view.visibleRect),
+             "isHidden": view.isHidden, "hiddenAncestor": view.isHiddenOrHasHiddenAncestor,
+             "isFlipped": view.isFlipped, "windowNumber": view.window?.windowNumber ?? -1]
+        }
+
+        private func hierarchyDiagnostics(panel: NSPanel) -> [String: Any] {
+            var diagnostics: [String: Any] = ["panelFrame": rectValues(panel.frame),
+                "panelVisible": panel.isVisible, "panelStyleMask": String(panel.styleMask.rawValue),
+                "panelMinSize": [panel.minSize.width, panel.minSize.height],
+                "panelContentMinSize": [panel.contentMinSize.width, panel.contentMinSize.height]]
+            guard let content = panel.contentView else { return diagnostics }
+            diagnostics["panelContentView"] = viewDiagnostics(content)
+            var chains: [[String: Any]] = []
+            func visit(_ view: NSView) {
+                let type = String(describing: type(of: view))
+                if view is CompactCaptionTextView || type.contains("ResizeView") {
+                    var chain: [[String: Any]] = []
+                    var ancestor: NSView? = view
+                    while let current = ancestor {
+                        chain.append(viewDiagnostics(current))
+                        ancestor = current.superview
+                    }
+                    chains.append(["target": type, "ancestors": chain])
+                }
+                for child in view.subviews { visit(child) }
+            }
+            visit(content)
+            diagnostics["compactTargetViewChains"] = chains
+            return diagnostics
+        }
+
+        private func latestGlyphIsVisible(in text: NSTextView) -> Bool {
+            guard let layout = text.layoutManager, let container = text.textContainer else { return false }
+            let character = (text.string as NSString).rangeOfCharacter(
+                from: CharacterSet.whitespacesAndNewlines.inverted, options: .backwards)
+            guard character.location != NSNotFound else { return false }
+            layout.ensureLayout(for: container)
+            let glyph = layout.glyphRange(forCharacterRange: character, actualCharacterRange: nil)
+            guard glyph.length > 0 else { return false }
+            let origin = text.textContainerOrigin
+            tailGlyphRect = layout.boundingRect(forGlyphRange: glyph, in: container)
+                .offsetBy(dx: origin.x, dy: origin.y)
+            tailVisibleRect = text.visibleRect
+            // One point allows native pixel rounding while still requiring the
+            // whole final glyph to fit inside the clipped caption viewport.
+            return tailGlyphRect.width > 0 && tailGlyphRect.height > 0
+                && tailVisibleRect.insetBy(dx: -1, dy: -1).contains(tailGlyphRect)
+        }
+
+        private func compactDocument(in view: NSView) -> NSTextView? {
+            if let text = view as? CompactCaptionTextView { return text }
+            for child in view.subviews {
+                if let text = compactDocument(in: child) { return text }
+            }
+            return nil
+        }
+
+        var passed: Bool {
+            coordinatorAvailable && switches >= 2 && compactInspections > 0
+                && switchesPreserveModel && switchesPreservePhase && switchesPreserveHistory
+                && hiddenDetailStaysMounted && detailDocumentID != nil
+                && compactRowsBounded && compactRespectsMinimumSize
+                && compactDocumentPresent && compactMatchesLatest && compactTailVisible
+                && nativeResizeChecks == 2 && nativeResizeChecksPassed
+                && windows?.isCompact == false
+                && windows?.detailWindow?.isVisible == true
+        }
+
+        var report: [String: Any] {
+            ["compactCoordinatorAvailable": coordinatorAvailable,
+             "compactModeSwitches": switches, "compactResizes": compactResizes,
+             "compactInspections": compactInspections, "compactMaxRenderedRows": maxRenderedRows,
+             "compactDocumentCharacters": documentCharacters,
+             "compactSwitchesPreserveModel": switchesPreserveModel,
+             "compactSwitchesPreservePhase": switchesPreservePhase,
+             "compactSwitchesPreserveRawHistory": switchesPreserveHistory,
+             "compactHiddenDetailStaysMounted": hiddenDetailStaysMounted,
+             "compactDetailDocumentObserved": detailDocumentID != nil,
+             "compactRowsBounded": compactRowsBounded,
+             "compactRespectsMinimumSize": compactRespectsMinimumSize,
+             "compactDocumentPresent": compactDocumentPresent,
+             "compactMatchesLatestTail": compactMatchesLatest,
+             "compactTailVisible": compactTailVisible,
+             "compactNativeResizeChecks": nativeResizeChecks,
+             "compactNativeResizeChecksPassed": nativeResizeChecks == 2 && nativeResizeChecksPassed,
+             "compactTailGlyphRect": [tailGlyphRect.origin.x, tailGlyphRect.origin.y,
+                 tailGlyphRect.width, tailGlyphRect.height],
+             "compactTailVisibleRect": [tailVisibleRect.origin.x, tailVisibleRect.origin.y,
+                 tailVisibleRect.width, tailVisibleRect.height],
+             "compactPanelVisible": windows?.compactPanel?.isVisible ?? false,
+             "compactDetailVisible": windows?.detailWindow?.isVisible ?? false,
+             "compactChecksPassed": passed]
+        }
     }
 
     private static func write(_ values: [String: Any], to file: FileHandle) {

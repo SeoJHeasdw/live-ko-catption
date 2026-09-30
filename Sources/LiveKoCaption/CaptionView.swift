@@ -16,12 +16,13 @@ enum CaptionPalette {
 
 struct CaptionView: View {
     @Bindable var model: CaptionModel
+    let windows: CaptionWindowCoordinator
     @ViewState private var presentationMode = false
     @ViewState private var confirmsNewSession = false
 
     var body: some View {
         VStack(spacing: 0) {
-            CaptionHeader(model: model, presentationMode: $presentationMode)
+            CaptionHeader(model: model, windows: windows, presentationMode: $presentationMode)
             Rectangle().fill(CaptionPalette.border).frame(height: 1)
             HStack(spacing: 0) {
                 if !presentationMode {
@@ -38,6 +39,7 @@ struct CaptionView: View {
         .preferredColorScheme(.dark)
         .tint(CaptionPalette.blue)
         .frame(minWidth: 950, minHeight: 660)
+        .background(CaptionWindowAttachment(windows: windows, model: model))
         .task { await model.checkReadiness() }
         .translationTask(model.translationConfiguration) { session in
             await model.prepareModels(using: session)
@@ -45,6 +47,9 @@ struct CaptionView: View {
         .onAppear {
             CaptionAppDelegate.model = model
             CaptionUISoakRunner.start(model: model)
+        }
+        .onChange(of: model.phase) { oldPhase, newPhase in
+            if oldPhase == .starting && newPhase == .listening { windows.showCompact() }
         }
         .alert("새 대화를 시작할까요?", isPresented: $confirmsNewSession) {
             Button("취소", role: .cancel) {}
@@ -60,6 +65,7 @@ struct CaptionView: View {
 // An input-level tick must not re-evaluate captions, controls or the sidebar.
 private struct CaptionHeader: View {
     @Bindable var model: CaptionModel
+    let windows: CaptionWindowCoordinator
     @Binding var presentationMode: Bool
     var body: some View {
         HStack(spacing: 14) {
@@ -95,6 +101,12 @@ private struct CaptionHeader: View {
                     .disabled(!model.canStart && !model.canStop)
                     .keyboardShortcut(.space, modifiers: [])
             }
+            Button { windows.showCompact() } label: {
+                Label("간략히 보기", systemImage: "pip")
+                    .font(.system(size: 12, weight: .medium)).padding(.horizontal, 10).frame(height: 32)
+            }.buttonStyle(.plain)
+                .background(Color.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
+                .help("작은 떠 있는 자막 창으로 전환 · ⌘2")
             Button { presentationMode.toggle() } label: {
                 Image(systemName: presentationMode ? "sidebar.left" : "rectangle.expand.vertical")
                     .frame(width: 32, height: 32)
