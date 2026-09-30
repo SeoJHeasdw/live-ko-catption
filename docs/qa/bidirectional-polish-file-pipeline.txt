@@ -1,0 +1,112 @@
+양방향 로컬 보완 · 파일 음성 통합 검사
+검사일: 2026-09-30 (한국 시간)
+
+결론
+
+영어→한국어와 한국어→영어 각각 일반/IT 공개 예문을 실제 Apple 음성 인식,
+실제 Apple 빠른 번역, 실제 HY-MT2-1.8B Q6_K 보완으로 처리했다. 네 파일 모두
+원문 수정 버전·회색 초안·확정 조건·대기열·정지 정리 검사를 통과했다.
+통과는 상태와 실행 경로에 대한 결과이며, 인식·번역 의미가 모두 맞았다는
+결과가 아니다. 한국어 IT 인식 오류와 영어 IT 보완 번역의 의미 차이가 남았다.
+
+재현
+
+  ./scripts/check-bidirectional-polish-pipeline.sh
+
+리포트 경로를 첫 인자로 지정할 수 있으며, 기존 리포트는 덮어쓰지 않는다.
+CAPTION_PIPELINE_MODEL_PATH 환경변수를 우선 사용한다. 없으면 개발용
+.build/local-model/Hy-MT2-1.8B-Q6_K.gguf, 그 파일도 없으면 앱 다운로드 버튼으로
+설치한 ~/Library/Application Support/Live Korean Captions/Models/ 모델을 사용한다.
+CAPTION_PIPELINE_RUNTIME_PATH로 이미 빌드한 런타임의 경로를 지정할 수 있다.
+모델·런타임·Apple 언어 자산·음성을 새로 다운로드하거나 빌드하지 않는다.
+
+실제 설치된 macOS 기본 음성 Samantha(en_US), Yuna(ko_KR)를 확인하고 say의
+파일 출력으로 각 예문을 합성했다. 형제 TTS·마이크·오디오 장치를 사용하지
+않았다. 예문 원문과 의미 검토 기준은 다음 파일에 있다.
+  Tests/BidirectionalPolishPipelineChecks/fixtures.json
+
+전체 원자료:
+  docs/qa/raw/bidirectional-polish-pipeline-20260930.json
+
+조건과 경로
+
+- HY 런타임을 먼저 준비하고 EN→KO, KO→EN의 짧은 요청을 각각 예열했다.
+  이 실행의 모델 로딩은 685.511ms, 예열 생성은 75.918ms/36.463ms였다.
+  이전 실행으로 파일/Metal 캐시가 따뜻한 상태이므로 최초 설치의 cold load로
+  해석하지 않는다. ASR 준비 역시 파일 스트리밍 시계가 시작되기 전에 끝냈다.
+- 테스트 전용 UserDefaults에 방향·분야를 명시했다. 실제 SpeechTranscriber
+  locale, Apple 번역 언어쌍, HY 요청 direction/domain이 선택값과 일치했다.
+- 파일을 100ms 단위로 해당 오디오 끝 시각에 맞춰 전달했다. 프로덕션
+  AudioPump의 nonisolated tap factory와 외부 큐 콜백을 그대로 사용했다.
+- 프로덕션 CaptionModel.receive, 번역 큐, 확정 문장만 보완하는 경로,
+  제한된 문맥 묶음, stop을 실행했다. 모델 상태를 20ms 간격과 ASR 이벤트
+  시점에 관측했다. 전체 세션 원문을 보완 프롬프트로 전달하지 않았다.
+- 실제 Apple 번역은 프로덕션 TranslationSessionLease로 호출했다. 이 검사에서는
+  호출마다 lease를 생성/정리하며, 앱은 빠른 번역 lease를 재사용한다.
+- 단일 보완 요청의 previousSentence는 모두 비어 있었다. 문맥은 별도 배경
+  프롬프트 대신 기존 문맥 경로가 명시적으로 합친 현재 ASR 원문으로 번역했다.
+- 최종 자막의 exact source/target 쌍이 실제 완료된 Apple 또는 HY 호출에
+  존재하는지 확인했다. 문맥 표시도 실제 구성원 ASR 원문을 유지해야 통과한다.
+
+관측 결과
+
+fixture           파일길이  ASR초안/최종  HY완료  최종문맥묶음  최대대기
+english-general   4.820s    20 / 2       3       1             1
+english-it        6.154s    26 / 2       3       1             2
+korean-general    5.617s    37 / 1       1       0             1
+korean-it         6.560s    44 / 1       1       0             1
+
+모든 파일에서 회색 자막이 관측됐고, 입력 누락·입력 오류는 없었다. 정지 후
+모델 대기열, 실제 Apple 호출, Apple 네이티브 await, 실제 로컬 생성 호출은
+모두 0이었다. 한국어 파일은 각 두 문장이 ASR 최종 구절 하나로 묶였으므로,
+한국어 방향의 다중 ASR 구절 문맥 묶음까지 검증했다고 주장하지 않는다.
+
+실제 HY 호출 8개의 네이티브 총 시간은 93.824~241.360ms, TTFT는
+30.267~52.662ms였다. 이는 프롬프트 처리와 생성 시간이며 ASR 대기나
+Apple 번역, 파일 입력, 화면 그리기를 포함하는 전체 자막 지연이 아니다.
+
+해당 파일 ASR 오디오 구간 끝→정확한 현재 원문 자막 최초 관측 시간:
+fixture           전체현재표본 중앙값  HY최종표본 중앙값/최대   HY최종표본수
+english-general   0.629s                1.109s / 1.164s         2
+english-it        0.596s                0.862s / 0.894s         2
+korean-general    0.621s                0.661s / 0.661s         1
+korean-it         0.321s                0.321s / 0.321s         1
+
+전체현재표본은 해당 수정 버전의 Apple 초안도 포함한다. HY 최종 표본은
+sourceIsFinal, translatedRevision==revision, 문맥 대기 없음, 완료된 HY 요청의
+원문/번역 일치를 모두 요구한다. 다른 구절이 바뀔 때 다시 관측한 오래된 자막은
+새 지연 표본으로 세지 않는다. Apple 초안과 HY 결과의 문자열이 같아도 HY가
+최종으로 보인 최초 시각은 따로 집계했다. 해당 보정은 보존된 원시 사건으로
+계산했으며 JSON의 postprocessing_note에 명시했다. 화면이 한 actor 처리에서
+곧바로 문맥 대기로 바뀐 개별 결과는 별도 확정 표시 표본에 잡히지 않을 수 있다.
+
+이 시간은 마이크 하드웨어 지연과 SwiftUI 그리기를 포함하지 않는다. 실제
+마이크·사람 음성·다른 작업 병행의 성능이나 정확도를 이 검사로 입증하지 않는다.
+
+의미 검토와 남은 한계
+
+영어 일반과 한국어 일반은 합성 예문의 내일 오후 만남, 수정 계획서, 공동
+검토라는 핵심 관계를 유지했다. 한국어의 생략된 주어가 영어에서 I/we로
+구체화되므로 실제 화자의 의도를 보장하는 결과는 아니다.
+
+영어 IT 실제 ASR:
+  The deployment is complete, but we must keep the backup.
+  If the API is slow, roll back the update.
+Apple의 마지막 문장 번역:
+  API가 느리면 업데이트를 되돌리십시오.
+HY 문맥 표시:
+  배포는 완료되었지만, 백업은 계속 유지해야 합니다. API가 느리다면 업데이트를 취소해야 합니다.
+백업 유지와 API 조건은 보존했지만, rollback을 업데이트 취소로 옮겨 이전 상태
+복구라는 기술적 의미가 약해졌다. 이 사례에서는 보완이 Apple보다 항상 좋다고
+볼 수 없다. IT 분야 선택과 숫자/형식 검사는 이러한 의미 차이를 판정하지 못한다.
+
+한국어 IT 합성 원문:
+  배포는 끝났지만 백업은 유지해야 합니다. API의 응답이 느리면 업데이트를 되돌려 주세요.
+실제 ASR:
+  제 포는 끝났지만 백업은 유지해야 합니다. API의 응답이 누리면 업데이트를 되돌려주세요.
+HY 최종 표시:
+  My project is finished, but I still need to keep the backup. If the API responds negatively, please revert the update.
+배포/느리면이 인식 단계에서 잘못됐고, 보완 모델은 이를 project/negatively로
+해석해 의미가 틀렸다. 첫 실행과 재실행에서 같은 인식 오류가 관측됐다.
+코드의 임의 치환이나 합성 원문 삽입으로 오류를 덮지 않았다. 실제 인식 원문은
+그대로 기록했으며, 상태 검사 통과를 의미 정확도 통과로 해석하지 않는다.

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "model": "Tencent Hy-MT2-1.8B",
+  "quantization": "Q6_K",
+  "repository": "tencent/Hy-MT2-1.8B-GGUF",
+  "revision": "a0c709d9fac510f2c807aa3af52872340dc37a4a",
+  "filename": "Hy-MT2-1.8B-Q6_K.gguf",
+  "downloadURL": "https://huggingface.co/tencent/Hy-MT2-1.8B-GGUF/resolve/a0c709d9fac510f2c807aa3af52872340dc37a4a/Hy-MT2-1.8B-Q6_K.gguf",
+  "byteCount": 1474785120,
+  "sha256Constant": "Sources/LiveKoCaption/LocalModelStore.swift: LocalModelManifest.hyMT2.sha256",
+  "digestSource": "https://huggingface.co/api/models/tencent/Hy-MT2-1.8B-GGUF/revision/a0c709d9fac510f2c807aa3af52872340dc37a4a?blobs=true",
+  "license": "Apache-2.0",
+  "licenseSource": "https://huggingface.co/tencent/Hy-MT2-1.8B-GGUF/raw/a0c709d9fac510f2c807aa3af52872340dc37a4a/LICENSE.txt",
+  "installedRelativePath": "Live Korean Captions/Models/Hy-MT2-1.8B-Q6_K.gguf",
+  "downloadPolicy": "Explicit user request only. File size and streaming SHA-256 verification precede atomic installation. No model weights are bundled in Git. Inference remains local."
+}

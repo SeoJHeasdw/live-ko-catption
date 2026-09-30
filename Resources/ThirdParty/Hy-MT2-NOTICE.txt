@@ -1,0 +1,10 @@
+Optional translation model: Tencent Hy-MT2-1.8B, Q6_K GGUF
+Copyright (C) 2026 Tencent. All rights reserved.
+License: Apache License, Version 2.0 (see Hy-MT2-LICENSE.txt).
+
+Upstream project: https://github.com/Tencent-Hunyuan/Hy-MT2
+Official model repository: https://huggingface.co/tencent/Hy-MT2-1.8B-GGUF
+Pinned revision: a0c709d9fac510f2c807aa3af52872340dc37a4a
+Model file: Hy-MT2-1.8B-Q6_K.gguf
+The app downloads the upstream quantized model unchanged, only when requested.
+The model weights are not included in the app's source repository.

@@ -83,7 +83,8 @@ public struct CaptionTimeline: Sendable {
 
     @discardableResult
     public mutating func accept(source: String, audioStart: Double,
-                                audioEnd: Double, isFinal: Bool) -> TranslationJob? {
+                                audioEnd: Double, isFinal: Bool,
+                                requireFinalTranslation: Bool = false) -> TranslationJob? {
         let text = source.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, audioStart.isFinite, audioEnd.isFinite,
               audioStart >= 0, audioEnd >= audioStart else { return nil }
@@ -116,6 +117,11 @@ public struct CaptionTimeline: Sendable {
                 segments[index].translationError = nil
             }
             segments[index].sourceIsFinal = isFinal
+            if isFinal, requireFinalTranslation,
+               segments[index].translatedRevision == segments[index].revision {
+                // Keep the readable draft, but wait for the final-only stage.
+                segments[index].translatedRevision = nil
+            }
             segments[index].audioStart = audioStart
             segments[index].audioEnd = audioEnd
             for duplicate in matching.dropFirst().reversed() {
@@ -162,6 +168,21 @@ public struct CaptionTimeline: Sendable {
             $0.id == job.segmentID && $0.revision == job.revision && $0.source == job.source &&
                 $0.translatedRevision != job.revision
         }
+    }
+
+    /// A fast result can be read while an optional final-only refinement runs.
+    /// It never finalizes or reopens an already finalized revision.
+    @discardableResult
+    public mutating func preview(translation: String, for job: TranslationJob) -> Bool {
+        guard job.isSourceFinal, needsTranslation(job), let index = segments.firstIndex(where: {
+            $0.id == job.segmentID && $0.revision == job.revision && $0.source == job.source
+        }), segments[index].sourceIsFinal else { return false }
+        let text = translation.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return false }
+        segments[index].translation = text
+        segments[index].translatedRevision = nil
+        segments[index].translationError = nil
+        return true
     }
 
     @discardableResult

@@ -1,0 +1,33 @@
+Local translation comparison fixtures
+
+24 synthetic examples: 12 English→Korean and 12 Korean→English, with six general
+and six IT cases in each direction. These are authored examples, not private user
+transcripts or a representative quality benchmark. They do not test speech
+recognition, live microphone delay, long-session thermals, or fan noise.
+
+Schema
+- direction and domain use CaptionCore enum raw values.
+- previousSentence, when present, is exactly one short preceding source sentence.
+  Give it to the local model as context, but request translation of source only.
+  An Apple source-only baseline does not receive equivalent separate context;
+  identify that difference in reports rather than attributing all gains to model
+  size. If a context-inclusive Apple comparison is added, label it separately.
+- goldenMeaning describes facts and relationships to check, not a reference
+  string for exact matching. Equivalent natural translations are acceptable.
+- requiredTerms are terminology review hints. Compare meaning and allowed
+  equivalents, not raw case-sensitive substring presence. In these fixtures the
+  fixed precision/recall classifier meanings are deliberate.
+- expectedNumbers describes values, units, and times to preserve semantically.
+  Localized forms such as 120밀리초, 120 ms, 오전 9시 30분, and 9:30 a.m. are valid.
+- ambiguityNote explains the intended context choice and facts not to invent.
+
+Review each output for meaning preservation, naturalness, domain terminology,
+and added/omitted facts. Negation, conditional scope, self-corrections, denominator
+definitions, units, dates, and event order matter more than surface wording.
+Do not treat a fluent but false caption as an improvement. Do not mark ambiguity
+as solved if the output simply copies the previous sentence into the caption.
+
+Report actual warm/cold timing measurements separately from language quality.
+Both a source-only local run and a context-enabled local run can be useful, so
+the context benefit and model benefit are visible. No quality percentages or
+latency claims are established by this fixture file alone.

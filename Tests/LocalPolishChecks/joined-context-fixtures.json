@@ -1,0 +1,62 @@
+[
+  {
+    "id": "joined-en-bank-2-sentences",
+    "source": "We rented a canoe for the afternoon. I'll meet you by the bank after lunch.",
+    "direction": "englishToKorean",
+    "domain": "general",
+    "goldenMeaning": "오후에 카누를 빌렸고, 점심 후 강둑 근처에서 만나겠다는 두 문장을 모두 번역한다. 카누 문맥에서 bank는 강둑이다. 오후와 점심 이후라는 시간을 유지한다.",
+    "ambiguityNote": "이 검사는 앞 문장을 배경 메타데이터로 숨기지 않는다. source의 두 문장 모두가 실제 번역 대상이다."
+  },
+  {
+    "id": "joined-ko-bank-2-sentences",
+    "source": "오후에 카누를 빌렸어요. 점심을 먹고 강둑 근처에서 만나요.",
+    "direction": "koreanToEnglish",
+    "domain": "general",
+    "goldenMeaning": "The speaker rented a canoe for the afternoon and proposes meeting near the river bank after lunch. Translate both sentences, preserving the location and times."
+  },
+  {
+    "id": "joined-en-duck-2-sentences",
+    "source": "We were watching a dodgeball match. I saw her duck just before the ball hit the wall.",
+    "direction": "englishToKorean",
+    "domain": "general",
+    "goldenMeaning": "피구 경기를 보고 있었고, 공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 모습을 보았다는 뜻이다. 두 문장을 모두 번역한다. 종목, 몸을 숙이는 동작, 공이 맞은 대상과 사건 순서를 보존한다.",
+    "ambiguityNote": "duck는 몸을 숙이는 동사다. 오리, 숨기, 야구 경기를 새로 만들지 않는다."
+  },
+  {
+    "id": "joined-ko-duck-2-sentences",
+    "source": "피구 경기를 보고 있었어요. 공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 걸 봤어요.",
+    "direction": "koreanToEnglish",
+    "domain": "general",
+    "goldenMeaning": "The speaker was watching dodgeball and saw her duck/bend down just before the ball hit the wall. Translate both sentences; preserve dodgeball, the action, event order, and the wall as the impact target."
+  },
+  {
+    "id": "joined-en-classifier-3-sentences",
+    "source": "We are evaluating a spam classifier. Precision is the share of flagged messages that are actually spam. Recall is the share of all spam messages that we catch.",
+    "direction": "englishToKorean",
+    "domain": "it",
+    "goldenMeaning": "스팸 분류기를 평가한다. 정밀도는 스팸으로 탐지한 메시지 중 실제 스팸의 비율이고, 재현율은 전체 실제 스팸 중 탐지한 스팸의 비율이다. 세 문장과 서로 다른 두 지표의 분모를 모두 유지한다.",
+    "requiredTerms": ["정밀도", "재현율"]
+  },
+  {
+    "id": "joined-ko-classifier-3-sentences",
+    "source": "스팸 분류기를 평가하고 있어요. 정밀도는 스팸으로 탐지한 메시지 중 실제 스팸의 비율입니다. 재현율은 전체 실제 스팸 중 우리가 탐지한 스팸의 비율입니다.",
+    "direction": "koreanToEnglish",
+    "domain": "it",
+    "goldenMeaning": "We are evaluating a spam classifier. Precision measures actual spam among messages flagged as spam; recall measures detected spam among all actual spam. Preserve all three sentences and the distinct denominators.",
+    "requiredTerms": ["precision", "recall"]
+  },
+  {
+    "id": "joined-en-rollback-4-sentences",
+    "source": "This release changes only application code. If the deployment fails, roll back to the previous version. Do not drop the database. We do not need to restart the service unless the configuration changes.",
+    "direction": "englishToKorean",
+    "domain": "it",
+    "goldenMeaning": "이번 릴리스는 애플리케이션 코드만 변경한다. 배포 실패 시 이전 버전으로 롤백한다. 데이터베이스는 삭제하지 않는다. 설정이 바뀌지 않는 한 서비스를 재시작할 필요가 없다. 네 문장의 범위, 조건, 부정과 예외를 보존한다."
+  },
+  {
+    "id": "joined-ko-rollback-4-sentences",
+    "source": "이번 릴리스는 애플리케이션 코드만 변경합니다. 배포에 실패하면 이전 버전으로 롤백하세요. 데이터베이스는 삭제하지 마세요. 설정이 바뀌지 않는 한 서비스를 다시 시작할 필요가 없습니다.",
+    "direction": "koreanToEnglish",
+    "domain": "it",
+    "goldenMeaning": "This release changes application code only. If deployment fails, roll back to the previous version. Keep the database intact. There is no need to restart the service unless configuration changes. Preserve all four sentences, conditions, and negations."
+  }
+]

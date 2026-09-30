@@ -15,6 +15,30 @@ final class CaptionModel {
     private var storedDirection: CaptionDirection
     private var storedDomain: TranslationDomain
     private let preferencesDefaults: UserDefaults
+    private var storedPolishEnabled: Bool
+    var polishEnabled: Bool {
+        get { storedPolishEnabled }
+        set {
+            guard newValue != storedPolishEnabled, phase == .idle, !isPreparing,
+                  !isPreview, !isUISoak, !hasPendingTranslations else { return }
+            storedPolishEnabled = newValue
+            localPolishReady = false
+            preferencesDefaults.set(newValue, forKey: "localPolishEnabled")
+            localPreparationID = nil
+            if newValue { Task { [weak self] in await self?.prepareLocalModel() } }
+            else { localEngine.unload(); isPreparingLocalModel = false; localPolishMessage = "빠른 번역 사용" }
+        }
+    }
+    var isPreparingLocalModel = false
+    var localPolishMessage = "문맥 다듬기 꺼짐"
+    var localPolishMilliseconds: Double?
+    private var localPreparationID: UUID?
+    private var localPolishDegraded = false
+    private var localPolishReady = false
+    private var finalFastBaselines: [UUID: (revision: Int, translation: String)] = [:]
+    private var activeFastBaseline: (job: TranslationJob, translation: String, worker: UUID)?
+    private var polishTask: Task<String, any Error>?
+    private let localEngine: LocalTranslationEngine
     var selectedDirection: CaptionDirection {
         get { storedDirection }
         set {
@@ -105,6 +129,8 @@ final class CaptionModel {
     private let translationOverride: (@MainActor (String, Bool) async throws -> String)?
     private let microphoneAccessOverride: (@MainActor () async -> Bool)?
     private let readinessOverride: (@MainActor (CaptionDirection) async throws -> Bool)?
+    private let polishOverride: (@MainActor (LocalTranslationRequest) async throws -> String)?
+    private let polishTimeoutSeconds: Double
     private var readinessID: UUID?
     private var runHasAudio = false
     private var lastDraftTranslation: TimeInterval = 0
@@ -143,11 +169,11 @@ final class CaptionModel {
         guard !inputWarnings.isEmpty else { return text }
         return text + "\n입력 관련 알림 · 누락 가능성\n" + inputWarnings.map { "- \($0)" }.joined(separator: "\n") + "\n"
     }
-    var canStart: Bool { assetsReady && phase == .idle && !isChecking && !isPreparing && !isPreview && !hasPendingTranslations }
+    var canStart: Bool { assetsReady && phase == .idle && !isChecking && !isPreparing && !isPreparingLocalModel && (!polishEnabled || localPolishReady) && !isPreview && !hasPendingTranslations }
     var canChangeSessionSettings: Bool {
-        phase == .idle && !isPreparing && !isPreview && !isUISoak && !hasContent && !hasPendingTranslations
+        phase == .idle && !isPreparing && !isPreparingLocalModel && !isPreview && !isUISoak && !hasContent && !hasPendingTranslations
     }
-    var isBusy: Bool { phase == .starting || phase == .stopping || isPreparing }
+    var isBusy: Bool { phase == .starting || phase == .stopping || isPreparing || isPreparingLocalModel }
     var isListening: Bool { phase == .listening }
     var canStop: Bool { phase == .listening || phase == .starting }
     var hasPendingTranslations: Bool { queuedTranslations > 0 || workerTask != nil }
@@ -167,11 +193,18 @@ final class CaptionModel {
     init(preview: Bool = false, translationOverride: (@MainActor (String, Bool) async throws -> String)? = nil,
          microphoneAccessOverride: (@MainActor () async -> Bool)? = nil,
          readinessOverride: (@MainActor (CaptionDirection) async throws -> Bool)? = nil,
-         preferencesDefaults: UserDefaults = .standard) {
+         preferencesDefaults: UserDefaults = .standard,
+         polishOverride: (@MainActor (LocalTranslationRequest) async throws -> String)? = nil,
+         polishTimeoutSeconds: Double = 1.8,
+         localEngine: LocalTranslationEngine? = nil) {
         self.translationOverride = translationOverride
         self.microphoneAccessOverride = microphoneAccessOverride
         self.readinessOverride = readinessOverride
+        self.polishOverride = polishOverride
+        self.polishTimeoutSeconds = polishTimeoutSeconds
+        self.localEngine = localEngine ?? LocalTranslationEngine()
         self.preferencesDefaults = preferencesDefaults
+        storedPolishEnabled = !preview && translationOverride == nil && preferencesDefaults.bool(forKey: "localPolishEnabled")
         storedDirection = preview ? .englishToKorean :
             CaptionDirection(rawValue: preferencesDefaults.string(forKey: CaptionDirection.preferenceKey) ?? "") ?? .englishToKorean
         storedDomain = preview ? .general :
@@ -230,6 +263,42 @@ final class CaptionModel {
         }
     }
 
+    func prepareLocalModel() async {
+        guard polishEnabled, !isPreview, !isUISoak, !isPreparingLocalModel else { return }
+        if polishOverride != nil { localPolishReady = true; localPolishMessage = "보완 번역 준비됨"; return }
+        let token = UUID()
+        localPreparationID = token
+        isPreparingLocalModel = true
+        localPolishMessage = "문맥 다듬기 모델 준비 중"
+        defer { if localPreparationID == token { isPreparingLocalModel = false } }
+        await LocalModelStore.shared.refresh()
+        guard localPreparationID == token, polishEnabled else { return }
+        guard let modelURL = LocalModelStore.shared.modelURL else {
+            localEngine.unload()
+            storedPolishEnabled = false
+            preferencesDefaults.set(false, forKey: "localPolishEnabled")
+            localPolishMessage = "문맥 다듬기 모델을 다운로드해 주세요."
+            return
+        }
+        do {
+            // Loading and the first Metal graph run before microphone capture.
+            // No main-thread model loading or first-caption cold initialization.
+            try await localEngine.prepare(modelURL: modelURL)
+            guard localPreparationID == token, polishEnabled else { return }
+            _ = try await localEngine.translate(LocalTranslationRequest(source: "Hello.",
+                direction: .englishToKorean), timeoutMilliseconds: 3_000)
+            guard localPreparationID == token, polishEnabled else { return }
+            localPolishReady = true
+            localPolishMessage = "문맥 다듬기 준비됨 · 로컬 실행"
+        } catch {
+            guard localPreparationID == token else { return }
+            localEngine.unload()
+            storedPolishEnabled = false
+            preferencesDefaults.set(false, forKey: "localPolishEnabled")
+            localPolishMessage = error.localizedDescription
+        }
+    }
+
     private func readinessIsCurrent(_ token: UUID, direction: CaptionDirection) -> Bool {
         readinessID == token && selectedDirection == direction && !Task.isCancelled
     }
@@ -285,6 +354,8 @@ final class CaptionModel {
         runHasAudio = false
         timeline.resetContext()
         contextTimedOut = false
+        localPolishDegraded = false
+        finalFastBaselines.removeAll()
         lastDraftTranslation = 0
         let requestedDeviceUID = selectedDeviceUID
         refreshDevices()
@@ -457,6 +528,13 @@ final class CaptionModel {
     }
 
     private func finishRun() {
+        localEngine.cancelActive()
+        polishTask?.cancel(); polishTask = nil
+        if let baseline = activeFastBaseline, timeline.isCurrent(baseline.job) {
+            timeline.apply(translation: baseline.translation, for: baseline.job)
+        }
+        activeFastBaseline = nil
+        finalFastBaselines.removeAll()
         analysisTask?.cancel(); analysisTask = nil
         resultTask?.cancel(); resultTask = nil
         if let analyzer { Task { await analyzer.cancelAndFinishNow() } }
@@ -492,6 +570,12 @@ final class CaptionModel {
         contextSession?.retire(); contextSession = nil
         contextTask?.cancel(); contextTask = nil
         activeContext = nil
+        localEngine.cancelActive()
+        polishTask?.cancel(); polishTask = nil
+        activeFastBaseline = nil
+        finalFastBaselines.removeAll()
+        localPolishDegraded = false
+        localPolishMilliseconds = nil
         contextJobs.removeAll()
         timeline = CaptionTimeline()
         inputWarnings.removeAll()
@@ -572,7 +656,15 @@ final class CaptionModel {
     /// The same production state/scheduler path is exercised by the deterministic
     /// integration checks, with an injected translator and no microphone access.
     func receive(source: String, audioStart: Double, audioEnd: Double, isFinal: Bool) {
-        if let job = timeline.accept(source: source, audioStart: audioStart, audioEnd: audioEnd, isFinal: isFinal) {
+        let reusable = isFinal && shouldPolish ? segments.suffix(6).filter {
+            !$0.sourceIsFinal && $0.translatedRevision == $0.revision && $0.translation != nil
+        } : []
+        if let job = timeline.accept(source: source, audioStart: audioStart, audioEnd: audioEnd, isFinal: isFinal,
+                                     requireFinalTranslation: shouldPolish) {
+            if let previous = reusable.first(where: { $0.id == job.segmentID && $0.revision == job.revision && $0.source == job.source }),
+               let translation = previous.translation {
+                finalFastBaselines[job.segmentID] = (job.revision, translation)
+            }
             enqueue(job)
         }
         if isFinal {
@@ -594,6 +686,13 @@ final class CaptionModel {
     }
 
     private func enqueue(_ job: TranslationJob) {
+        if job.isSourceFinal, let activeTranslation, let polishTask,
+           activeTranslation.segmentID != job.segmentID || activeTranslation.revision != job.revision {
+            // Optional refinement yields to a newly finalized source. Its exact
+            // fast baseline is finalized before the next Apple job runs.
+            polishTask.cancel()
+            localEngine.cancelActive()
+        }
         if job.isSourceFinal, let activeTranslation, !activeTranslation.isSourceFinal,
            activeTranslation.segmentID != job.segmentID || activeTranslation.revision != job.revision {
             if timeline.needsTranslation(activeTranslation) { translationQueue.enqueue(activeTranslation) }
@@ -653,16 +752,32 @@ final class CaptionModel {
                 if let contextJob = contextJobs.first, !contextTimedOut, contextCorrectionEnabled {
                     contextJobs.removeFirst()
                     activeContext = contextJob
-                    let contextSession = TranslationSessionLease(installedSource: sourceLanguage,
+                    let useLocal = shouldPolish
+                    let contextSession = useLocal ? nil : TranslationSessionLease(installedSource: sourceLanguage,
                         target: targetLanguage, preferredStrategy: .highFidelity)
                     self.contextSession = contextSession
                     queuedTranslations = contextJobs.count
                     do {
                         let override = translationOverride
+                        let baseline = contextJob.members.compactMap { member in
+                            segments.first(where: { $0.id == member.segmentID && $0.revision == member.revision })?.translation
+                        }.joined(separator: " ")
+                        let request = LocalTranslationRequest(source: contextJob.source, baseline: baseline,
+                            direction: selectedDirection, domain: translationDomain)
+                        let engine = localEngine
+                        let polisher = polishOverride
                         let task = Task {
-                            try await OperationDeadline.run(seconds: 4, name: "문맥 보정",
-                                onTimeout: { contextSession.retire() }) {
+                            try await OperationDeadline.run(seconds: useLocal ? self.polishTimeoutSeconds : 4, name: "문맥 보정",
+                                onTimeout: { contextSession?.retire(); if useLocal { engine.cancelActive() } }) {
+                                if useLocal {
+                                    let text: String
+                                    if let polisher { text = try await polisher(request) }
+                                    else { text = try await engine.translate(request).text }
+                                    guard request.accepts(text) else { throw LocalTranslationError.unsafeOutput }
+                                    return text
+                                }
                                 if let override { return try await override(contextJob.source, true) }
+                                guard let contextSession else { throw LocalTranslationError.notPrepared }
                                 return try await contextSession.translate(contextJob.source)
                             }
                         }
@@ -674,7 +789,10 @@ final class CaptionModel {
                         guard workerID == token, !Task.isCancelled else { return }
                         // Context is optional: retain the already translated exact
                         // source revisions and prioritize subsequent live speech.
-                        if error is OperationDeadline.Expired || error is TranslationSessionLease.CapacityReached {
+                        let localTimeout: Bool
+                        if case LocalTranslationError.native(2, _) = error { localTimeout = true }
+                        else { localTimeout = false }
+                        if localTimeout || error is OperationDeadline.Expired || error is TranslationSessionLease.CapacityReached {
                             contextTimedOut = true
                             contextJobs.removeAll()
                             message = "문맥 보정이 지연돼 이번 실행에서는 문장별 번역을 유지합니다. 다시 시작하면 문맥 보정을 다시 시도합니다."
@@ -696,12 +814,15 @@ final class CaptionModel {
             activeTranslation = job
             do {
                 let override = translationOverride
+                let cached = finalFastBaselines.removeValue(forKey: job.segmentID)
                 let task = Task {
-                    try await OperationDeadline.run(seconds: 6, name: "자막 번역", onTimeout: { session?.retire() }) {
+                    let baseline = try await OperationDeadline.run(seconds: 6, name: "자막 번역", onTimeout: { session?.retire() }) {
+                        if let cached, cached.revision == job.revision { return cached.translation }
                         if let override { return try await override(job.source, false) }
                         guard let session else { throw CancellationError() }
                         return try await session.translate(job.source)
                     }
+                    return try await self.refineFinal(baseline, for: job, worker: token)
                 }
                 translationTask = task
                 let translation = try await task.value
@@ -751,6 +872,70 @@ final class CaptionModel {
             activeTranslation = nil; translationTask = nil
         }
         queuedTranslations = 0
+    }
+
+    private var shouldPolish: Bool { polishEnabled && !localPolishDegraded && !isPreview && !isUISoak }
+
+    private func refineFinal(_ baseline: String, for job: TranslationJob, worker token: UUID) async throws -> String {
+        guard shouldPolish, timeline.isCurrent(job),
+              let segment = segments.first(where: { $0.id == job.segmentID }), segment.sourceIsFinal else { return baseline }
+        if translationQueue.hasFinal(excluding: job) {
+            localPolishMessage = "새 문장을 우선해 빠른 번역을 유지했습니다."
+            return baseline
+        }
+        let finalJob = TranslationJob(segmentID: job.segmentID, revision: job.revision,
+            source: job.source, isSourceFinal: true)
+        activeTranslation = finalJob
+        guard timeline.preview(translation: baseline, for: finalJob) else { return baseline }
+        activeFastBaseline = (finalJob, baseline, token)
+        defer {
+            if activeFastBaseline?.worker == token, activeFastBaseline?.job == finalJob {
+                activeFastBaseline = nil
+                polishTask = nil
+            }
+        }
+        // Separate background prompts leaked earlier sentences in actual QA.
+        // Adjacent context is translated only as an explicit bounded group by
+        // the existing context lane, preserving all member source records.
+        let request = LocalTranslationRequest(source: job.source, baseline: baseline,
+            direction: selectedDirection, domain: translationDomain)
+        guard request.isWithinBudget else { return baseline }
+        do {
+            let engine = localEngine
+            let polisher = polishOverride
+            let started = ProcessInfo.processInfo.systemUptime
+            let task = Task {
+                try await OperationDeadline.run(seconds: self.polishTimeoutSeconds, name: "문맥 다듬기",
+                    onTimeout: { engine.cancelActive() }) {
+                    if let polisher { return try await polisher(request) }
+                    return try await engine.translate(request).text
+                }
+            }
+            polishTask = task
+            let text = try await task.value
+            try Task.checkCancellation()
+            guard workerID == token, timeline.isCurrent(job) else { throw CancellationError() }
+            guard request.accepts(text) else {
+                localPolishMessage = "이번 구절은 빠른 번역을 유지했습니다."
+                return baseline
+            }
+            localPolishMilliseconds = (ProcessInfo.processInfo.systemUptime - started) * 1_000
+            localPolishMessage = "문맥 다듬기 사용 중 · \(translationDomain.label)"
+            return text
+        } catch {
+            guard workerID == token, !Task.isCancelled else { throw CancellationError() }
+            if error is CancellationError, polishTask?.isCancelled == true {
+                localPolishMessage = "새 문장을 우선해 빠른 번역을 유지했습니다."
+            } else if case LocalTranslationError.unsafeOutput = error {
+                localPolishMessage = "이번 구절은 빠른 번역을 유지했습니다."
+            } else {
+                localPolishDegraded = true
+                localEngine.cancelActive()
+                localPolishMessage = "보완이 지연되거나 실패해 이번 실행은 빠른 번역을 유지합니다."
+                message = localPolishMessage
+            }
+            return baseline
+        }
     }
 
     private func loadPreview() {

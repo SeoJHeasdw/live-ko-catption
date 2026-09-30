@@ -82,6 +82,81 @@ func checkLateContextGapInsertion(isFinal: Bool) throws {
 }
 
 let checks: [(String, () throws -> Void)] = [
+    ("a final baseline preview stays gray and cannot reopen completed captions", {
+        var timeline = CaptionTimeline()
+        let partial = try require(timeline.accept(source: "Still speaking", audioStart: 0, audioEnd: 1, isFinal: false))
+        try expect(!timeline.preview(translation: "아직 말하는 중입니다.", for: partial),
+            "Optional final preview accepted a provisional source")
+        let final = try require(timeline.accept(source: "Finished speaking.", audioStart: 0, audioEnd: 1, isFinal: true))
+        try expect(!timeline.preview(translation: "예전 원문 번역", for: partial), "Stale preview changed a newer final revision")
+        try expect(!timeline.preview(translation: " \n ", for: final), "Empty preview hid the current translation")
+        try expect(timeline.preview(translation: "빠르게 생성한 번역입니다.", for: final), "Current final baseline could not be shown")
+        try expect(timeline.segments[0].sourceIsFinal && !timeline.segments[0].isFinal &&
+            timeline.needsTranslation(final) && timeline.segments[0].translation == "빠르게 생성한 번역입니다.",
+            "Visible pending baseline was incorrectly finalized")
+        try expect(timeline.apply(translation: "다듬기를 마친 번역입니다.", for: final), "Exact final refinement could not be applied")
+        let completed = timeline.segments[0]
+        try expect(completed.isFinal && !timeline.preview(translation: "뒤늦은 중간 번역", for: final),
+            "A completed final was reopened by a later preview")
+        try expect(timeline.segments[0] == completed, "Rejected preview changed completed text or finality")
+    }),
+    ("optional refinement reuses an unchanged partial baseline while finality waits", {
+        var timeline = CaptionTimeline()
+        let partial = try require(timeline.accept(source: "The same sentence.", audioStart: 0, audioEnd: 1, isFinal: false))
+        try expect(timeline.apply(translation: "같은 문장입니다.", for: partial), "Partial baseline could not be translated")
+        let final = try require(timeline.accept(source: "The same sentence.", audioStart: 0, audioEnd: 1,
+            isFinal: true, requireFinalTranslation: true))
+        try expect(final.segmentID == partial.segmentID && final.revision == partial.revision && final.isSourceFinal,
+            "Confirming unchanged text invented a different source revision")
+        try expect(timeline.segments[0].translation == "같은 문장입니다." && !timeline.segments[0].isFinal && timeline.needsTranslation(final),
+            "Unchanged final lost its fast baseline or skipped required final refinement")
+        try expect(timeline.preview(translation: "같은 문장입니다.", for: final), "Cached baseline could not be used as a pending preview")
+        try expect(timeline.apply(translation: "동일한 문장입니다.", for: final) && timeline.segments[0].isFinal,
+            "Confirmed unchanged source could not finish optional refinement")
+    }),
+    ("bounded IT context guides classifier terminology without rewriting ordinary recall", {
+        let classifier = LocalTranslationRequest(source: "Recall improved, while precision stayed the same.",
+            direction: .englishToKorean, domain: .it, previousSentence: "We are comparing a binary classifier.")
+        let classifierTerms = Dictionary(uniqueKeysWithValues: classifier.relevantTerms)
+        try expect(classifierTerms["recall"] == "재현율" && classifierTerms["precision"] == "정밀도",
+            "Classifier context did not supply the two correct metric translations")
+        let ordinary = LocalTranslationRequest(source: "I recall the planning meeting.",
+            direction: .englishToKorean, domain: .it, previousSentence: "We are discussing what happened last week.")
+        try expect(!ordinary.relevantTerms.contains { $0.0 == "recall" },
+            "Ordinary remembering was forced into a classifier metric")
+        let general = LocalTranslationRequest(source: classifier.source, direction: .englishToKorean,
+            domain: .general, previousSentence: classifier.previousSentence)
+        try expect(!general.prompt.contains("Reference translations:"), "General mode silently applied the IT glossary")
+        let reverse = LocalTranslationRequest(source: "캐시를 비우고 지연 시간을 확인하세요.", direction: .koreanToEnglish, domain: .it)
+        let reverseTerms = Dictionary(uniqueKeysWithValues: reverse.relevantTerms)
+        try expect(reverseTerms["캐시"] == "cache" && reverseTerms["지연 시간"] == "latency",
+            "Reverse glossary failed to recognize Korean nouns followed by particles")
+        let boundary = LocalTranslationRequest(source: "The response is uncached.", direction: .englishToKorean, domain: .it)
+        try expect(!boundary.relevantTerms.contains { $0.0 == "cache" }, "Glossary matched a word inside an unrelated larger word")
+        let longContext = LocalTranslationRequest(source: "Current source.", direction: .englishToKorean,
+            previousSentence: String(repeating: "older context ", count: 100) + "most recent sentence")
+        try expect(longContext.previousSentence.count <= 300 && longContext.previousSentence.hasSuffix("most recent sentence"),
+            "Context budget lost recent information or admitted unbounded history")
+        let oversized = LocalTranslationRequest(source: String(repeating: "a", count: 1_001), direction: .englishToKorean)
+        try expect(!oversized.isWithinBudget, "Local refinement admitted an oversized source")
+    }),
+    ("optional output checks reject obvious number and language corruption", {
+        let request = LocalTranslationRequest(source: "The error rate is 2.5 percent, and latency is 120 milliseconds.",
+            baseline: "오류율은 2.5%이며 지연 시간은 120밀리초입니다.", direction: .englishToKorean, domain: .it)
+        try expect(request.accepts("오류율은 2.50%이고 지연 시간은 120 ms입니다."),
+            "Equivalent numeric formatting was rejected")
+        try expect(!request.accepts("오류율은 25%이고 지연 시간은 120밀리초입니다."), "Corrupted decimal was accepted")
+        try expect(!request.accepts("오류율은 2.5%입니다."), "Omitted latency number was accepted")
+        try expect(!request.accepts("오류율은 2.5%이고 지연 시간은 120밀리초이며 재시도는 3번입니다."),
+            "Invented number was accepted")
+        try expect(!request.accepts("The error rate is 2.5 percent and latency is 120 milliseconds."),
+            "English-only output was accepted for a Korean caption")
+        try expect(!request.accepts("오류율 2.5%, 지연 120밀리초 <｜hy_Assistant｜>") && !request.accepts(""),
+            "Model control tokens or empty output entered the caption")
+        let reverse = LocalTranslationRequest(source: "재시도는 3번입니다.", baseline: "Retry 3 times.", direction: .koreanToEnglish)
+        try expect(reverse.accepts("There are 3 retries.") && !reverse.accepts("재시도는 3번입니다."),
+            "Reverse caption output language was not checked")
+    }),
     ("translation directions map speech locales and export labels consistently", {
         let english = CaptionDirection.englishToKorean
         let korean = CaptionDirection.koreanToEnglish

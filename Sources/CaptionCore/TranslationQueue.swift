@@ -11,6 +11,10 @@ public struct TranslationQueue: Sendable {
     public var finalCount: Int { finals.count }
     public var hasFinals: Bool { !finals.isEmpty }
 
+    public func hasFinal(excluding job: TranslationJob) -> Bool {
+        finals.contains { $0.segmentID != job.segmentID || $0.revision != job.revision }
+    }
+
     public mutating func enqueue(_ job: TranslationJob) {
         if job.isSourceFinal {
             drafts.removeAll { $0.segmentID == job.segmentID }

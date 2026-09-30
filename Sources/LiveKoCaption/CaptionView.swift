@@ -40,7 +40,12 @@ struct CaptionView: View {
         .tint(CaptionPalette.blue)
         .frame(minWidth: 950, minHeight: 660)
         .background(CaptionWindowAttachment(windows: windows, model: model))
-        .task { await model.checkReadiness() }
+        .task {
+            async let localCheck: Void = LocalModelStore.shared.refresh()
+            await model.checkReadiness()
+            await localCheck
+            if model.polishEnabled { await model.prepareLocalModel() }
+        }
         .translationTask(model.translationConfiguration) { session in
             await model.prepareModels(using: session)
         }
@@ -139,6 +144,7 @@ private struct CaptionSidebar: View {
                         .font(.system(size: 10)).foregroundStyle(CaptionPalette.secondary).lineSpacing(3)
                 }
             }
+            LocalPolishControls(model: model, store: LocalModelStore.shared)
             VStack(alignment: .leading, spacing: 14) {
                 sectionLabel("오디오 입력")
                 HStack {
@@ -247,6 +253,44 @@ private struct CaptionSidebar: View {
     private func sectionLabel(_ title: String) -> some View {
         Text(title).font(.system(size: 11, weight: .semibold))
             .foregroundStyle(CaptionPalette.secondary)
+    }
+}
+
+private struct LocalPolishControls: View {
+    @Bindable var model: CaptionModel
+    @Bindable var store: LocalModelStore
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 11) {
+            Text("번역 보완").font(.system(size: 11, weight: .semibold)).foregroundStyle(CaptionPalette.secondary)
+            Toggle("작은 모델로 문장 다듬기", isOn: $model.polishEnabled)
+                .toggleStyle(.checkbox).font(.system(size: 12))
+                .disabled(!store.isInstalled || model.phase != .idle || model.isPreparing || model.isPreview || model.isUISoak)
+            if store.isInstalled {
+                Picker("분야", selection: $model.translationDomain) {
+                    Text("일반").tag(TranslationDomain.general)
+                    Text("IT").tag(TranslationDomain.it)
+                }.pickerStyle(.segmented).font(.system(size: 11))
+                    .disabled(!model.polishEnabled || !model.canChangeSessionSettings)
+                if model.isPreparingLocalModel { ProgressView().controlSize(.small) }
+                Text(model.polishEnabled ? model.localPolishMessage : "빠른 자막은 그대로, 확정할 문장만 보완합니다.")
+                    .font(.system(size: 10)).foregroundStyle(CaptionPalette.secondary).lineSpacing(3)
+                Text("시험 기능 · 오역이 생길 수 있어요. 어색하면 보완을 끄고 빠른 번역을 사용하세요.")
+                    .font(.system(size: 10)).foregroundStyle(CaptionPalette.secondary).lineSpacing(3)
+            } else if store.isDownloading || store.isVerifying {
+                if let progress = store.progress { ProgressView(value: progress).progressViewStyle(.linear) }
+                else { ProgressView().controlSize(.small) }
+                Text(store.message).font(.system(size: 10)).foregroundStyle(CaptionPalette.secondary)
+                if store.isDownloading {
+                    Button("다운로드 취소") { store.cancelDownload() }.controlSize(.small)
+                }
+            } else {
+                Button("보완 모델 다운로드 · 1.47 GB") { store.requestDownload() }
+                    .controlSize(.small).disabled(model.phase != .idle || model.isPreparing)
+                Text("처음 한 번 준비 후 이 Mac에서 실행합니다.")
+                    .font(.system(size: 10)).foregroundStyle(CaptionPalette.secondary)
+            }
+        }
     }
 }
 

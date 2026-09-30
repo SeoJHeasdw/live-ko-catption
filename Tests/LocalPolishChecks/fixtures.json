@@ -1,0 +1,204 @@
+[
+  {
+    "id": "en-it-precision-recall",
+    "source": "Precision tells us how many flagged requests were truly malicious; recall tells us how many malicious requests we caught.",
+    "direction": "englishToKorean",
+    "domain": "it",
+    "previousSentence": "We are evaluating a binary classifier that blocks malicious requests.",
+    "goldenMeaning": "분류기의 정밀도는 탐지한 요청 중 실제 악성 요청의 비율이고, 재현율은 전체 악성 요청 중 탐지한 비율이다. 두 지표의 분모를 뒤바꾸지 않는다.",
+    "requiredTerms": ["정밀도", "재현율"]
+  },
+  {
+    "id": "en-general-recall-meeting",
+    "source": "I can't recall who led the meeting last Thursday.",
+    "direction": "englishToKorean",
+    "domain": "general",
+    "previousSentence": "We were talking about last week's planning meeting.",
+    "goldenMeaning": "지난 목요일 회의를 누가 진행했는지 기억이 나지 않는다는 뜻이다. 기억하지 못한다는 부정과 목요일을 보존한다.",
+    "ambiguityNote": "일반 문맥의 recall은 기억해 내는 행위다. IT의 재현율이나 제품 리콜로 바꾸지 않는다."
+  },
+  {
+    "id": "en-it-deployment-rollback",
+    "source": "If the deployment fails, roll back to the previous version without dropping the database.",
+    "direction": "englishToKorean",
+    "domain": "it",
+    "previousSentence": "The release includes only application changes.",
+    "goldenMeaning": "배포에 실패했을 때 이전 버전으로 되돌리되 데이터베이스는 삭제하지 않는다. 조건, 이전 버전, 데이터 보존을 모두 유지한다."
+  },
+  {
+    "id": "en-it-kubernetes-readiness",
+    "source": "The pod is running, but the readiness probe is still failing, so Kubernetes should not send traffic to it yet.",
+    "direction": "englishToKorean",
+    "domain": "it",
+    "previousSentence": "We're debugging why the new deployment isn't receiving requests.",
+    "goldenMeaning": "파드가 실행 중이어도 준비 상태 검사가 실패하므로 쿠버네티스가 아직 그 파드에 트래픽을 보내면 안 된다. 실행 상태와 준비 상태를 같은 뜻으로 합치지 않는다.",
+    "ambiguityNote": "pod는 쿠버네티스 파드다. 파드/pod, 쿠버네티스/Kubernetes, 준비 상태 검사/readiness probe 등 의미가 같은 표기는 모두 허용한다."
+  },
+  {
+    "id": "en-general-bank-context",
+    "source": "I'll meet you by the bank after lunch.",
+    "direction": "englishToKorean",
+    "domain": "general",
+    "previousSentence": "We rented a canoe for the afternoon.",
+    "goldenMeaning": "카누를 타는 문맥에서 점심 후 강둑 근처에서 만나겠다는 뜻으로 해석한다. 장소와 점심 이후라는 순서를 유지한다.",
+    "ambiguityNote": "원문만 있으면 bank는 은행과 강둑 사이에서 모호하다. 앞 문장을 제공한 경우의 문맥 선택을 평가하며, 앞 문장을 번역 결과에 덧붙이지 않는다."
+  },
+  {
+    "id": "en-general-duck-context",
+    "source": "I saw her duck just before the ball hit the wall.",
+    "direction": "englishToKorean",
+    "domain": "general",
+    "previousSentence": "We were watching a dodgeball match.",
+    "goldenMeaning": "피구 경기에서 공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 모습을 보았다는 뜻이다. 오리를 보았다는 뜻으로 번역하지 않는다.",
+    "ambiguityNote": "her duck의 명사/동사 중의성은 피구라는 최근 문맥으로 판단한다. 공이 그녀에게 맞았다는 사건을 새로 만들지 않는다."
+  },
+  {
+    "id": "en-general-piece-of-cake",
+    "source": "That's a piece of cake once the dependencies are installed.",
+    "direction": "englishToKorean",
+    "domain": "general",
+    "previousSentence": "She has done this setup dozens of times.",
+    "goldenMeaning": "의존성을 설치하고 나면 그 작업은 매우 쉽다는 뜻이다. 의존성 설치가 선행 조건이며, 실제 케이크에 대한 발언이 아니다.",
+    "ambiguityNote": "식은 죽 먹기나 아주 쉽다는 표현 등 자연스러운 동등 의역을 허용한다."
+  },
+  {
+    "id": "en-it-not-only",
+    "source": "The patch not only fixes the crash but also reduces memory use.",
+    "direction": "englishToKorean",
+    "domain": "it",
+    "goldenMeaning": "패치는 충돌 문제를 해결할 뿐 아니라 메모리 사용량도 줄인다. 두 효과를 모두 긍정적으로 유지한다. not only를 충돌이 고쳐지지 않는다는 부정으로 해석하지 않는다."
+  },
+  {
+    "id": "en-it-unless-negation",
+    "source": "We do not need to restart the service unless the configuration changes.",
+    "direction": "englishToKorean",
+    "domain": "it",
+    "goldenMeaning": "설정이 바뀌지 않는 한 서비스를 재시작할 필요가 없다. 부정과 예외 조건을 유지하며, 항상 재시작해야 한다거나 절대로 재시작하지 말라는 뜻으로 바꾸지 않는다."
+  },
+  {
+    "id": "en-general-corrected-weekday",
+    "source": "Let's meet on Tuesday—sorry, Thursday—not tomorrow.",
+    "direction": "englishToKorean",
+    "domain": "general",
+    "previousSentence": "Today is Monday.",
+    "goldenMeaning": "화요일이라고 말했다가 목요일로 바로잡았으며, 내일은 만나지 않는다는 뜻이다. 최종 약속은 목요일이다. 정정 표현을 자연스럽게 보존해도 된다.",
+    "ambiguityNote": "화요일과 목요일을 별개의 두 약속으로 만들지 않는다. 캡션의 말하기 중 정정을 모델의 새로운 사실로 확대하지 않는다."
+  },
+  {
+    "id": "en-it-percentages-latency",
+    "source": "The error rate fell from 2.5% to 0.8%, and the median latency stayed at 120 milliseconds.",
+    "direction": "englishToKorean",
+    "domain": "it",
+    "goldenMeaning": "오류율이 2.5%에서 0.8%로 감소했고, 지연 시간 중앙값은 120밀리초로 유지됐다. 전후 수치, 단위, 중앙값과 유지됐다는 의미를 보존한다.",
+    "expectedNumbers": ["2.5%", "0.8%", "120 milliseconds"]
+  },
+  {
+    "id": "en-general-date-time-zone",
+    "source": "Schedule the review for October 15, 2026, at 9:30 a.m. Korea Standard Time.",
+    "direction": "englishToKorean",
+    "domain": "general",
+    "goldenMeaning": "검토 회의를 한국 표준시 2026년 10월 15일 오전 9시 30분으로 잡아 달라는 요청이다. 날짜, 오전, 시각과 시간대를 유지한다.",
+    "expectedNumbers": ["2026", "October 15", "9:30 a.m. KST"]
+  },
+  {
+    "id": "ko-it-precision-recall",
+    "source": "정밀도는 탐지한 항목 중 실제 양성의 비율이고, 재현율은 실제 양성 중 탐지한 항목의 비율입니다.",
+    "direction": "koreanToEnglish",
+    "domain": "it",
+    "previousSentence": "지금은 스팸 분류기의 성능을 비교하고 있습니다.",
+    "goldenMeaning": "Precision is the fraction of detected items that are actually positive; recall is the fraction of actual positive items that were detected. Keep the two denominators distinct.",
+    "requiredTerms": ["precision", "recall"]
+  },
+  {
+    "id": "ko-general-recall-meeting",
+    "source": "지난 목요일 회의에서 누가 발표했는지 잘 기억이 나지 않아요.",
+    "direction": "koreanToEnglish",
+    "domain": "general",
+    "previousSentence": "지난주 기획 회의를 이야기하는 중입니다.",
+    "goldenMeaning": "The speaker cannot quite remember who presented at last Thursday's meeting. Preserve the memory uncertainty and Thursday.",
+    "ambiguityNote": "Remember, recall, and equivalent natural expressions are valid here. Do not introduce a technical recall metric."
+  },
+  {
+    "id": "ko-it-deployment-rollback",
+    "source": "배포에 실패하면 이전 버전으로 롤백하되, 데이터베이스는 삭제하지 마세요.",
+    "direction": "koreanToEnglish",
+    "domain": "it",
+    "previousSentence": "이번 릴리스에서는 애플리케이션 코드만 변경했습니다.",
+    "goldenMeaning": "If deployment fails, roll back to the previous version while keeping the database intact. Preserve the condition and the instruction not to delete the database."
+  },
+  {
+    "id": "ko-it-kubernetes-readiness",
+    "source": "파드는 실행 중이지만 준비 상태 검사에 실패하고 있으니, 쿠버네티스가 아직 트래픽을 보내면 안 됩니다.",
+    "direction": "koreanToEnglish",
+    "domain": "it",
+    "previousSentence": "새 배포에 요청이 들어오지 않는 이유를 확인하고 있습니다.",
+    "goldenMeaning": "The pod is running but failing its readiness check, so Kubernetes should not send traffic to it yet. Running and ready are different states.",
+    "ambiguityNote": "Readiness check and readiness probe are acceptable in this context. Avoid inventing a failed liveness probe or a stopped pod."
+  },
+  {
+    "id": "ko-general-bank-context",
+    "source": "점심 먹고 은행 옆에서 만나요.",
+    "direction": "koreanToEnglish",
+    "domain": "general",
+    "previousSentence": "계좌를 개설하려고 오늘 지점에 들를 거예요.",
+    "goldenMeaning": "Meet beside the bank after lunch. The previous sentence identifies a financial bank, rather than a ginkgo tree.",
+    "ambiguityNote": "Korean 은행 can name a bank or ginkgo. Use the branch/account context, and do not add the account-opening sentence to the translated caption."
+  },
+  {
+    "id": "ko-general-duck-action",
+    "source": "공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 걸 봤어요.",
+    "direction": "koreanToEnglish",
+    "domain": "general",
+    "previousSentence": "피구 경기를 보고 있었어요.",
+    "goldenMeaning": "The speaker saw her duck or bend down just before the ball hit the wall. Preserve the action and event order; do not turn the action into an animal.",
+    "ambiguityNote": "Ducked, bent down, and other accurate natural descriptions are valid. The ball hit the wall, not the woman."
+  },
+  {
+    "id": "ko-general-easy-idiom",
+    "source": "의존성만 설치하고 나면 이 작업은 식은 죽 먹기예요.",
+    "direction": "koreanToEnglish",
+    "domain": "general",
+    "previousSentence": "그녀는 이 설정을 수십 번 해 봤어요.",
+    "goldenMeaning": "Once the dependencies are installed, the task is very easy. Preserve the prerequisite and idiomatic meaning rather than describing food.",
+    "ambiguityNote": "A piece of cake, straightforward, or very easy are acceptable natural translations."
+  },
+  {
+    "id": "ko-it-not-only",
+    "source": "이번 패치는 충돌을 고칠 뿐 아니라 메모리 사용량도 줄여 줍니다.",
+    "direction": "koreanToEnglish",
+    "domain": "it",
+    "goldenMeaning": "The patch both fixes the crash and reduces memory usage. Keep both effects affirmative; a not-only construction is optional."
+  },
+  {
+    "id": "ko-it-unless-negation",
+    "source": "설정이 바뀌지 않는 한 서비스를 다시 시작할 필요가 없습니다.",
+    "direction": "koreanToEnglish",
+    "domain": "it",
+    "goldenMeaning": "There is no need to restart the service unless the configuration changes. Preserve the negative statement and its exception, without claiming restart is always required or never allowed."
+  },
+  {
+    "id": "ko-general-corrected-weekday",
+    "source": "화요일에 만납시다. 아니, 목요일이요. 내일은 아닙니다.",
+    "direction": "koreanToEnglish",
+    "domain": "general",
+    "previousSentence": "오늘은 월요일입니다.",
+    "goldenMeaning": "The speaker corrects Tuesday to Thursday and rules out tomorrow. The final meeting day is Thursday, rather than two separate dates.",
+    "ambiguityNote": "A natural self-correction is valid. Do not silently treat the abandoned Tuesday as a confirmed meeting."
+  },
+  {
+    "id": "ko-it-percentages-latency",
+    "source": "오류율은 2.5%에서 0.8%로 떨어졌고, 지연 시간 중앙값은 120밀리초로 유지됐어요.",
+    "direction": "koreanToEnglish",
+    "domain": "it",
+    "goldenMeaning": "The error rate fell from 2.5% to 0.8%, while median latency stayed at 120 milliseconds. Preserve the old and new rates, milliseconds, median, and unchanged latency.",
+    "expectedNumbers": ["2.5%", "0.8%", "120 milliseconds"]
+  },
+  {
+    "id": "ko-general-date-time-zone",
+    "source": "검토 회의는 한국 표준시로 2026년 10월 15일 오전 9시 30분에 잡아 주세요.",
+    "direction": "koreanToEnglish",
+    "domain": "general",
+    "goldenMeaning": "Schedule the review for October 15, 2026, at 9:30 a.m. Korea Standard Time. Preserve the date, morning time, and time zone.",
+    "expectedNumbers": ["2026", "October 15", "9:30 a.m. KST"]
+  }
+]

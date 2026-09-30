@@ -7,6 +7,7 @@ extra_flags=("${@:3}")
 run_stamp="$(TZ=Asia/Seoul date +%Y%m%d-%H%M%S)"
 test_bundle_id="io.javis.live-ko-caption.ui-soak-$run_stamp"
 report_path="${2:-$project_root/docs/qa/raw/ui-soak-$run_stamp.jsonl}"
+report_path="${report_path:A}"
 mkdir -p "${report_path:h}"
 if [[ -e "$report_path" ]]; then
     print -u2 -r -- "Refusing to reuse an existing UI soak report: $report_path"
