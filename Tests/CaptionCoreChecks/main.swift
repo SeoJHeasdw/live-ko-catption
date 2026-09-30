@@ -82,6 +82,19 @@ func checkLateContextGapInsertion(isFinal: Bool) throws {
 }
 
 let checks: [(String, () throws -> Void)] = [
+    ("translation directions map speech locales and export labels consistently", {
+        let english = CaptionDirection.englishToKorean
+        let korean = CaptionDirection.koreanToEnglish
+        try expect(english.sourceLanguageCode == korean.targetLanguageCode &&
+            english.targetLanguageCode == korean.sourceLanguageCode, "Direction languages are not inverse")
+        try expect(english.speechLocaleIdentifier == "en-US" && korean.speechLocaleIdentifier == "ko-KR",
+            "Speech locale does not match input language")
+        var timeline = CaptionTimeline()
+        _ = try appendFinal(&timeline, source: "배포를 시작합니다.", translation: "Starting deployment.", start: 0, end: 1)
+        let exported = timeline.exportText(sourceLabel: korean.sourceExportLabel, targetLabel: korean.targetExportLabel)
+        try expect(exported.contains("KO: 배포를 시작합니다.\nEN: Starting deployment."),
+            "Reverse-direction export labels were swapped")
+    }),
     ("late translation cannot overwrite a revised sentence", {
         var timeline = CaptionTimeline()
         let old = try require(timeline.accept(source: "We can", audioStart: 0, audioEnd: 1, isFinal: false))

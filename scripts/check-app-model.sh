@@ -6,7 +6,7 @@ checks_path="$project_root/.build/model-checks"
 mkdir -p "$checks_path"
 xcrun swiftc -swift-version 6 -target arm64-apple-macos26.4 \
     -emit-library -emit-module -module-name CaptionCore \
-    Sources/CaptionCore/CaptionTimeline.swift Sources/CaptionCore/TranslationQueue.swift \
+    Sources/CaptionCore/*.swift \
     -emit-module-path "$checks_path/CaptionCore.swiftmodule" \
     -o "$checks_path/libCaptionCore.dylib"
 xcrun swiftc -swift-version 6 -target arm64-apple-macos26.4 -parse-as-library \

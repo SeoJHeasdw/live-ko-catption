@@ -7,6 +7,7 @@ import SwiftUI
 struct NativeCompactCaption: NSViewRepresentable {
     var segments: [CaptionSegment]
     var fontSize: Double
+    var targetLanguageName = "한국어"
 
     func makeCoordinator() -> Coordinator { Coordinator() }
 
@@ -40,7 +41,7 @@ struct NativeCompactCaption: NSViewRepresentable {
         text.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude,
             height: CGFloat.greatestFiniteMagnitude)
         text.textContainerInset = NSSize(width: 0, height: 4)
-        text.setAccessibilityLabel("간략 한국어 실시간 자막")
+        text.setAccessibilityLabel("간략 실시간 번역 자막")
         scroll.documentView = text
         context.coordinator.attach(scroll: scroll, text: text)
         return scroll
@@ -48,7 +49,8 @@ struct NativeCompactCaption: NSViewRepresentable {
 
     func updateNSView(_ view: CompactCaptionScrollView, context: Context) {
         context.coordinator.submit(.init(segments: Array(segments.suffix(2)),
-            fontSize: fontSize.isFinite ? min(52, max(24, fontSize)) : 35))
+            fontSize: fontSize.isFinite ? min(52, max(24, fontSize)) : 35,
+            targetLanguageName: targetLanguageName))
     }
 
     static func dismantleNSView(_ view: CompactCaptionScrollView, coordinator: Coordinator) {
@@ -59,6 +61,7 @@ struct NativeCompactCaption: NSViewRepresentable {
     struct Snapshot: Equatable {
         var segments: [CaptionSegment]
         var fontSize: Double
+        var targetLanguageName: String
     }
 
     @MainActor
@@ -144,8 +147,8 @@ struct NativeCompactCaption: NSViewRepresentable {
             }
             if rows.isEmpty {
                 rows.append((snapshot.segments.isEmpty
-                    ? "영어를 들으면 한국어 자막이 여기에 표시됩니다."
-                    : "한국어 자막을 준비하고 있습니다…", draft, .regular))
+                    ? "말하면 \(snapshot.targetLanguageName) 자막이 여기에 표시됩니다."
+                    : "\(snapshot.targetLanguageName) 자막을 준비하고 있습니다…", draft, .regular))
             }
             let result = NSMutableAttributedString(string: "")
             for (index, row) in rows.enumerated() {

@@ -10,6 +10,7 @@ struct NativeCaptionTranscript: NSViewRepresentable {
     var showEnglish: Bool
     var isIdle: Bool
     @Binding var followsLatest: Bool
+    var accessibilityLabel = "한국어 실시간 자막과 영어 원문"
 
     func makeCoordinator() -> Coordinator { Coordinator() }
 
@@ -44,7 +45,7 @@ struct NativeCaptionTranscript: NSViewRepresentable {
         text.minSize = NSSize.zero
         text.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         text.textContainerInset = NSSize(width: 34, height: 14)
-        text.setAccessibilityLabel("한국어 실시간 자막과 영어 원문")
+        text.setAccessibilityLabel(accessibilityLabel)
         scroll.documentView = text
         context.coordinator.attach(scroll: scroll, text: text)
         return scroll
@@ -263,7 +264,7 @@ struct NativeCaptionTranscript: NSViewRepresentable {
                 .foregroundColor: secondary, .paragraphStyle: metadataStyle
             ]))
             let translation = segment.translation ?? (segment.translationError == nil
-                ? "한국어 자막을 준비하고 있습니다…" : "번역하지 못했습니다. 영어 원문을 확인해 주세요.")
+                ? "자막을 준비하고 있습니다…" : "번역하지 못했습니다. 원문을 확인해 주세요.")
             let captionStyle = NSMutableParagraphStyle()
             captionStyle.lineSpacing = 8
             captionStyle.paragraphSpacing = snapshot.showEnglish || segment.translationError != nil ? 10 : 28

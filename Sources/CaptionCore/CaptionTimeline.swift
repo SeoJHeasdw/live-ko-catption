@@ -290,13 +290,14 @@ public struct CaptionTimeline: Sendable {
 
     public var endTime: Double { segments.map(\.audioEnd).max() ?? 0 }
 
-    public func exportText(createdAt: Date = Date()) -> String {
+    public func exportText(createdAt: Date = Date(), sourceLabel: String = "EN",
+                           targetLabel: String = "KO") -> String {
         let date = ISO8601DateFormatter().string(from: createdAt)
         let rows = displaySegments.map { segment in
             let stamp = String(format: "%02d:%02d", Int(segment.audioStart) / 60,
                                Int(segment.audioStart) % 60)
             let state = segment.isFinal ? "확정" : "미확정"
-            return "[\(stamp) · \(state)]\nEN: \(segment.source)\nKO: \(segment.translation ?? "번역 없음")"
+            return "[\(stamp) · \(state)]\n\(sourceLabel): \(segment.source)\n\(targetLabel): \(segment.translation ?? "번역 없음")"
         }
         return "Live Korean Captions\n\(date)\n\n" + rows.joined(separator: "\n\n") + "\n"
     }

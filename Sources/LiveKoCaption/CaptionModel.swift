@@ -12,6 +12,33 @@ import UniformTypeIdentifiers
 final class CaptionModel {
     enum Phase { case idle, starting, listening, stopping }
     var phase: Phase = .idle
+    private var storedDirection: CaptionDirection
+    private var storedDomain: TranslationDomain
+    private let preferencesDefaults: UserDefaults
+    var selectedDirection: CaptionDirection {
+        get { storedDirection }
+        set {
+            guard newValue != storedDirection, canChangeSessionSettings else { return }
+            storedDirection = newValue
+            preferencesDefaults.set(newValue.rawValue, forKey: CaptionDirection.preferenceKey)
+            // Disable Start immediately, before the newly scheduled check gets
+            // an actor turn. A previous pair's suspended check cannot re-enable it.
+            readinessID = nil
+            assetsReady = false
+            isChecking = true
+            translationConfiguration = nil
+            message = nil
+            Task { [weak self] in await self?.checkReadiness() }
+        }
+    }
+    var translationDomain: TranslationDomain {
+        get { storedDomain }
+        set {
+            guard newValue != storedDomain, canChangeSessionSettings else { return }
+            storedDomain = newValue
+            preferencesDefaults.set(newValue.rawValue, forKey: TranslationDomain.preferenceKey)
+        }
+    }
     var devices: [AudioInputDevice] = []
     var selectedDeviceUID: String {
         didSet { UserDefaults.standard.set(selectedDeviceUID, forKey: "inputDeviceUID") }
@@ -34,7 +61,16 @@ final class CaptionModel {
         }
     }
     var isPreview = false
-    var isUISoak = false
+    var isUISoak = false {
+        didSet {
+            guard isUISoak else { return }
+            // Synthetic English fixtures keep their declared language even if
+            // the user last used Korean input. Do not overwrite user preferences.
+            storedDirection = .englishToKorean
+            storedDomain = .general
+            readinessID = nil
+        }
+    }
     var isChecking = true
     var isPreparing = false
     var assetsReady = false
@@ -68,15 +104,19 @@ final class CaptionModel {
     private var contextTimedOut = false
     private let translationOverride: (@MainActor (String, Bool) async throws -> String)?
     private let microphoneAccessOverride: (@MainActor () async -> Bool)?
+    private let readinessOverride: (@MainActor (CaptionDirection) async throws -> Bool)?
+    private var readinessID: UUID?
     private var runHasAudio = false
     private var lastDraftTranslation: TimeInterval = 0
     private var runID: UUID?
     private var runUptime: TimeInterval = 0
     private var audioOffset: Double = 0
     private var accumulatedDuration: TimeInterval = 0
-    private let speechLocale = Locale(identifier: "en-US")
-    private let sourceLanguage = Locale.Language(identifier: "en")
-    private let targetLanguage = Locale.Language(identifier: "ko")
+    private var sourceLanguage: Locale.Language { Locale.Language(identifier: selectedDirection.sourceLanguageCode) }
+    private var targetLanguage: Locale.Language { Locale.Language(identifier: selectedDirection.targetLanguageCode) }
+    var sourceDisplayName: String { selectedDirection.sourceDisplayName }
+    var targetDisplayName: String { selectedDirection.targetDisplayName }
+    var directionLabel: String { selectedDirection.label }
 
     var segments: [CaptionSegment] { timeline.segments }
     var displaySegments: [CaptionSegment] {
@@ -98,11 +138,15 @@ final class CaptionModel {
     }
     var hasContent: Bool { !segments.isEmpty }
     var transcriptText: String {
-        let text = timeline.exportText(createdAt: sessionCreatedAt)
+        let text = timeline.exportText(createdAt: sessionCreatedAt,
+            sourceLabel: selectedDirection.sourceExportLabel, targetLabel: selectedDirection.targetExportLabel)
         guard !inputWarnings.isEmpty else { return text }
         return text + "\n입력 관련 알림 · 누락 가능성\n" + inputWarnings.map { "- \($0)" }.joined(separator: "\n") + "\n"
     }
     var canStart: Bool { assetsReady && phase == .idle && !isChecking && !isPreparing && !isPreview && !hasPendingTranslations }
+    var canChangeSessionSettings: Bool {
+        phase == .idle && !isPreparing && !isPreview && !isUISoak && !hasContent && !hasPendingTranslations
+    }
     var isBusy: Bool { phase == .starting || phase == .stopping || isPreparing }
     var isListening: Bool { phase == .listening }
     var canStop: Bool { phase == .listening || phase == .starting }
@@ -115,15 +159,23 @@ final class CaptionModel {
         switch phase {
         case .idle: return hasPendingTranslations ? "남은 원문 번역 중" : (assetsReady ? "준비됨" : "언어 모델 준비 필요")
         case .starting: return "시작 중"
-        case .listening: return "영어를 듣고 있습니다"
+        case .listening: return "\(sourceDisplayName)를 듣고 있습니다"
         case .stopping: return "마지막 문장 정리 중"
         }
     }
 
     init(preview: Bool = false, translationOverride: (@MainActor (String, Bool) async throws -> String)? = nil,
-         microphoneAccessOverride: (@MainActor () async -> Bool)? = nil) {
+         microphoneAccessOverride: (@MainActor () async -> Bool)? = nil,
+         readinessOverride: (@MainActor (CaptionDirection) async throws -> Bool)? = nil,
+         preferencesDefaults: UserDefaults = .standard) {
         self.translationOverride = translationOverride
         self.microphoneAccessOverride = microphoneAccessOverride
+        self.readinessOverride = readinessOverride
+        self.preferencesDefaults = preferencesDefaults
+        storedDirection = preview ? .englishToKorean :
+            CaptionDirection(rawValue: preferencesDefaults.string(forKey: CaptionDirection.preferenceKey) ?? "") ?? .englishToKorean
+        storedDomain = preview ? .general :
+            TranslationDomain(rawValue: preferencesDefaults.string(forKey: TranslationDomain.preferenceKey) ?? "") ?? .general
         selectedDeviceUID = UserDefaults.standard.string(forKey: "inputDeviceUID") ?? ""
         showEnglish = UserDefaults.standard.object(forKey: "showEnglish") as? Bool ?? true
         let savedFontSize = UserDefaults.standard.object(forKey: "fontSize") as? Double ?? 35
@@ -141,31 +193,52 @@ final class CaptionModel {
 
     func checkReadiness() async {
         guard !isPreview, !isUISoak else { return }
+        let token = UUID()
+        let direction = selectedDirection
+        readinessID = token
         isChecking = true
         assetsReady = false
-        defer { isChecking = false }
-        guard SpeechTranscriber.isAvailable else {
-            message = "이 Mac에서는 로컬 음성 인식을 사용할 수 없습니다. Apple Silicon과 macOS 26.4 이상이 필요합니다."
-            return
+        defer { if readinessID == token { isChecking = false } }
+        do {
+            if let readinessOverride {
+                let ready = try await readinessOverride(direction)
+                guard readinessIsCurrent(token, direction: direction) else { return }
+                assetsReady = ready
+                return
+            }
+            guard SpeechTranscriber.isAvailable else {
+                message = "이 Mac에서는 로컬 음성 인식을 사용할 수 없습니다. Apple Silicon과 macOS 26.4 이상이 필요합니다."
+                return
+            }
+            let locale = try await reserveSpeechLocale(for: direction)
+            guard readinessIsCurrent(token, direction: direction) else { return }
+            let transcriber = makeTranscriber(locale: locale)
+            let speechStatus = await AssetInventory.status(forModules: [transcriber])
+            guard readinessIsCurrent(token, direction: direction) else { return }
+            let translationStatus = await LanguageAvailability(preferredStrategy: .lowLatency)
+                .status(from: Locale.Language(identifier: direction.sourceLanguageCode),
+                        to: Locale.Language(identifier: direction.targetLanguageCode))
+            guard readinessIsCurrent(token, direction: direction) else { return }
+            if speechStatus == .unsupported || translationStatus == .unsupported {
+                message = "이 Mac에서 \(direction.sourceDisplayName) 음성 인식 또는 \(direction.label) 번역을 지원하지 않습니다."
+                return
+            }
+            assetsReady = speechStatus == .installed && translationStatus == .installed
+        } catch {
+            guard readinessIsCurrent(token, direction: direction) else { return }
+            message = "\(direction.sourceDisplayName) 음성 인식을 준비할 수 없습니다: \(error.localizedDescription)"
         }
-        let transcriber = makeTranscriber()
-        do { try await reserveSpeechLocale() }
-        catch { message = "영어 음성 인식을 준비할 수 없습니다: \(error.localizedDescription)"; return }
-        let speechStatus = await AssetInventory.status(forModules: [transcriber])
-        let translationStatus = await LanguageAvailability(preferredStrategy: .lowLatency)
-            .status(from: sourceLanguage, to: targetLanguage)
-        if speechStatus == .unsupported || translationStatus == .unsupported {
-            message = "이 Mac에서 영어 음성 인식 또는 영어→한국어 번역을 지원하지 않습니다."
-            return
-        }
-        assetsReady = speechStatus == .installed && translationStatus == .installed
+    }
+
+    private func readinessIsCurrent(_ token: UUID, direction: CaptionDirection) -> Bool {
+        readinessID == token && selectedDirection == direction && !Task.isCancelled
     }
 
     func requestPreparation() {
         guard !isPreparing && phase == .idle && !isPreview else { return }
         message = nil
         isPreparing = true
-        preparationMessage = "영어·한국어 번역 모델 준비"
+        preparationMessage = "\(directionLabel) 번역 모델 준비"
         preparationProgress = nil
         if var configuration = translationConfiguration {
             configuration.invalidate()
@@ -177,14 +250,14 @@ final class CaptionModel {
     }
 
     func prepareModels(using session: TranslationSession) async {
-        guard isPreparing else { return }
+        guard isPreparing, session.sourceLanguage == sourceLanguage, session.targetLanguage == targetLanguage else { return }
         defer { isPreparing = false; preparationProgress = nil }
         do {
             try await session.prepareTranslation()
             try Task.checkCancellation()
-            preparationMessage = "영어 음성 인식 모델 다운로드"
-            let transcriber = makeTranscriber()
-            try await reserveSpeechLocale()
+            preparationMessage = "\(sourceDisplayName) 음성 인식 모델 다운로드"
+            let locale = try await reserveSpeechLocale(for: selectedDirection)
+            let transcriber = makeTranscriber(locale: locale)
             if let request = try await AssetInventory.assetInstallationRequest(supporting: [transcriber]) {
                 let progressTask = Task { [weak self] in
                     while !Task.isCancelled {
@@ -226,9 +299,9 @@ final class CaptionModel {
             guard allowed else {
                 throw CaptionError.message("마이크 접근이 필요합니다. 시스템 설정 → 개인정보 보호 및 보안 → 마이크에서 이 앱을 허용해 주세요.")
             }
-            try await reserveSpeechLocale()
+            let locale = try await reserveSpeechLocale(for: selectedDirection)
             try checkStarting(token)
-            let transcriber = makeTranscriber()
+            let transcriber = makeTranscriber(locale: locale)
             guard let format = await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith: [transcriber]) else {
                 throw CaptionError.message("음성 인식에 사용할 음성 형식을 찾지 못했습니다.")
             }
@@ -439,8 +512,8 @@ final class CaptionModel {
     func exportTranscript() -> Bool {
         let panel = NSSavePanel()
         panel.allowedContentTypes = [.plainText]
-        panel.nameFieldStringValue = "한글자막-\(Date().formatted(.iso8601.year().month().day())).txt"
-        panel.title = "영어 원문과 한국어 자막 저장"
+        panel.nameFieldStringValue = "자막-\(Date().formatted(.iso8601.year().month().day())).txt"
+        panel.title = "\(sourceDisplayName) 원문과 \(targetDisplayName) 자막 저장"
         if panel.runModal() == .OK, let url = panel.url {
             do {
                 try transcriptText.write(to: url, atomically: true, encoding: .utf8)
@@ -469,17 +542,22 @@ final class CaptionModel {
         }
     }
 
-    private func makeTranscriber() -> SpeechTranscriber {
-        SpeechTranscriber(locale: speechLocale, transcriptionOptions: [],
+    private func makeTranscriber(locale: Locale) -> SpeechTranscriber {
+        SpeechTranscriber(locale: locale, transcriptionOptions: [],
                           reportingOptions: [.volatileResults, .fastResults],
                           attributeOptions: [.audioTimeRange])
     }
 
-    private func reserveSpeechLocale() async throws {
-        // Reservations belong to this app. Keep its single English subscription
-        // across sessions so offline assets are not unsubscribed after every pause.
-        // Model retention while running is independently scoped to whileInUse.
-        try await AssetInventory.reserve(locale: speechLocale)
+    private func reserveSpeechLocale(for direction: CaptionDirection) async throws -> Locale {
+        let requested = Locale(identifier: direction.speechLocaleIdentifier)
+        guard let locale = await SpeechTranscriber.supportedLocale(equivalentTo: requested) else {
+            throw CaptionError.message("이 Mac에서 \(direction.sourceDisplayName) 로컬 음성 인식을 지원하지 않습니다.")
+        }
+        // Reserve the exact supported locale. Keep this app's downloaded English
+        // and Korean subscriptions across sessions for offline direction changes.
+        // Active model retention is independently scoped to whileInUse.
+        try await AssetInventory.reserve(locale: locale)
+        return locale
     }
 
     private func receive(_ result: SpeechTranscriber.Result) {

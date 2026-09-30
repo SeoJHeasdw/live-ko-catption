@@ -106,6 +106,33 @@ final class PermissionProbe {
 }
 
 @MainActor
+final class ReadinessProbe {
+    var calls: [CaptionDirection] = []
+    private var waiting: [(CaptionDirection, CheckedContinuation<Bool, any Error>)] = []
+
+    func check(_ direction: CaptionDirection) async throws -> Bool {
+        calls.append(direction)
+        return try await withCheckedThrowingContinuation { waiting.append((direction, $0)) }
+    }
+
+    func release(_ direction: CaptionDirection, ready: Bool) {
+        guard let index = waiting.firstIndex(where: { $0.0 == direction }) else { return }
+        waiting.remove(at: index).1.resume(returning: ready)
+    }
+
+    func fail(_ direction: CaptionDirection) {
+        guard let index = waiting.firstIndex(where: { $0.0 == direction }) else { return }
+        waiting.remove(at: index).1.resume(throwing: ModelCheckFailure(description: "Old pair unavailable"))
+    }
+
+    func releaseAll() {
+        let pending = waiting
+        waiting.removeAll()
+        for (_, continuation) in pending { continuation.resume(returning: false) }
+    }
+}
+
+@MainActor
 func makeModel(_ probe: TranslatorProbe, context: Bool = false) -> CaptionModel {
     let model = CaptionModel(translationOverride: { source, isContext in
         try await probe.translate(source, context: isContext)
@@ -128,6 +155,92 @@ struct AppModelChecks {
             }
         }
         let checks: [(String, @MainActor () async throws -> Void)] = [
+            ("direction and domain persist and cannot mix recorded session languages", {
+                let suite = "LiveKoCaption.ModelChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let model = CaptionModel(readinessOverride: { _ in true }, preferencesDefaults: defaults)
+                try expect(model.selectedDirection == .englishToKorean && model.translationDomain == .general,
+                    "Empty preferences did not use English to Korean/general")
+                model.isChecking = false; model.assetsReady = true
+                model.selectedDirection = .koreanToEnglish
+                try expect(!model.canStart && model.isChecking && !model.assetsReady,
+                    "Changing direction left the previous pair ready before checking")
+                model.translationDomain = .it
+                try await waitUntil("Changed pair readiness never finished") { !model.isChecking && model.assetsReady }
+                let restored = CaptionModel(preferencesDefaults: defaults)
+                try expect(restored.selectedDirection == .koreanToEnglish && restored.translationDomain == .it,
+                    "Direction/domain were not restored")
+                try expect(model.sourceDisplayName == "한국어" && model.targetDisplayName == "영어",
+                    "Selected direction labels remained English input")
+                model.phase = .listening
+                try expect(model.statusText == "한국어를 듣고 있습니다", "Listening status used the wrong input language")
+                for phase in [CaptionModel.Phase.starting, .listening, .stopping] {
+                    model.phase = phase
+                    model.selectedDirection = .englishToKorean; model.translationDomain = .general
+                    try expect(model.selectedDirection == .koreanToEnglish && model.translationDomain == .it,
+                        "Session settings changed during an active phase")
+                }
+                model.phase = .idle; model.isPreparing = true
+                model.selectedDirection = .englishToKorean; model.translationDomain = .general
+                try expect(model.selectedDirection == .koreanToEnglish && model.translationDomain == .it,
+                    "Session settings changed during model preparation")
+                model.isPreparing = false
+                model.receive(source: "캐시를 비웁니다.", audioStart: 0, audioEnd: 1, isFinal: true)
+                model.selectedDirection = .englishToKorean; model.translationDomain = .general
+                try expect(!model.canChangeSessionSettings && model.selectedDirection == .koreanToEnglish && model.translationDomain == .it,
+                    "Recorded sources were relabeled without a new session")
+                try expect(model.transcriptText.contains("KO: 캐시를 비웁니다.\nEN: 번역 없음"),
+                    "Korean input export used English input labels")
+                model.newSession()
+                try expect(model.canChangeSessionSettings, "New conversation did not unlock settings")
+                model.requestPreparation()
+                try expect(model.translationConfiguration != nil, "Preparation did not create a translation configuration")
+                model.isPreparing = false
+                model.selectedDirection = .englishToKorean
+                try expect(model.translationConfiguration == nil, "Old direction translation configuration survived")
+                try await waitUntil("New conversation readiness never finished") { !model.isChecking }
+                let preview = CaptionModel(preview: true, preferencesDefaults: defaults)
+                try expect(preview.selectedDirection == .englishToKorean && preview.translationDomain == .general,
+                    "Preview used persisted non-fixture languages")
+                defaults.set(CaptionDirection.koreanToEnglish.rawValue, forKey: CaptionDirection.preferenceKey)
+                defaults.set(TranslationDomain.it.rawValue, forKey: TranslationDomain.preferenceKey)
+                let soak = CaptionModel(preferencesDefaults: defaults)
+                soak.isUISoak = true
+                try expect(soak.selectedDirection == .englishToKorean && soak.translationDomain == .general,
+                    "Synthetic soak used persisted non-fixture languages")
+                try expect(defaults.string(forKey: CaptionDirection.preferenceKey) == CaptionDirection.koreanToEnglish.rawValue,
+                    "Synthetic fixtures overwrote user direction")
+            }),
+            ("stale readiness cannot enable Start or overwrite the current direction error", {
+                let suite = "LiveKoCaption.ReadinessChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let probe = ReadinessProbe()
+                defer { probe.releaseAll() }
+                let model = CaptionModel(readinessOverride: { try await probe.check($0) }, preferencesDefaults: defaults)
+                let oldCheck = Task { await model.checkReadiness() }
+                try await waitUntil("Old readiness did not start") { probe.calls == [.englishToKorean] }
+                model.selectedDirection = .koreanToEnglish
+                try await waitUntil("New direction check did not start") { probe.calls.count == 2 }
+                probe.release(.englishToKorean, ready: true)
+                await oldCheck.value
+                try expect(model.isChecking && !model.assetsReady && !model.canStart,
+                    "Stale readiness enabled a pair that is still being checked")
+                probe.release(.koreanToEnglish, ready: false)
+                try await waitUntil("Current readiness did not finish") { !model.isChecking }
+                try expect(!model.assetsReady, "Unavailable current pair inherited old installed assets")
+                let staleErrorCheck = Task { await model.checkReadiness() }
+                try await waitUntil("Error readiness fixture did not start") { probe.calls.count == 3 }
+                model.selectedDirection = .englishToKorean
+                try await waitUntil("Replacement error check did not start") { probe.calls.count == 4 }
+                probe.release(.englishToKorean, ready: true)
+                try await waitUntil("Replacement installed pair did not finish") { !model.isChecking && model.assetsReady }
+                probe.fail(.koreanToEnglish)
+                await staleErrorCheck.value
+                try expect(model.canStart && model.message == nil && model.selectedDirection == .englishToKorean,
+                    "Old readiness error polluted the current ready pair")
+            }),
             ("a canceled startup cannot resurrect itself or overwrite a newer startup", {
                 let permission = PermissionProbe()
                 defer { permission.releaseAll() }

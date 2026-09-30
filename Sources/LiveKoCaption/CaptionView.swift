@@ -75,7 +75,7 @@ private struct CaptionHeader: View {
                 .background(CaptionPalette.blue.opacity(0.10), in: RoundedRectangle(cornerRadius: 12))
             VStack(alignment: .leading, spacing: 4) {
                 Text("한글 라이브 자막").font(.system(size: 19, weight: .semibold))
-                Text("EN  →  KO").font(.system(size: 11, weight: .medium, design: .monospaced))
+                Text(model.directionLabel).font(.system(size: 11, weight: .medium, design: .monospaced))
                     .foregroundStyle(CaptionPalette.secondary)
             }
             Spacer()
@@ -127,6 +127,18 @@ private struct CaptionSidebar: View {
     var body: some View {
         ScrollView {
                 VStack(alignment: .leading, spacing: 26) {
+            VStack(alignment: .leading, spacing: 12) {
+                sectionLabel("번역 방향")
+                Picker("번역 방향", selection: $model.selectedDirection) {
+                    Text("영어 → 한국어").tag(CaptionDirection.englishToKorean)
+                    Text("한국어 → 영어").tag(CaptionDirection.koreanToEnglish)
+                }.pickerStyle(.radioGroup).labelsHidden().font(.system(size: 12))
+                    .disabled(!model.canChangeSessionSettings)
+                if model.hasContent {
+                    Text("방향을 바꾸려면 기록을 저장한 뒤 새 대화를 시작하세요.")
+                        .font(.system(size: 10)).foregroundStyle(CaptionPalette.secondary).lineSpacing(3)
+                }
+            }
             VStack(alignment: .leading, spacing: 14) {
                 sectionLabel("오디오 입력")
                 HStack {
@@ -146,7 +158,7 @@ private struct CaptionSidebar: View {
                 }.labelsHidden().pickerStyle(.menu).disabled(model.phase != .idle)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 CaptionAudioMeter(model: model)
-                Text(model.isListening ? "영어 화자 가까이에 마이크를 두세요." : "시작하면 마이크 입력을 확인할 수 있습니다.")
+                Text(model.isListening ? "\(model.sourceDisplayName) 화자 가까이에 마이크를 두세요." : "시작하면 마이크 입력을 확인할 수 있습니다.")
                     .font(.system(size: 11)).foregroundStyle(CaptionPalette.secondary).lineSpacing(4)
             }
             if !model.assetsReady && !model.isChecking {
@@ -175,7 +187,7 @@ private struct CaptionSidebar: View {
             Rectangle().fill(CaptionPalette.border).frame(height: 1)
             VStack(alignment: .leading, spacing: 16) {
                 sectionLabel("자막 보기")
-                Toggle("영어 원문 함께 보기", isOn: $model.showEnglish).toggleStyle(.checkbox)
+                Toggle("\(model.sourceDisplayName) 원문 함께 보기", isOn: $model.showEnglish).toggleStyle(.checkbox)
                     .font(.system(size: 12))
                 Toggle("최근 구절을 문맥으로 함께 번역", isOn: $model.contextCorrectionEnabled)
                     .toggleStyle(.checkbox).font(.system(size: 12))
@@ -218,7 +230,7 @@ private struct CaptionSidebar: View {
         VStack(alignment: .leading, spacing: 11) {
             Label("처음 한 번 준비", systemImage: "arrow.down.circle")
                 .font(.system(size: 12, weight: .semibold))
-            Text(model.isPreparing ? model.preparationMessage : "영어 인식·한국어 번역 모델을 받습니다. 준비 후에는 인터넷 없이 사용할 수 있습니다.")
+            Text(model.isPreparing ? model.preparationMessage : "\(model.sourceDisplayName) 음성 인식·\(model.targetDisplayName) 번역을 준비합니다. 준비 후에는 인터넷 없이 사용할 수 있습니다.")
                 .font(.system(size: 11)).foregroundStyle(CaptionPalette.secondary).lineSpacing(4)
             if model.isPreparing {
                 if let progress = model.preparationProgress {
@@ -261,7 +273,7 @@ private struct CaptionArea: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("한국어 자막").font(.system(size: 12, weight: .medium)).foregroundStyle(CaptionPalette.secondary)
+                Text("\(model.targetDisplayName) 자막").font(.system(size: 12, weight: .medium)).foregroundStyle(CaptionPalette.secondary)
                 if model.segments.contains(where: { $0.translationError != nil }) {
                     Button("다시 번역") { model.retryFailedTranslations() }
                         .controlSize(.small)
@@ -280,7 +292,8 @@ private struct CaptionArea: View {
             if model.hasContent {
                 NativeCaptionTranscript(segments: model.recentDisplaySegments(limit: visibleLimit),
                     fontSize: model.fontSize, showEnglish: model.showEnglish,
-                    isIdle: model.phase == .idle && !model.isPreview, followsLatest: $followsLatest)
+                    isIdle: model.phase == .idle && !model.isPreview, followsLatest: $followsLatest,
+                    accessibilityLabel: "\(model.targetDisplayName) 실시간 자막과 \(model.sourceDisplayName) 원문")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 Text("화면에는 최근 100개 자막을 표시합니다. 전체 대화는 ‘원문·자막 저장’으로 보관할 수 있습니다.")
                     .font(.system(size: 10)).foregroundStyle(CaptionPalette.secondary)
@@ -291,7 +304,7 @@ private struct CaptionArea: View {
                     Spacer()
                     Image(systemName: "waveform").font(.system(size: 39, weight: .light))
                         .foregroundStyle(CaptionPalette.blue.opacity(0.55))
-                    Text("영어를 듣고, 한글로 함께 읽습니다.").font(.system(size: 23, weight: .medium))
+                    Text("\(model.sourceDisplayName)를 듣고, \(model.targetDisplayName)로 함께 읽습니다.").font(.system(size: 23, weight: .medium))
                     Text(model.assetsReady ? "마이크를 선택하고 ‘자막 시작’을 눌러 주세요." : "왼쪽에서 언어 모델을 준비한 뒤 시작해 주세요.")
                         .font(.system(size: 13)).foregroundStyle(CaptionPalette.secondary)
                     Spacer()
