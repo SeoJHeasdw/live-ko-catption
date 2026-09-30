@@ -1,12 +1,12 @@
 새 세션 인계 · Live Korean Captions
 
 작업 위치: /Users/jaehoseo/Desktop/vswrk/javis/live-ko-caption
-브랜치: codex/caption-realtime-review
+브랜치: main
 원격: https://github.com/SeoJHeasdw/live-ko-catption
-기존 draft PR: https://github.com/SeoJHeasdw/live-ko-catption/pull/1
+병합한 PR 기록: https://github.com/SeoJHeasdw/live-ko-catption/pull/1
 
 현재 안정화는 0.2.2 (5)로 반영했다. 앱은 실행 후 정지·재시작까지 확인했고
-준비 상태로 열어 두었다. 기능별 커밋과 push를 완료했으며 PR은 draft로 유지한다.
+준비 상태로 열어 두었다. 기능별 커밋과 검증 자료는 main에 반영했고 PR과 작업 브랜치를 정리했다.
 
 핵심 검증: 실제 로컬 엔진 30분+30초 재시작, 별도 합성 창 30분, 실제 내장
 마이크 20분40초+55초 재시작, 결정적 검사 63개. 종료 후 네이티브 응답 대기와
@@ -62,8 +62,6 @@
 
 다음 세션에서 사용자가 새 요구사항을 정하면 검토할 후보
 
-- 실제 영어 화자와 핀마이크로 30분 이상, 오프라인, 입력 분리/복구, 잠자기/복귀,
-  권한 변경과 환경 소음·빠른 말·혼합 언어를 반복 검증한다.
 - 과거 자막을 읽는 동안의 고정된 탐색 화면, 검색·페이지 이동, 자동 저장/복구를
   검토한다. 현재 화면은 최근 100구절이며 전체 기록은 수동 저장한다.
 - 이름·전문 용어·표기 방식의 용어집을 검토한다. 음성 인식용 어휘와 번역용 용어를
@@ -78,8 +76,4 @@
 
 지켜야 할 프로젝트 조건
 
-독립 네이티브 macOS 앱, macOS 26.4 이상, 완전 로컬 추론을 유지한다. 형제
-에셋/음악/TTS 엔진을 가져오지 않는다. 요청 없이 클라우드·시스템 오디오를 추가하지
-않는다. 외부 오디오 콜백은 nonisolated factory에서 만들고 AudioCallbackBridge를
-사용한다. SDK27에 있다고 macOS26.4에서 가능한 API라고 가정하지 않는다.
-기능별로 빌드 가능한 커밋을 만들고 각 완료 기능을 별도로 push한다.
+기능별로 빌드 가능한 커밋을 만들고, 커밋메시지는 한글로 한다. 각 완료 기능을 별도로 push한다.
