@@ -6,10 +6,11 @@
     <key>CFBundleIdentifier</key><string>io.javis.live-ko-caption</string>
     <key>CFBundleExecutable</key><string>LiveKoCaption</string>
     <key>CFBundlePackageType</key><string>APPL</string>
-    <key>CFBundleShortVersionString</key><string>0.4.7</string>
-    <key>CFBundleVersion</key><string>15</string>
+    <key>CFBundleShortVersionString</key><string>0.4.8</string>
+    <key>CFBundleVersion</key><string>16</string>
     <key>LSMinimumSystemVersion</key><string>26.4</string>
     <key>NSHighResolutionCapable</key><true/>
     <key>NSMicrophoneUsageDescription</key><string>선택한 영어 또는 한국어 음성을 이 Mac에서 인식해 반대 언어의 자막을 표시합니다.</string>
+    <key>NSAudioCaptureUsageDescription</key><string>소리 입력을 컴퓨터 소리로 선택하면 이 Mac에서 재생되는 영어 또는 한국어 음성을 인식해 반대 언어의 자막을 표시합니다. 소리는 저장하지 않습니다.</string>
     <key>NSSpeechRecognitionUsageDescription</key><string>선택한 영어 또는 한국어 음성을 이 Mac에서 실시간 자막으로 바꿉니다.</string>
 </dict></plist>

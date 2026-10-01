@@ -74,6 +74,11 @@ final class CaptionModel {
     var selectedDeviceUID: String {
         didSet { UserDefaults.standard.set(selectedDeviceUID, forKey: "inputDeviceUID") }
     }
+    /// The input is what this Mac plays rather than a microphone.
+    var usesSystemAudio: Bool { selectedDeviceUID == AudioInputDevice.systemAudioUID }
+    /// Computer sound is selected and nothing has played recently. Silence
+    /// is normal there, so this is a hint and never an input error.
+    private(set) var isWaitingForSystemAudio = false
     var showEnglish: Bool {
         didSet { UserDefaults.standard.set(showEnglish, forKey: "showEnglish") }
     }
@@ -216,7 +221,9 @@ final class CaptionModel {
         switch phase {
         case .idle: return hasPendingTranslations ? "남은 원문 번역 중" : (assetsReady ? "준비됨" : "언어 모델 준비 필요")
         case .starting: return "시작 중"
-        case .listening: return "\(sourceDisplayName)를 듣고 있습니다"
+        case .listening:
+            if isWaitingForSystemAudio { return "컴퓨터 소리를 기다리는 중" }
+            return usesSystemAudio ? "컴퓨터 소리에서 \(sourceDisplayName)를 듣고 있습니다" : "\(sourceDisplayName)를 듣고 있습니다"
         case .stopping: return "마지막 문장 정리 중"
         }
     }
@@ -391,12 +398,16 @@ final class CaptionModel {
         lastAcceptedSourceUptime = 0
         let requestedDeviceUID = selectedDeviceUID
         refreshDevices()
+        let usesSystemAudio = requestedDeviceUID == AudioInputDevice.systemAudioUID
         do {
-            guard requestedDeviceUID.isEmpty || devices.contains(where: { $0.uid == requestedDeviceUID }) else {
+            guard requestedDeviceUID.isEmpty || usesSystemAudio || devices.contains(where: { $0.uid == requestedDeviceUID }) else {
                 throw CaptionError.message("선택한 마이크가 연결되지 않았습니다. 다시 연결하거나 입력 장치를 직접 선택해 주세요.")
             }
+            // Computer sound opens no microphone. macOS asks for its own
+            // system audio permission when the tap first delivers audio.
             let allowed: Bool
-            if let microphoneAccessOverride { allowed = await microphoneAccessOverride() }
+            if usesSystemAudio { allowed = true }
+            else if let microphoneAccessOverride { allowed = await microphoneAccessOverride() }
             else { allowed = await AVCaptureDevice.requestAccess(for: .audio) }
             try checkStarting(token)
             guard allowed else {
@@ -449,7 +460,8 @@ final class CaptionModel {
             let audioCapture = AudioCapture()
             capture = audioCapture
             let deviceID = devices.first(where: { $0.uid == selectedDeviceUID })?.id
-            let stream = try audioCapture.start(deviceID: deviceID, target: format,
+            let stream = try audioCapture.start(deviceID: deviceID,
+                systemAudio: usesSystemAudio ? try SystemAudioTap() : nil, target: format,
                 onLevel: { [weak self] level in
                     Task { @MainActor in
                         guard self?.runID == token else { return }
@@ -461,7 +473,11 @@ final class CaptionModel {
                               self.phase != .idle else { return }
                         await self.receiveAudioProblem(problem)
                     }
+                }, onSourceActivity: { [weak self] active in
+                    guard let self, self.runID == token else { return }
+                    self.isWaitingForSystemAudio = usesSystemAudio && !active
                 })
+            isWaitingForSystemAudio = usesSystemAudio
             // Analyze the live stream in its own task. Do not await a streaming
             // analysis operation before allowing the user to stop the stream.
             analysisTask = Task { [weak self] in
@@ -591,6 +607,7 @@ final class CaptionModel {
         draftHeldSince = nil
         queuedTranslations = 0
         audioLevel = 0
+        isWaitingForSystemAudio = false
         phase = .idle
     }
 

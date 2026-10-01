@@ -32,7 +32,7 @@ open "dist/Live Korean Captions.app"
 |---|---|
 | [Sources/CaptionCore](../Sources/CaptionCore) | 자막 구간, 원문 수정 버전, 확정 상태, 문맥 묶음, 텍스트 내보내기와 번역 큐 |
 | [CaptionModel.swift](../Sources/LiveKoCaption/CaptionModel.swift) | 언어 자산 준비, 음성 인식·번역 작업, 대화 생명주기와 오류 복구 |
-| [AudioDeviceCapture.swift](../Sources/LiveKoCaption/AudioDeviceCapture.swift) | 선택한 장치에 고정하는 입력 전용 AudioUnit 캡처 |
+| [AudioDeviceCapture.swift](../Sources/LiveKoCaption/AudioDeviceCapture.swift) | 선택한 장치에 고정하는 입력 전용 AudioUnit 캡처, 컴퓨터 소리를 받는 비공개 탭 장치 |
 | [AudioCapture.swift](../Sources/LiveKoCaption/AudioCapture.swift) | 장치 목록, 입력 버퍼 복사, 변환과 분석 스트림 |
 | [CaptionView.swift](../Sources/LiveKoCaption/CaptionView.swift) | 상세 자막 화면, 접이식 조작 사이드바, 설정 팝업과 하단 실행 버튼 |
 | [CompactCaptionView.swift](../Sources/LiveKoCaption/CompactCaptionView.swift) | 떠 있는 간략 자막 창의 조작 UI |
@@ -53,11 +53,13 @@ open "dist/Live Korean Captions.app"
 
 펼친 사이드바의 **번역 분야**는 일반·IT를 선택하는 사전 설정입니다. 비어 있는 시작 전 대화에서는 문장 다듬기의 활성화 여부와 관계없이 선택할 수 있습니다. 기록이 있거나 실행·준비 중이면 현재 분야를 유지하고 새 대화에서 변경하도록 안내합니다. 분야는 `LocalTranslationRequest`의 로컬 모델 프롬프트에만 전달하며, Apple의 빠른 번역에는 적용하지 않습니다.
 
-사이드바의 설정 아이콘은 **자막·번역·마이크** 탭이 있는 팝업을 엽니다. 자막 탭의 **원문 함께 보기**는 현재 방향의 입력 언어를 표시하며, **자막 글자 크기**를 바꾸면 원문 크기도 함께 조절합니다. 번역 탭에는 **최근 구절 함께 번역**과 선택적 **문장 다듬기**가 있습니다. 언어 자산이 준비되지 않았을 때는 빈 자막 화면 중앙의 **언어 모델 준비** 버튼으로 다운로드를 시작합니다.
+사이드바의 설정 아이콘은 **자막·번역·입력** 탭이 있는 팝업을 엽니다. 자막 탭의 **원문 함께 보기**는 현재 방향의 입력 언어를 표시하며, **자막 글자 크기**를 바꾸면 원문 크기도 함께 조절합니다. 번역 탭에는 **최근 구절 함께 번역**과 선택적 **문장 다듬기**가 있습니다. 언어 자산이 준비되지 않았을 때는 빈 자막 화면 중앙의 **언어 모델 준비** 버튼으로 다운로드를 시작합니다.
 
-마이크 기본값은 **자동 선택 (시스템 기본)**이며, 빈 장치 UID로 표현합니다. 장치 목록은 설정 팝업을 열 때, 마이크 탭으로 이동할 때, 자막을 시작할 때 갱신합니다. 자동 선택은 각 시작 시 현재 시스템 기본 마이크를 사용합니다. 수동 선택은 저장한 장치 UID로 입력을 고정하며, 해당 장치가 없으면 기본 마이크로 몰래 전환하지 않고 오류를 표시합니다.
+입력 기본값은 **마이크 · 자동 선택 (시스템 기본)**이며, 빈 장치 UID로 표현합니다. 장치 목록은 설정 팝업을 열 때, 입력 탭으로 이동할 때, 자막을 시작할 때 갱신합니다. 자동 선택은 각 시작 시 현재 시스템 기본 마이크를 사용합니다. 수동 선택은 저장한 장치 UID로 입력을 고정하며, 해당 장치가 없으면 기본 마이크로 몰래 전환하지 않고 오류를 표시합니다.
 
 실행 중 시스템 기본 마이크가 바뀌거나 새 장치가 연결돼도 자동으로 입력을 전환하지 않습니다. 입력을 바꾸려면 일시정지한 뒤 설정을 변경하고 재개합니다. 현재 입력이 끊기는 경우는 오디오 오류 복구 경로를 따릅니다.
+
+**컴퓨터에서 나는 소리**는 `AudioInputDevice.systemAudioUID`로 저장하는 선택입니다. 시작할 때 `SystemAudioTap`이 이 Mac의 전체 출력을 받는 비공개 Core Audio 탭과 그 탭만 담은 비공개 집합 장치를 만들고, 기존 `AudioDeviceCapture`가 그 장치를 마이크처럼 읽습니다. 마이크는 열지 않으며 마이크 권한도 요청하지 않습니다. macOS는 `NSAudioCaptureUsageDescription`으로 시스템 오디오 녹음 허용을 따로 묻습니다. 정지하면 장치와 탭을 제거합니다.
 
 ## 유지해야 할 동작
 
@@ -81,6 +83,8 @@ open "dist/Live Korean Captions.app"
 ### 오디오와 작업 생명주기
 
 오디오 콜백에서는 인식·번역을 실행하지 않습니다. 버퍼를 복사한 뒤 제한된 변환 큐로 전달합니다. 변환 대기는 입력 0.5초 이내, 분석 스트림은 8개 버퍼로 제한하며 누락 횟수를 보고합니다. 짧은 입력은 변환 큐에서 약 100ms 단위로 모읍니다. 정지할 때 마지막 짧은 입력도 배출합니다.
+
+컴퓨터 소리 탭은 재생 중이 아닐 때 버퍼를 보내지 않거나 디지털 무음만 보냅니다. `AudioPump.makeSilenceTimer()`가 입력이 100ms 이상 비면 무음 한 조각을 채워, 인식 시간이 계속 흐르고 마지막 문장이 확정되며 조용한 구간이 입력 중단으로 처리되지 않게 합니다. 이 타이머 핸들러도 외부 큐에서 실행되므로 `AudioPump` 안의 nonisolated 위치에서 만듭니다. 상태의 **컴퓨터 소리를 기다리는 중**은 측정 바닥보다 큰 소리가 1.5초 동안 없었다는 표시이며 오류가 아닙니다.
 
 AVFoundation의 외부 스레드 콜백은 nonisolated factory인 `AudioPump.makeTapBlock()`과 `AudioCallbackBridge`로 구성합니다. MainActor 메서드 안에서 `AVAudioNodeTapBlock`을 만들면 Swift 6이 MainActor 실행을 요구하도록 추론할 수 있어 실제 마이크 입력에서 충돌할 수 있습니다. 오디오 변경 뒤에는 `check-audio-callbacks.sh`를 실행합니다.
 
@@ -106,6 +110,7 @@ swift run --build-system native TranslationSchedulingChecks
 ./scripts/check-app-model.sh
 ./scripts/check-lifecycle.sh
 ./scripts/check-audio-callbacks.sh
+./scripts/check-system-audio.sh
 ./scripts/check-translation-leases.sh
 ./scripts/check-local-model-store.sh
 ```
@@ -117,6 +122,7 @@ swift run --build-system native TranslationSchedulingChecks
 | `check-app-model.sh` | 주입한 번역기로 취소, 시간 초과, 재시도, 보완과 원문 보존 재현 |
 | `check-lifecycle.sh` | 작업의 시간 제한과 취소 처리 |
 | `check-audio-callbacks.sh` | 콜백 실행 영역, PCM 변환, 종료 시 입력 배출 |
+| `check-system-audio.sh` | 합성 예문을 재생하는 프로세스 하나를 음소거로 탭해 제품 캡처·무음 채움·실제 영어 인식까지 확인. 준비된 영어 인식 자산이 필요하며, 전체 출력 탭과 권한 요청은 실행하지 않음 |
 | `check-translation-leases.sh` | 실제 반환 전 세션 보존과 요청 상한 |
 | `check-local-model-store.sh` | 다운로드 취소, 크기·해시 검사와 설치 처리 |
 

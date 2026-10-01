@@ -69,10 +69,10 @@ private struct CompactCaptionHeader: View {
 
     private var controlHelp: String {
         switch model.phase {
-        case .starting: return "마이크와 음성 인식 준비를 취소합니다."
-        case .listening: return "마이크 입력을 일시정지하고 마지막 자막을 정리합니다. 대화 기록은 유지됩니다."
+        case .starting: return "소리 입력과 음성 인식 준비를 취소합니다."
+        case .listening: return "소리 입력을 일시정지하고 마지막 자막을 정리합니다. 대화 기록은 유지됩니다."
         case .stopping: return "마지막 음성의 자막을 정리하고 있습니다. 완료되면 다시 시작할 수 있습니다."
-        case .idle: return model.hasContent ? "현재 대화에 이어서 마이크 자막을 재개합니다." : "선택한 번역 방향으로 마이크 자막을 시작합니다."
+        case .idle: return model.hasContent ? "현재 대화에 이어서 자막을 재개합니다." : "선택한 번역 방향으로 자막을 시작합니다."
         }
     }
 
@@ -108,7 +108,7 @@ private struct CompactCaptionHeader: View {
                     Task { await windows.pauseOrResume() }
                 }.disabled(!model.canStart && !model.canStop)
                 control("일시정지하고 상세 보기", symbol: "stop.fill", shortcut: nil,
-                    help: "상세 창으로 돌아가며 마이크 입력을 일시정지합니다. 대화 기록은 유지됩니다.",
+                    help: "상세 창으로 돌아가며 소리 입력을 일시정지합니다. 대화 기록은 유지됩니다.",
                     shortcutHint: "⌘.") {
                     Task { await windows.stopAndShowDetailed() }
                 }

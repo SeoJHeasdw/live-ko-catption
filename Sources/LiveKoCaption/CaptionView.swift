@@ -159,7 +159,7 @@ private struct CaptionSidebar: View {
                 .disabled(!expanded).allowsHitTesting(expanded).accessibilityHidden(!expanded)
             Spacer(minLength: 0)
             action("설정", symbol: "gearshape",
-                help: "원문 표시, 글자 크기, 문장 다듬기와 마이크 설정을 엽니다.") { openSettings(.captions) }
+                help: "원문 표시, 글자 크기, 문장 다듬기와 소리 입력 설정을 엽니다.") { openSettings(.captions) }
         }.padding(.vertical, 12).frame(width: 260, alignment: .leading)
             .frame(maxHeight: .infinity)
             .background(CaptionPalette.panel)
@@ -270,7 +270,7 @@ private struct CaptionIconButton: View {
 private enum CaptionSettingsTab: String, CaseIterable, Identifiable {
     case captions = "자막"
     case translation = "번역"
-    case microphone = "마이크"
+    case microphone = "입력"
     var id: String { rawValue }
 }
 
@@ -380,23 +380,29 @@ private struct CaptionSettingsPopover: View {
     private var microphoneSettings: some View {
         VStack(alignment: .leading, spacing: 22) {
             VStack(alignment: .leading, spacing: 10) {
-                Text("입력 마이크").font(CaptionType.section)
-                Picker("입력 마이크", selection: $model.selectedDeviceUID) {
-                    Text("자동 선택 (시스템 기본)").tag("")
-                    ForEach(model.devices) { device in Text(device.name).tag(device.uid) }
-                    if !model.selectedDeviceUID.isEmpty && !model.devices.contains(where: { $0.uid == model.selectedDeviceUID }) {
+                Text("소리 입력").font(CaptionType.section)
+                Picker("소리 입력", selection: $model.selectedDeviceUID) {
+                    Text("마이크 · 자동 선택 (시스템 기본)").tag("")
+                    Text("컴퓨터에서 나는 소리").tag(AudioInputDevice.systemAudioUID)
+                    ForEach(model.devices) { device in Text("마이크 · " + device.name).tag(device.uid) }
+                    if !model.selectedDeviceUID.isEmpty && !model.usesSystemAudio &&
+                        !model.devices.contains(where: { $0.uid == model.selectedDeviceUID }) {
                         Text("저장된 마이크 · 연결 안 됨").tag(model.selectedDeviceUID)
                     }
                 }.labelsHidden().pickerStyle(.menu).controlSize(.large)
                     .disabled(model.phase != .idle)
-                    .help("자동 선택은 시작할 때 시스템 기본 마이크를 사용합니다. 원하는 장치를 직접 지정할 수도 있습니다.")
-                explanation(model.selectedDeviceUID.isEmpty ? "시작할 때 시스템 기본 마이크를 자동으로 사용합니다." :
-                    "선택한 마이크를 사용합니다. 변경하려면 먼저 일시정지하세요.")
+                    .help("마이크로 말소리를 받거나, 이 Mac에서 재생되는 영상·회의의 소리를 직접 받습니다.")
+                explanation(model.usesSystemAudio
+                    ? "브라우저·영상·회의 앱 등 이 Mac에서 재생되는 모든 소리를 자막으로 만듭니다. 처음 시작할 때 macOS가 시스템 오디오 녹음 허용을 묻습니다. 소리는 저장하지 않습니다."
+                    : model.selectedDeviceUID.isEmpty ? "시작할 때 시스템 기본 마이크를 자동으로 사용합니다."
+                    : "선택한 마이크를 사용합니다. 변경하려면 먼저 일시정지하세요.")
             }
             VStack(alignment: .leading, spacing: 10) {
                 Text("입력 크기").font(CaptionType.section)
                 CaptionAudioMeter(model: model)
-                explanation(model.isListening ? "마이크 가까이에서 말해 주세요." : "자막을 시작하면 입력 크기가 표시됩니다.")
+                explanation(!model.isListening ? "자막을 시작하면 입력 크기가 표시됩니다."
+                    : model.usesSystemAudio ? "재생 중인데 움직이지 않으면 시스템 설정 → 개인정보 보호 및 보안 → 화면 및 시스템 오디오 녹음에서 이 앱을 허용해 주세요."
+                    : "마이크 가까이에서 말해 주세요.")
             }
             Button { model.refreshDevices() } label: {
                 Label("목록 새로고침", systemImage: "arrow.clockwise")
@@ -589,8 +595,8 @@ private struct CaptionEmptyState: View {
         if model.isChecking { return "사용 준비 확인 중" }
         if model.isPreparingLocalModel { return "문장 보완 준비 중" }
         switch model.phase {
-        case .starting: return "마이크 연결 중"
-        case .listening: return "\(model.sourceDisplayName)로 말해 주세요"
+        case .starting: return model.usesSystemAudio ? "컴퓨터 소리 연결 중" : "마이크 연결 중"
+        case .listening: return model.usesSystemAudio ? "\(model.sourceDisplayName) 소리를 재생해 주세요" : "\(model.sourceDisplayName)로 말해 주세요"
         case .stopping: return "마지막 자막 정리 중"
         case .idle: return "대화를 자막으로 읽으세요"
         }
@@ -601,8 +607,8 @@ private struct CaptionEmptyState: View {
         if model.isChecking { return "선택한 언어의 음성 인식과 번역을 확인하고 있습니다." }
         if model.isPreparingLocalModel { return "로컬 모델을 불러오고 있습니다. 준비가 끝나면 시작할 수 있습니다." }
         switch model.phase {
-        case .starting: return "마이크 접근 권한을 요청하면 허용해 주세요."
-        case .listening: return "말씀하신 내용이 \(model.targetDisplayName) 자막으로 여기에 나타납니다."
+        case .starting: return model.usesSystemAudio ? "시스템 오디오 녹음 권한을 요청하면 허용해 주세요." : "마이크 접근 권한을 요청하면 허용해 주세요."
+        case .listening: return model.usesSystemAudio ? "이 Mac에서 재생되는 소리가 \(model.targetDisplayName) 자막으로 여기에 나타납니다." : "말씀하신 내용이 \(model.targetDisplayName) 자막으로 여기에 나타납니다."
         case .stopping: return "남은 원문과 번역을 정리하고 있습니다."
         case .idle:
             return model.assetsReady ? "위에서 번역 방향을 선택하고 ‘자막 시작’을 누르세요." :

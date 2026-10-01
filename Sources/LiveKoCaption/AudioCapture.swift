@@ -7,6 +7,8 @@ import OSLog
 import Speech
 
 struct AudioInputDevice: Identifiable, Equatable, Sendable {
+    /// A stored selection that means "what this Mac plays", not a device UID.
+    static let systemAudioUID = "io.javis.live-ko-caption.system-audio"
     let id: AudioDeviceID
     let uid: String
     let name: String
@@ -78,6 +80,7 @@ final class AudioPump: @unchecked Sendable {
     static let runningInputWait: TimeInterval = 20
     private let startedAtUptime: TimeInterval
     private var lastInputUptime: TimeInterval
+    private var lastAudibleUptime: TimeInterval = 0
     private var finished = false
     private var closingScheduled = false
     private var closed = false
@@ -88,6 +91,7 @@ final class AudioPump: @unchecked Sendable {
     private let converter: AVAudioConverter
     private let sourceFormat: AVAudioFormat
     private let sourceBatch: AVAudioPCMBuffer
+    private let silentBatch: AVAudioPCMBuffer
     private let maximumPendingInputFrames: Int64
     private let target: AVAudioFormat
     private let continuation: AsyncStream<AnalyzerInput>.Continuation
@@ -110,6 +114,13 @@ final class AudioPump: @unchecked Sendable {
         guard let sourceBatch = AVAudioPCMBuffer(pcmFormat: source, frameCapacity: batchFrames) else {
             throw CaptionError.message("마이크 입력을 모을 메모리가 부족합니다.")
         }
+        guard let silentBatch = AVAudioPCMBuffer(pcmFormat: source, frameCapacity: batchFrames) else {
+            throw CaptionError.message("입력을 모을 메모리가 부족합니다.")
+        }
+        silentBatch.frameLength = batchFrames
+        for plane in UnsafeMutableAudioBufferListPointer(silentBatch.mutableAudioBufferList) {
+            if let data = plane.mData { memset(data, 0, Int(plane.mDataByteSize)) }
+        }
         // The converter defaults to remapping, which selects only channel 0
         // for mono output. A stereo receiver carrying the speaker on its right
         // channel must remain audible to recognition.
@@ -117,6 +128,7 @@ final class AudioPump: @unchecked Sendable {
         self.converter = converter
         self.sourceFormat = source
         self.sourceBatch = sourceBatch
+        self.silentBatch = silentBatch
         self.maximumPendingInputFrames = Int64(source.sampleRate / 2)
         self.target = target
         self.continuation = continuation
@@ -145,6 +157,31 @@ final class AudioPump: @unchecked Sendable {
                 ? uptime - lastInputUptime > Self.runningInputWait
                 : uptime - startedAtUptime > Self.startupInputWait)
         }
+    }
+
+    /// Whether the source carried sound above the meter floor recently. A tap
+    /// keeps delivering digital silence after playback ends, so buffer arrival
+    /// alone does not show that something is playing.
+    func hasAudibleInput(within seconds: TimeInterval, at uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) -> Bool {
+        lock.withLock { lastAudibleUptime > 0 && uptime - lastAudibleUptime <= seconds }
+    }
+
+    /// Computer sound delivers no buffers while nothing plays. One chunk of
+    /// silence per idle chunk interval keeps recognition time moving, so a
+    /// last sentence can finalize and a quiet source is not a stalled device.
+    func enqueueSilenceIfIdle(at uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) {
+        guard lock.withLock({ !finished && uptime - lastInputUptime >= Self.analyzerChunkDuration }) else { return }
+        enqueue(silentBatch, at: uptime)
+    }
+
+    // Like the tap block, this handler runs on a foreign queue. Building it in
+    // the @MainActor capture controller would infer MainActor isolation and
+    // trap on its first tick. Construct it here, capturing only the pump.
+    func makeSilenceTimer() -> DispatchSourceTimer {
+        let timer = DispatchSource.makeTimerSource(queue: .global(qos: .userInitiated))
+        timer.schedule(deadline: .now() + Self.analyzerChunkDuration, repeating: Self.analyzerChunkDuration)
+        timer.setEventHandler { [self] in enqueueSilenceIfIdle() }
+        return timer
     }
 
     func enqueue(_ original: AVAudioPCMBuffer, at uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) {
@@ -249,6 +286,7 @@ final class AudioPump: @unchecked Sendable {
         let now = ProcessInfo.processInfo.systemUptime
         if now - lastMeterTime > 0.10, let level = Self.level(of: source) {
             lastMeterTime = now
+            if level > 0.02 { lock.withLock { lastAudibleUptime = now } }
             onLevel(level)
         }
     }
@@ -379,36 +417,62 @@ final class AudioCapture {
     private let stopQueue = DispatchQueue(label: "io.javis.live-ko-caption.device-stop")
     private var deviceCapture: AudioDeviceCapture?
     private var pump: AudioPump?
+    private var systemAudio: SystemAudioTap?
+    private var silenceTimer: DispatchSourceTimer?
     private var watchdogTask: Task<Void, Never>?
 
-    func start(deviceID: AudioDeviceID?, target: AVAudioFormat,
+    /// A system audio tap replaces the microphone device for this run. This
+    /// capture owns the tap and destroys it after the unit has stopped.
+    func start(deviceID: AudioDeviceID?, systemAudio tap: SystemAudioTap? = nil, target: AVAudioFormat,
                onLevel: @escaping @Sendable (Double) -> Void,
-               onProblem: @escaping @Sendable (String) -> Void) throws -> AsyncStream<AnalyzerInput> {
+               onProblem: @escaping @Sendable (String) -> Void,
+               onSourceActivity: (@MainActor @Sendable (Bool) -> Void)? = nil) throws -> AsyncStream<AnalyzerInput> {
         guard deviceCapture == nil, pump == nil else {
-            throw CaptionError.message("마이크가 이미 실행 중입니다. 잠시 멈춘 뒤 다시 시작해 주세요.")
+            tap?.destroy()
+            throw CaptionError.message("입력이 이미 실행 중입니다. 잠시 멈춘 뒤 다시 시작해 주세요.")
         }
         // A dedicated input-only AudioUnit keeps the selected input independent
         // of AVAudioEngine's default input/output aggregate-device rebuilding.
-        let source = try AudioDeviceCapture(deviceID: deviceID)
+        let source: AudioDeviceCapture
+        do { source = try AudioDeviceCapture(deviceID: tap?.deviceID ?? deviceID) }
+        catch { tap?.destroy(); throw error }
         let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream(
             bufferingPolicy: .bufferingNewest(AudioPump.analyzerBufferLimit))
-        let audioPump = try AudioPump(source: source.format, target: target,
-            continuation: continuation, onLevel: onLevel, onProblem: onProblem)
+        let audioPump: AudioPump
+        do {
+            audioPump = try AudioPump(source: source.format, target: target,
+                continuation: continuation, onLevel: onLevel, onProblem: onProblem)
+        } catch { source.stop(); tap?.destroy(); continuation.finish(); throw error }
         deviceCapture = source
         pump = audioPump
+        systemAudio = tap
         do { try source.start(pump: audioPump, onProblem: onProblem) }
         catch {
             deviceCapture = nil
+            pump = nil
+            systemAudio = nil
             source.stop()
+            tap?.destroy()
             continuation.finish()
             throw error
         }
+        if tap != nil {
+            let timer = audioPump.makeSilenceTimer()
+            timer.resume()
+            silenceTimer = timer
+        }
         watchdogTask = Task { @MainActor [weak self] in
             var reportedFirstInput = false
+            var sourceWasActive: Bool?
             while !Task.isCancelled {
                 do { try await Task.sleep(for: .milliseconds(500)) } catch { return }
                 guard !Task.isCancelled, let self, self.deviceCapture === source,
                       self.pump === audioPump else { return }
+                let sourceIsActive = audioPump.hasAudibleInput(within: 1.5)
+                if sourceIsActive != sourceWasActive {
+                    sourceWasActive = sourceIsActive
+                    onSourceActivity?(sourceIsActive)
+                }
                 if audioPump.hasReceivedInput && !reportedFirstInput {
                     reportedFirstInput = true
                     Self.logger.notice("Selected microphone receiving input: device=\(source.deviceID), convertedBuffers=\(audioPump.bufferCount)")
@@ -434,12 +498,15 @@ final class AudioCapture {
         watchdogTask?.cancel(); watchdogTask = nil
         let closingSource = deviceCapture
         let closingPump = pump
-        deviceCapture = nil; pump = nil
+        let closingTap = systemAudio
+        deviceCapture = nil; pump = nil; systemAudio = nil
+        silenceTimer?.cancel(); silenceTimer = nil
         // Hardware stop can wait for its callback. Keep it off the UI actor so
         // input failure cannot freeze the Start button or the stop deadline.
         await withCheckedContinuation { done in
             stopQueue.async {
                 closingSource?.stop()
+                closingTap?.destroy()
                 done.resume()
             }
         }

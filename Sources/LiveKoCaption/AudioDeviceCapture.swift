@@ -248,3 +248,79 @@ final class AudioDeviceCapture: @unchecked Sendable {
         if status != noErr { throw CaptionError.message("\(message) (\(status)).") }
     }
 }
+
+/// A private Core Audio tap of what this Mac plays, exposed as an input-only
+/// aggregate device. The existing selected-device capture reads it like a
+/// microphone, so recognition, queues and callbacks stay on one path. The tap
+/// neither changes the output route nor mutes or records anything to disk.
+final class SystemAudioTap: @unchecked Sendable {
+    let deviceID: AudioDeviceID
+    private let tapID: AudioObjectID
+    private let lock = NSLock()
+    private var destroyed = false
+
+    /// An empty process list taps everything the Mac plays. Checks pass one
+    /// process and mute it while tapped, so a fixture is captured silently.
+    init(onlyProcesses processes: [AudioObjectID] = [], muteBehavior: CATapMuteBehavior = .unmuted) throws {
+        let description = processes.isEmpty
+            ? CATapDescription(stereoGlobalTapButExcludeProcesses: [])
+            : CATapDescription(stereoMixdownOfProcesses: processes)
+        description.uuid = UUID()
+        description.name = "Live Korean Captions"
+        description.isPrivate = true
+        description.muteBehavior = muteBehavior
+        var tap = AudioObjectID(kAudioObjectUnknown)
+        try Self.check(AudioHardwareCreateProcessTap(description, &tap), "컴퓨터 소리를 받을 준비를 할 수 없습니다")
+        // Only the tap is in this private device, so it does not depend on
+        // which output device is playing and never appears in device lists.
+        // It delivers buffers only while something plays; the pump fills the
+        // silent gaps so caption time keeps advancing.
+        let aggregate: [String: Any] = [
+            kAudioAggregateDeviceNameKey: "Live Korean Captions 컴퓨터 소리",
+            kAudioAggregateDeviceUIDKey: "io.javis.live-ko-caption.system-audio." + UUID().uuidString,
+            kAudioAggregateDeviceIsPrivateKey: true,
+            kAudioAggregateDeviceIsStackedKey: false,
+            kAudioAggregateDeviceTapAutoStartKey: true,
+            kAudioAggregateDeviceTapListKey: [[kAudioSubTapUIDKey: description.uuid.uuidString,
+                                               kAudioSubTapDriftCompensationKey: true]]
+        ]
+        var device = AudioDeviceID(kAudioObjectUnknown)
+        let status = AudioHardwareCreateAggregateDevice(aggregate as CFDictionary, &device)
+        guard status == noErr, device != kAudioObjectUnknown else {
+            AudioHardwareDestroyProcessTap(tap)
+            throw CaptionError.message("컴퓨터 소리 입력 장치를 만들 수 없습니다 (\(status)).")
+        }
+        tapID = tap
+        deviceID = device
+    }
+
+    static func processObject(forPID pid: pid_t) throws -> AudioObjectID {
+        var address = AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyTranslatePIDToProcessObject,
+            mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMain)
+        var process = AudioObjectID(kAudioObjectUnknown)
+        var size = UInt32(MemoryLayout<AudioObjectID>.size)
+        var value = pid
+        try check(AudioObjectGetPropertyData(AudioObjectID(kAudioObjectSystemObject), &address,
+            UInt32(MemoryLayout<pid_t>.size), &value, &size, &process), "소리를 내는 프로세스를 찾을 수 없습니다")
+        guard process != kAudioObjectUnknown else { throw CaptionError.message("소리를 내는 프로세스를 찾을 수 없습니다.") }
+        return process
+    }
+
+    /// Destroys the device before its tap. Call after the capture has stopped.
+    func destroy() {
+        let shouldDestroy = lock.withLock {
+            guard !destroyed else { return false }
+            destroyed = true
+            return true
+        }
+        guard shouldDestroy else { return }
+        AudioHardwareDestroyAggregateDevice(deviceID)
+        AudioHardwareDestroyProcessTap(tapID)
+    }
+
+    deinit { destroy() }
+
+    private static func check(_ status: OSStatus, _ message: String) throws {
+        if status != noErr { throw CaptionError.message("\(message) (\(status)).") }
+    }
+}
