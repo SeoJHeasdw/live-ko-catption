@@ -1,0 +1,84 @@
+mode=speech-fast chunkMs=100.0 format=16000.0Hz fixture=10.85s events=54 bursts=14 finals=3
+  t=  1.13 n=5 final=n audioEnd=  1.10 lag= 0.03 | The proposal sounds
+  t=  2.02 n=4 final=n audioEnd=  2.00 lag= 0.02 | The proposal sounds promising, but we
+  t=  3.02 n=5 final=n audioEnd=  3.00 lag= 0.02 | promising, but we need enough time to understand
+  t=  4.01 n=3 final=n audioEnd=  4.00 lag= 0.01 | need enough time to understand what happens when
+  t=  4.91 n=4 final=n audioEnd=  4.90 lag= 0.01 |  understand what happens when conditions change.
+  t=  5.04 n=1 final=Y audioEnd=  4.50 lag= 0.54 |  understand what happens when conditions change.
+  t=  5.92 n=6 final=n audioEnd=  5.90 lag= 0.02 |  Please check the date carefully
+  t=  6.81 n=5 final=n audioEnd=  6.80 lag= 0.01 | eck the date carefully because the meeting is on
+  t=  7.82 n=4 final=n audioEnd=  7.80 lag= 0.02 |  because the meeting is on Tuesday, not Thursday
+  t=  8.81 n=1 final=n audioEnd=  8.80 lag= 0.01 | because the meeting is on Tuesday, not Thursday.
+  t=  8.87 n=4 final=n audioEnd=  8.80 lag= 0.07 |  We should not
+  t=  9.72 n=3 final=n audioEnd=  9.70 lag= 0.02 |  We should not cancel the appointment
+  t= 10.72 n=6 final=n audioEnd= 10.70 lag= 0.02 | ncel the appointment unless someone confirms the
+  t= 10.87 n=3 final=Y audioEnd= 10.85 lag= 0.07 |  appointment unless someone confirms the change.
+  burst gap median=0.90s max=1.00s  first result at 1.13s
+  FINAL: The proposal sounds promising, but we need enough time to understand what happens when conditions change. |  Please check the date carefully because the meeting is on Tuesday, not Thursday. |  We should not cancel the appointment unless someone confirms the change.
+
+mode=speech-fast chunkMs=20.0 format=16000.0Hz fixture=10.85s events=54 bursts=13 finals=3
+  t=  1.11 n=5 final=n audioEnd=  1.10 lag= 0.01 | The proposal sounds
+  t=  2.06 n=4 final=n audioEnd=  2.04 lag= 0.02 | The proposal sounds promising, but we
+  t=  3.02 n=5 final=n audioEnd=  3.00 lag= 0.02 | promising, but we need enough time to understand
+  t=  3.98 n=3 final=n audioEnd=  3.96 lag= 0.02 | need enough time to understand what happens when
+  t=  4.93 n=4 final=n audioEnd=  4.92 lag= 0.02 |  understand what happens when conditions change.
+  t=  5.00 n=1 final=Y audioEnd=  4.50 lag= 0.50 |  understand what happens when conditions change.
+  t=  5.89 n=6 final=n audioEnd=  5.88 lag= 0.01 |  Please check the date carefully
+  t=  6.86 n=5 final=n audioEnd=  6.84 lag= 0.02 | eck the date carefully because the meeting is on
+  t=  7.82 n=4 final=n audioEnd=  7.80 lag= 0.02 |  because the meeting is on Tuesday, not Thursday
+  t=  8.78 n=5 final=n audioEnd=  8.82 lag= 0.01 |  We should not
+  t=  9.73 n=3 final=n audioEnd=  9.72 lag= 0.01 |  We should not cancel the appointment
+  t= 10.69 n=6 final=n audioEnd= 10.68 lag= 0.01 | ncel the appointment unless someone confirms the
+  t= 10.87 n=3 final=Y audioEnd= 10.85 lag= 0.06 |  appointment unless someone confirms the change.
+  burst gap median=0.96s max=0.96s  first result at 1.11s
+  FINAL: The proposal sounds promising, but we need enough time to understand what happens when conditions change. |  Please check the date carefully because the meeting is on Tuesday, not Thursday. |  We should not cancel the appointment unless someone confirms the change.
+
+mode=speech chunkMs=100.0 format=16000.0Hz fixture=10.85s events=54 bursts=4 finals=3
+  t=  4.03 n=17 final=n audioEnd=  4.00 lag= 0.03 | need enough time to understand what happens when
+  t=  7.83 n=4 final=n audioEnd=  7.80 lag= 0.03 |  understand what happens when conditions change.
+  t=  7.89 n=15 final=n audioEnd=  7.80 lag= 0.09 | carefully because the meeting is on Tuesday, not
+  t= 10.87 n=18 final=Y audioEnd= 10.80 lag= 0.14 |  appointment unless someone confirms the change.
+  burst gap median=2.98s max=3.80s  first result at 4.03s
+  FINAL: The proposal sounds promising, but we need enough time to understand what happens when conditions change. |  Please check the date carefully because the meeting is on Tuesday, not Thursday. |  We should not cancel the appointment unless someone confirms the change.
+
+mode=dictation chunkMs=100.0 format=16000.0Hz fixture=10.85s events=48 bursts=37 finals=1
+  t=  0.63 n=2 final=n audioEnd=  0.48 lag= 0.16 | The pro
+  t=  0.82 n=1 final=n audioEnd=  0.72 lag= 0.10 | The propos
+  t=  1.12 n=1 final=n audioEnd=  0.96 lag= 0.16 | The proposal
+  t=  1.33 n=1 final=n audioEnd=  1.20 lag= 0.13 | The proposal sounds
+  t=  1.62 n=2 final=n audioEnd=  1.44 lag= 0.18 | The proposal sounds Promi
+  t=  1.84 n=1 final=n audioEnd=  1.68 lag= 0.16 | The proposal sounds promising
+  t=  2.03 n=1 final=n audioEnd=  1.92 lag= 0.11 | The proposal sounds promising, but
+  t=  2.33 n=2 final=n audioEnd=  2.16 lag= 0.18 | The proposal sounds promising, but we need
+  t=  2.53 n=1 final=n audioEnd=  2.40 lag= 0.13 | he proposal sounds promising, but we need enough
+  t=  2.82 n=1 final=n audioEnd=  2.64 lag= 0.18 | oposal sounds promising, but we need enough time
+  t=  3.02 n=1 final=n audioEnd=  2.88 lag= 0.14 | sal sounds promising, but we need enough time to
+  t=  3.23 n=1 final=n audioEnd=  3.12 lag= 0.11 | promising, but we need enough time to understand
+  t=  3.72 n=2 final=n audioEnd=  3.60 lag= 0.13 | t we need enough time to understand what happens
+  t=  4.22 n=1 final=n audioEnd=  4.08 lag= 0.14 | need enough time to understand what happens when
+  t=  4.42 n=1 final=n audioEnd=  4.32 lag= 0.10 | h time to understand what happens when condition
+  t=  4.73 n=1 final=n audioEnd=  4.56 lag= 0.17 | o understand what happens when conditions change
+  t=  5.22 n=1 final=n audioEnd=  5.04 lag= 0.18 | stand what happens when conditions change please
+  t=  5.42 n=1 final=n audioEnd=  5.28 lag= 0.14 | what happens when conditions change please check
+  t=  5.63 n=1 final=n audioEnd=  5.52 lag= 0.11 |  happens when conditions change please check the
+  t=  5.94 n=2 final=n audioEnd=  5.76 lag= 0.19 | conditions change. Please check the date careful
+  t=  6.13 n=2 final=n audioEnd=  6.00 lag= 0.14 | conditions change. Please check the date careful
+  t=  6.42 n=2 final=n audioEnd=  6.24 lag= 0.19 |  change. Please check the date carefully because
+  t=  6.63 n=1 final=n audioEnd=  6.48 lag= 0.15 | nge. Please check the date carefully because the
+  t=  6.83 n=1 final=n audioEnd=  6.72 lag= 0.11 | ase check the date carefully because the meeting
+  t=  7.12 n=2 final=n audioEnd=  6.96 lag= 0.17 | eck the date carefully because the meeting is on
+  t=  7.33 n=1 final=n audioEnd=  7.20 lag= 0.13 | date carefully because the meeting is on Tuesday
+  t=  7.83 n=1 final=n audioEnd=  7.68 lag= 0.15 |  carefully because the meeting is on Tuesday not
+  t=  8.03 n=1 final=n audioEnd=  7.92 lag= 0.11 | y because the meeting is on Tuesday not Thursday
+  t=  8.53 n=1 final=n audioEnd=  8.40 lag= 0.13 | ecause the meeting is on Tuesday not Thursday we
+  t=  8.83 n=2 final=n audioEnd=  8.64 lag= 0.20 | eeting is on Tuesday not Thursday. We should not
+  t=  9.03 n=1 final=n audioEnd=  8.88 lag= 0.15 | is on Tuesday not Thursday. We should not cancel
+  t=  9.53 n=1 final=n audioEnd=  9.36 lag= 0.17 | n Tuesday not Thursday. We should not cancel the
+  t=  9.73 n=1 final=n audioEnd=  9.60 lag= 0.13 | t Thursday. We should not cancel the appointment
+  t= 10.24 n=2 final=n audioEnd= 10.08 lag= 0.17 | should not cancel the appointment unless someone
+  t= 10.73 n=1 final=n audioEnd= 10.56 lag= 0.17 | ot cancel the appointment unless someone confirm
+  t= 10.89 n=2 final=n audioEnd= 10.85 lag= 0.04 | e appointment unless someone confirms the change
+  t= 10.97 n=1 final=Y audioEnd= 10.85 lag= 0.12 |  appointment unless someone confirms the change.
+  burst gap median=0.22s max=0.51s  first result at 0.63s
+  FINAL: The proposal sounds promising, but we need enough time to understand what happens when conditions change. Please check the date carefully because the meeting is on Tuesday not Thursday. We should not cancel the appointment unless someone confirms the change.
+

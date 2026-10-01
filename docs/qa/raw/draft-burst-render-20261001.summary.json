@@ -1,0 +1,104 @@
+{
+  "appVersion": "0.4.6",
+  "build": "14",
+  "draftAdmissionCommit": "6ff212f84415d1db634792360065921d6ca6736c",
+  "renderIntervalCommit": "de225686ac75cf0434c815d6ce2a3f9422a53d73",
+  "baselineCommit": "dc83fce1f7a7167089ab91da13b81eb083a92b3d",
+  "sourceSHA256": {
+    "Sources/LiveKoCaption/CaptionModel.swift": "695fe8ab1b6b2240e719f7d63441232bc21f663b773b9a81b060e7bea3cd5ee0",
+    "Sources/LiveKoCaption/NativeCaptionTranscript.swift": "cd05f5bbb80dd35b4ef6de41ebfa01a92e84e1f49d275d3feb15f850c1e47006",
+    "Sources/LiveKoCaption/NativeCompactCaption.swift": "524d02ed73f3f7d203c0a376e8ccecc05b2c9536fe51a51118b541536f4e2399",
+    "Tests/AppModelChecks/AppModelChecks.swift": "22954ec44e6cbcfa778539c7ee19d93a35cf815e04e064aaa34ea44f8c5895e4",
+    "Tests/RealtimePipelineChecks/RealtimePipelineChecks.swift": "a926b06d39ecdaa9bc0ca8f52dfe90a3cad23309afe51689f5fbb67ba60aea3a",
+    "Tests/AsrCadenceProbe/AsrCadenceProbe.swift": "1a825c345c3399d106d5e0ff7d6bacc9a4cc917d6000111033c6fb99e24f6626",
+    "Resources/Info.plist": "7748c43b060fe9c70e4a4148e9b766104403de335538c84325da00686766edf6"
+  },
+  "syntheticAudioSHA256": "eed098bb18cd4c5712c0e2d0297c88b771debd506a78f6d39222bc07ee950d7d",
+  "syntheticAudioRecipe": "say -v Samantha -r 235 -f docs/qa/raw/fast-english-fixture-20261001.txt -o /tmp/fast-english.aiff",
+  "pipelineScope": "Same 10.85s synthetic file paced into actual local English ASR and Apple EN->KO translation, one baseline run and two runs after the draft admission change. Local optional polish is disabled in this file harness. No microphone, UI drawing or real-speaker measurement.",
+  "burstMetricDefinition": "ASR events arriving less than 50ms apart form one burst. The metric is the time from the arrival of a burst's last event until an Apple translation of exactly that text completed. Bursts whose last text was never translated separately are excluded.",
+  "pipelineBefore": {
+    "report": "fast-english-after-20261001.json",
+    "commit": "297aa60",
+    "asrBursts": 13,
+    "liveTranslationCalls": 19,
+    "contextCalls": 1,
+    "newestBurstRevisionToKoreanMedianMs": 235,
+    "newestBurstRevisionToKoreanMaxMs": 587,
+    "exactRevisionKoreanDelayAfterAudioEndMedianMs": 599,
+    "exactRevisionKoreanDelayAfterAudioEndMaxMs": 929,
+    "droppedAudioBuffers": 0,
+    "finalAsrSegments": 3,
+    "finalKorean": [
+      "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+      "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다."
+    ],
+    "passed": true
+  },
+  "pipelineAfterRun1": {
+    "report": "draft-burst-after-20261001.json",
+    "asrBursts": 13,
+    "liveTranslationCalls": 13,
+    "contextCalls": 1,
+    "newestBurstRevisionToKoreanMedianMs": 93,
+    "newestBurstRevisionToKoreanMaxMs": 102,
+    "exactRevisionKoreanDelayAfterAudioEndMedianMs": 123,
+    "exactRevisionKoreanDelayAfterAudioEndMaxMs": 934,
+    "droppedAudioBuffers": 0,
+    "finalAsrSegments": 3,
+    "finalKorean": [
+      "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+      "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다."
+    ],
+    "passed": true
+  },
+  "pipelineAfterRun2": {
+    "report": "draft-burst-after-run2-20261001.json",
+    "asrBursts": 13,
+    "liveTranslationCalls": 13,
+    "contextCalls": 1,
+    "newestBurstRevisionToKoreanMedianMs": 91,
+    "newestBurstRevisionToKoreanMaxMs": 100,
+    "exactRevisionKoreanDelayAfterAudioEndMedianMs": 127,
+    "exactRevisionKoreanDelayAfterAudioEndMaxMs": 936,
+    "droppedAudioBuffers": 0,
+    "finalAsrSegments": 3,
+    "finalKorean": [
+      "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+      "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다."
+    ],
+    "passed": true
+  },
+  "uiScope": "35s synthetic UI check with compact and sidebar exercises. Synthetic source updates are far more frequent than the measured recognizer cadence. On-screen draw time was not measured.",
+  "uiBefore": {
+    "report": "compact-reading-final-20261001.jsonl",
+    "commit": "297aa60",
+    "passed": true,
+    "maxMainActorPauseMs": 55,
+    "cpuPercentMedian": 19.15,
+    "cpuPercentMax": 25.9,
+    "processSamples": 8
+  },
+  "uiAfter": {
+    "report": "render-interval-20261001.jsonl",
+    "passed": true,
+    "maxMainActorPauseMs": 60,
+    "cpuPercentMedian": 22.299999999999997,
+    "cpuPercentMax": 35.6,
+    "processSamples": 8
+  },
+  "modelChecks": 42,
+  "captionCoreChecks": 26,
+  "schedulingChecks": 7,
+  "asrCadenceProbe": "asr-cadence-probe-20261001.txt",
+  "notMeasured": [
+    "real microphone and speaker",
+    "Hy-MT2 polish during live speech",
+    "semantic accuracy",
+    "on-screen draw latency",
+    "long-session heat or fan noise"
+  ]
+}
