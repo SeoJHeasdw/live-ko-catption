@@ -28,14 +28,18 @@ public struct LocalTranslationRequest: Sendable, Equatable {
     public var direction: CaptionDirection
     public var domain: TranslationDomain
     public var previousSentence: String
+    /// The user's own terms. They are used only with the custom domain.
+    public var glossary: [GlossaryEntry]
 
     public init(source: String, baseline: String = "", direction: CaptionDirection,
-                domain: TranslationDomain = .general, previousSentence: String = "") {
+                domain: TranslationDomain = .general, previousSentence: String = "",
+                glossary: [GlossaryEntry] = []) {
         self.source = source
         self.baseline = baseline
         self.direction = direction
         self.domain = domain
         self.previousSentence = String(previousSentence.suffix(300))
+        self.glossary = domain == .custom ? glossary : []
     }
 
     public var isWithinBudget: Bool { !source.isEmpty && source.count <= 1_000 }
@@ -48,7 +52,7 @@ public struct LocalTranslationRequest: Sendable, Equatable {
         if !previousSentence.isEmpty {
             instructions += "[Background Information]\n" + previousSentence + "\n\n"
         }
-        if domain == .it {
+        if domain != .general {
             let terms = relevantTerms
             if !terms.isEmpty {
                 instructions += "Reference the following translations:\n" + terms.map { "\($0.0) translates to \($0.1)" }.joined(separator: "\n") + "\n\n"
@@ -73,7 +77,12 @@ public struct LocalTranslationRequest: Sendable, Equatable {
         let context = (source + " " + previousSentence).lowercased()
         let mlContext = ["classifier", "classification", "machine learning", "f1", "prediction", "flagged requests",
                          "정밀도", "재현율", "분류기", "분류 모델", "머신러닝"].contains { context.contains($0) }
-        return (pairs + (mlContext ? mlTerms : [])).compactMap { pair in
+        // The owner's terms come first and win over a built-in term of the same name.
+        let custom = glossary.map { ($0.english, $0.korean) }
+        let builtIn = (pairs + (mlContext ? mlTerms : [])).filter { pair in
+            !custom.contains { $0.0.caseInsensitiveCompare(pair.0) == .orderedSame }
+        }
+        return (custom + builtIn).compactMap { pair in
             let term = direction == .englishToKorean ? pair.0 : pair.1
             let escaped = NSRegularExpression.escapedPattern(for: term)
             let pattern = "(?i)(?<![\\p{L}\\p{N}_])" + escaped + "(?![\\p{L}\\p{N}_])"
@@ -84,7 +93,7 @@ public struct LocalTranslationRequest: Sendable, Equatable {
             } else { matched = source.range(of: pattern, options: .regularExpression) != nil }
             guard matched else { return nil }
             return direction == .englishToKorean ? pair : (pair.1, pair.0)
-        }.prefix(6).map { $0 }
+        }.prefix(8).map { $0 }
     }
 
     /// This rejects obvious output/number corruption; it is not a semantic
@@ -101,6 +110,9 @@ public struct LocalTranslationRequest: Sendable, Equatable {
            text.range(of: "[가-힣]", options: .regularExpression) == nil { return false }
         if direction == .koreanToEnglish,
            text.range(of: "[가-힣]", options: .regularExpression) != nil { return false }
+        // The model sometimes slips a Chinese character into Korean or English.
+        if text.range(of: "\\p{Han}", options: .regularExpression) != nil,
+           source.range(of: "\\p{Han}", options: .regularExpression) == nil { return false }
         let numbers = Self.numbers(in: baseline)
         return numbers == Self.numbers(in: text)
     }

@@ -71,6 +71,26 @@ final class CaptionModel {
             preferencesDefaults.set(newValue.rawValue, forKey: TranslationDomain.preferenceKey)
         }
     }
+    /// The user's own terms, read from a text file on this Mac when a run
+    /// starts. Used only while the translation domain is the custom one.
+    private(set) var glossary = CaptionGlossary.empty
+    private(set) var glossaryMessage = ""
+    let glossaryURL: URL
+    static let defaultGlossaryURL = URL.applicationSupportDirectory
+        .appendingPathComponent("Live Korean Captions/Glossary/glossary.txt")
+    static let glossaryTemplate = """
+        # Live Korean Captions 용어집
+        # 한 줄에 용어 하나:  영어 = 한국어 | 잘못 들리는 표기, 잘못 들리는 표기
+        # "= 한국어"를 빼면 이름을 번역하지 않고 그대로 둡니다. "| ..."는 뺄 수 있습니다.
+        # 번역 분야에서 "내 용어집"을 고른 대화에 적용하고, 자막을 시작할 때마다 다시 읽습니다.
+        # "잘못 들리는 표기"는 음성 인식 원문에서 그 용어로 고쳐 씁니다. 적은 표기만 고칩니다.
+        #
+        # 예시 (앞의 "# "를 지우면 적용됩니다):
+        # OpenShift | open shift
+        # recall = 재현율
+        # service mesh = 서비스 메시 | service mash
+
+        """
     var devices: [AudioInputDevice] = []
     var selectedDeviceUID: String {
         didSet { UserDefaults.standard.set(selectedDeviceUID, forKey: "inputDeviceUID") }
@@ -247,7 +267,9 @@ final class CaptionModel {
          preferencesDefaults: UserDefaults = .standard,
          polishOverride: (@MainActor (LocalTranslationRequest) async throws -> String)? = nil,
          polishTimeoutSeconds: Double = 1.8,
-         localEngine: LocalTranslationEngine? = nil) {
+         localEngine: LocalTranslationEngine? = nil,
+         glossaryURL: URL = CaptionModel.defaultGlossaryURL) {
+        self.glossaryURL = glossaryURL
         self.translationOverride = translationOverride
         self.microphoneAccessOverride = microphoneAccessOverride
         self.readinessOverride = readinessOverride
@@ -268,8 +290,35 @@ final class CaptionModel {
         compactStaysAbovePresentations = UserDefaults.standard.object(forKey: "compactStaysAbovePresentations") as? Bool ?? true
         isPreview = preview
         timeline.direction = storedDirection
+        reloadGlossary()
         refreshDevices()
         if preview { loadPreview() }
+    }
+
+    /// Reads the glossary file. A missing file is an empty glossary.
+    func reloadGlossary() {
+        guard let data = try? Data(contentsOf: glossaryURL), data.count <= 262_144 else {
+            glossary = .empty
+            glossaryMessage = FileManager.default.fileExists(atPath: glossaryURL.path)
+                ? "용어집 파일을 읽지 못했습니다. 크기와 형식을 확인해 주세요." : "아직 용어집 파일이 없습니다."
+            return
+        }
+        glossary = CaptionGlossary(text: String(decoding: data, as: UTF8.self))
+        let corrections = glossary.entries.reduce(0) { $0 + $1.heardAs.count }
+        glossaryMessage = glossary.entries.isEmpty ? "용어집에 적용할 용어가 없습니다."
+            : "용어 \(glossary.entries.count)개, 고쳐 쓸 표기 \(corrections)개를 읽었습니다."
+    }
+
+    /// Opens the glossary in the user's text editor, creating a commented
+    /// template the first time. The file stays on this Mac.
+    func openGlossaryFile() {
+        do {
+            if !FileManager.default.fileExists(atPath: glossaryURL.path) {
+                try FileManager.default.createDirectory(at: glossaryURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+                try Data(Self.glossaryTemplate.utf8).write(to: glossaryURL, options: .atomic)
+            }
+            NSWorkspace.shared.open(glossaryURL)
+        } catch { glossaryMessage = "용어집 파일을 만들지 못했습니다: \(error.localizedDescription)" }
     }
 
     func refreshDevices() {
@@ -448,6 +497,7 @@ final class CaptionModel {
         finalFastBaselines.removeAll()
         draftHeldSince = nil
         lastAcceptedSourceUptime = 0
+        reloadGlossary()
         let requestedDeviceUID = selectedDeviceUID
         refreshDevices()
         let usesSystemAudio = requestedDeviceUID == AudioInputDevice.systemAudioUID
@@ -765,6 +815,8 @@ final class CaptionModel {
     /// The same production state/scheduler path is exercised by the deterministic
     /// integration checks, with an injected translator and no microphone access.
     func receive(source: String, audioStart: Double, audioEnd: Double, isFinal: Bool) {
+        // Only spellings the user listed are corrected, before any translation.
+        let source = translationDomain == .custom ? glossary.correcting(source, direction: selectedDirection) : source
         let previousTail = segments.last
         let previousCount = segments.count
         let reusable = isFinal && shouldPolish ? segments.suffix(6).filter {
@@ -899,7 +951,7 @@ final class CaptionModel {
                             segments.first(where: { $0.id == member.segmentID && $0.revision == member.revision })?.translation
                         }.joined(separator: " ")
                         let request = LocalTranslationRequest(source: contextJob.source, baseline: baseline,
-                            direction: selectedDirection, domain: translationDomain)
+                            direction: selectedDirection, domain: translationDomain, glossary: glossary.entries)
                         let engine = localEngine
                         let polisher = polishOverride
                         let task = Task {
@@ -1030,7 +1082,7 @@ final class CaptionModel {
         let finalJob = TranslationJob(segmentID: job.segmentID, revision: job.revision,
             source: job.source, isSourceFinal: true)
         let request = LocalTranslationRequest(source: job.source, baseline: baseline,
-            direction: selectedDirection, domain: translationDomain)
+            direction: selectedDirection, domain: translationDomain, glossary: glossary.entries)
         guard request.isWithinBudget, timeline.preview(translation: baseline, for: finalJob) else { return false }
         polishWaiting.append(PolishItem(job: finalJob, baseline: baseline))
         while polishWaiting.count > Self.polishWaitingLimit {
@@ -1083,7 +1135,7 @@ final class CaptionModel {
         // Adjacent context is translated only as an explicit bounded group by
         // the existing context lane, preserving all member source records.
         let request = LocalTranslationRequest(source: item.job.source, baseline: item.baseline,
-            direction: selectedDirection, domain: translationDomain)
+            direction: selectedDirection, domain: translationDomain, glossary: glossary.entries)
         let engine = localEngine
         let polisher = polishOverride
         let started = ProcessInfo.processInfo.systemUptime

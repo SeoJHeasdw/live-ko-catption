@@ -736,6 +736,45 @@ struct AppModelChecks {
                 try expect(model.message?.contains("마이크 접근") == true && !model.isSwitchingDirection,
                     "A failed restart hid its reason or left the switch in progress")
             }),
+            ("the custom domain corrects listed spellings before translation and gives refinement its terms", {
+                let suite = "LiveKoCaption.GlossaryChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let file = FileManager.default.temporaryDirectory.appendingPathComponent("glossary-\(UUID().uuidString).txt")
+                defer { try? FileManager.default.removeItem(at: file) }
+                try Data("Northwind = 노스윈드 | north wind\nOpenShift | open shift\n".utf8).write(to: file)
+                let translator = TranslatorProbe()
+                let polisher = PolisherProbe()
+                let model = CaptionModel(translationOverride: { source, isContext in
+                    try await translator.translate(source, context: isContext)
+                }, preferencesDefaults: defaults, polishOverride: { try await polisher.polish($0) }, glossaryURL: file)
+                model.isChecking = false; model.assetsReady = true; model.contextCorrectionEnabled = false
+                model.polishEnabled = true
+                try expect(model.glossary.entries.count == 2 && model.glossaryMessage.contains("용어 2개"),
+                    "The glossary file was not read at launch")
+                model.receive(source: "The north wind team uses open shift.", audioStart: 0, audioEnd: 1, isFinal: true)
+                try await waitUntil("General-domain caption did not finish") { model.segments.first?.isFinal == true && !model.hasPendingTranslations }
+                try expect(model.segments[0].source == "The north wind team uses open shift." &&
+                    polisher.calls.count == 1 && polisher.calls[0].glossary.isEmpty,
+                    "The glossary changed a conversation that did not select the custom domain")
+                model.newSession()
+                model.translationDomain = .custom
+                try expect(model.translationDomain == .custom, "The custom domain could not be selected in an empty conversation")
+                model.receive(source: "The north wind team uses", audioStart: 0, audioEnd: 1, isFinal: false)
+                model.receive(source: "The north wind team uses open shift.", audioStart: 0, audioEnd: 2, isFinal: true)
+                try await waitUntil("Custom-domain caption did not finish") { model.segments.first?.isFinal == true && !model.hasPendingTranslations }
+                try expect(model.segments[0].source == "The Northwind team uses OpenShift." &&
+                    translator.calls.last?.source == "The Northwind team uses OpenShift.",
+                    "Listed spellings were not corrected before the fast translation: \(model.segments[0].source)")
+                let request = polisher.calls.last
+                try expect(polisher.calls.count == 2 && request?.source == "The Northwind team uses OpenShift." &&
+                    request?.prompt.contains("Northwind translates to 노스윈드") == true,
+                    "Refinement was not given the corrected source and the owner's terms")
+                try Data("Northwind = 노스윈드\n".utf8).write(to: file)
+                model.reloadGlossary()
+                try expect(model.glossary.entries.count == 1 && model.glossary.entries[0].heardAs.isEmpty,
+                    "An edited glossary file was not read again")
+            }),
             ("direction and domain persist and cannot mix recorded session languages", {
                 let suite = "LiveKoCaption.ModelChecks.\(UUID().uuidString)"
                 let defaults = UserDefaults(suiteName: suite)!

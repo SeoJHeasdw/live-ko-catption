@@ -22,7 +22,15 @@ public enum CaptionDirection: String, CaseIterable, Hashable, Sendable {
 public enum TranslationDomain: String, CaseIterable, Hashable, Sendable {
     case general
     case it
+    /// The IT terms plus the user's own glossary file.
+    case custom
 
-    public var label: String { self == .general ? "일반" : "IT" }
+    public var label: String {
+        switch self {
+        case .general: return "일반"
+        case .it: return "IT"
+        case .custom: return "내 용어집"
+        }
+    }
     public static let preferenceKey = "translationDomain"
 }

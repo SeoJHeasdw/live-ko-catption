@@ -159,12 +159,56 @@ let checks: [(String, () throws -> Void)] = [
             "A pinned model file selected the wrong chat template")
         try expect(!request.accepts("배포를 롤백하세요.<|eos|>"), "A leaked 7B control token was accepted")
     }),
+    ("the user's glossary corrects only listed spellings and supplies its terms first", {
+        let glossary = CaptionGlossary(text: """
+            # comment lines and blank lines are ignored
+
+            OpenShift | open shift, Open Shifts
+            service mesh = 서비스 메시 | service mash
+            recall = 리콜률
+            Northwind = 노스윈드 | 노스 윈드, north wind
+            = 번역만 있는 줄
+            """)
+        try expect(glossary.entries.map(\.english) == ["OpenShift", "service mesh", "recall", "Northwind"] &&
+            glossary.entries[0].korean == "OpenShift" && glossary.entries[0].heardAs == ["open shift", "Open Shifts"],
+            "Glossary lines were not parsed into terms, kept names and listed spellings")
+        let english = glossary.correcting("We run it on open shift with a service mash near the North Wind office. Reopen shifts later.",
+                                          direction: .englishToKorean)
+        try expect(english == "We run it on OpenShift with a service mesh near the Northwind office. Reopen shifts later.",
+            "Listed English spellings were not corrected at word boundaries only: \(english)")
+        let korean = glossary.correcting("노스 윈드의 서비스는 그대로입니다.", direction: .koreanToEnglish)
+        try expect(korean == "노스윈드의 서비스는 그대로입니다.", "A Korean spelling followed by a particle was not corrected: \(korean)")
+        try expect(CaptionGlossary.empty.correcting("open shift", direction: .englishToKorean) == "open shift" &&
+            glossary.correcting("Nothing listed here.", direction: .englishToKorean) == "Nothing listed here.",
+            "Text without a listed spelling was changed")
+        let custom = LocalTranslationRequest(source: "Recall improved after Northwind moved the classifier to OpenShift.",
+            direction: .englishToKorean, domain: .custom, glossary: glossary.entries)
+        let terms = custom.relevantTerms
+        try expect(terms.prefix(3).map(\.0) == ["OpenShift", "recall", "Northwind"] &&
+            terms.first { $0.0 == "recall" }?.1 == "리콜률" && terms.filter { $0.0.lowercased() == "recall" }.count == 1,
+            "The owner's terms did not come first or did not replace the built-in term of the same name: \(terms)")
+        try expect(custom.prompt.contains("Northwind translates to 노스윈드") && custom.prompt.contains("OpenShift translates to OpenShift") &&
+            !custom.prompt.contains("This is an IT discussion."),
+            "The custom prompt did not reference the owner's terms")
+        let reverse = LocalTranslationRequest(source: "노스윈드의 서비스 메시를 점검합니다.", direction: .koreanToEnglish,
+            domain: .custom, glossary: glossary.entries)
+        try expect(reverse.relevantTerms.contains { $0 == ("노스윈드", "Northwind") } &&
+            reverse.relevantTerms.contains { $0 == ("서비스 메시", "service mesh") },
+            "Korean input did not match the owner's Korean terms")
+        let it = LocalTranslationRequest(source: custom.source, direction: .englishToKorean, domain: .it, glossary: glossary.entries)
+        try expect(it.glossary.isEmpty && !it.prompt.contains("Northwind translates"),
+            "The owner's glossary leaked into a conversation that did not select it")
+        let many = CaptionGlossary(text: (0..<400).map { "term\($0) = 용어\($0)" }.joined(separator: "\n"))
+        try expect(many.entries.count == CaptionGlossary.entryLimit, "The glossary admitted an unbounded number of terms")
+    }),
     ("optional output checks reject obvious number and language corruption", {
         let request = LocalTranslationRequest(source: "The error rate is 2.5 percent, and latency is 120 milliseconds.",
             baseline: "오류율은 2.5%이며 지연 시간은 120밀리초입니다.", direction: .englishToKorean, domain: .it)
         try expect(request.accepts("오류율은 2.50%이고 지연 시간은 120 ms입니다."),
             "Equivalent numeric formatting was rejected")
         try expect(!request.accepts("오류율은 25%이고 지연 시간은 120밀리초입니다."), "Corrupted decimal was accepted")
+        try expect(!request.accepts("오류율은 2.5%이고 지연 시간은 서버上에서 120밀리초입니다."),
+            "A stray Chinese character in Korean output was accepted")
         try expect(!request.accepts("오류율은 2.5%입니다."), "Omitted latency number was accepted")
         try expect(!request.accepts("오류율은 2.5%이고 지연 시간은 120밀리초이며 재시도는 3번입니다."),
             "Invented number was accepted")

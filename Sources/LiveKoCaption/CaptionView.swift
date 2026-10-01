@@ -176,8 +176,9 @@ private struct CaptionSidebar: View {
                 Picker("번역 분야", selection: $model.translationDomain) {
                     Text("일반").tag(TranslationDomain.general)
                     Text("IT").tag(TranslationDomain.it)
+                    Text("내 용어집").tag(TranslationDomain.custom)
                 }.pickerStyle(.segmented).controlSize(.large).labelsHidden()
-                    .help("작은 모델로 문장을 다듬을 때 참고할 분야를 선택합니다. 빠른 Apple 번역에는 적용되지 않습니다.")
+                    .help("작은 모델로 문장을 다듬을 때 참고할 분야를 선택합니다. 내 용어집은 IT 용어에 직접 적은 용어를 더하고, 적어 둔 잘못 들리는 표기를 원문에서 고칩니다.")
             } else {
                 HStack {
                     Text(model.translationDomain.label).font(CaptionType.body)
@@ -189,7 +190,8 @@ private struct CaptionSidebar: View {
                     .accessibilityLabel("번역 분야").accessibilityValue(model.translationDomain.label)
                     .help("분야 변경은 빈 대화에서 시작 전에 가능합니다.")
             }
-            Text(model.hasContent ? "새 대화에서 변경 · 문장 다듬기에 적용" : "문장 다듬기에 적용")
+            Text(model.hasContent ? "새 대화에서 변경 · 문장 다듬기에 적용"
+                 : model.translationDomain == .custom ? "원문 고쳐 쓰기와 문장 다듬기에 적용" : "문장 다듬기에 적용")
                 .font(CaptionType.supporting).foregroundStyle(CaptionPalette.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             Button { openSettings(.translation) } label: {
@@ -335,7 +337,7 @@ private struct CaptionSettingsPopover: View {
                     case .microphone: microphoneSettings
                     }
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 4)
-            }.id(tab).frame(width: 452, height: tab == .captions ? 220 : tab == .translation ? 300 : 280)
+            }.id(tab).frame(width: 452, height: tab == .captions ? 300 : tab == .translation ? 340 : 320)
             Text("언어 모델을 준비한 뒤에는 이 Mac에서 처리합니다.")
                 .font(CaptionType.supporting).foregroundStyle(CaptionPalette.secondary)
         }.font(CaptionType.body).controlSize(.large).padding(24).frame(width: 500)
@@ -383,6 +385,18 @@ private struct CaptionSettingsPopover: View {
             }
             Divider().overlay(CaptionPalette.border)
             LocalPolishControls(model: model, store: LocalModelStore.shared)
+            Divider().overlay(CaptionPalette.border)
+            VStack(alignment: .leading, spacing: 10) {
+                Text("내 용어집").font(CaptionType.section)
+                explanation("제품 이름이나 전문 용어를 이 Mac의 텍스트 파일에 적어 둡니다. 번역 분야가 ‘내 용어집’인 대화에서, 적어 둔 잘못 들리는 표기를 원문에서 고치고 확정 문장을 다듬을 때 용어 번역을 참고합니다. 문장 다듬기가 꺼져 있으면 원문 고쳐 쓰기만 적용됩니다.")
+                HStack(spacing: 10) {
+                    Button("용어집 파일 열기") { model.openGlossaryFile() }.controlSize(.large)
+                        .help("용어집을 텍스트 편집기로 엽니다. 처음에는 형식 설명이 있는 파일을 만듭니다.")
+                    Button("다시 읽기") { model.reloadGlossary() }.controlSize(.large).disabled(model.phase != .idle)
+                        .help("저장한 용어집을 지금 다시 읽습니다. 자막을 시작할 때도 자동으로 다시 읽습니다.")
+                }
+                explanation(model.glossaryMessage)
+            }
         }
     }
 
@@ -503,9 +517,10 @@ private struct LocalPolishControls: View {
                 Picker("번역 분야", selection: $model.translationDomain) {
                     Text("일반").tag(TranslationDomain.general)
                     Text("IT").tag(TranslationDomain.it)
+                    Text("내 용어집").tag(TranslationDomain.custom)
                 }.pickerStyle(.segmented).controlSize(.large)
                     .disabled(!model.canChangeSessionSettings)
-                    .help("새 대화에서 일반 또는 IT 분야를 선택합니다. IT 분야는 관련 용어를 참고합니다.")
+                    .help("새 대화에서 분야를 선택합니다. IT 분야는 관련 용어를 참고하고, 내 용어집은 직접 적은 용어를 더합니다.")
                 if model.isPreparingLocalModel { ProgressView().controlSize(.small) }
                 if model.polishEnabled {
                     Text(model.localPolishMessage)
