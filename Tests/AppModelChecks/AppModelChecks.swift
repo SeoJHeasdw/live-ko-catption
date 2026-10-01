@@ -420,6 +420,53 @@ struct AppModelChecks {
                     "Late aborted refinement changed the old or resumed caption")
                 await model.stop(aborting: true)
             }),
+            ("a current draft preempts held optional refinement and preserves its exact final baseline", {
+                let suite = "LiveKoCaption.DraftPolishPreemptionChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let translator = TranslatorProbe()
+                let polisher = PolisherProbe()
+                polisher.heldSources = ["Already spoken."]
+                defer { polisher.releaseAll() }
+                let model = makePolishModel(translator, polisher: polisher, defaults: defaults)
+                model.receive(source: "Already spoken.", audioStart: 0, audioEnd: 1, isFinal: true)
+                try await waitUntil("Held optional refinement did not start") { polisher.calls.count == 1 }
+                let began = ProcessInfo.processInfo.systemUptime
+                model.receive(source: "Now speaking quickly", audioStart: 1, audioEnd: 2, isFinal: false)
+                try await waitUntil("Current draft waited behind old optional refinement", seconds: 0.35) {
+                    model.segments.count == 2 && model.segments[1].translation == "KO: Now speaking quickly" &&
+                        !model.hasPendingTranslations
+                }
+                try expect(ProcessInfo.processInfo.systemUptime - began < 0.35 &&
+                    model.segments[0].isFinal && model.segments[0].translation == "KO: Already spoken." &&
+                    !model.segments[1].isFinal && model.segments.allSatisfy { $0.translationError == nil },
+                    "Draft preemption lost the final fast baseline or falsely finalized live speech")
+                let beforeLateResult = model.segments
+                polisher.release(source: "Already spoken.", translation: "양보한 뒤 늦게 온 문장입니다.")
+                try await Task.sleep(for: .milliseconds(50))
+                try expect(model.segments == beforeLateResult && model.message == nil,
+                    "Late optional output changed the baseline or current draft")
+            }),
+            ("a draft already queued during Apple work skips earlier optional polish", {
+                let suite = "LiveKoCaption.QueuedDraftPolishChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let translator = TranslatorProbe()
+                translator.heldSources = ["First final."]
+                defer { translator.releaseAll() }
+                let polisher = PolisherProbe()
+                let model = makePolishModel(translator, polisher: polisher, defaults: defaults)
+                model.receive(source: "First final.", audioStart: 0, audioEnd: 1, isFinal: true)
+                try await waitUntil("Final Apple baseline did not start") { translator.calls.count == 1 }
+                model.receive(source: "Following live speech", audioStart: 1, audioEnd: 2, isFinal: false)
+                translator.release(source: "First final.", translation: "첫 문장의 빠른 번역입니다.")
+                try await waitUntil("Queued live speech did not translate") {
+                    model.segments.last?.translation == "KO: Following live speech" && !model.hasPendingTranslations
+                }
+                try expect(polisher.calls.isEmpty && model.segments[0].isFinal &&
+                    model.segments[0].translation == "첫 문장의 빠른 번역입니다.",
+                    "Optional polish started while a current draft was already waiting")
+            }),
             ("a new final preempts held optional refinement before its timeout and preserves fast captions", {
                 let suite = "LiveKoCaption.PolishPreemptionChecks.\(UUID().uuidString)"
                 let defaults = UserDefaults(suiteName: suite)!
@@ -499,7 +546,7 @@ struct AppModelChecks {
                 model.receive(source: "First.", audioStart: 0, audioEnd: 1, isFinal: true)
                 try await waitUntil("First local caption never finished") { model.segments.first?.isFinal == true && !model.hasPendingTranslations }
                 model.receive(source: "Second.", audioStart: 1, audioEnd: 2, isFinal: true)
-                try await waitUntil("Injected native context timeout did not finish", seconds: 0.8) {
+                try await waitUntil("Injected native context timeout did not finish", seconds: 1.2) {
                     polisher.calls.contains { $0.source == "First. Second." } && !model.hasPendingTranslations
                 }
                 try expect(model.segments.allSatisfy(\.isFinal) && model.segments.allSatisfy { $0.translationError == nil } &&
@@ -830,6 +877,153 @@ struct AppModelChecks {
                     model.segments.first?.isFinal == true && !model.hasPendingTranslations
                 }
                 try expect(probe.calls.count == 1, "Matching final queued a redundant translation")
+            }),
+            ("final translation interrupts the draft admission wait", {
+                let probe = TranslatorProbe()
+                let model = makeModel(probe)
+                model.receive(source: "First live hypothesis", audioStart: 0, audioEnd: 1, isFinal: false)
+                try await waitUntil("Initial draft did not translate") { !model.hasPendingTranslations && probe.calls.count == 1 }
+                model.receive(source: "Changed live hypothesis", audioStart: 0, audioEnd: 2, isFinal: false)
+                try await Task.sleep(for: .milliseconds(100))
+                let began = ProcessInfo.processInfo.systemUptime
+                model.receive(source: "Urgent final.", audioStart: 2, audioEnd: 3, isFinal: true)
+                try await waitUntil("Final remained inside the draft cooldown", seconds: 0.25) {
+                    model.segments.last?.isFinal == true
+                }
+                try expect(ProcessInfo.processInfo.systemUptime - began < 0.25 &&
+                    probe.calls[1] == .init(source: "Urgent final.", context: false),
+                    "Final failed to wake draft admission or lost priority to the queued draft")
+                try await waitUntil("Remaining current draft did not drain") { !model.hasPendingTranslations }
+                try expect(model.segments[0].translation == "KO: Changed live hypothesis" &&
+                    model.segments[1].translation == "KO: Urgent final." && model.segments[1].isFinal,
+                    "Interrupting draft admission discarded a source or changed final output")
+            }),
+            ("context waits for a quiet final tail and never starts behind a live draft", {
+                let probe = TranslatorProbe()
+                probe.holdContexts = true
+                defer { probe.releaseAll() }
+                let model = makeModel(probe, context: true)
+                model.receive(source: "First.", audioStart: 0, audioEnd: 1, isFinal: true)
+                model.receive(source: "Second.", audioStart: 1, audioEnd: 2, isFinal: true)
+                try await waitUntil("Initial exact final translations did not finish") {
+                    model.segments.count == 2 && model.segments.allSatisfy(\.isFinal)
+                }
+                model.receive(source: "Still speaking", audioStart: 2, audioEnd: 3, isFinal: false)
+                try await waitUntil("Following draft did not translate") {
+                    model.segments.last?.translation == "KO: Still speaking" && !model.hasPendingTranslations
+                }
+                try await Task.sleep(for: .milliseconds(850))
+                try expect(!probe.calls.contains(where: \.context) &&
+                    !model.displaySegments.contains(where: \.contextIsPending),
+                    "Context started or stayed pending while the latest source was still a draft")
+                let confirmedAt = ProcessInfo.processInfo.systemUptime
+                model.receive(source: "Still speaking", audioStart: 2, audioEnd: 3, isFinal: true)
+                try await Task.sleep(for: .milliseconds(350))
+                try expect(!probe.calls.contains(where: \.context), "Context skipped the source quiet interval")
+                try await waitUntil("Quiet confirmed final tail never received context") { probe.calls.contains(where: \.context) }
+                try expect(ProcessInfo.processInfo.systemUptime - confirmedAt >= 0.70,
+                    "Context started before the accepted source settled")
+                let raw = model.segments
+                probe.release(context: true, translation: "첫째, 둘째, 이어서 말했습니다.")
+                try await waitUntil("Quiet context did not finish") { !model.hasPendingTranslations }
+                try expect(model.segments == raw && model.displaySegments.count == 2 &&
+                    model.displaySegments.last?.contextSegmentCount == 2 &&
+                    model.recentCompactSegments().map(\.source) == ["Second.", "Still speaking"] &&
+                    model.recentCompactSegments().allSatisfy(\.isFinal),
+                    "Quiet context changed ASR records or exposed a merged passage in the compact feed")
+            }),
+            ("a current draft preempts held context and does not retry it during live speech", {
+                let probe = TranslatorProbe()
+                probe.holdContexts = true
+                defer { probe.releaseAll() }
+                let model = makeModel(probe, context: true)
+                model.receive(source: "First.", audioStart: 0, audioEnd: 1, isFinal: true)
+                model.receive(source: "Second.", audioStart: 1, audioEnd: 2, isFinal: true)
+                try await waitUntil("Held context did not start") { probe.calls.contains(where: \.context) }
+                let beforeDraft = model.segments
+                let began = ProcessInfo.processInfo.systemUptime
+                model.receive(source: "New live speech", audioStart: 2, audioEnd: 3, isFinal: false)
+                try await waitUntil("Current draft waited for the context deadline", seconds: 0.35) {
+                    model.segments.last?.translation == "KO: New live speech" && !model.hasPendingTranslations
+                }
+                try expect(ProcessInfo.processInfo.systemUptime - began < 0.35 &&
+                    Array(model.segments.prefix(2)) == beforeDraft &&
+                    !model.displaySegments.contains(where: \.contextIsPending),
+                    "Draft context preemption damaged earlier exact captions or left pending gray state")
+                let beforeLateResult = model.segments
+                probe.release(source: "First. Second.", context: true, translation: "양보한 문맥의 늦은 번역입니다.")
+                try await Task.sleep(for: .milliseconds(850))
+                try expect(probe.calls.filter(\.context).count == 1 && model.segments == beforeLateResult &&
+                    !model.displaySegments.contains { $0.translation == "양보한 문맥의 늦은 번역입니다." },
+                    "Canceled context retried during a draft or accepted late obsolete output")
+            }),
+            ("compact retains readable phrases during queued finals and clears with a new conversation", {
+                let probe = TranslatorProbe()
+                probe.heldSources = ["Second pending.", "Third pending."]
+                defer { probe.releaseAll() }
+                let model = makeModel(probe)
+                model.receive(source: "First readable.", audioStart: 0, audioEnd: 1, isFinal: true)
+                try await waitUntil("First readable caption did not translate") {
+                    model.segments.first?.isFinal == true && !model.hasPendingTranslations
+                }
+                let first = model.segments[0]
+                model.receive(source: "Second pending.", audioStart: 1, audioEnd: 2, isFinal: true)
+                try await waitUntil("Second baseline did not enter its held request") {
+                    probe.calls.contains(.init(source: "Second pending.", context: false))
+                }
+                model.receive(source: "Third pending.", audioStart: 2, audioEnd: 3, isFinal: true)
+                try expect(model.recentCompactSegments() == [first] &&
+                    model.segments.suffix(2).allSatisfy { $0.translation == nil },
+                    "Two untranslated newer phrases evicted the readable compact caption")
+                probe.release(source: "Second pending.", translation: "둘째 구절입니다.")
+                try await waitUntil("Third baseline did not enter its held request") {
+                    probe.calls.contains(.init(source: "Third pending.", context: false))
+                }
+                try expect(model.recentCompactSegments().map(\.source) == ["First readable.", "Second pending."] &&
+                    model.recentCompactSegments().allSatisfy(\.isFinal),
+                    "Completing one queued phrase lost exact final state or the earlier readable phrase")
+                probe.release(source: "Third pending.", translation: "셋째 구절입니다.")
+                try await waitUntil("Queued final baselines did not drain") { !model.hasPendingTranslations }
+                try expect(model.recentCompactSegments().map(\.source) == ["Second pending.", "Third pending."] &&
+                    model.recentCompactSegments(limit: 1).map(\.source) == ["Third pending."] &&
+                    model.recentCompactSegments(limit: 0).isEmpty,
+                    "New readable phrases did not replace the compact tail in speech order")
+                model.newSession()
+                try expect(model.recentCompactSegments().isEmpty,
+                    "A new conversation retained the previous compact caption")
+            }),
+            ("compact preserves current provisional state and exposes translation errors", {
+                let probe = TranslatorProbe()
+                probe.failuresRemaining = ["Failed next phrase.": 1]
+                let model = makeModel(probe)
+                model.receive(source: "Old live hypothesis", audioStart: 0, audioEnd: 1, isFinal: false)
+                try await waitUntil("Initial compact hypothesis did not translate") { !model.hasPendingTranslations }
+                probe.heldSources = ["Corrected live hypothesis"]
+                defer { probe.releaseAll() }
+                model.receive(source: "Corrected live hypothesis", audioStart: 0, audioEnd: 2, isFinal: false)
+                let currentDraft = model.recentCompactSegments().first
+                try expect(currentDraft?.source == "Corrected live hypothesis" &&
+                    currentDraft?.translation == "KO: Old live hypothesis" &&
+                    currentDraft?.translatedRevision != currentDraft?.revision && currentDraft?.isFinal == false,
+                    "Compact fallback cached an old source revision or falsely finalized stale translated text")
+                try await waitUntil("Corrected draft did not enter its held translation") {
+                    probe.calls.contains(.init(source: "Corrected live hypothesis", context: false))
+                }
+                probe.release(source: "Corrected live hypothesis", translation: "현재 수정된 구절입니다.")
+                try await waitUntil("Corrected draft did not drain") { !model.hasPendingTranslations }
+                model.receive(source: "Failed next phrase.", audioStart: 2, audioEnd: 3, isFinal: true)
+                try await waitUntil("Injected translation failure was not recorded") { !model.hasPendingTranslations }
+                let tail = model.recentCompactSegments()
+                try expect(tail.count == 2 && tail.last?.source == "Failed next phrase." &&
+                    tail.last?.translationError != nil && tail.last?.isFinal == false,
+                    "Readable fallback masked the latest translation error")
+                model.newSession()
+                probe.heldSources.insert("First new pending.")
+                model.receive(source: "First new pending.", audioStart: 0, audioEnd: 1, isFinal: false)
+                try expect(model.recentCompactSegments().map(\.source) == ["First new pending."] &&
+                    model.recentCompactSegments().first?.translation == nil,
+                    "An untranslated new conversation reused text from the previous conversation")
+                model.newSession()
             }),
             ("context goes gray, corrects earlier Korean, and preserves ASR records", {
                 let probe = TranslatorProbe()

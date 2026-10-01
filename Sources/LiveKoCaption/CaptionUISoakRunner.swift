@@ -167,6 +167,7 @@ enum CaptionUISoakRunner {
             compactState.showCompact(model: model, reason: "final-tail-inspection", file: file)
             try? await Task.sleep(for: .milliseconds(300))
             await compactState.exerciseNativeResize(model: model, file: file)
+            await compactState.exerciseReadingSpace(model: model, file: file)
             try? await Task.sleep(for: .milliseconds(300))
             compactState.inspect(model: model, verifyLatest: true, file: file)
             compactState.showDetailed(model: model, reason: "restore-detail", file: file)
@@ -441,6 +442,7 @@ enum CaptionUISoakRunner {
         private var tailVisibleRect = NSRect.zero
         private var nativeResizeChecks = 0
         private var nativeResizeChecksPassed = true
+        private var expandedReadingSpacePassed = false
 
         func prepare(model: CaptionModel) async {
             for _ in 0..<40 {
@@ -568,6 +570,38 @@ enum CaptionUISoakRunner {
             inspectMountedDetail()
         }
 
+        func exerciseReadingSpace(model: CaptionModel, file: FileHandle) async {
+            guard let panel = windows?.compactPanel else { return }
+            let original = panel.frame
+            let originalFont = model.fontSize
+            defer {
+                model.fontSize = originalFont
+                panel.setFrame(original, display: true)
+                panel.saveFrame(usingName: "CompactCaptionPanel")
+            }
+            model.fontSize = 35
+            var heights: [CGFloat] = []
+            var allTailsVisible = true
+            var allTopLinesWhole = true
+            for height in [CGFloat(144), CGFloat(224), CGFloat(320)] {
+                panel.setContentSize(NSSize(width: 780, height: height))
+                try? await Task.sleep(for: .milliseconds(300))
+                panel.contentView?.layoutSubtreeIfNeeded()
+                let document = panel.contentView.flatMap { compactDocument(in: $0) }
+                let viewportHeight = document?.enclosingScrollView?.contentView.bounds.height ?? 0
+                heights.append(viewportHeight)
+                let tailVisible = document.map { latestGlyphIsVisible(in: $0) } ?? false
+                let wholeTop = document.map { topLineIsUnclipped(in: $0) } ?? false
+                allTailsVisible = allTailsVisible && tailVisible
+                allTopLinesWhole = allTopLinesWhole && wholeTop
+                write(["event": "compact-reading-space", "panelHeight": height,
+                       "viewportHeight": viewportHeight, "expectedHeight": height - 72,
+                       "latestGlyphVisible": tailVisible, "topLineIsWhole": wholeTop], to: file)
+            }
+            expandedReadingSpacePassed = allTailsVisible && allTopLinesWhole && heights.count == 3 &&
+                abs(heights[0] - 72) <= 1 && abs(heights[1] - 152) <= 1 && abs(heights[2] - 248) <= 1
+        }
+
         private func nativeResizeProbe(panel: NSPanel, name: String, start: NSPoint,
                                        delta: NSPoint, clampToMinimum: Bool, file: FileHandle) {
             nativeResizeChecks += 1
@@ -650,9 +684,9 @@ enum CaptionUISoakRunner {
             }.count
             maxRenderedRows = max(maxRenderedRows, rows)
             compactRowsBounded = compactRowsBounded && rows <= 2
-                && model.recentDisplaySegments(limit: 2).count <= 2
+                && model.recentCompactSegments(limit: 2).count <= 2
             if verifyLatest {
-                let tail = model.recentDisplaySegments(limit: 2)
+                let tail = model.recentCompactSegments(limit: 2)
                 compactMatchesLatest = !tail.isEmpty && tail.allSatisfy {
                     guard let translation = $0.translation,
                           !translation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
@@ -723,6 +757,15 @@ enum CaptionUISoakRunner {
                 && tailVisibleRect.insetBy(dx: -1, dy: -1).contains(tailGlyphRect)
         }
 
+        private func topLineIsUnclipped(in text: NSTextView) -> Bool {
+            guard let layout = text.layoutManager, let container = text.textContainer,
+                  layout.numberOfGlyphs > 0 else { return false }
+            let origin = text.textContainerOrigin
+            let glyph = layout.glyphIndex(for: NSPoint(x: 0, y: max(0, text.visibleRect.minY - origin.y)), in: container)
+            let line = layout.lineFragmentRect(forGlyphAt: glyph, effectiveRange: nil)
+            return line.minY + origin.y >= text.visibleRect.minY - 1
+        }
+
         private func compactDocument(in view: NSView) -> NSTextView? {
             if let text = view as? CompactCaptionTextView { return text }
             for child in view.subviews {
@@ -738,6 +781,7 @@ enum CaptionUISoakRunner {
                 && compactRowsBounded && compactRespectsMinimumSize
                 && compactDocumentPresent && compactMatchesLatest && compactTailVisible
                 && nativeResizeChecks == 2 && nativeResizeChecksPassed
+                && expandedReadingSpacePassed
                 && windows?.isCompact == false
                 && windows?.detailWindow?.isVisible == true
         }
@@ -759,6 +803,7 @@ enum CaptionUISoakRunner {
              "compactTailVisible": compactTailVisible,
              "compactNativeResizeChecks": nativeResizeChecks,
              "compactNativeResizeChecksPassed": nativeResizeChecks == 2 && nativeResizeChecksPassed,
+             "compactExpandedReadingSpacePassed": expandedReadingSpacePassed,
              "compactTailGlyphRect": [tailGlyphRect.origin.x, tailGlyphRect.origin.y,
                  tailGlyphRect.width, tailGlyphRect.height],
              "compactTailVisibleRect": [tailVisibleRect.origin.x, tailVisibleRect.origin.y,

@@ -369,8 +369,8 @@ private struct CaptionSettingsPopover: View {
             VStack(alignment: .leading, spacing: 8) {
                 Toggle("최근 구절 함께 번역", isOn: $model.contextCorrectionEnabled)
                     .toggleStyle(.checkbox).disabled(model.phase != .idle)
-                    .help("이어지는 문맥에 맞춰 최근 구절을 다시 번역합니다. 듣는 중에는 변경할 수 없습니다.")
-                explanation("이어지는 문맥에 맞춰 최근 자막을 수정합니다.")
+                    .help("발화가 잠시 잦아든 뒤 최근 구절을 문맥에 맞춰 보완합니다. 듣는 중에는 변경할 수 없습니다.")
+                explanation("묶음 번역은 상세 보기와 저장 기록에 표시합니다. 간략 보기는 문장별 자막을 유지합니다.")
             }
             Divider().overlay(CaptionPalette.border)
             LocalPolishControls(model: model, store: LocalModelStore.shared)

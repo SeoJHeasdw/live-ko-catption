@@ -165,10 +165,9 @@ private struct CompactCaptionText: View {
 
     var body: some View {
         let fontSize = min(model.fontSize, max(24, Double(availableHeight - 14) / 2.5))
-        let lineHeight = NSLayoutManager().defaultLineHeight(for: NSFont.systemFont(ofSize: fontSize))
-        NativeCompactCaption(segments: model.recentDisplaySegments(limit: 2), fontSize: fontSize,
+        NativeCompactCaption(segments: model.recentCompactSegments(limit: 2), fontSize: fontSize,
             targetLanguageName: model.targetDisplayName)
-            .frame(height: min(availableHeight, ceil(lineHeight * 2 + 13)))
+            .frame(height: max(0, availableHeight))
     }
 }
 

@@ -44,7 +44,7 @@ final class CaptionWindowCoordinator: NSObject, NSWindowDelegate {
         let panel: NSPanel
         if let compactPanel { panel = compactPanel }
         else {
-            panel = CompactCaptionPanel(contentRect: NSRect(x: 0, y: 0, width: 780, height: 184),
+            panel = CompactCaptionPanel(contentRect: NSRect(x: 0, y: 0, width: 780, height: 224),
                 styleMask: [.borderless, .resizable, .nonactivatingPanel], backing: .buffered, defer: false)
             panel.title = "라이브 자막 · 간략 보기"
             panel.isReleasedWhenClosed = false

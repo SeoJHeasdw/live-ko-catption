@@ -134,6 +134,7 @@ final class CaptionModel {
     private var readinessID: UUID?
     private var runHasAudio = false
     private var lastDraftTranslation: TimeInterval = 0
+    private var lastAcceptedSourceUptime: TimeInterval = 0
     private var runID: UUID?
     private var runUptime: TimeInterval = 0
     private var audioOffset: Double = 0
@@ -150,6 +151,24 @@ final class CaptionModel {
     }
     func recentDisplaySegments(limit: Int = 100) -> [CaptionSegment] {
         markPendingContext(in: timeline.recentDisplaySegments(limit: limit))
+    }
+    /// The small caption window keeps individual phrases readable while the
+    /// detail view may reconsider a bounded passage as a context group.
+    func recentCompactSegments(limit: Int = 2) -> [CaptionSegment] {
+        guard limit > 0 else { return [] }
+        let count = min(limit, 100)
+        var readable: [CaptionSegment] = []
+        for segment in timeline.segments.suffix(100).reversed() {
+            if segment.translationError != nil ||
+                !(segment.translation?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true) {
+                readable.append(segment)
+                if readable.count == count { break }
+            }
+        }
+        // Pending newer phrases must not evict the last readable translation.
+        // Read directly from this timeline, so an empty new conversation cannot
+        // retain a previous conversation's caption or its finalized appearance.
+        return readable.isEmpty ? Array(timeline.segments.suffix(count)) : Array(readable.reversed())
     }
     var displayHistoryCount: Int { timeline.displaySegmentCount }
     private func markPendingContext(in segments: [CaptionSegment]) -> [CaptionSegment] {
@@ -357,6 +376,7 @@ final class CaptionModel {
         localPolishDegraded = false
         finalFastBaselines.removeAll()
         lastDraftTranslation = 0
+        lastAcceptedSourceUptime = 0
         let requestedDeviceUID = selectedDeviceUID
         refreshDevices()
         do {
@@ -580,6 +600,7 @@ final class CaptionModel {
         timeline = CaptionTimeline()
         inputWarnings.removeAll()
         translationQueue.removeAll(); queuedTranslations = 0
+        lastAcceptedSourceUptime = 0
         translationMilliseconds = nil; speechDelaySeconds = nil; captionDelaySeconds = nil
         accumulatedDuration = 0
         startedAt = Date()
@@ -656,11 +677,16 @@ final class CaptionModel {
     /// The same production state/scheduler path is exercised by the deterministic
     /// integration checks, with an injected translator and no microphone access.
     func receive(source: String, audioStart: Double, audioEnd: Double, isFinal: Bool) {
+        let previousTail = segments.last
+        let previousCount = segments.count
         let reusable = isFinal && shouldPolish ? segments.suffix(6).filter {
             !$0.sourceIsFinal && $0.translatedRevision == $0.revision && $0.translation != nil
         } : []
-        if let job = timeline.accept(source: source, audioStart: audioStart, audioEnd: audioEnd, isFinal: isFinal,
-                                     requireFinalTranslation: shouldPolish) {
+        let acceptedJob = timeline.accept(source: source, audioStart: audioStart, audioEnd: audioEnd, isFinal: isFinal,
+                                         requireFinalTranslation: shouldPolish)
+        let sourceChanged = acceptedJob != nil || segments.count != previousCount || segments.last != previousTail
+        if sourceChanged { lastAcceptedSourceUptime = ProcessInfo.processInfo.systemUptime }
+        if let job = acceptedJob {
             if let previous = reusable.first(where: { $0.id == job.segmentID && $0.revision == job.revision && $0.source == job.source }),
                let translation = previous.translation {
                 finalFastBaselines[job.segmentID] = (job.revision, translation)
@@ -672,12 +698,19 @@ final class CaptionModel {
                 contextSession?.retire()
                 contextTask?.cancel()
             }
-            enqueueContextIfAvailable()
         }
+        if sourceChanged || isFinal { enqueueContextIfAvailable() }
     }
 
     private func enqueueContextIfAvailable() {
-        guard contextCorrectionEnabled, !contextTimedOut, let last = segments.last(where: { $0.sourceIsFinal }),
+        // A following live draft takes priority over reconsidering older text.
+        // Do not requeue that optional group after each draft translation.
+        guard let last = segments.last, last.sourceIsFinal else {
+            contextJobs.removeAll()
+            queuedTranslations = translationQueue.count
+            return
+        }
+        guard contextCorrectionEnabled, !contextTimedOut,
               let job = timeline.contextJob(endingAt: last.id) else { return }
         contextJobs.removeAll { !timeline.needsContextTranslation($0) || $0.endingSegmentID == job.endingSegmentID }
         if !contextJobs.contains(job) { contextJobs.append(job) }
@@ -686,9 +719,9 @@ final class CaptionModel {
     }
 
     private func enqueue(_ job: TranslationJob) {
-        if job.isSourceFinal, let activeTranslation, let polishTask,
+        if let activeTranslation, let polishTask,
            activeTranslation.segmentID != job.segmentID || activeTranslation.revision != job.revision {
-            // Optional refinement yields to a newly finalized source. Its exact
+            // Optional refinement yields to new live speech. Its exact
             // fast baseline is finalized before the next Apple job runs.
             polishTask.cancel()
             localEngine.cancelActive()
@@ -703,7 +736,7 @@ final class CaptionModel {
                     target: targetLanguage, preferredStrategy: .lowLatency)
             }
         }
-        if job.isSourceFinal, activeContext != nil {
+        if activeContext != nil {
             contextSession?.retire(); contextTask?.cancel()
         }
         translationQueue.prune(using: timeline)
@@ -744,12 +777,23 @@ final class CaptionModel {
             if !translationQueue.hasFinals && translationQueue.count > 0 {
                 let wait = 0.55 - (ProcessInfo.processInfo.systemUptime - lastDraftTranslation)
                 if wait > 0 {
-                    do { try await Task.sleep(for: .seconds(wait)) } catch { return }
+                    // A final can arrive during draft admission. Recheck often
+                    // without changing the draft translation interval.
+                    do { try await Task.sleep(for: .seconds(min(wait, 0.05))) } catch { return }
                     continue // A final result may have arrived while sleeping.
                 }
             }
             guard let job = translationQueue.next(allowDraft: true) else {
                 if let contextJob = contextJobs.first, !contextTimedOut, contextCorrectionEnabled {
+                    guard segments.last?.sourceIsFinal == true else {
+                        contextJobs.removeAll()
+                        continue
+                    }
+                    let quietWait = 0.75 - (ProcessInfo.processInfo.systemUptime - lastAcceptedSourceUptime)
+                    if quietWait > 0 {
+                        do { try await Task.sleep(for: .seconds(min(quietWait, 0.05))) } catch { return }
+                        continue
+                    }
                     contextJobs.removeFirst()
                     activeContext = contextJob
                     let useLocal = shouldPolish
@@ -879,7 +923,8 @@ final class CaptionModel {
     private func refineFinal(_ baseline: String, for job: TranslationJob, worker token: UUID) async throws -> String {
         guard shouldPolish, timeline.isCurrent(job),
               let segment = segments.first(where: { $0.id == job.segmentID }), segment.sourceIsFinal else { return baseline }
-        if translationQueue.hasFinal(excluding: job) {
+        translationQueue.prune(using: timeline)
+        if translationQueue.hasFinal(excluding: job) || translationQueue.count > translationQueue.finalCount {
             localPolishMessage = "새 문장을 우선해 빠른 번역을 유지했습니다."
             return baseline
         }
