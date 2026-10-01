@@ -884,10 +884,11 @@ struct AppModelChecks {
                 model.receive(source: "First live hypothesis", audioStart: 0, audioEnd: 1, isFinal: false)
                 try await waitUntil("Initial draft did not translate") { !model.hasPendingTranslations && probe.calls.count == 1 }
                 model.receive(source: "Changed live hypothesis", audioStart: 0, audioEnd: 2, isFinal: false)
-                try await Task.sleep(for: .milliseconds(100))
+                // The final arrives while the revised draft is still settling.
+                try await Task.sleep(for: .milliseconds(15))
                 let began = ProcessInfo.processInfo.systemUptime
                 model.receive(source: "Urgent final.", audioStart: 2, audioEnd: 3, isFinal: true)
-                try await waitUntil("Final remained inside the draft cooldown", seconds: 0.25) {
+                try await waitUntil("Final remained inside the draft admission wait", seconds: 0.25) {
                     model.segments.last?.isFinal == true
                 }
                 try expect(ProcessInfo.processInfo.systemUptime - began < 0.25 &&
@@ -897,6 +898,37 @@ struct AppModelChecks {
                 try expect(model.segments[0].translation == "KO: Changed live hypothesis" &&
                     model.segments[1].translation == "KO: Urgent final." && model.segments[1].isFinal,
                     "Interrupting draft admission discarded a source or changed final output")
+            }),
+            ("a burst of draft revisions translates only its newest text without a long wait", {
+                let probe = TranslatorProbe()
+                let model = makeModel(probe)
+                let began = ProcessInfo.processInfo.systemUptime
+                // The recognizer delivers each revision as a separate actor turn.
+                for (index, source) in ["The", "The proposal", "The proposal sounds"].enumerated() {
+                    model.receive(source: source, audioStart: 0, audioEnd: Double(index + 1), isFinal: false)
+                    try await Task.sleep(for: .milliseconds(3))
+                }
+                try await waitUntil("Newest burst revision waited behind an obsolete draft", seconds: 0.3) {
+                    model.segments.first?.translation == "KO: The proposal sounds" && !model.hasPendingTranslations
+                }
+                try expect(ProcessInfo.processInfo.systemUptime - began < 0.3 &&
+                    probe.calls == [.init(source: "The proposal sounds", context: false)] &&
+                    model.segments.first?.isFinal == false,
+                    "Draft admission translated an obsolete burst revision or finalized live speech")
+            }),
+            ("a steady trickle of draft revisions is translated within the hold limit", {
+                let probe = TranslatorProbe()
+                let model = makeModel(probe)
+                // Revisions closer together than the settle time never go quiet.
+                for index in 1...16 {
+                    model.receive(source: "Trickle \(index)", audioStart: 0, audioEnd: Double(index), isFinal: false)
+                    try await Task.sleep(for: .milliseconds(25))
+                }
+                try expect(!probe.calls.isEmpty && probe.calls.count <= 5,
+                    "A continuous trickle starved draft translation or translated every revision")
+                try await waitUntil("Final trickle revision did not drain") {
+                    model.segments.first?.translation == "KO: Trickle 16" && !model.hasPendingTranslations
+                }
             }),
             ("context waits for a quiet final tail and never starts behind a live draft", {
                 let probe = TranslatorProbe()

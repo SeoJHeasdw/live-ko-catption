@@ -133,7 +133,12 @@ final class CaptionModel {
     private let polishTimeoutSeconds: Double
     private var readinessID: UUID?
     private var runHasAudio = false
-    private var lastDraftTranslation: TimeInterval = 0
+    // The recognizer delivers several revisions within a few milliseconds and
+    // then stays quiet. Draft admission waits for that burst to settle so the
+    // newest revision is translated, with a bounded hold for a steady trickle.
+    static let draftSettleSeconds = 0.05
+    static let draftHoldLimitSeconds = 0.15
+    private var draftHeldSince: TimeInterval?
     private var lastAcceptedSourceUptime: TimeInterval = 0
     private var runID: UUID?
     private var runUptime: TimeInterval = 0
@@ -375,7 +380,7 @@ final class CaptionModel {
         contextTimedOut = false
         localPolishDegraded = false
         finalFastBaselines.removeAll()
-        lastDraftTranslation = 0
+        draftHeldSince = nil
         lastAcceptedSourceUptime = 0
         let requestedDeviceUID = selectedDeviceUID
         refreshDevices()
@@ -576,6 +581,7 @@ final class CaptionModel {
                 message: "이 구절의 번역이 완료되지 않았습니다. 다시 번역할 수 있습니다.")
         }
         translationQueue.removeAll()
+        draftHeldSince = nil
         queuedTranslations = 0
         audioLevel = 0
         phase = .idle
@@ -600,6 +606,7 @@ final class CaptionModel {
         timeline = CaptionTimeline()
         inputWarnings.removeAll()
         translationQueue.removeAll(); queuedTranslations = 0
+        draftHeldSince = nil
         lastAcceptedSourceUptime = 0
         translationMilliseconds = nil; speechDelaySeconds = nil; captionDelaySeconds = nil
         accumulatedDuration = 0
@@ -774,13 +781,19 @@ final class CaptionModel {
             guard session != nil || translationOverride != nil else { break }
             translationQueue.prune(using: timeline)
             contextJobs.removeAll { !timeline.needsContextTranslation($0) }
-            if !translationQueue.hasFinals && translationQueue.count > 0 {
-                let wait = 0.55 - (ProcessInfo.processInfo.systemUptime - lastDraftTranslation)
+            if translationQueue.count == translationQueue.finalCount {
+                draftHeldSince = nil
+            } else if !translationQueue.hasFinals {
+                let now = ProcessInfo.processInfo.systemUptime
+                let heldSince = draftHeldSince ?? now
+                draftHeldSince = heldSince
+                // Admit the burst's newest revision once the source goes quiet.
+                // A final arriving meanwhile is taken first on the next pass.
+                let wait = min(Self.draftSettleSeconds - (now - lastAcceptedSourceUptime),
+                               Self.draftHoldLimitSeconds - (now - heldSince))
                 if wait > 0 {
-                    // A final can arrive during draft admission. Recheck often
-                    // without changing the draft translation interval.
-                    do { try await Task.sleep(for: .seconds(min(wait, 0.05))) } catch { return }
-                    continue // A final result may have arrived while sleeping.
+                    do { try await Task.sleep(for: .seconds(wait)) } catch { return }
+                    continue // A newer revision or a final may have arrived while sleeping.
                 }
             }
             guard let job = translationQueue.next(allowDraft: true) else {
@@ -849,9 +862,7 @@ final class CaptionModel {
                 }
                 break
             }
-            if !job.isSourceFinal {
-                lastDraftTranslation = ProcessInfo.processInfo.systemUptime
-            }
+            if !job.isSourceFinal { draftHeldSince = nil }
             queuedTranslations = translationQueue.count + contextJobs.count
             guard timeline.needsTranslation(job) else { continue }
             let began = ProcessInfo.processInfo.systemUptime
