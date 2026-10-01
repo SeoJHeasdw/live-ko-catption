@@ -1,0 +1,4200 @@
+{
+  "asr_events" : [
+    {
+      "arrived_after_stream_seconds" : 1.1156481249490753,
+      "audio_end_seconds" : 1.0992500000000001,
+      "audio_start_seconds" : 0,
+      "english" : "The",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 1.1166311249835417,
+      "audio_end_seconds" : 1.0992500000000001,
+      "audio_start_seconds" : 0,
+      "english" : "The prop",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 1.1178794166771695,
+      "audio_end_seconds" : 1.0992500000000001,
+      "audio_start_seconds" : 0,
+      "english" : "The propos",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 1.1180282082641497,
+      "audio_end_seconds" : 1.0992500000000001,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 1.118314208346419,
+      "audio_end_seconds" : 1.0992500000000001,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 2.0088100417051464,
+      "audio_end_seconds" : 1.99925,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds prom",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 2.0090657082619146,
+      "audio_end_seconds" : 1.99925,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 2.0091713749570772,
+      "audio_end_seconds" : 1.99925,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising, but",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 2.0093127916334197,
+      "audio_end_seconds" : 1.99925,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising, but we",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 3.0131973749957979,
+      "audio_end_seconds" : 2.99925,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising, but we need",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 3.0134017500095069,
+      "audio_end_seconds" : 2.99925,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising, but we need enough",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 3.0139072916936129,
+      "audio_end_seconds" : 2.99925,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising, but we need enough time",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 3.0140452083433047,
+      "audio_end_seconds" : 2.99925,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising, but we need enough time to",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 3.0141616249457002,
+      "audio_end_seconds" : 2.99925,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising, but we need enough time to understand",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 4.0114924166118726,
+      "audio_end_seconds" : 3.99925,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising, but we need enough time to understand what",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 4.0117794999387115,
+      "audio_end_seconds" : 3.99925,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 4.0121022916864604,
+      "audio_end_seconds" : 3.99925,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 4.9142503333278,
+      "audio_end_seconds" : 4.8992500000000003,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when condition",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 4.9157704999670386,
+      "audio_end_seconds" : 4.8992500000000003,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 4.9169586249627173,
+      "audio_end_seconds" : 4.8992500000000003,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 4.9171346250222996,
+      "audio_end_seconds" : 4.8992500000000003,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 4.9753270833753049,
+      "audio_end_seconds" : 4.5,
+      "audio_start_seconds" : 0,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+      "is_final" : true
+    },
+    {
+      "arrived_after_stream_seconds" : 5.913580208318308,
+      "audio_end_seconds" : 5.8992500000000003,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 5.9141889583552256,
+      "audio_end_seconds" : 5.8992500000000003,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 5.9143537499476224,
+      "audio_end_seconds" : 5.8992500000000003,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check the",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 5.9144935833755881,
+      "audio_end_seconds" : 5.8992500000000003,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check the date",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 5.9146130416775122,
+      "audio_end_seconds" : 5.8992500000000003,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check the date care",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 5.9148785416036844,
+      "audio_end_seconds" : 5.8992500000000003,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check the date carefully",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 6.8135209166212007,
+      "audio_end_seconds" : 6.7992499999999998,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check the date carefully because",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 6.81374095834326,
+      "audio_end_seconds" : 6.7992499999999998,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check the date carefully because the",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 6.8138643333222717,
+      "audio_end_seconds" : 6.7992499999999998,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check the date carefully because the meeting",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 6.8139910416211933,
+      "audio_end_seconds" : 6.7992499999999998,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check the date carefully because the meeting is",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 6.8141306249890476,
+      "audio_end_seconds" : 6.7992499999999998,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check the date carefully because the meeting is on",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 7.813116249977611,
+      "audio_end_seconds" : 7.7992499999999998,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check the date carefully because the meeting is on Tuesday",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 7.8136991249630228,
+      "audio_end_seconds" : 7.7992499999999998,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check the date carefully because the meeting is on Tuesday,",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 7.8143073333194479,
+      "audio_end_seconds" : 7.7992499999999998,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check the date carefully because the meeting is on Tuesday, not",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 7.8144772083032876,
+      "audio_end_seconds" : 7.7992499999999998,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check the date carefully because the meeting is on Tuesday, not Thursday",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 8.8095945416716859,
+      "audio_end_seconds" : 8.7992500000000007,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 8.8498810833552852,
+      "audio_end_seconds" : 7.9800000000000004,
+      "audio_start_seconds" : 4.5,
+      "english" : " Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "is_final" : true
+    },
+    {
+      "arrived_after_stream_seconds" : 8.8499978749314323,
+      "audio_end_seconds" : 8.7992500000000007,
+      "audio_start_seconds" : 7.9800000000000004,
+      "english" : " We",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 8.8501072500366718,
+      "audio_end_seconds" : 8.7992500000000007,
+      "audio_start_seconds" : 7.9800000000000004,
+      "english" : " We should",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 8.8501940832938999,
+      "audio_end_seconds" : 8.7992500000000007,
+      "audio_start_seconds" : 7.9800000000000004,
+      "english" : " We should not",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 9.7096278333337978,
+      "audio_end_seconds" : 9.6992499999999993,
+      "audio_start_seconds" : 7.9800000000000004,
+      "english" : " We should not cancel",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 9.7107536667026579,
+      "audio_end_seconds" : 9.6992499999999993,
+      "audio_start_seconds" : 7.9800000000000004,
+      "english" : " We should not cancel the",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 9.7109754167031497,
+      "audio_end_seconds" : 9.6992499999999993,
+      "audio_start_seconds" : 7.9800000000000004,
+      "english" : " We should not cancel the appointment",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 10.715957083273679,
+      "audio_end_seconds" : 10.699249999999999,
+      "audio_start_seconds" : 7.9800000000000004,
+      "english" : " We should not cancel the appointment unless",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 10.71644925000146,
+      "audio_end_seconds" : 10.699249999999999,
+      "audio_start_seconds" : 7.9800000000000004,
+      "english" : " We should not cancel the appointment unless someone",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 10.716761333285831,
+      "audio_end_seconds" : 10.699249999999999,
+      "audio_start_seconds" : 7.9800000000000004,
+      "english" : " We should not cancel the appointment unless someone conf",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 10.717077708337456,
+      "audio_end_seconds" : 10.699249999999999,
+      "audio_start_seconds" : 7.9800000000000004,
+      "english" : " We should not cancel the appointment unless someone confir",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 10.717359583359212,
+      "audio_end_seconds" : 10.699249999999999,
+      "audio_start_seconds" : 7.9800000000000004,
+      "english" : " We should not cancel the appointment unless someone confirms",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 10.717531875008717,
+      "audio_end_seconds" : 10.699249999999999,
+      "audio_start_seconds" : 7.9800000000000004,
+      "english" : " We should not cancel the appointment unless someone confirms the",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 10.862625541631132,
+      "audio_end_seconds" : 10.8526875,
+      "audio_start_seconds" : 7.9800000000000004,
+      "english" : " We should not cancel the appointment unless someone confirms the change",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 10.86294483335223,
+      "audio_end_seconds" : 10.8526875,
+      "audio_start_seconds" : 7.9800000000000004,
+      "english" : " We should not cancel the appointment unless someone confirms the change.",
+      "is_final" : false
+    },
+    {
+      "arrived_after_stream_seconds" : 10.893097291700542,
+      "audio_end_seconds" : 10.8526875,
+      "audio_start_seconds" : 7.9800000000000004,
+      "english" : " We should not cancel the appointment unless someone confirms the change.",
+      "is_final" : true
+    }
+  ],
+  "audio_chunk_milliseconds" : 100,
+  "audio_fixture_filename" : "fast-english-readability.aiff",
+  "completed_source_korean_changes" : [
+    {
+      "current_korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+      "observed_after_stream_seconds" : 5.0754108333494514,
+      "pending_gray_observed_before_change" : false,
+      "previous_korean" : "제안은 유망해 보이지만, 어떤 일이 일어나는지 이해하기 위해서는 충분한 시간이 필요합니다.",
+      "previous_translation_previously_visual_final" : false
+    },
+    {
+      "current_korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "observed_after_stream_seconds" : 8.9089737916365266,
+      "pending_gray_observed_before_change" : false,
+      "previous_korean" : "회의가 목요일이 아니라 화요일이니 날짜를 꼼꼼히 확인해 주세요.",
+      "previous_translation_previously_visual_final" : false
+    },
+    {
+      "current_korean" : "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "english" : "We should not cancel the appointment unless someone confirms the change.",
+      "observed_after_stream_seconds" : 10.967510749935172,
+      "pending_gray_observed_before_change" : true,
+      "previous_korean" : "누군가 확인하지 않는 한 우리는 약속을 취소해서는 안 됩니다.",
+      "previous_translation_previously_visual_final" : false
+    },
+    {
+      "current_korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요. 누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday. We should not cancel the appointment unless someone confirms the change.",
+      "observed_after_stream_seconds" : 11.743729541660286,
+      "pending_gray_observed_before_change" : true,
+      "previous_korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "previous_translation_previously_visual_final" : true
+    }
+  ],
+  "failures" : [
+
+  ],
+  "final_asr_sources" : [
+    "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+    "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+    "We should not cancel the appointment unless someone confirms the change."
+  ],
+  "final_display_segments" : [
+    {
+      "audio_end_seconds" : 4.5,
+      "audio_start_seconds" : 0,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+      "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+      "is_visual_final" : true,
+      "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+      "source_is_final" : true,
+      "source_revision" : 21,
+      "translated_revision" : 21,
+      "translation_error" : null
+    },
+    {
+      "audio_end_seconds" : 10.8526875,
+      "audio_start_seconds" : 4.5,
+      "context_is_pending" : false,
+      "context_segment_count" : 2,
+      "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday. We should not cancel the appointment unless someone confirms the change.",
+      "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+      "is_visual_final" : true,
+      "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요. 누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "source_is_final" : true,
+      "source_revision" : 16,
+      "translated_revision" : 16,
+      "translation_error" : null
+    }
+  ],
+  "final_source_segments" : [
+    {
+      "audio_end_seconds" : 4.5,
+      "audio_start_seconds" : 0,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+      "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+      "is_visual_final" : true,
+      "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+      "source_is_final" : true,
+      "source_revision" : 21,
+      "translated_revision" : 21,
+      "translation_error" : null
+    },
+    {
+      "audio_end_seconds" : 7.9800000000000004,
+      "audio_start_seconds" : 4.5,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+      "is_visual_final" : true,
+      "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "source_is_final" : true,
+      "source_revision" : 16,
+      "translated_revision" : 16,
+      "translation_error" : null
+    },
+    {
+      "audio_end_seconds" : 10.8526875,
+      "audio_start_seconds" : 7.9800000000000004,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "We should not cancel the appointment unless someone confirms the change.",
+      "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+      "is_visual_final" : true,
+      "korean" : "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "source_is_final" : true,
+      "source_revision" : 14,
+      "translated_revision" : 14,
+      "translation_error" : null
+    }
+  ],
+  "fixture_seconds" : 10.85265306122449,
+  "korean_updates" : [
+    {
+      "after_corresponding_audio_end_seconds" : 0.60458533334825182,
+      "audio_end_seconds" : 1.0992500000000001,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds",
+      "is_visual_final" : false,
+      "korean" : "제안이 들립니다",
+      "observed_after_stream_seconds" : 1.7038353333482519,
+      "source_revision" : 5,
+      "translated_revision" : 5
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.0097153333416208909,
+      "audio_end_seconds" : 1.99925,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds prom",
+      "is_visual_final" : false,
+      "korean" : "제안이 들립니다",
+      "observed_after_stream_seconds" : 2.0089653333416209,
+      "source_revision" : 6,
+      "translated_revision" : 5
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.0098605416649952815,
+      "audio_end_seconds" : 1.99925,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising",
+      "is_visual_final" : false,
+      "korean" : "제안이 들립니다",
+      "observed_after_stream_seconds" : 2.0091105416649953,
+      "source_revision" : 7,
+      "translated_revision" : 5
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.00998824997153136,
+      "audio_end_seconds" : 1.99925,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but",
+      "is_visual_final" : false,
+      "korean" : "제안이 들립니다",
+      "observed_after_stream_seconds" : 2.0092382499715313,
+      "source_revision" : 8,
+      "translated_revision" : 5
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.010095083264634042,
+      "audio_end_seconds" : 1.99925,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we",
+      "is_visual_final" : false,
+      "korean" : "제안이 들립니다",
+      "observed_after_stream_seconds" : 2.009345083264634,
+      "source_revision" : 9,
+      "translated_revision" : 5
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.25036295828688893,
+      "audio_end_seconds" : 1.99925,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we",
+      "is_visual_final" : false,
+      "korean" : "그 제안은 유망해 보이지만, 우리는",
+      "observed_after_stream_seconds" : 2.2496129582868889,
+      "source_revision" : 9,
+      "translated_revision" : 9
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.014060791691765218,
+      "audio_end_seconds" : 2.99925,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need",
+      "is_visual_final" : false,
+      "korean" : "그 제안은 유망해 보이지만, 우리는",
+      "observed_after_stream_seconds" : 3.0133107916917652,
+      "source_revision" : 10,
+      "translated_revision" : 9
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.014187541667372017,
+      "audio_end_seconds" : 2.99925,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough",
+      "is_visual_final" : false,
+      "korean" : "그 제안은 유망해 보이지만, 우리는",
+      "observed_after_stream_seconds" : 3.013437541667372,
+      "source_revision" : 11,
+      "translated_revision" : 9
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.01470499997306618,
+      "audio_end_seconds" : 2.99925,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough time",
+      "is_visual_final" : false,
+      "korean" : "그 제안은 유망해 보이지만, 우리는",
+      "observed_after_stream_seconds" : 3.0139549999730662,
+      "source_revision" : 12,
+      "translated_revision" : 9
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.014856083312071888,
+      "audio_end_seconds" : 2.99925,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough time to",
+      "is_visual_final" : false,
+      "korean" : "그 제안은 유망해 보이지만, 우리는",
+      "observed_after_stream_seconds" : 3.0141060833120719,
+      "source_revision" : 13,
+      "translated_revision" : 9
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.014940291636623471,
+      "audio_end_seconds" : 2.99925,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough time to understand",
+      "is_visual_final" : false,
+      "korean" : "그 제안은 유망해 보이지만, 우리는",
+      "observed_after_stream_seconds" : 3.0141902916366234,
+      "source_revision" : 14,
+      "translated_revision" : 9
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.61583004169445488,
+      "audio_end_seconds" : 2.99925,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough time to understand",
+      "is_visual_final" : false,
+      "korean" : "그 제안은 유망해 보이지만, 이해하기 위해서는 충분한 시간이 필요합니다.",
+      "observed_after_stream_seconds" : 3.6150800416944548,
+      "source_revision" : 14,
+      "translated_revision" : 14
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.012347875040024547,
+      "audio_end_seconds" : 3.99925,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough time to understand what",
+      "is_visual_final" : false,
+      "korean" : "그 제안은 유망해 보이지만, 이해하기 위해서는 충분한 시간이 필요합니다.",
+      "observed_after_stream_seconds" : 4.0115978750400245,
+      "source_revision" : 15,
+      "translated_revision" : 14
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.012580291710794,
+      "audio_end_seconds" : 3.99925,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens",
+      "is_visual_final" : false,
+      "korean" : "그 제안은 유망해 보이지만, 이해하기 위해서는 충분한 시간이 필요합니다.",
+      "observed_after_stream_seconds" : 4.011830291710794,
+      "source_revision" : 16,
+      "translated_revision" : 14
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.012913750012405245,
+      "audio_end_seconds" : 3.99925,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when",
+      "is_visual_final" : false,
+      "korean" : "그 제안은 유망해 보이지만, 이해하기 위해서는 충분한 시간이 필요합니다.",
+      "observed_after_stream_seconds" : 4.0121637500124052,
+      "source_revision" : 17,
+      "translated_revision" : 14
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.16475295833591375,
+      "audio_end_seconds" : 3.99925,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when",
+      "is_visual_final" : false,
+      "korean" : "제안은 유망해 보이지만, 어떤 일이 일어나는지 이해하기 위해서는 충분한 시간이 필요합니다.",
+      "observed_after_stream_seconds" : 4.1640029583359137,
+      "source_revision" : 17,
+      "translated_revision" : 17
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.01507487498968807,
+      "audio_end_seconds" : 4.8992500000000003,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when condition",
+      "is_visual_final" : false,
+      "korean" : "제안은 유망해 보이지만, 어떤 일이 일어나는지 이해하기 위해서는 충분한 시간이 필요합니다.",
+      "observed_after_stream_seconds" : 4.9143248749896884,
+      "source_revision" : 18,
+      "translated_revision" : 17
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.016607041603885264,
+      "audio_end_seconds" : 4.8992500000000003,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions",
+      "is_visual_final" : false,
+      "korean" : "제안은 유망해 보이지만, 어떤 일이 일어나는지 이해하기 위해서는 충분한 시간이 필요합니다.",
+      "observed_after_stream_seconds" : 4.9158570416038856,
+      "source_revision" : 19,
+      "translated_revision" : 17
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.017794833302497537,
+      "audio_end_seconds" : 4.8992500000000003,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change",
+      "is_visual_final" : false,
+      "korean" : "제안은 유망해 보이지만, 어떤 일이 일어나는지 이해하기 위해서는 충분한 시간이 필요합니다.",
+      "observed_after_stream_seconds" : 4.9170448333024979,
+      "source_revision" : 20,
+      "translated_revision" : 17
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.017923041612840862,
+      "audio_end_seconds" : 4.8992500000000003,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+      "is_visual_final" : false,
+      "korean" : "제안은 유망해 보이지만, 어떤 일이 일어나는지 이해하기 위해서는 충분한 시간이 필요합니다.",
+      "observed_after_stream_seconds" : 4.9171730416128412,
+      "source_revision" : 21,
+      "translated_revision" : 17
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.57541083334945142,
+      "audio_end_seconds" : 4.5,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+      "is_visual_final" : true,
+      "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+      "observed_after_stream_seconds" : 5.0754108333494514,
+      "source_revision" : 21,
+      "translated_revision" : 21
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.60372141668852386,
+      "audio_end_seconds" : 5.8992500000000003,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "Please check the date carefully",
+      "is_visual_final" : false,
+      "korean" : "날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds" : 6.5029714166885242,
+      "source_revision" : 6,
+      "translated_revision" : 6
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.01436929164268097,
+      "audio_end_seconds" : 6.7992499999999998,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "Please check the date carefully because",
+      "is_visual_final" : false,
+      "korean" : "날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds" : 6.8136192916426808,
+      "source_revision" : 7,
+      "translated_revision" : 6
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.014526416704058853,
+      "audio_end_seconds" : 6.7992499999999998,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "Please check the date carefully because the",
+      "is_visual_final" : false,
+      "korean" : "날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds" : 6.8137764167040586,
+      "source_revision" : 8,
+      "translated_revision" : 6
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.014655749935656992,
+      "audio_end_seconds" : 6.7992499999999998,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "Please check the date carefully because the meeting",
+      "is_visual_final" : false,
+      "korean" : "날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds" : 6.8139057499356568,
+      "source_revision" : 9,
+      "translated_revision" : 6
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.01478033330570927,
+      "audio_end_seconds" : 6.7992499999999998,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "Please check the date carefully because the meeting is",
+      "is_visual_final" : false,
+      "korean" : "날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds" : 6.8140303333057091,
+      "source_revision" : 10,
+      "translated_revision" : 6
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.014943374942988363,
+      "audio_end_seconds" : 6.7992499999999998,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "Please check the date carefully because the meeting is on",
+      "is_visual_final" : false,
+      "korean" : "날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds" : 6.8141933749429882,
+      "source_revision" : 11,
+      "translated_revision" : 6
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.27420975004136583,
+      "audio_end_seconds" : 6.7992499999999998,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "Please check the date carefully because the meeting is on",
+      "is_visual_final" : false,
+      "korean" : "회의가 진행 중이니 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds" : 7.0734597500413656,
+      "source_revision" : 11,
+      "translated_revision" : 11
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.013963958288543132,
+      "audio_end_seconds" : 7.7992499999999998,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "Please check the date carefully because the meeting is on Tuesday",
+      "is_visual_final" : false,
+      "korean" : "회의가 진행 중이니 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds" : 7.8132139582885429,
+      "source_revision" : 12,
+      "translated_revision" : 11
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.014509958371520248,
+      "audio_end_seconds" : 7.7992499999999998,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "Please check the date carefully because the meeting is on Tuesday,",
+      "is_visual_final" : false,
+      "korean" : "회의가 진행 중이니 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds" : 7.81375995837152,
+      "source_revision" : 13,
+      "translated_revision" : 11
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.015117333310656456,
+      "audio_end_seconds" : 7.7992499999999998,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "Please check the date carefully because the meeting is on Tuesday, not",
+      "is_visual_final" : false,
+      "korean" : "회의가 진행 중이니 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds" : 7.8143673333106562,
+      "source_revision" : 14,
+      "translated_revision" : 11
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.015280250034295229,
+      "audio_end_seconds" : 7.7992499999999998,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday",
+      "is_visual_final" : false,
+      "korean" : "회의가 진행 중이니 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds" : 7.814530250034295,
+      "source_revision" : 15,
+      "translated_revision" : 11
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.61620829165261259,
+      "audio_end_seconds" : 7.7992499999999998,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday",
+      "is_visual_final" : false,
+      "korean" : "회의가 목요일이 아니라 화요일이니 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds" : 8.4154582916526124,
+      "source_revision" : 15,
+      "translated_revision" : 15
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.010438625042326066,
+      "audio_end_seconds" : 8.7992500000000007,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "is_visual_final" : false,
+      "korean" : "회의가 목요일이 아니라 화요일이니 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds" : 8.8096886250423267,
+      "source_revision" : 16,
+      "translated_revision" : 15
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.92897379163652616,
+      "audio_end_seconds" : 7.9800000000000004,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "is_visual_final" : true,
+      "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds" : 8.9089737916365266,
+      "source_revision" : 16,
+      "translated_revision" : 16
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.15718429167102954,
+      "audio_end_seconds" : 8.7992500000000007,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "We should not",
+      "is_visual_final" : false,
+      "korean" : "우리는 해서는 안 됩니다.",
+      "observed_after_stream_seconds" : 8.9564342916710302,
+      "source_revision" : 3,
+      "translated_revision" : 3
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.010873750031926477,
+      "audio_end_seconds" : 9.6992499999999993,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "We should not cancel",
+      "is_visual_final" : false,
+      "korean" : "우리는 해서는 안 됩니다.",
+      "observed_after_stream_seconds" : 9.7101237500319257,
+      "source_revision" : 4,
+      "translated_revision" : 3
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.011569000029005849,
+      "audio_end_seconds" : 9.6992499999999993,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "We should not cancel the",
+      "is_visual_final" : false,
+      "korean" : "우리는 해서는 안 됩니다.",
+      "observed_after_stream_seconds" : 9.7108190000290051,
+      "source_revision" : 5,
+      "translated_revision" : 3
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.011785249987617874,
+      "audio_end_seconds" : 9.6992499999999993,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "We should not cancel the appointment",
+      "is_visual_final" : false,
+      "korean" : "우리는 해서는 안 됩니다.",
+      "observed_after_stream_seconds" : 9.7110352499876171,
+      "source_revision" : 6,
+      "translated_revision" : 3
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.5944180417042233,
+      "audio_end_seconds" : 9.6992499999999993,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "We should not cancel the appointment",
+      "is_visual_final" : false,
+      "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds" : 10.293668041704223,
+      "source_revision" : 6,
+      "translated_revision" : 6
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.016848291683011496,
+      "audio_end_seconds" : 10.699249999999999,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "We should not cancel the appointment unless",
+      "is_visual_final" : false,
+      "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds" : 10.716098291683011,
+      "source_revision" : 7,
+      "translated_revision" : 6
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.017280916630291188,
+      "audio_end_seconds" : 10.699249999999999,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "We should not cancel the appointment unless someone",
+      "is_visual_final" : false,
+      "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds" : 10.71653091663029,
+      "source_revision" : 8,
+      "translated_revision" : 6
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.017565875028260791,
+      "audio_end_seconds" : 10.699249999999999,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "We should not cancel the appointment unless someone conf",
+      "is_visual_final" : false,
+      "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds" : 10.71681587502826,
+      "source_revision" : 9,
+      "translated_revision" : 6
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.017961833340116584,
+      "audio_end_seconds" : 10.699249999999999,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "We should not cancel the appointment unless someone confir",
+      "is_visual_final" : false,
+      "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds" : 10.717211833340116,
+      "source_revision" : 10,
+      "translated_revision" : 6
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.018157208285295212,
+      "audio_end_seconds" : 10.699249999999999,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "We should not cancel the appointment unless someone confirms",
+      "is_visual_final" : false,
+      "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds" : 10.717407208285294,
+      "source_revision" : 11,
+      "translated_revision" : 6
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.018317750019953394,
+      "audio_end_seconds" : 10.699249999999999,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "We should not cancel the appointment unless someone confirms the",
+      "is_visual_final" : false,
+      "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds" : 10.717567750019953,
+      "source_revision" : 12,
+      "translated_revision" : 6
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.010073916705325203,
+      "audio_end_seconds" : 10.8526875,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "We should not cancel the appointment unless someone confirms the change",
+      "is_visual_final" : false,
+      "korean" : "누군가 확인하지 않는 한 우리는 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds" : 10.862761416705325,
+      "source_revision" : 13,
+      "translated_revision" : 12
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.010313624933361965,
+      "audio_end_seconds" : 10.8526875,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "We should not cancel the appointment unless someone confirms the change.",
+      "is_visual_final" : false,
+      "korean" : "누군가 확인하지 않는 한 우리는 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds" : 10.863001124933362,
+      "source_revision" : 14,
+      "translated_revision" : 12
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.11482324993517246,
+      "audio_end_seconds" : 10.8526875,
+      "context_is_pending" : true,
+      "context_segment_count" : 1,
+      "english" : "We should not cancel the appointment unless someone confirms the change.",
+      "is_visual_final" : false,
+      "korean" : "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds" : 10.967510749935172,
+      "source_revision" : 14,
+      "translated_revision" : 14
+    },
+    {
+      "after_corresponding_audio_end_seconds" : 0.89104204166028644,
+      "audio_end_seconds" : 10.8526875,
+      "context_is_pending" : false,
+      "context_segment_count" : 2,
+      "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday. We should not cancel the appointment unless someone confirms the change.",
+      "is_visual_final" : true,
+      "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요. 누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds" : 11.743729541660286,
+      "source_revision" : 16,
+      "translated_revision" : 16
+    }
+  ],
+  "limitations" : [
+    "No microphone was opened. Fixture-stream timing excludes microphone hardware and is not microphone latency.",
+    "Timing captures model state at 20ms intervals and does not include SwiftUI drawing.",
+    "A translation matching an exact source revision can still be semantically wrong.",
+    "Requested highFidelity may use Apple's documented traditional-model fallback.",
+    "Model start/permission/device selection was bypassed; production receive, queues, context correction and stop were exercised.",
+    "The injected real translator uses the production lease and creates/retires a session per call; the app normally reuses lowLatency and creates highFidelity per context job.",
+    "This check does not verify network-disabled operation or real-speaker accuracy."
+  ],
+  "metrics" : {
+    "active_local_translation_calls_after_stop" : 0,
+    "completed_context_calls" : 1,
+    "context_pending_observations" : 4,
+    "context_translation_calls" : 1,
+    "current_revision_korean_delay_max_seconds" : 0.92897379163652616,
+    "current_revision_korean_delay_median_seconds" : 0.59906972919637358,
+    "current_revision_korean_delay_sample_count" : 12,
+    "dropped_audio_buffers" : 0,
+    "dropped_state_snapshots" : 0,
+    "final_asr_segments" : 3,
+    "final_context_groups" : 1,
+    "first_english_after_stream_seconds" : 1.1156481249490753,
+    "first_exact_current_revision_korean_observation" : {
+      "after_corresponding_audio_end_seconds" : 0.60458533334825182,
+      "audio_end_seconds" : 1.0992500000000001,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds",
+      "is_visual_final" : false,
+      "korean" : "제안이 들립니다",
+      "observed_after_stream_seconds" : 1.7038353333482519,
+      "source_revision" : 5,
+      "translated_revision" : 5
+    },
+    "first_korean_observation" : {
+      "after_corresponding_audio_end_seconds" : 0.60458533334825182,
+      "audio_end_seconds" : 1.0992500000000001,
+      "context_is_pending" : false,
+      "context_segment_count" : 1,
+      "english" : "The proposal sounds",
+      "is_visual_final" : false,
+      "korean" : "제안이 들립니다",
+      "observed_after_stream_seconds" : 1.7038353333482519,
+      "source_revision" : 5,
+      "translated_revision" : 5
+    },
+    "fixture_has_eligible_adjacent_context" : true,
+    "gray_korean_observations" : 66,
+    "has_pending_translations_after_stop" : false,
+    "input_and_asr_finished_after_stream_seconds" : 10.904719166690484,
+    "latency_sample_filter" : "only translatedRevision == revision, contextIsPending == false, and a matching completed actual source/target call",
+    "maximum_queued_translations_observed" : 2,
+    "pending_context_korean_updates" : 1,
+    "physical_context_awaits_after_stop" : 0,
+    "physical_live_awaits_after_stop" : 0,
+    "production_stop_drained_after_stream_seconds" : 11.745100583299063,
+    "provisional_asr_events" : 51,
+    "stale_korean_updates" : 37,
+    "visual_final_to_gray_transitions" : 1
+  },
+  "mode" : "paced audio file → actual local ASR → production CaptionModel scheduler → actual local Korean translation",
+  "operating_system" : "Version 26.7 (Build 25G229)",
+  "passed" : true,
+  "production_message" : null,
+  "recorded_at" : "2026-10-01T02:56:46Z",
+  "state_observation_resolution_milliseconds" : 20,
+  "state_snapshots" : [
+    {
+      "has_pending_translations" : false,
+      "observed_after_stream_seconds" : 0.0003048749640583992,
+      "queued_translations" : 0,
+      "rows" : [
+
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 1.1160582082811743,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 1.0992500000000001,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 1,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 1.1169027499854565,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 1.0992500000000001,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The prop",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 2,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 1.1179648332763463,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 1.0992500000000001,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The propos",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 3,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 1.1180875833379105,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 1.0992500000000001,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 4,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 1.1186005416093394,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 1.0992500000000001,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 5,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 1.6820754583459347,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 1.0992500000000001,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 5,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : false,
+      "observed_after_stream_seconds" : 1.7038353333482519,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 1.0992500000000001,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "제안이 들립니다",
+          "source_is_final" : false,
+          "source_revision" : 5,
+          "translated_revision" : 5,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 2.0089653333416209,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 1.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds prom",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "제안이 들립니다",
+          "source_is_final" : false,
+          "source_revision" : 6,
+          "translated_revision" : 5,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 2.0091105416649953,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 1.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "제안이 들립니다",
+          "source_is_final" : false,
+          "source_revision" : 7,
+          "translated_revision" : 5,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 2.0092382499715313,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 1.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "제안이 들립니다",
+          "source_is_final" : false,
+          "source_revision" : 8,
+          "translated_revision" : 5,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 2.009345083264634,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 1.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "제안이 들립니다",
+          "source_is_final" : false,
+          "source_revision" : 9,
+          "translated_revision" : 5,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 2.2263839583611116,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 1.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "제안이 들립니다",
+          "source_is_final" : false,
+          "source_revision" : 9,
+          "translated_revision" : 5,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : false,
+      "observed_after_stream_seconds" : 2.2496129582868889,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 1.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "그 제안은 유망해 보이지만, 우리는",
+          "source_is_final" : false,
+          "source_revision" : 9,
+          "translated_revision" : 9,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 3.0133107916917652,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 2.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "그 제안은 유망해 보이지만, 우리는",
+          "source_is_final" : false,
+          "source_revision" : 10,
+          "translated_revision" : 9,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 3.013437541667372,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 2.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "그 제안은 유망해 보이지만, 우리는",
+          "source_is_final" : false,
+          "source_revision" : 11,
+          "translated_revision" : 9,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 3.0139549999730662,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 2.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "그 제안은 유망해 보이지만, 우리는",
+          "source_is_final" : false,
+          "source_revision" : 12,
+          "translated_revision" : 9,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 3.0141060833120719,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 2.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "그 제안은 유망해 보이지만, 우리는",
+          "source_is_final" : false,
+          "source_revision" : 13,
+          "translated_revision" : 9,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 3.0141902916366234,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 2.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "그 제안은 유망해 보이지만, 우리는",
+          "source_is_final" : false,
+          "source_revision" : 14,
+          "translated_revision" : 9,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 3.5721795833669603,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 2.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "그 제안은 유망해 보이지만, 우리는",
+          "source_is_final" : false,
+          "source_revision" : 14,
+          "translated_revision" : 9,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : false,
+      "observed_after_stream_seconds" : 3.6150800416944548,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 2.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "그 제안은 유망해 보이지만, 이해하기 위해서는 충분한 시간이 필요합니다.",
+          "source_is_final" : false,
+          "source_revision" : 14,
+          "translated_revision" : 14,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 4.0115978750400245,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 3.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "그 제안은 유망해 보이지만, 이해하기 위해서는 충분한 시간이 필요합니다.",
+          "source_is_final" : false,
+          "source_revision" : 15,
+          "translated_revision" : 14,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 4.011830291710794,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 3.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "그 제안은 유망해 보이지만, 이해하기 위해서는 충분한 시간이 필요합니다.",
+          "source_is_final" : false,
+          "source_revision" : 16,
+          "translated_revision" : 14,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 4.0121637500124052,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 3.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "그 제안은 유망해 보이지만, 이해하기 위해서는 충분한 시간이 필요합니다.",
+          "source_is_final" : false,
+          "source_revision" : 17,
+          "translated_revision" : 14,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 4.117214750032872,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 3.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "그 제안은 유망해 보이지만, 이해하기 위해서는 충분한 시간이 필요합니다.",
+          "source_is_final" : false,
+          "source_revision" : 17,
+          "translated_revision" : 14,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : false,
+      "observed_after_stream_seconds" : 4.1640029583359137,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 3.99925,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "제안은 유망해 보이지만, 어떤 일이 일어나는지 이해하기 위해서는 충분한 시간이 필요합니다.",
+          "source_is_final" : false,
+          "source_revision" : 17,
+          "translated_revision" : 17,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 4.9143248749896884,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.8992500000000003,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when condition",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "제안은 유망해 보이지만, 어떤 일이 일어나는지 이해하기 위해서는 충분한 시간이 필요합니다.",
+          "source_is_final" : false,
+          "source_revision" : 18,
+          "translated_revision" : 17,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 4.9158570416038856,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.8992500000000003,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "제안은 유망해 보이지만, 어떤 일이 일어나는지 이해하기 위해서는 충분한 시간이 필요합니다.",
+          "source_is_final" : false,
+          "source_revision" : 19,
+          "translated_revision" : 17,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 4.9170448333024979,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.8992500000000003,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "제안은 유망해 보이지만, 어떤 일이 일어나는지 이해하기 위해서는 충분한 시간이 필요합니다.",
+          "source_is_final" : false,
+          "source_revision" : 20,
+          "translated_revision" : 17,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 4.9171730416128412,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.8992500000000003,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "제안은 유망해 보이지만, 어떤 일이 일어나는지 이해하기 위해서는 충분한 시간이 필요합니다.",
+          "source_is_final" : false,
+          "source_revision" : 21,
+          "translated_revision" : 17,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 4.9754442083649337,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "제안은 유망해 보이지만, 어떤 일이 일어나는지 이해하기 위해서는 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 17,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 5.0257236666511744,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : false,
+          "korean" : "제안은 유망해 보이지만, 어떤 일이 일어나는지 이해하기 위해서는 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 17,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : false,
+      "observed_after_stream_seconds" : 5.0754108333494514,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 5.9136647082632408,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 5.8992500000000003,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 1,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 5.9142465416807681,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 5.8992500000000003,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 2,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 5.9143985833507031,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 5.8992500000000003,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 3,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 5.9145250832661986,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 5.8992500000000003,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 4,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 5.9146655832882971,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 5.8992500000000003,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date care",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 5,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 5.9149307917105034,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 5.8992500000000003,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 6,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 6.482618416659534,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 5.8992500000000003,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 6,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : false,
+      "observed_after_stream_seconds" : 6.5029714166885242,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 5.8992500000000003,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : false,
+          "source_revision" : 6,
+          "translated_revision" : 6,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 6.8136192916426808,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 6.7992499999999998,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : false,
+          "source_revision" : 7,
+          "translated_revision" : 6,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 6.8137764167040586,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 6.7992499999999998,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : false,
+          "source_revision" : 8,
+          "translated_revision" : 6,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 6.8139057499356568,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 6.7992499999999998,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : false,
+          "source_revision" : 9,
+          "translated_revision" : 6,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 6.8140303333057091,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 6.7992499999999998,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : false,
+          "source_revision" : 10,
+          "translated_revision" : 6,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 6.8141933749429882,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 6.7992499999999998,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : false,
+          "source_revision" : 11,
+          "translated_revision" : 6,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 7.0253019999945536,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 6.7992499999999998,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : false,
+          "source_revision" : 11,
+          "translated_revision" : 6,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : false,
+      "observed_after_stream_seconds" : 7.0734597500413656,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 6.7992499999999998,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "회의가 진행 중이니 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : false,
+          "source_revision" : 11,
+          "translated_revision" : 11,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 7.8132139582885429,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.7992499999999998,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "회의가 진행 중이니 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : false,
+          "source_revision" : 12,
+          "translated_revision" : 11,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 7.81375995837152,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.7992499999999998,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday,",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "회의가 진행 중이니 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : false,
+          "source_revision" : 13,
+          "translated_revision" : 11,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 7.8143673333106562,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.7992499999999998,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "회의가 진행 중이니 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : false,
+          "source_revision" : 14,
+          "translated_revision" : 11,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 7.814530250034295,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.7992499999999998,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "회의가 진행 중이니 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : false,
+          "source_revision" : 15,
+          "translated_revision" : 11,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 8.3684012499870732,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.7992499999999998,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "회의가 진행 중이니 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : false,
+          "source_revision" : 15,
+          "translated_revision" : 11,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : false,
+      "observed_after_stream_seconds" : 8.4154582916526124,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.7992499999999998,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "회의가 목요일이 아니라 화요일이니 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : false,
+          "source_revision" : 15,
+          "translated_revision" : 15,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 8.8096886250423267,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 8.7992500000000007,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "회의가 목요일이 아니라 화요일이니 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : false,
+          "source_revision" : 16,
+          "translated_revision" : 15,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 8.8499333333456889,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "회의가 목요일이 아니라 화요일이니 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 15,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 8.8500404166989028,
+      "queued_translations" : 2,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "회의가 목요일이 아니라 화요일이니 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 15,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 8.7992500000000007,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 1,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 8.8501436249352992,
+      "queued_translations" : 2,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "회의가 목요일이 아니라 화요일이니 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 15,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 8.7992500000000007,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 2,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 8.8502185833640397,
+      "queued_translations" : 2,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "회의가 목요일이 아니라 화요일이니 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 15,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 8.7992500000000007,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 3,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 8.8637276249937713,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "회의가 목요일이 아니라 화요일이니 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 15,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 8.7992500000000007,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 3,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 8.9089737916365266,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 8.7992500000000007,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 3,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 8.9323392083169892,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 8.7992500000000007,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : null,
+          "source_is_final" : false,
+          "source_revision" : 3,
+          "translated_revision" : null,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : false,
+      "observed_after_stream_seconds" : 8.9564342916710302,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 8.7992500000000007,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "우리는 해서는 안 됩니다.",
+          "source_is_final" : false,
+          "source_revision" : 3,
+          "translated_revision" : 3,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 9.7101237500319257,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 9.6992499999999993,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "우리는 해서는 안 됩니다.",
+          "source_is_final" : false,
+          "source_revision" : 4,
+          "translated_revision" : 3,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 9.7108190000290051,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 9.6992499999999993,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "우리는 해서는 안 됩니다.",
+          "source_is_final" : false,
+          "source_revision" : 5,
+          "translated_revision" : 3,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 9.7110352499876171,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 9.6992499999999993,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "우리는 해서는 안 됩니다.",
+          "source_is_final" : false,
+          "source_revision" : 6,
+          "translated_revision" : 3,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 10.268165958346799,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 9.6992499999999993,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "우리는 해서는 안 됩니다.",
+          "source_is_final" : false,
+          "source_revision" : 6,
+          "translated_revision" : 3,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : false,
+      "observed_after_stream_seconds" : 10.293668041704223,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 9.6992499999999993,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final" : false,
+          "source_revision" : 6,
+          "translated_revision" : 6,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 10.716098291683011,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 10.699249999999999,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment unless",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final" : false,
+          "source_revision" : 7,
+          "translated_revision" : 6,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 10.71653091663029,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 10.699249999999999,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment unless someone",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final" : false,
+          "source_revision" : 8,
+          "translated_revision" : 6,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 10.71681587502826,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 10.699249999999999,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment unless someone conf",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final" : false,
+          "source_revision" : 9,
+          "translated_revision" : 6,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 10.717211833340116,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 10.699249999999999,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment unless someone confir",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final" : false,
+          "source_revision" : 10,
+          "translated_revision" : 6,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 10.717407208285294,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 10.699249999999999,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment unless someone confirms",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final" : false,
+          "source_revision" : 11,
+          "translated_revision" : 6,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 10.717567750019953,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 10.699249999999999,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment unless someone confirms the",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final" : false,
+          "source_revision" : 12,
+          "translated_revision" : 6,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 10.823957541608252,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 10.699249999999999,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment unless someone confirms the",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final" : false,
+          "source_revision" : 12,
+          "translated_revision" : 6,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 10.862761416705325,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 10.8526875,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment unless someone confirms the change",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "누군가 확인하지 않는 한 우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final" : false,
+          "source_revision" : 13,
+          "translated_revision" : 12,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 10.863001124933362,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 10.8526875,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment unless someone confirms the change.",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "누군가 확인하지 않는 한 우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final" : false,
+          "source_revision" : 14,
+          "translated_revision" : 12,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 10.893162416643463,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 10.8526875,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment unless someone confirms the change.",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "누군가 확인하지 않는 한 우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final" : true,
+          "source_revision" : 14,
+          "translated_revision" : 12,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "actual ASR event"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 10.917373458272777,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 10.8526875,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment unless someone confirms the change.",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "누군가 확인하지 않는 한 우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final" : true,
+          "source_revision" : 14,
+          "translated_revision" : 12,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 10.967510749935172,
+      "queued_translations" : 1,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : true,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 10.8526875,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : true,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment unless someone confirms the change.",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+          "source_is_final" : true,
+          "source_revision" : 14,
+          "translated_revision" : 14,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : true,
+      "observed_after_stream_seconds" : 11.658850666601211,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 7.9800000000000004,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : true,
+          "context_segment_count" : 1,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : false,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 10.8526875,
+          "audio_start_seconds" : 7.9800000000000004,
+          "context_is_pending" : true,
+          "context_segment_count" : 1,
+          "english" : "We should not cancel the appointment unless someone confirms the change.",
+          "id" : "C618964B-F9BF-4831-B7EF-4DDE38328086",
+          "is_visual_final" : false,
+          "korean" : "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+          "source_is_final" : true,
+          "source_revision" : 14,
+          "translated_revision" : 14,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "20ms state observation"
+    },
+    {
+      "has_pending_translations" : false,
+      "observed_after_stream_seconds" : 11.743729541660286,
+      "queued_translations" : 0,
+      "rows" : [
+        {
+          "audio_end_seconds" : 4.5,
+          "audio_start_seconds" : 0,
+          "context_is_pending" : false,
+          "context_segment_count" : 1,
+          "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+          "id" : "F4E0D8E0-EA43-453E-BC03-675108808763",
+          "is_visual_final" : true,
+          "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+          "source_is_final" : true,
+          "source_revision" : 21,
+          "translated_revision" : 21,
+          "translation_error" : null
+        },
+        {
+          "audio_end_seconds" : 10.8526875,
+          "audio_start_seconds" : 4.5,
+          "context_is_pending" : false,
+          "context_segment_count" : 2,
+          "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday. We should not cancel the appointment unless someone confirms the change.",
+          "id" : "BB3DE75B-8185-4DF4-A960-9702EEFCB14F",
+          "is_visual_final" : true,
+          "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요. 누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+          "source_is_final" : true,
+          "source_revision" : 16,
+          "translated_revision" : 16,
+          "translation_error" : null
+        }
+      ],
+      "trigger" : "production stop drained"
+    }
+  ],
+  "translation_calls" : [
+    {
+      "english" : "The",
+      "id" : "F2179B8E-2F19-4337-ACC2-2A535778506C",
+      "is_context" : false,
+      "korean" : "그",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 1.1165555833140388,
+      "status" : "completed",
+      "text_translation_seconds" : 0.01560012495610863
+    },
+    {
+      "english" : "The proposal sounds",
+      "id" : "6AE01DD6-F417-4851-A9F8-2461BC03D5FA",
+      "is_context" : false,
+      "korean" : "제안이 들립니다",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 1.6678857499500737,
+      "status" : "completed",
+      "text_translation_seconds" : 0.025479250005446374
+    },
+    {
+      "english" : "The proposal sounds promising, but we",
+      "id" : "479C7AC7-9133-4D08-B31C-5E0D1985E3B1",
+      "is_context" : false,
+      "korean" : "그 제안은 유망해 보이지만, 우리는",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 2.2182897499296814,
+      "status" : "completed",
+      "text_translation_seconds" : 0.03063154174014926
+    },
+    {
+      "english" : "The proposal sounds promising, but we need",
+      "id" : "D0322E4C-BC32-41B8-8C64-423EF5488F1B",
+      "is_context" : false,
+      "korean" : "그 제안은 유망해 보이지만, 우리는 필요합니다.",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 3.013839166611433,
+      "status" : "completed",
+      "text_translation_seconds" : 0.031302041723392904
+    },
+    {
+      "english" : "The proposal sounds promising, but we need enough time to understand",
+      "id" : "7942AF42-6674-460B-959D-4F88BB542251",
+      "is_context" : false,
+      "korean" : "그 제안은 유망해 보이지만, 이해하기 위해서는 충분한 시간이 필요합니다.",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 3.5663919582730159,
+      "status" : "completed",
+      "text_translation_seconds" : 0.034473083331249654
+    },
+    {
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when",
+      "id" : "7252A930-509D-4FB2-8071-CD6252435267",
+      "is_context" : false,
+      "korean" : "제안은 유망해 보이지만, 어떤 일이 일어나는지 이해하기 위해서는 충분한 시간이 필요합니다.",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 4.1170147083466873,
+      "status" : "completed",
+      "text_translation_seconds" : 0.043172791600227356
+    },
+    {
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when condition",
+      "id" : "5FD3D657-98CA-4622-8636-C2FBBCDEA315",
+      "is_context" : false,
+      "korean" : "제안은 유망해 보이지만, 조건이 발생했을 때 무슨 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 4.9155179583467543,
+      "status" : "completed",
+      "text_translation_seconds" : 0.044867874938063323
+    },
+    {
+      "english" : "The proposal sounds promising, but we need enough time to understand what happens when conditions change.",
+      "id" : "8DAF41B8-518E-4089-BC28-411FC31ECE8B",
+      "is_context" : false,
+      "korean" : "그 제안은 유망해 보이지만, 상황이 변할 때 어떤 일이 일어나는지 이해하기 위해 충분한 시간이 필요합니다.",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 5.0143127499613911,
+      "status" : "completed",
+      "text_translation_seconds" : 0.039343500044196844
+    },
+    {
+      "english" : "Please",
+      "id" : "137B98F2-9E93-46E5-AFAF-9CDC6A54E905",
+      "is_context" : false,
+      "korean" : "제발",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 5.9141360833309591,
+      "status" : "completed",
+      "text_translation_seconds" : 0.011443249997682869
+    },
+    {
+      "english" : "Please check the date carefully",
+      "id" : "A04E6CA1-C708-49E7-A8A3-E458155402C4",
+      "is_context" : false,
+      "korean" : "날짜를 꼼꼼히 확인해 주세요.",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 6.4651814999524504,
+      "status" : "completed",
+      "text_translation_seconds" : 0.025516666704788804
+    },
+    {
+      "english" : "Please check the date carefully because the meeting is on",
+      "id" : "3E6ED985-EBC3-4860-BBA3-D382081E98D7",
+      "is_context" : false,
+      "korean" : "회의가 진행 중이니 날짜를 꼼꼼히 확인해 주세요.",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 7.0184664583066478,
+      "status" : "completed",
+      "text_translation_seconds" : 0.030899208388291299
+    },
+    {
+      "english" : "Please check the date carefully because the meeting is on Tuesday",
+      "id" : "A4572633-B2F6-403F-8E7F-ED6771AA56B5",
+      "is_context" : false,
+      "korean" : "회의가 화요일에 있기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 7.8136706249788404,
+      "status" : "completed",
+      "text_translation_seconds" : 0.02716112497728318
+    },
+    {
+      "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday",
+      "id" : "270F8792-8FCC-4AE4-B9ED-9BA46E6176BD",
+      "is_context" : false,
+      "korean" : "회의가 목요일이 아니라 화요일이니 날짜를 꼼꼼히 확인해 주세요.",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 8.3652163333026692,
+      "status" : "completed",
+      "text_translation_seconds" : 0.035367749980650842
+    },
+    {
+      "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "id" : "F4F980B6-7105-4AC5-B5CA-8AB5C153ACCF",
+      "is_context" : false,
+      "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 8.8642004999564961,
+      "status" : "completed",
+      "text_translation_seconds" : 0.030765916686505079
+    },
+    {
+      "english" : "We should not",
+      "id" : "4319895F-AB72-4D6D-AFE4-DCD7459A4A71",
+      "is_context" : false,
+      "korean" : "우리는 해서는 안 됩니다.",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 8.9165852916194126,
+      "status" : "completed",
+      "text_translation_seconds" : 0.037567541701719165
+    },
+    {
+      "english" : "We should not cancel",
+      "id" : "74299B53-F662-47BA-B6B0-249E7626491C",
+      "is_context" : false,
+      "korean" : "우리는 취소해서는 안 됩니다.",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 9.7107212083647028,
+      "status" : "completed",
+      "text_translation_seconds" : 0.022471916629001498
+    },
+    {
+      "english" : "We should not cancel the appointment",
+      "id" : "80C0B10C-4BDF-486B-9C39-11E1FB4EC1F1",
+      "is_context" : false,
+      "korean" : "우리는 약속을 취소해서는 안 됩니다.",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 10.263377916649915,
+      "status" : "completed",
+      "text_translation_seconds" : 0.028038041666150093
+    },
+    {
+      "english" : "We should not cancel the appointment unless someone confirms the",
+      "id" : "A4E73D2F-A591-49BC-B763-BCE61A3C6E4A",
+      "is_context" : false,
+      "korean" : "누군가 확인하지 않는 한 우리는 약속을 취소해서는 안 됩니다.",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 10.814261583262123,
+      "status" : "completed",
+      "text_translation_seconds" : 0.033914125058799982
+    },
+    {
+      "english" : "We should not cancel the appointment unless someone confirms the change.",
+      "id" : "3EC81A7A-E3B2-4D16-ABF2-E90C34077257",
+      "is_context" : false,
+      "korean" : "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "requested_strategy" : "lowLatency",
+      "started_after_stream_seconds" : 10.917673874995671,
+      "status" : "completed",
+      "text_translation_seconds" : 0.028546458343043923
+    },
+    {
+      "english" : "Please check the date carefully because the meeting is on Tuesday, not Thursday. We should not cancel the appointment unless someone confirms the change.",
+      "id" : "5AF4677A-224F-46C7-AF90-24FA186701AE",
+      "is_context" : true,
+      "korean" : "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요. 누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "requested_strategy" : "highFidelity",
+      "started_after_stream_seconds" : 11.644364999956451,
+      "status" : "completed",
+      "text_translation_seconds" : 0.09894920838996768
+    }
+  ]
+}
