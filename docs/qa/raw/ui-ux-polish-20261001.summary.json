@@ -1,0 +1,71 @@
+{
+  "dateKST": "2026-10-01",
+  "appVersion": "0.4.1",
+  "appBuild": "9",
+  "kind": "synthetic-ui-only",
+  "requestedSeconds": 65,
+  "commands": [
+    "./scripts/build-app.sh",
+    "./scripts/check-app-model.sh",
+    "./scripts/check-ui-soak.sh 65 /tmp/caption-ux-final-20261001.jsonl --ui-soak-compact"
+  ],
+  "productionModelChecksPassed": 33,
+  "sourceSHA256": {
+    "Sources/LiveKoCaption/CaptionView.swift": "70b022425a930ba1e2cc44a43d8302d83d7cd1218adf6a5a6c9197b2b901fbe1",
+    "Sources/LiveKoCaption/CompactCaptionView.swift": "7567ef53fd60b1ec779c18d938413831b03e40ad4cc955196bb564626ce62753",
+    "Sources/LiveKoCaption/CaptionWindowCoordinator.swift": "25cf66ab550fd754cd346ddbcf764a1a1a47bbd149fa86dd93aee6e8f75ef3af",
+    "Sources/LiveKoCaption/LiveKoCaptionApp.swift": "5957974351002e70f8505b9b2e744c53a739f532ff09e6d66eac2de1bd77fd2c",
+    "Sources/LiveKoCaption/CaptionModel.swift": "0547b6e2fe061ac697aef711ddecb104f9f9a3d7d81706c69fd55b9a6bf419b0",
+    "Resources/Info.plist": "d1cf2f045df9e14354b46df6cd661299bfe5f4d9ccac8719bbadcb1ea008b3ec"
+  },
+  "appExecutableSHA256": "fafbebe139177f93801e9255976cb53a8936e35bebde0e82a9cc26e14776a229",
+  "reportSHA256": "baafdaf0ec88a6c9bb6c7f2a776c9444b962a9f11be17ee04cf244364a6574ed",
+  "complete": {
+    "compactChecksPassed": true,
+    "compactCoordinatorAvailable": true,
+    "compactDetailDocumentObserved": true,
+    "compactDetailVisible": true,
+    "compactDocumentCharacters": 913,
+    "compactDocumentPresent": true,
+    "compactHiddenDetailStaysMounted": true,
+    "compactInspections": 32,
+    "compactMatchesLatestTail": true,
+    "compactMaxRenderedRows": 2,
+    "compactModeSwitches": 15,
+    "compactNativeResizeChecks": 2,
+    "compactNativeResizeChecksPassed": true,
+    "compactPanelVisible": false,
+    "compactResizes": 10,
+    "compactRespectsMinimumSize": true,
+    "compactRowsBounded": true,
+    "compactSwitchesPreserveModel": true,
+    "compactSwitchesPreservePhase": true,
+    "compactSwitchesPreserveRawHistory": true,
+    "compactTailGlyphRect": [
+      435.43581228121184,
+      433,
+      13.385289883590303,
+      28
+    ],
+    "compactTailVisible": true,
+    "compactTailVisibleRect": [
+      0,
+      396,
+      852,
+      69
+    ],
+    "elapsedSeconds": 66.40298320841976,
+    "event": "complete",
+    "maxMainActorPauseSeconds": 0.03920712498947978,
+    "nativeDocumentCharacters": 10500,
+    "nativeDocumentMatchesLatest": true,
+    "passed": true,
+    "rawSegments": 31,
+    "resizes": 4,
+    "ticks": 2411,
+    "transcriptCharacters": 10634,
+    "translatedSegments": 31,
+    "visibleSegments": 12
+  },
+  "scope": "UI layout, synthetic caption rendering, mode switching, history preservation; no live microphone, semantic accuracy or end-to-end latency measurement."
+}

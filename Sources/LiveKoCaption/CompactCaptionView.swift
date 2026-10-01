@@ -39,9 +39,32 @@ private struct CompactCaptionHeader: View {
     let model: CaptionModel
     let windows: CaptionWindowCoordinator
     let isHovered: Bool
+    @Environment(\.controlActiveState) private var controlActiveState
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled
 
     private var controlsVisible: Bool {
-        isHovered || !model.isListening || model.message != nil
+        isHovered || controlActiveState == .key || voiceOverEnabled || !model.isListening || model.message != nil
+    }
+
+    private var statusText: String {
+        if model.isPreview { return "예시 대화 · 미리보기" }
+        if model.isUISoak { return "합성 자막 · 화면 검사" }
+        if model.isPreparingLocalModel { return "문장 보완 준비 중" }
+        if model.phase == .idle && model.hasContent && !model.hasPendingTranslations { return "일시정지" }
+        return model.statusText
+    }
+
+    private var controlTitle: String {
+        switch model.phase {
+        case .starting: return "시작 취소"
+        case .listening: return "일시정지"
+        case .stopping: return "마지막 자막 정리 중"
+        case .idle: return model.hasContent ? "자막 재개" : "자막 시작"
+        }
+    }
+
+    private var controlSymbol: String {
+        model.phase == .starting ? "xmark" : model.canStop ? "pause.fill" : "play.fill"
     }
 
     var body: some View {
@@ -51,27 +74,29 @@ private struct CompactCaptionHeader: View {
                     HStack(spacing: 7) {
                         Circle().fill(model.isListening ? CaptionPalette.green : CaptionPalette.secondary)
                             .frame(width: 5, height: 5)
-                        Text(model.isPreview ? "예시 대화 · 화면 미리보기" :
-                            model.isUISoak ? "합성 자막 · 화면 검사" :
-                            model.phase == .idle && model.assetsReady ? "듣기 멈춤" : model.statusText)
+                            .accessibilityHidden(true)
+                        Text(statusText)
                             .font(.system(size: 11, weight: .medium))
                             .lineLimit(1).foregroundStyle(.white.opacity(0.50))
                     }.allowsHitTesting(false)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("자막 상태")
+                        .accessibilityValue(statusText)
                 }
-                .help("이 영역을 드래그해 자막 창을 옮길 수 있습니다.")
+                .help("\(statusText) · 이 영역을 드래그해 자막 창을 옮길 수 있습니다.")
             if model.message != nil {
                 Button { windows.showDetailed() } label: {
                     Image(systemName: "exclamationmark.circle.fill").foregroundStyle(.orange)
-                }.buttonStyle(.plain).help(model.message ?? "자막 알림 확인")
-                    .accessibilityLabel("자막 알림 · 자세히 보기")
+                }.buttonStyle(.plain).help("\(model.message ?? "자막 알림 확인") · 상세 보기 ⌘1")
+                    .accessibilityLabel("자막 알림 확인 · 상세 보기")
+                    .accessibilityValue(model.message ?? "")
             }
             HStack(spacing: 5) {
-                control("자세히 보기", symbol: "plus", shortcut: nil) { windows.showDetailed() }
-                control(model.phase == .starting ? "시작 취소" : model.canStop ? "일시정지" : "자막 재개",
-                    symbol: model.canStop ? "pause.fill" : "play.fill", shortcut: .space) {
+                control("상세 보기", symbol: "plus", shortcut: nil, shortcutHint: "⌘1") { windows.showDetailed() }
+                control(controlTitle, symbol: controlSymbol, shortcut: .space, shortcutHint: "Space") {
                     Task { await windows.pauseOrResume() }
                 }.disabled(!model.canStart && !model.canStop)
-                control("중지하고 자세히 보기", symbol: "stop.fill", shortcut: nil) {
+                control("일시정지하고 상세 보기", symbol: "stop.fill", shortcut: nil, shortcutHint: "⌘.") {
                     Task { await windows.stopAndShowDetailed() }
                 }
             }
@@ -81,13 +106,14 @@ private struct CompactCaptionHeader: View {
         }
     }
 
-    private func control(_ title: String, symbol: String, shortcut: KeyEquivalent?,
+    private func control(_ title: String, symbol: String, shortcut: KeyEquivalent?, shortcutHint: String? = nil,
                          action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: symbol).font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(.white.opacity(0.86)).frame(width: 30, height: 28)
                 .background(.white.opacity(0.09), in: RoundedRectangle(cornerRadius: 7))
-        }.buttonStyle(.plain).help(title).accessibilityLabel(title)
+        }.buttonStyle(.plain)
+            .help(shortcutHint.map { "\(title) · \($0)" } ?? title).accessibilityLabel(title)
             .keyboardShortcut(shortcut.map { KeyboardShortcut($0, modifiers: []) })
     }
 }

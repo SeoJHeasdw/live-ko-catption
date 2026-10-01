@@ -10,7 +10,7 @@ struct LiveKoCaptionApp: App {
         : CaptionModel(preview: CommandLine.arguments.contains("--preview") || CommandLine.arguments.contains("--snapshot"))
 
     var body: some Scene {
-        Window("한글 라이브 자막", id: "captions") {
+        Window("라이브 자막", id: "captions") {
             CaptionView(model: model, windows: windows)
         }
         .windowStyle(.hiddenTitleBar)
@@ -19,22 +19,31 @@ struct LiveKoCaptionApp: App {
         .commands {
             CommandGroup(replacing: .newItem) {}
             CommandGroup(after: .saveItem) {
-                Button("원문·자막 저장…") { model.exportTranscript() }
+                Button("기록 저장…") { model.exportTranscript() }
                     .keyboardShortcut("s", modifiers: .command).disabled(!model.hasContent)
             }
             CommandMenu("자막 보기") {
-                Button("자세히 보기") { windows.showDetailed() }
+                Button("상세 보기") { windows.showDetailed() }
                     .keyboardShortcut("1", modifiers: .command)
-                Button("간략히 보기") { windows.showCompact() }
+                Button("간략 보기") { windows.showCompact() }
                     .keyboardShortcut("2", modifiers: .command)
                 Divider()
-                Button(model.canStop ? "일시정지" : "자막 재개") {
+                Button(controlTitle) {
                     Task { await windows.pauseOrResume() }
                 }.disabled(!model.canStart && !model.canStop)
-                Button("중지하고 자세히 보기") {
+                Button("일시정지하고 상세 보기") {
                     Task { await windows.stopAndShowDetailed() }
                 }.keyboardShortcut(".", modifiers: .command)
             }
+        }
+    }
+
+    private var controlTitle: String {
+        switch model.phase {
+        case .starting: return "시작 취소"
+        case .listening: return "일시정지"
+        case .stopping: return "마지막 자막 정리 중"
+        case .idle: return model.hasContent ? "자막 재개" : "자막 시작"
         }
     }
 }
