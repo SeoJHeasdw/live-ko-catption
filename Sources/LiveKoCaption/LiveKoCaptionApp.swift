@@ -14,7 +14,7 @@ struct LiveKoCaptionApp: App {
             CaptionView(model: model, windows: windows)
         }
         .windowStyle(.hiddenTitleBar)
-        .defaultSize(width: 1120, height: 820)
+        .defaultSize(width: 1040, height: 720)
         .windowResizability(.contentMinSize)
         .commands {
             CommandGroup(replacing: .newItem) {}

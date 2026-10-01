@@ -67,17 +67,26 @@ private struct CompactCaptionHeader: View {
         model.phase == .starting ? "xmark" : model.canStop ? "pause.fill" : "play.fill"
     }
 
+    private var controlHelp: String {
+        switch model.phase {
+        case .starting: return "마이크와 음성 인식 준비를 취소합니다."
+        case .listening: return "마이크 입력을 일시정지하고 마지막 자막을 정리합니다. 대화 기록은 유지됩니다."
+        case .stopping: return "마지막 음성의 자막을 정리하고 있습니다. 완료되면 다시 시작할 수 있습니다."
+        case .idle: return model.hasContent ? "현재 대화에 이어서 마이크 자막을 재개합니다." : "선택한 번역 방향으로 마이크 자막을 시작합니다."
+        }
+    }
+
     var body: some View {
         HStack(spacing: 10) {
             CompactWindowDragArea()
                 .overlay(alignment: .leading) {
                     HStack(spacing: 7) {
                         Circle().fill(model.isListening ? CaptionPalette.green : CaptionPalette.secondary)
-                            .frame(width: 5, height: 5)
+                            .frame(width: 6, height: 6)
                             .accessibilityHidden(true)
                         Text(statusText)
-                            .font(.system(size: 11, weight: .medium))
-                            .lineLimit(1).foregroundStyle(.white.opacity(0.50))
+                            .font(.system(size: 13, weight: .medium))
+                            .lineLimit(1).foregroundStyle(.white.opacity(0.72))
                     }.allowsHitTesting(false)
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel("자막 상태")
@@ -85,36 +94,68 @@ private struct CompactCaptionHeader: View {
                 }
                 .help("\(statusText) · 이 영역을 드래그해 자막 창을 옮길 수 있습니다.")
             if model.message != nil {
-                Button { windows.showDetailed() } label: {
-                    Image(systemName: "exclamationmark.circle.fill").foregroundStyle(.orange)
-                }.buttonStyle(.plain).help("\(model.message ?? "자막 알림 확인") · 상세 보기 ⌘1")
-                    .accessibilityLabel("자막 알림 확인 · 상세 보기")
+                control("자막 알림 확인", symbol: "exclamationmark.circle.fill", shortcut: nil,
+                    help: "\(model.message ?? "자막 알림 확인") 상세 창에서 알림을 확인합니다.",
+                    shortcutHint: "⌘1", tint: .orange) { windows.showDetailed() }
                     .accessibilityValue(model.message ?? "")
             }
             HStack(spacing: 5) {
-                control("상세 보기", symbol: "plus", shortcut: nil, shortcutHint: "⌘1") { windows.showDetailed() }
-                control(controlTitle, symbol: controlSymbol, shortcut: .space, shortcutHint: "Space") {
+                control("상세 보기", symbol: "arrow.up.left.and.arrow.down.right", shortcut: nil,
+                    help: "원문, 기록 저장과 설정이 있는 상세 창으로 돌아갑니다. 자막은 계속 진행됩니다.",
+                    shortcutHint: "⌘1") { windows.showDetailed() }
+                control(controlTitle, symbol: controlSymbol, shortcut: .space,
+                    help: controlHelp, shortcutHint: "스페이스 바") {
                     Task { await windows.pauseOrResume() }
                 }.disabled(!model.canStart && !model.canStop)
-                control("일시정지하고 상세 보기", symbol: "stop.fill", shortcut: nil, shortcutHint: "⌘.") {
+                control("일시정지하고 상세 보기", symbol: "stop.fill", shortcut: nil,
+                    help: "상세 창으로 돌아가며 마이크 입력을 일시정지합니다. 대화 기록은 유지됩니다.",
+                    shortcutHint: "⌘.") {
                     Task { await windows.stopAndShowDetailed() }
                 }
             }
             // Keep the hit regions stable as the pointer crosses the header.
             .opacity(controlsVisible ? 1 : 0)
             .allowsHitTesting(controlsVisible)
+            .accessibilityHidden(!controlsVisible)
         }
     }
 
-    private func control(_ title: String, symbol: String, shortcut: KeyEquivalent?, shortcutHint: String? = nil,
+    private func control(_ title: String, symbol: String, shortcut: KeyEquivalent?, help: String,
+                         shortcutHint: String? = nil, tint: Color = .white,
                          action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: symbol).font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(.white.opacity(0.86)).frame(width: 30, height: 28)
-                .background(.white.opacity(0.09), in: RoundedRectangle(cornerRadius: 7))
-        }.buttonStyle(.plain)
-            .help(shortcutHint.map { "\(title) · \($0)" } ?? title).accessibilityLabel(title)
+        CompactCaptionControl(title: title, symbol: symbol, help: help, tint: tint, action: action)
+            .help(shortcutHint.map { "\(title) · \($0)\n\(help)" } ?? "\(title)\n\(help)")
             .keyboardShortcut(shortcut.map { KeyboardShortcut($0, modifiers: []) })
+    }
+}
+
+private struct CompactCaptionControl: View {
+    let title: String
+    let symbol: String
+    let help: String
+    let tint: Color
+    let action: () -> Void
+    @Environment(\.isEnabled) private var isEnabled
+    @ViewState private var isHovered = false
+    @SwiftUI.FocusState private var isFocused: Bool
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: symbol).font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(tint.opacity(isEnabled ? 0.92 : 0.35)).frame(width: 32, height: 28)
+                .background(.white.opacity(isEnabled && isHovered ? 0.18 : 0.09),
+                    in: RoundedRectangle(cornerRadius: 7))
+                .contentShape(RoundedRectangle(cornerRadius: 7))
+        }.buttonStyle(.plain)
+            .focused($isFocused)
+            .overlay {
+                RoundedRectangle(cornerRadius: 7)
+                    .strokeBorder(isFocused ? CaptionPalette.blue : .clear, lineWidth: 2)
+                    .padding(-2).allowsHitTesting(false)
+            }
+            .onHover { isHovered = $0 }
+            .accessibilityLabel(title)
+            .accessibilityHint(help)
     }
 }
 

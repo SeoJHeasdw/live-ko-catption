@@ -1,0 +1,79 @@
+{
+  "dateKST": "2026-10-01",
+  "appVersion": "0.4.2",
+  "appBuild": "10",
+  "kind": "synthetic-ui-only",
+  "requestedSeconds": 65,
+  "productionModelChecksPassed": 33,
+  "commands": [
+    "./scripts/build-app.sh",
+    "./scripts/check-app-model.sh",
+    "./scripts/check-ui-soak.sh 65 /tmp/caption-settings-popup-20261001.jsonl --ui-soak-compact"
+  ],
+  "sourceSHA256": {
+    "Sources/LiveKoCaption/CaptionView.swift": "43e759d57b81be2ea54faed76ca8c5e8e25214eed0c5a9df28464f5783cba22b",
+    "Sources/LiveKoCaption/CompactCaptionView.swift": "d23adf6e626f10c79287001ef4722597541b9eaf5b2efce3bdd8d690fdb26d7b",
+    "Sources/LiveKoCaption/NativeCaptionTranscript.swift": "a774e4017e835d4e0b29a89a838293ba54d718376c07bdb7ce3d608f1c181240",
+    "Sources/LiveKoCaption/LiveKoCaptionApp.swift": "e7396ecc01af6a0327ce5b9b07259dfed54bcd77195aadb1c6e38221a21d5e09",
+    "Sources/LiveKoCaption/CaptionModel.swift": "0547b6e2fe061ac697aef711ddecb104f9f9a3d7d81706c69fd55b9a6bf419b0",
+    "Resources/Info.plist": "9ecaebee1effa76cc422bbbaa09b44f6e98f39a2f5ff102f84d4b181f618390e"
+  },
+  "appExecutableSHA256": "200c573f01286cb28e4ab9e01b480b3060d901f6a5a0f407a5f246cabddca88a",
+  "reportSHA256": "977086c66c8a12b41a7e306ba5786410f91e81c49260286252c5b34d4fa310fe",
+  "publicPreviewSHA256": "8b32d61bfd9abe0ee8da940127ffd00afc75e8746a46ef69f4011670725c331c",
+  "complete": {
+    "compactChecksPassed": true,
+    "compactCoordinatorAvailable": true,
+    "compactDetailDocumentObserved": true,
+    "compactDetailVisible": true,
+    "compactDocumentCharacters": 913,
+    "compactDocumentPresent": true,
+    "compactHiddenDetailStaysMounted": true,
+    "compactInspections": 32,
+    "compactMatchesLatestTail": true,
+    "compactMaxRenderedRows": 2,
+    "compactModeSwitches": 15,
+    "compactNativeResizeChecks": 2,
+    "compactNativeResizeChecksPassed": true,
+    "compactPanelVisible": false,
+    "compactResizes": 10,
+    "compactRespectsMinimumSize": true,
+    "compactRowsBounded": true,
+    "compactSwitchesPreserveModel": true,
+    "compactSwitchesPreservePhase": true,
+    "compactSwitchesPreserveRawHistory": true,
+    "compactTailGlyphRect": [
+      435.43581228121184,
+      433,
+      13.385289883590303,
+      28
+    ],
+    "compactTailVisible": true,
+    "compactTailVisibleRect": [
+      0,
+      396,
+      852,
+      69
+    ],
+    "elapsedSeconds": 66.6281694166828,
+    "event": "complete",
+    "maxMainActorPauseSeconds": 0.02878758336883038,
+    "nativeDocumentCharacters": 10583,
+    "nativeDocumentMatchesLatest": true,
+    "passed": true,
+    "rawSegments": 31,
+    "resizes": 4,
+    "ticks": 2421,
+    "transcriptCharacters": 10733,
+    "translatedSegments": 31,
+    "visibleSegments": 13
+  },
+  "manualChecks": [
+    "settings three tabs and Escape close",
+    "source visibility and 35-to-36-to-35 font slider",
+    "860x560 minimum detail content",
+    "automatic default microphone UI",
+    "empty EN-to-KO and KO-to-EN direction and source wording"
+  ],
+  "scope": "UI rendering, settings, language labels, window geometry and history preservation; no live microphone, semantic accuracy or end-to-end latency measurement."
+}

@@ -10,7 +10,7 @@ struct NativeCaptionTranscript: NSViewRepresentable {
     var showEnglish: Bool
     var isIdle: Bool
     @Binding var followsLatest: Bool
-    var accessibilityLabel = "한국어 실시간 자막과 영어 원문"
+    var accessibilityLabel = "실시간 번역 자막과 원문"
 
     func makeCoordinator() -> Coordinator { Coordinator() }
 
@@ -52,6 +52,7 @@ struct NativeCaptionTranscript: NSViewRepresentable {
     }
 
     func updateNSView(_ view: CaptionScrollView, context: Context) {
+        view.documentView?.setAccessibilityLabel(accessibilityLabel)
         let followBinding = $followsLatest
         // This callback only runs for actual user scroll input, never for a
         // programmatic scroll or during updateNSView/layout.
@@ -250,7 +251,7 @@ struct NativeCaptionTranscript: NSViewRepresentable {
 
         private static func attributedRow(_ segment: CaptionSegment, snapshot: Snapshot) -> NSAttributedString {
             let text = NSMutableAttributedString(string: "")
-            let secondary = NSColor(calibratedRed: 0.56, green: 0.61, blue: 0.68, alpha: 1)
+            let secondary = NSColor(calibratedRed: 0.68, green: 0.72, blue: 0.78, alpha: 1)
             let draft = NSColor(calibratedRed: 0.59, green: 0.63, blue: 0.69, alpha: 1)
             let ink = NSColor(calibratedRed: 0.94, green: 0.96, blue: 0.99, alpha: 1)
             let time = max(0, Int(segment.audioStart))
@@ -258,16 +259,16 @@ struct NativeCaptionTranscript: NSViewRepresentable {
             if !segment.isFinal { label += "  ·  " + captionState(segment, isIdle: snapshot.isIdle) }
             if segment.contextSegmentCount > 1 { label += "  ·  문맥 묶음" }
             let metadataStyle = NSMutableParagraphStyle()
-            metadataStyle.paragraphSpacing = 10
+            metadataStyle.paragraphSpacing = 9
             text.append(NSAttributedString(string: label + "\n", attributes: [
-                .font: NSFont.monospacedSystemFont(ofSize: 10, weight: .medium),
+                .font: NSFont.monospacedSystemFont(ofSize: 13, weight: .medium),
                 .foregroundColor: secondary, .paragraphStyle: metadataStyle
             ]))
             let translation = segment.translation ?? (segment.translationError == nil
                 ? "자막을 준비하고 있습니다…" : "번역하지 못했습니다. 원문을 확인해 주세요.")
             let captionStyle = NSMutableParagraphStyle()
             captionStyle.lineSpacing = 8
-            captionStyle.paragraphSpacing = snapshot.showEnglish || segment.translationError != nil ? 10 : 28
+            captionStyle.paragraphSpacing = snapshot.showEnglish || segment.translationError != nil ? 12 : 30
             text.append(NSAttributedString(string: translation + "\n", attributes: [
                 .font: NSFont.systemFont(ofSize: snapshot.fontSize, weight: segment.isFinal ? .medium : .regular),
                 .foregroundColor: segment.isFinal ? ink : draft, .paragraphStyle: captionStyle
@@ -275,9 +276,10 @@ struct NativeCaptionTranscript: NSViewRepresentable {
             if snapshot.showEnglish || segment.translationError != nil {
                 let sourceStyle = NSMutableParagraphStyle()
                 sourceStyle.lineSpacing = 5
-                sourceStyle.paragraphSpacing = 28
+                sourceStyle.paragraphSpacing = 30
+                let sourceFontSize = min(22, max(16, snapshot.fontSize * 0.58))
                 text.append(NSAttributedString(string: segment.source + "\n", attributes: [
-                    .font: NSFont.systemFont(ofSize: 14), .foregroundColor: secondary,
+                    .font: NSFont.systemFont(ofSize: sourceFontSize), .foregroundColor: secondary,
                     .paragraphStyle: sourceStyle
                 ]))
             }
