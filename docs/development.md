@@ -34,7 +34,7 @@ open "dist/Live Korean Captions.app"
 | [CaptionModel.swift](../Sources/LiveKoCaption/CaptionModel.swift) | 언어 자산 준비, 음성 인식·번역 작업, 대화 생명주기와 오류 복구 |
 | [AudioDeviceCapture.swift](../Sources/LiveKoCaption/AudioDeviceCapture.swift) | 선택한 장치에 고정하는 입력 전용 AudioUnit 캡처 |
 | [AudioCapture.swift](../Sources/LiveKoCaption/AudioCapture.swift) | 장치 목록, 입력 버퍼 복사, 변환과 분석 스트림 |
-| [CaptionView.swift](../Sources/LiveKoCaption/CaptionView.swift) | 상세 자막 화면, 상단 도구막대, 설정 팝업와 하단 실행 버튼 |
+| [CaptionView.swift](../Sources/LiveKoCaption/CaptionView.swift) | 상세 자막 화면, 접이식 조작 사이드바, 설정 팝업과 하단 실행 버튼 |
 | [CompactCaptionView.swift](../Sources/LiveKoCaption/CompactCaptionView.swift) | 떠 있는 간략 자막 창의 조작 UI |
 | [NativeCaptionTranscript.swift](../Sources/LiveKoCaption/NativeCaptionTranscript.swift) | 최근 표시 구절의 네이티브 텍스트 화면과 읽기 위치 유지 |
 | [NativeCompactCaption.swift](../Sources/LiveKoCaption/NativeCompactCaption.swift) | 간략 창의 최근 자막과 긴 문장 끝부분 표시 |
@@ -47,11 +47,15 @@ open "dist/Live Korean Captions.app"
 
 ## 화면과 입력 장치
 
-상세 화면은 사이드바 없이 자막 영역을 중심으로 구성합니다. 높이 54pt의 상단 도구막대에는 번역 방향 메뉴와 기록 저장·새 대화·간략 보기·전체 화면·설정 아이콘이 있습니다. 아이콘의 마우스 호버 설명과 접근성 이름으로 동작을 안내합니다. 실행·일시정지·재개 버튼은 하단에 유지합니다.
+상세 화면의 얇은 상단 도구막대에는 제목·번역 방향·사이드바 접기/펼치기가 있습니다. 왼쪽 조작 사이드바는 펼치면 260pt, 접으면 56pt의 아이콘 열로 표시합니다. 간략 보기·전체 화면·기록 저장·새 대화·설정은 두 상태에서 모두 사용할 수 있으며, 아이콘에 마우스 호버 설명과 접근성 이름을 제공합니다. 실행·일시정지·재개 버튼은 하단에 유지합니다.
 
-설정 아이콘은 **자막·번역·마이크** 탭이 있는 팝오버를 엽니다. 자막 탭의 **원문 함께 보기**는 현재 방향의 입력 언어를 표시하며, **자막 글자 크기**를 바꾸면 원문 크기도 함께 조절합니다. 번역 탭에는 **최근 구절 함께 번역**과 선택적 **문장 다듬기**가 있습니다. 언어 자산이 준비되지 않았을 때는 빈 자막 화면 중앙의 **언어 모델 준비** 버튼으로 다운로드를 시작합니다.
+사이드바의 폭과 라벨은 0.22초 동안 전환하며, macOS의 동작 줄이기가 켜져 있으면 애니메이션을 생략합니다. 접힘 상태는 사용자 설정으로 보존합니다. 자막 영역은 사이드바의 폭에 맞춰 확장되고 최근 자막·대화 모델은 유지합니다.
 
-마이크 기본값은 **자동 선택 (시스템 기본)**이며, 빈 장치 UID로 표현합니다. 장치 목록은 설정 팝업를 열 때, 마이크 탭으로 이동할 때, 자막을 시작할 때 갱신합니다. 자동 선택은 각 시작 시 현재 시스템 기본 마이크를 사용합니다. 수동 선택은 저장한 장치 UID로 입력을 고정하며, 해당 장치가 없으면 기본 마이크로 몰래 전환하지 않고 오류를 표시합니다.
+펼친 사이드바의 **번역 분야**는 일반·IT를 선택하는 사전 설정입니다. 비어 있는 시작 전 대화에서는 문장 다듬기의 활성화 여부와 관계없이 선택할 수 있습니다. 기록이 있거나 실행·준비 중이면 현재 분야를 유지하고 새 대화에서 변경하도록 안내합니다. 분야는 `LocalTranslationRequest`의 로컬 모델 프롬프트에만 전달하며, Apple의 빠른 번역에는 적용하지 않습니다.
+
+사이드바의 설정 아이콘은 **자막·번역·마이크** 탭이 있는 팝업을 엽니다. 자막 탭의 **원문 함께 보기**는 현재 방향의 입력 언어를 표시하며, **자막 글자 크기**를 바꾸면 원문 크기도 함께 조절합니다. 번역 탭에는 **최근 구절 함께 번역**과 선택적 **문장 다듬기**가 있습니다. 언어 자산이 준비되지 않았을 때는 빈 자막 화면 중앙의 **언어 모델 준비** 버튼으로 다운로드를 시작합니다.
+
+마이크 기본값은 **자동 선택 (시스템 기본)**이며, 빈 장치 UID로 표현합니다. 장치 목록은 설정 팝업을 열 때, 마이크 탭으로 이동할 때, 자막을 시작할 때 갱신합니다. 자동 선택은 각 시작 시 현재 시스템 기본 마이크를 사용합니다. 수동 선택은 저장한 장치 UID로 입력을 고정하며, 해당 장치가 없으면 기본 마이크로 몰래 전환하지 않고 오류를 표시합니다.
 
 실행 중 시스템 기본 마이크가 바뀌거나 새 장치가 연결돼도 자동으로 입력을 전환하지 않습니다. 입력을 바꾸려면 일시정지한 뒤 설정을 변경하고 재개합니다. 현재 입력이 끊기는 경우는 오디오 오류 복구 경로를 따릅니다.
 
@@ -148,9 +152,10 @@ swift run --build-system native LocalPipelineCheck --translation-quality --compa
 ./scripts/check-continuous-pipeline.sh
 ./scripts/check-ui-soak.sh
 ./scripts/check-ui-soak.sh 65 /tmp/compact-caption-ui.jsonl --ui-soak-compact
+./scripts/check-ui-soak.sh 65 /tmp/sidebar-caption-ui.jsonl --ui-soak-compact --ui-soak-sidebar
 ```
 
-앞의 두 명령은 기본 30분 검사입니다. 엔진 검사는 합성 영어 파일을 실제 시간에 맞춰 입력한 뒤 30초 재시작을 확인합니다. 화면 검사는 별도 번들 ID의 시험 앱으로 합성 자막을 갱신하며 창 크기·글자 크기·원문 표시를 바꿉니다. 마지막 명령은 짧은 간략 창 검사입니다. 합성 화면 검사는 실제 마이크 정확도와 번역 지연을 측정하지 않습니다.
+앞의 두 명령은 기본 30분 검사입니다. 엔진 검사는 합성 영어 파일을 실제 시간에 맞춰 입력한 뒤 30초 재시작을 확인합니다. 화면 검사는 별도 번들 ID의 시험 앱으로 합성 자막을 갱신하며 창 크기·글자 크기·원문 표시를 바꿉니다. 세 번째 명령은 짧은 간략 창 검사입니다. `--ui-soak-sidebar`는 입력 중 사이드바 전환과 폭 변경 후 최신 자막·읽던 구절·텍스트 선택 유지도 확인합니다. 합성 화면 검사는 실제 마이크 정확도와 번역 지연을 측정하지 않습니다.
 
 ## 화면 미리보기와 실제 사용 확인
 
