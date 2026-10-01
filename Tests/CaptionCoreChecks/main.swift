@@ -140,6 +140,25 @@ let checks: [(String, () throws -> Void)] = [
         let oversized = LocalTranslationRequest(source: String(repeating: "a", count: 1_001), direction: .englishToKorean)
         try expect(!oversized.isWithinBudget, "Local refinement admitted an oversized source")
     }),
+    ("each model size wraps the same instructions in its own chat template", {
+        let request = LocalTranslationRequest(source: "Roll back the deployment.", direction: .englishToKorean, domain: .it)
+        let small = request.prompt(template: .hyMT2Small), dense = request.prompt(template: .hyMT2Dense)
+        try expect(request.prompt == small && small.hasPrefix("<｜hy_begin▁of▁sentence｜><｜hy_User｜>") &&
+            small.hasSuffix("Roll back the deployment.<｜hy_Assistant｜>"), "The 1.8B wrapper changed")
+        try expect(dense.hasPrefix("<|startoftext|>") && dense.hasSuffix("Roll back the deployment.<|extra_0|>") &&
+            !dense.contains("hy_"), "The 7B wrapper mixed in the 1.8B tokens")
+        let strip: (String) -> String = {
+            $0.replacingOccurrences(of: "<｜hy_begin▁of▁sentence｜><｜hy_User｜>", with: "")
+                .replacingOccurrences(of: "<｜hy_Assistant｜>", with: "")
+                .replacingOccurrences(of: "<|startoftext|>", with: "").replacingOccurrences(of: "<|extra_0|>", with: "")
+        }
+        try expect(strip(small) == strip(dense), "The two wrappers carried different instructions")
+        try expect(LocalPromptTemplate.matching(modelFileName: "Hy-MT2-7B-Q4_K_M.gguf") == .hyMT2Dense &&
+            LocalPromptTemplate.matching(modelFileName: "HY-MT2-7B-Q6_K.gguf") == .hyMT2Dense &&
+            LocalPromptTemplate.matching(modelFileName: "Hy-MT2-1.8B-Q6_K.gguf") == .hyMT2Small,
+            "A pinned model file selected the wrong chat template")
+        try expect(!request.accepts("배포를 롤백하세요.<|eos|>"), "A leaked 7B control token was accepted")
+    }),
     ("optional output checks reject obvious number and language corruption", {
         let request = LocalTranslationRequest(source: "The error rate is 2.5 percent, and latency is 120 milliseconds.",
             baseline: "오류율은 2.5%이며 지연 시간은 120밀리초입니다.", direction: .englishToKorean, domain: .it)

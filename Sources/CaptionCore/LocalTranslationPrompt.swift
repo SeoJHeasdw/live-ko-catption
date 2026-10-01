@@ -1,5 +1,25 @@
 import Foundation
 
+/// The wrapper each model's official chat_template.jinja produces for one user
+/// message. The instruction text inside is the same for both sizes.
+public enum LocalPromptTemplate: String, Sendable {
+    case hyMT2Small, hyMT2Dense
+
+    /// A model file is identified by its pinned name; the 7B files use the
+    /// dense template, every other supported file the 1.8B one.
+    public static func matching(modelFileName name: String) -> LocalPromptTemplate {
+        name.range(of: "-7B-", options: .caseInsensitive) != nil ? .hyMT2Dense : .hyMT2Small
+    }
+
+    func wrap(_ instructions: String) -> String {
+        switch self {
+        // These are the tokenizer's own Unicode special tokens.
+        case .hyMT2Small: return "<｜hy_begin▁of▁sentence｜><｜hy_User｜>" + instructions + "<｜hy_Assistant｜>"
+        case .hyMT2Dense: return "<|startoftext|>" + instructions + "<|extra_0|>"
+        }
+    }
+}
+
 /// Small, explicit inputs: no session-history prompt, no network lookup, and no
 /// replacement of ambiguous words in a completed caption.
 public struct LocalTranslationRequest: Sendable, Equatable {
@@ -20,7 +40,9 @@ public struct LocalTranslationRequest: Sendable, Equatable {
 
     public var isWithinBudget: Bool { !source.isEmpty && source.count <= 1_000 }
 
-    public var prompt: String {
+    public var prompt: String { prompt(template: .hyMT2Small) }
+
+    public func prompt(template: LocalPromptTemplate) -> String {
         let target = direction == .englishToKorean ? "Korean" : "English"
         var instructions = ""
         if !previousSentence.isEmpty {
@@ -35,8 +57,7 @@ public struct LocalTranslationRequest: Sendable, Equatable {
         instructions += "Translate the following segment into \(target), without additional explanation. Use natural subtitle phrasing and preserve all meaning."
         if domain == .it { instructions += " This is an IT discussion." }
         instructions += previousSentence.isEmpty ? "\n\n" + source : " Translate only [Source Text], using the background for context.\n[Source Text]\n" + source
-        // The official Hy-MT2 tokenizer uses these Unicode special tokens.
-        return "<｜hy_begin▁of▁sentence｜><｜hy_User｜>" + instructions + "<｜hy_Assistant｜>"
+        return template.wrap(instructions)
     }
 
     public var relevantTerms: [(String, String)] {
@@ -71,7 +92,7 @@ public struct LocalTranslationRequest: Sendable, Equatable {
     public func accepts(_ candidate: String) -> Bool {
         let text = candidate.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, text.count <= max(120, source.count * 4),
-              !text.contains("<｜hy_"), !text.contains("<think>"), !text.contains("</think>") else { return false }
+              !text.contains("<｜hy_"), !text.contains("<|"), !text.contains("<think>"), !text.contains("</think>") else { return false }
         let labels = ["source text:", "[source text]", "background information:", "[background information]",
                       "원문:", "배경 정보:", "번역:", "translation:"]
         guard !labels.contains(where: { text.lowercased().hasPrefix($0) }),

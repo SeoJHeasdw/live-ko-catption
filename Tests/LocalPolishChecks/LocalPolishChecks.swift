@@ -180,7 +180,8 @@ private struct ModelManifest: Decodable {
     let revision: String
     let filename: String
     let byteCount: UInt64
-    let sha256: String
+    /// The app manifest names the constant that holds its digest instead.
+    let sha256: String?
 }
 
 private struct ModelMetadata: Codable {
@@ -338,9 +339,9 @@ private struct LocalPolishChecks {
             platform: ProcessInfo.processInfo.operatingSystemVersionString, machine: machineName(),
             physicalMemoryBytes: ProcessInfo.processInfo.physicalMemory, processors: ProcessInfo.processInfo.processorCount,
             model: ModelMetadata(model: manifest.model, quantization: manifest.quantization, repository: manifest.repository,
-                expectedRevision: manifest.revision, expectedSHA256: manifest.sha256, expectedByteCount: manifest.byteCount,
+                expectedRevision: manifest.revision, expectedSHA256: manifest.sha256 ?? "Not listed in this manifest.", expectedByteCount: manifest.byteCount,
                 actualByteCount: bytes, modelPath: modelURL.path,
-                provenanceVerification: "Pinned manifest metadata and file size recorded. This driver does not rehash the 1.47 GB model; installation verifies SHA-256 separately."),
+                provenanceVerification: "Pinned manifest metadata and file size recorded. This driver does not rehash the model file; its SHA-256 is verified separately before use."),
             runtimePath: runtimeURL.path,
             fixturesSHA256: SHA256.hash(data: fixtureData).map { String(format: "%02x", $0) }.joined(),
             conditions: ["Apple: installed local lowLatency translation, source sentence only, one reusable lease per language direction.",

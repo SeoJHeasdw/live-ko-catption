@@ -52,6 +52,7 @@ final class LocalTranslationEngine: @unchecked Sendable {
     private var canceledID: UInt64?
     private var lifecycleRevision: UInt64 = 0
     private var desiredModelPath: String?
+    private var template = LocalPromptTemplate.hyMT2Small
 
     init(runtimeURL: URL? = nil) {
         self.runtimeURL = runtimeURL ?? (Bundle.main.privateFrameworksURL ?? Bundle.main.bundleURL.appendingPathComponent("Contents/Frameworks"))
@@ -87,6 +88,7 @@ final class LocalTranslationEngine: @unchecked Sendable {
                         let old = handle
                         handle = loaded
                         preparedPath = modelURL.path
+                        template = LocalPromptTemplate.matching(modelFileName: modelURL.lastPathComponent)
                         return (true, old)
                     }
                     guard published.0 else { functions.free(loaded); throw CancellationError() }
@@ -109,12 +111,12 @@ final class LocalTranslationEngine: @unchecked Sendable {
                 queue.async { [self] in
                     defer { release(id) }
                     do {
-                        let snapshot = lock.withLock { (api, handle, canceledID == id) }
+                        let snapshot = lock.withLock { (api, handle, canceledID == id, template) }
                         guard !snapshot.2 else { throw CancellationError() }
                         guard let functions = snapshot.0, let native = snapshot.1 else { throw LocalTranslationError.notPrepared }
                         var output = [CChar](repeating: 0, count: 8_192)
                         var stats = [CChar](repeating: 0, count: 2_048)
-                        let status = request.prompt.withCString { prompt in
+                        let status = request.prompt(template: snapshot.3).withCString { prompt in
                             output.withUnsafeMutableBufferPointer { out in
                                 stats.withUnsafeMutableBufferPointer { json in
                                     functions.generate(native, id, prompt, 192, timeoutMilliseconds,
