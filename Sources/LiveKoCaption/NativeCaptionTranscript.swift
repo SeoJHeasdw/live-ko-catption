@@ -93,6 +93,12 @@ struct NativeCaptionTranscript: NSViewRepresentable {
         private var needsFollowScroll = false
         private var forceFollowScroll = false
         private var lastFollowScroll: TimeInterval = 0
+        private var lastRender: TimeInterval = 0
+        private var renderDue: TimeInterval = 0
+        /// Native updates never run more often than this, but a caption that
+        /// arrives after a quiet interval is not held back by a fixed delay.
+        static let renderInterval: TimeInterval = 1.0 / 30
+        static let followScrollInterval: TimeInterval = 0.20
 
         func attach(scroll: CaptionScrollView, text: NSTextView) {
             self.scroll = scroll
@@ -116,11 +122,25 @@ struct NativeCaptionTranscript: NSViewRepresentable {
             }
             self.followsLatest = followsLatest
             pending = snapshot == rendered ? nil : snapshot
-            guard (pending != nil || needsFollowScroll), renderTask == nil else { return }
+            scheduleRender()
+        }
+
+        private func scheduleRender() {
+            guard pending != nil || needsFollowScroll else { return }
             // Replace pending work rather than retaining every ASR revision.
             // Even a burst of partials creates at most one scheduled UI update.
+            var due = lastRender + Self.renderInterval
+            if pending == nil && !forceFollowScroll {
+                // Only a throttled follow scroll remains; wait for its turn.
+                due = max(due, lastFollowScroll + Self.followScrollInterval)
+            }
+            // New text must not wait behind a later follow-scroll-only update.
+            if renderTask != nil, renderDue <= due { return }
+            renderTask?.cancel()
+            renderDue = due
             renderTask = Task { @MainActor [weak self] in
-                try? await Task.sleep(for: .milliseconds(100))
+                let delay = due - ProcessInfo.processInfo.systemUptime
+                if delay > 0 { try? await Task.sleep(for: .seconds(delay)) }
                 guard !Task.isCancelled, let self else { return }
                 self.renderTask = nil
                 self.renderLatest()
@@ -184,6 +204,7 @@ struct NativeCaptionTranscript: NSViewRepresentable {
 
         private func renderLatest() {
             guard let scroll, let text, let storage = text.textStorage else { return }
+            lastRender = ProcessInfo.processInfo.systemUptime
             let oldOrigin = scroll.contentView.bounds.origin
             let oldSelection = text.selectedRange()
             let viewportAnchor = followsLatest ? nil : (widthAnchor ?? visibleAnchor())
@@ -229,7 +250,7 @@ struct NativeCaptionTranscript: NSViewRepresentable {
                 }
             }
             let now = ProcessInfo.processInfo.systemUptime
-            if followsLatest && (forceFollowScroll || now - lastFollowScroll >= 0.20) {
+            if followsLatest && (forceFollowScroll || now - lastFollowScroll >= Self.followScrollInterval) {
                 text.scrollRangeToVisible(NSRange(location: storage.length, length: 0))
                 lastFollowScroll = now
                 needsFollowScroll = false
@@ -238,8 +259,7 @@ struct NativeCaptionTranscript: NSViewRepresentable {
                 // A trailing update guarantees the final revision reaches the
                 // viewport, even when no more microphone results follow it.
                 needsFollowScroll = true
-                submit(rendered ?? .init(segments: [], fontSize: 35, showEnglish: true, isIdle: false),
-                    followsLatest: true)
+                scheduleRender()
             }
         }
 

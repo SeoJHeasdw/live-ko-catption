@@ -73,6 +73,10 @@ struct NativeCompactCaption: NSViewRepresentable {
         private var renderTask: Task<Void, Never>?
         private var needsTailScroll = false
         private var renderedRows: [RenderRow] = []
+        private var lastRender: TimeInterval = 0
+        /// Native updates never run more often than this, but a caption that
+        /// arrives after a quiet interval is not held back by a fixed delay.
+        static let renderInterval: TimeInterval = 1.0 / 30
 
         func attach(scroll: CompactCaptionScrollView, text: CompactCaptionTextView) {
             self.scroll = scroll
@@ -92,8 +96,9 @@ struct NativeCompactCaption: NSViewRepresentable {
             guard (pending != nil || needsTailScroll), renderTask == nil else { return }
             // Keep only the latest revision and one trailing update. A burst of
             // partial results or a live resize cannot build a queue of UI work.
+            let delay = lastRender + Self.renderInterval - ProcessInfo.processInfo.systemUptime
             renderTask = Task { @MainActor [weak self] in
-                try? await Task.sleep(for: .milliseconds(100))
+                if delay > 0 { try? await Task.sleep(for: .seconds(delay)) }
                 guard !Task.isCancelled, let self else { return }
                 self.renderTask = nil
                 self.renderLatest()
@@ -109,6 +114,7 @@ struct NativeCompactCaption: NSViewRepresentable {
 
         private func renderLatest() {
             guard let scroll, let text, let storage = text.textStorage else { return }
+            lastRender = ProcessInfo.processInfo.systemUptime
             var shouldScroll = needsTailScroll
             if let next = pending {
                 pending = nil
