@@ -34,7 +34,7 @@ open "dist/Live Korean Captions.app"
 | [CaptionModel.swift](../Sources/LiveKoCaption/CaptionModel.swift) | 언어 자산 준비, 음성 인식·번역 작업, 대화 생명주기와 오류 복구 |
 | [AudioDeviceCapture.swift](../Sources/LiveKoCaption/AudioDeviceCapture.swift) | 선택한 장치에 고정하는 입력 전용 AudioUnit 캡처 |
 | [AudioCapture.swift](../Sources/LiveKoCaption/AudioCapture.swift) | 장치 목록, 입력 버퍼 복사, 변환과 분석 스트림 |
-| [CaptionView.swift](../Sources/LiveKoCaption/CaptionView.swift) | 상세 자막 화면과 설정·조작 UI |
+| [CaptionView.swift](../Sources/LiveKoCaption/CaptionView.swift) | 상세 자막 화면, 상단 도구막대, 설정 팝업와 하단 실행 버튼 |
 | [CompactCaptionView.swift](../Sources/LiveKoCaption/CompactCaptionView.swift) | 떠 있는 간략 자막 창의 조작 UI |
 | [NativeCaptionTranscript.swift](../Sources/LiveKoCaption/NativeCaptionTranscript.swift) | 최근 표시 구절의 네이티브 텍스트 화면과 읽기 위치 유지 |
 | [NativeCompactCaption.swift](../Sources/LiveKoCaption/NativeCompactCaption.swift) | 간략 창의 최근 자막과 긴 문장 끝부분 표시 |
@@ -44,6 +44,16 @@ open "dist/Live Korean Captions.app"
 | [LocalTranslationEngine.swift](../Sources/LiveKoCaption/LocalTranslationEngine.swift) | 네이티브 모델 로딩, 직렬 추론, 작업별 취소와 시간 제한 |
 | [Runtime](../Runtime) | 고정 llama.cpp/ggml을 정적으로 연결하는 C++/Metal 런타임 |
 | [Tests](../Tests) | 상태·스케줄링·앱 모델·오디오·실제 엔진 검사와 공개 예문 |
+
+## 화면과 입력 장치
+
+상세 화면은 사이드바 없이 자막 영역을 중심으로 구성합니다. 높이 54pt의 상단 도구막대에는 번역 방향 메뉴와 기록 저장·새 대화·간략 보기·전체 화면·설정 아이콘이 있습니다. 아이콘의 마우스 호버 설명과 접근성 이름으로 동작을 안내합니다. 실행·일시정지·재개 버튼은 하단에 유지합니다.
+
+설정 아이콘은 **자막·번역·마이크** 탭이 있는 팝오버를 엽니다. 자막 탭의 **원문 함께 보기**는 현재 방향의 입력 언어를 표시하며, **자막 글자 크기**를 바꾸면 원문 크기도 함께 조절합니다. 번역 탭에는 **최근 구절 함께 번역**과 선택적 **문장 다듬기**가 있습니다. 언어 자산이 준비되지 않았을 때는 빈 자막 화면 중앙의 **언어 모델 준비** 버튼으로 다운로드를 시작합니다.
+
+마이크 기본값은 **자동 선택 (시스템 기본)**이며, 빈 장치 UID로 표현합니다. 장치 목록은 설정 팝업를 열 때, 마이크 탭으로 이동할 때, 자막을 시작할 때 갱신합니다. 자동 선택은 각 시작 시 현재 시스템 기본 마이크를 사용합니다. 수동 선택은 저장한 장치 UID로 입력을 고정하며, 해당 장치가 없으면 기본 마이크로 몰래 전환하지 않고 오류를 표시합니다.
+
+실행 중 시스템 기본 마이크가 바뀌거나 새 장치가 연결돼도 자동으로 입력을 전환하지 않습니다. 입력을 바꾸려면 일시정지한 뒤 설정을 변경하고 재개합니다. 현재 입력이 끊기는 경우는 오디오 오류 복구 경로를 따릅니다.
 
 ## 유지해야 할 동작
 
