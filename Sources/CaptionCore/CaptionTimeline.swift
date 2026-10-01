@@ -14,6 +14,9 @@ public struct CaptionSegment: Identifiable, Equatable, Sendable {
     public var contextSegmentCount: Int
     /// Display-only state while a recent final passage is being reconsidered.
     public var contextIsPending: Bool
+    /// The direction that was active when this source was recognized. One
+    /// conversation can hold both after the user switches direction.
+    public var direction: CaptionDirection
 
     /// An ASR-final result stays provisional until its exact revision is translated.
     public var isFinal: Bool {
@@ -25,7 +28,7 @@ public struct CaptionSegment: Identifiable, Equatable, Sendable {
                 translation: String? = nil, sourceIsFinal: Bool = false,
                 translatedRevision: Int? = nil, translationError: String? = nil,
                 audioStart: Double, audioEnd: Double, contextSegmentCount: Int = 1,
-                contextIsPending: Bool = false) {
+                contextIsPending: Bool = false, direction: CaptionDirection = .englishToKorean) {
         self.id = id
         self.revision = revision
         self.source = source
@@ -37,6 +40,7 @@ public struct CaptionSegment: Identifiable, Equatable, Sendable {
         self.audioEnd = audioEnd
         self.contextSegmentCount = contextSegmentCount
         self.contextIsPending = contextIsPending
+        self.direction = direction
     }
 }
 
@@ -79,6 +83,8 @@ public struct CaptionTimeline: Sendable {
     private var contextGroups: [ContextGroup] = []
     private var contextRevision = 0
     private var contextBoundary: Set<UUID> = []
+    /// Applied to sources accepted from now on; earlier segments keep theirs.
+    public var direction: CaptionDirection = .englishToKorean
     public init() {}
 
     @discardableResult
@@ -129,7 +135,7 @@ public struct CaptionTimeline: Sendable {
             }
         } else {
             let segment = CaptionSegment(source: text, sourceIsFinal: isFinal,
-                                         audioStart: audioStart, audioEnd: audioEnd)
+                                         audioStart: audioStart, audioEnd: audioEnd, direction: direction)
             id = segment.id
             segments.append(segment)
         }
@@ -311,14 +317,14 @@ public struct CaptionTimeline: Sendable {
 
     public var endTime: Double { segments.map(\.audioEnd).max() ?? 0 }
 
-    public func exportText(createdAt: Date = Date(), sourceLabel: String = "EN",
-                           targetLabel: String = "KO") -> String {
+    public func exportText(createdAt: Date = Date()) -> String {
         let date = ISO8601DateFormatter().string(from: createdAt)
         let rows = displaySegments.map { segment in
             let stamp = String(format: "%02d:%02d", Int(segment.audioStart) / 60,
                                Int(segment.audioStart) % 60)
             let state = segment.isFinal ? "확정" : "미확정"
-            return "[\(stamp) · \(state)]\n\(sourceLabel): \(segment.source)\n\(targetLabel): \(segment.translation ?? "번역 없음")"
+            // Each row carries its own languages; a conversation can switch direction.
+            return "[\(stamp) · \(state)]\n\(segment.direction.sourceExportLabel): \(segment.source)\n\(segment.direction.targetExportLabel): \(segment.translation ?? "번역 없음")"
         }
         return "Live Korean Captions\n\(date)\n\n" + rows.joined(separator: "\n\n") + "\n"
     }

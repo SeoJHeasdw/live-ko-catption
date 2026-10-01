@@ -184,10 +184,17 @@ let checks: [(String, () throws -> Void)] = [
         try expect(english.speechLocaleIdentifier == "en-US" && korean.speechLocaleIdentifier == "ko-KR",
             "Speech locale does not match input language")
         var timeline = CaptionTimeline()
+        timeline.direction = korean
         _ = try appendFinal(&timeline, source: "배포를 시작합니다.", translation: "Starting deployment.", start: 0, end: 1)
-        let exported = timeline.exportText(sourceLabel: korean.sourceExportLabel, targetLabel: korean.targetExportLabel)
-        try expect(exported.contains("KO: 배포를 시작합니다.\nEN: Starting deployment."),
-            "Reverse-direction export labels were swapped")
+        // A conversation can switch direction; each row keeps its own labels.
+        timeline.direction = english
+        _ = try appendFinal(&timeline, source: "Thank you.", translation: "감사합니다.", start: 5, end: 6)
+        let exported = timeline.exportText()
+        try expect(exported.contains("KO: 배포를 시작합니다.\nEN: Starting deployment.") &&
+            exported.contains("EN: Thank you.\nKO: 감사합니다."),
+            "Export labels did not follow each row's own direction")
+        try expect(timeline.segments.map(\.direction) == [korean, english],
+            "A direction change relabeled an earlier caption")
     }),
     ("late translation cannot overwrite a revised sentence", {
         var timeline = CaptionTimeline()

@@ -6,6 +6,7 @@ mkdir -p .build/checks
 xcrun swiftc -swift-version 6 -target arm64-apple-macos26.4 -parse-as-library \
     Sources/LiveKoCaption/AudioCapture.swift \
     Sources/LiveKoCaption/AudioDeviceCapture.swift \
+    Sources/CaptionCore/CaptionPreferences.swift \
     Sources/CaptionCore/CaptionTimeline.swift \
     Tests/AudioCallbackChecks/AudioCallbackChecks.swift \
     -o .build/checks/AudioCallbackChecks

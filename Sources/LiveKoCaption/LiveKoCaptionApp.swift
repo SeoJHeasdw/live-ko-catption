@@ -34,6 +34,10 @@ struct LiveKoCaptionApp: App {
                 Button("일시정지하고 상세 보기") {
                     Task { await windows.stopAndShowDetailed() }
                 }.keyboardShortcut(".", modifiers: .command)
+                Divider()
+                Button("번역 방향 전환") {
+                    Task { await model.switchDirection() }
+                }.keyboardShortcut("d", modifiers: .command).disabled(!model.canSwitchDirection)
             }
         }
     }

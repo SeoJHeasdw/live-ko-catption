@@ -659,6 +659,83 @@ struct AppModelChecks {
                 try expect(polisher.calls.count == 1 && translator.calls.count == 2 && model.canStart,
                     "Optional failure was retried endlessly or blocked the fast path")
             }),
+            ("switching direction while paused keeps earlier captions and labels each row with its own languages", {
+                let suite = "LiveKoCaption.DirectionSwitchChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let probe = TranslatorProbe()
+                let model = CaptionModel(translationOverride: { source, isContext in
+                    try await probe.translate(source, context: isContext)
+                }, readinessOverride: { _ in true }, preferencesDefaults: defaults)
+                model.isChecking = false; model.assetsReady = true; model.contextCorrectionEnabled = false
+                model.receive(source: "Any questions?", audioStart: 0, audioEnd: 1, isFinal: true)
+                try await waitUntil("English caption did not finish") { model.segments.first?.isFinal == true && !model.hasPendingTranslations }
+                let english = model.segments[0]
+                try expect(model.canSwitchDirection && !model.canChangeSessionSettings,
+                    "A paused conversation with captions could not switch direction")
+                await model.switchDirection()
+                try expect(model.selectedDirection == .koreanToEnglish && model.segments == [english] &&
+                    model.sourceDisplayName == "한국어" && model.canStart && model.message == nil,
+                    "Switching changed recorded captions, kept the old input language or blocked Start")
+                try expect(defaults.string(forKey: CaptionDirection.preferenceKey) == CaptionDirection.koreanToEnglish.rawValue,
+                    "The switched direction was not kept for the next launch")
+                model.receive(source: "질문이 있습니다.", audioStart: 2, audioEnd: 3, isFinal: true)
+                try await waitUntil("Korean caption did not finish") { model.segments.count == 2 && model.segments[1].isFinal && !model.hasPendingTranslations }
+                try expect(model.segments.map(\.direction) == [.englishToKorean, .koreanToEnglish],
+                    "Captions were not tagged with the direction that was active when they were spoken")
+                let text = model.transcriptText
+                try expect(text.contains("]\nEN: Any questions?\nKO: ") && text.contains("]\nKO: 질문이 있습니다.\nEN: "),
+                    "Saved rows did not carry their own source and target language labels")
+                await model.switchDirection()
+                try expect(model.selectedDirection == .englishToKorean && model.segments.count == 2,
+                    "Switching back lost captions or did not restore the first direction")
+            }),
+            ("a direction switch is refused when the other language is not installed", {
+                let suite = "LiveKoCaption.DirectionSwitchMissingChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let probe = TranslatorProbe()
+                let model = CaptionModel(translationOverride: { source, isContext in
+                    try await probe.translate(source, context: isContext)
+                }, readinessOverride: { $0 == .englishToKorean }, preferencesDefaults: defaults)
+                model.isChecking = false; model.assetsReady = true
+                model.receive(source: "Keep this direction.", audioStart: 0, audioEnd: 1, isFinal: true)
+                try await waitUntil("Caption did not finish") { model.segments.first?.isFinal == true && !model.hasPendingTranslations }
+                await model.switchDirection()
+                try expect(model.selectedDirection == .englishToKorean && model.canStart &&
+                    model.message?.contains("준비되지 않아") == true && model.segments.count == 1,
+                    "A switch to an uninstalled language changed direction, hid the reason or blocked the current one")
+            }),
+            ("switching while listening finishes the run, flips direction and starts listening again", {
+                let suite = "LiveKoCaption.DirectionSwitchLiveChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let probe = TranslatorProbe()
+                var startAttempts: [CaptionDirection] = []
+                var model: CaptionModel!
+                // Denying the microphone ends the restart before any audio
+                // device or language engine is opened by this check.
+                model = CaptionModel(translationOverride: { source, isContext in
+                    try await probe.translate(source, context: isContext)
+                }, microphoneAccessOverride: {
+                    startAttempts.append(model.selectedDirection)
+                    return false
+                }, readinessOverride: { _ in true }, preferencesDefaults: defaults)
+                model.isChecking = false; model.assetsReady = true; model.contextCorrectionEnabled = false
+                model.selectedDeviceUID = ""
+                model.phase = .listening
+                model.receive(source: "Thank you. Any questions?", audioStart: 0, audioEnd: 2, isFinal: true)
+                try expect(model.canSwitchDirection, "A listening session could not switch direction")
+                await model.switchDirection()
+                try expect(startAttempts == [.koreanToEnglish],
+                    "The switch did not restart in the other direction exactly once: \(startAttempts)")
+                try expect(model.selectedDirection == .koreanToEnglish && model.phase == .idle && !model.hasPendingTranslations &&
+                    model.segments.count == 1 && model.segments[0].isFinal && model.segments[0].direction == .englishToKorean &&
+                    model.segments[0].translation == "KO: Thank you. Any questions?",
+                    "The last sentence before the switch was lost, left unfinished or relabeled")
+                try expect(model.message?.contains("마이크 접근") == true && !model.isSwitchingDirection,
+                    "A failed restart hid its reason or left the switch in progress")
+            }),
             ("direction and domain persist and cannot mix recorded session languages", {
                 let suite = "LiveKoCaption.ModelChecks.\(UUID().uuidString)"
                 let defaults = UserDefaults(suiteName: suite)!

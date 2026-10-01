@@ -103,6 +103,11 @@ private struct CompactCaptionHeader: View {
                 control("상세 보기", symbol: "arrow.up.left.and.arrow.down.right", shortcut: nil,
                     help: "원문, 기록 저장과 설정이 있는 상세 창으로 돌아갑니다. 자막은 계속 진행됩니다.",
                     shortcutHint: "⌘1") { windows.showDetailed() }
+                control("번역 방향 전환", symbol: "arrow.left.arrow.right", shortcut: nil,
+                    help: "지금부터 \(model.targetDisplayName)로 말하는 내용을 \(model.sourceDisplayName) 자막으로 바꿉니다. 마지막 문장을 정리한 뒤 다시 듣고, 이전 자막은 그대로 남습니다.",
+                    shortcutHint: "⌘D") {
+                    Task { await model.switchDirection() }
+                }.disabled(!model.canSwitchDirection)
                 control(controlTitle, symbol: controlSymbol, shortcut: .space,
                     help: controlHelp, shortcutHint: "스페이스 바") {
                     Task { await windows.pauseOrResume() }

@@ -113,15 +113,19 @@ private struct CaptionHeader: View {
             }.pickerStyle(.menu).labelsHidden().font(CaptionType.body)
                 .help("시작 전에 말할 언어와 자막 언어를 선택합니다.")
         } else {
-            HStack(spacing: 8) {
-                Text(model.directionLabel).font(CaptionType.body)
-                Image(systemName: "lock").font(CaptionType.supporting).foregroundStyle(CaptionPalette.secondary)
-            }.frame(maxWidth: .infinity).frame(height: 32)
-                .background(Color.white.opacity(0.045), in: RoundedRectangle(cornerRadius: 8))
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel("번역 방향").accessibilityValue(model.directionLabel)
-                .help(model.hasContent ? "방향을 바꾸려면 현재 기록을 저장하고 새 대화를 시작하세요." :
-                    "준비하거나 자막을 진행하는 동안에는 번역 방향을 유지합니다.")
+            Button { Task { await model.switchDirection() } } label: {
+                HStack(spacing: 8) {
+                    Text(model.directionLabel).font(CaptionType.body)
+                    Image(systemName: model.canSwitchDirection ? "arrow.left.arrow.right" : "lock")
+                        .font(CaptionType.supporting).foregroundStyle(CaptionPalette.secondary)
+                }.frame(maxWidth: .infinity).frame(height: 32)
+                    .background(Color.white.opacity(0.045), in: RoundedRectangle(cornerRadius: 8))
+                    .contentShape(RoundedRectangle(cornerRadius: 8))
+            }.buttonStyle(.plain).disabled(!model.canSwitchDirection)
+                .accessibilityLabel("번역 방향 전환").accessibilityValue(model.directionLabel)
+                .help(model.canSwitchDirection
+                    ? "이 대화 안에서 번역 방향을 반대로 바꿉니다 · ⌘D\n듣는 중이면 마지막 문장을 정리한 뒤 다른 언어로 다시 듣습니다. 이전 자막은 그대로 남습니다."
+                    : "준비하거나 정리하는 동안에는 번역 방향을 유지합니다.")
         }
     }
 }

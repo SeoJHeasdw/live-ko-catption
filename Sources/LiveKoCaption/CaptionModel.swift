@@ -51,6 +51,7 @@ final class CaptionModel {
         set {
             guard newValue != storedDirection, canChangeSessionSettings else { return }
             storedDirection = newValue
+            timeline.direction = newValue
             preferencesDefaults.set(newValue.rawValue, forKey: CaptionDirection.preferenceKey)
             // Disable Start immediately, before the newly scheduled check gets
             // an actor turn. A previous pair's suspended check cannot re-enable it.
@@ -108,6 +109,7 @@ final class CaptionModel {
             // Synthetic English fixtures keep their declared language even if
             // the user last used Korean input. Do not overwrite user preferences.
             storedDirection = .englishToKorean
+            timeline.direction = .englishToKorean
             storedDomain = .general
             readinessID = nil
         }
@@ -205,12 +207,18 @@ final class CaptionModel {
     }
     var hasContent: Bool { !segments.isEmpty }
     var transcriptText: String {
-        let text = timeline.exportText(createdAt: sessionCreatedAt,
-            sourceLabel: selectedDirection.sourceExportLabel, targetLabel: selectedDirection.targetExportLabel)
+        let text = timeline.exportText(createdAt: sessionCreatedAt)
         guard !inputWarnings.isEmpty else { return text }
         return text + "\n입력 관련 알림 · 누락 가능성\n" + inputWarnings.map { "- \($0)" }.joined(separator: "\n") + "\n"
     }
     var canStart: Bool { assetsReady && phase == .idle && !isChecking && !isPreparing && !isPreparingLocalModel && (!polishEnabled || localPolishReady) && !isPreview && !hasPendingTranslations }
+    /// The direction can flip inside a conversation: while listening, or while
+    /// paused with nothing left to translate. Earlier captions keep their own.
+    var canSwitchDirection: Bool {
+        !isPreview && !isUISoak && !isPreparing && !isPreparingLocalModel && !isSwitchingDirection &&
+            (phase == .listening || (phase == .idle && !isChecking && !hasPendingTranslations))
+    }
+    private(set) var isSwitchingDirection = false
     var canChangeSessionSettings: Bool {
         phase == .idle && !isPreparing && !isPreparingLocalModel && !isPreview && !isUISoak && !hasContent && !hasPendingTranslations
     }
@@ -259,6 +267,7 @@ final class CaptionModel {
         contextCorrectionEnabled = UserDefaults.standard.object(forKey: "contextCorrectionEnabled") as? Bool ?? true
         compactStaysAbovePresentations = UserDefaults.standard.object(forKey: "compactStaysAbovePresentations") as? Bool ?? true
         isPreview = preview
+        timeline.direction = storedDirection
         refreshDevices()
         if preview { loadPreview() }
     }
@@ -341,6 +350,43 @@ final class CaptionModel {
             preferencesDefaults.set(false, forKey: "localPolishEnabled")
             localPolishMessage = error.localizedDescription
         }
+    }
+
+    /// Whether a direction can be recognized and translated with what is
+    /// already installed. This never downloads anything.
+    private func hasInstalledAssets(for direction: CaptionDirection) async -> Bool {
+        if let readinessOverride { return (try? await readinessOverride(direction)) ?? false }
+        guard SpeechTranscriber.isAvailable, let locale = try? await reserveSpeechLocale(for: direction) else { return false }
+        let speech = await AssetInventory.status(forModules: [makeTranscriber(locale: locale)])
+        let translation = await LanguageAvailability(preferredStrategy: .lowLatency)
+            .status(from: Locale.Language(identifier: direction.sourceLanguageCode),
+                    to: Locale.Language(identifier: direction.targetLanguageCode))
+        return speech == .installed && translation == .installed
+    }
+
+    /// Flips the direction without starting a new conversation. A running
+    /// session first finishes its last sentence, then listens again in the
+    /// other language. Recorded captions keep the direction they were made in.
+    func switchDirection() async {
+        guard canSwitchDirection else { return }
+        isSwitchingDirection = true
+        defer { isSwitchingDirection = false }
+        let next: CaptionDirection = selectedDirection == .englishToKorean ? .koreanToEnglish : .englishToKorean
+        guard await hasInstalledAssets(for: next) else {
+            message = "\(next.label) 언어 모델이 아직 준비되지 않아 방향을 바꾸지 못했습니다. 새 대화에서 그 방향을 선택해 한 번 준비해 주세요."
+            return
+        }
+        let resume = phase == .listening
+        if resume { await stop() }
+        guard phase == .idle, !hasPendingTranslations else { return }
+        storedDirection = next
+        timeline.direction = next
+        preferencesDefaults.set(next.rawValue, forKey: CaptionDirection.preferenceKey)
+        readinessID = nil
+        translationConfiguration = nil
+        isChecking = false
+        assetsReady = true
+        if resume { await start() }
     }
 
     private func readinessIsCurrent(_ token: UUID, direction: CaptionDirection) -> Bool {
@@ -637,6 +683,7 @@ final class CaptionModel {
         localPolishMilliseconds = nil
         contextJobs.removeAll()
         timeline = CaptionTimeline()
+        timeline.direction = storedDirection
         inputWarnings.removeAll()
         translationQueue.removeAll(); queuedTranslations = 0
         draftHeldSince = nil
@@ -681,7 +728,8 @@ final class CaptionModel {
     }
 
     private func enqueueFailedTranslations() {
-        for segment in segments where segment.translationError != nil {
+        // The open translation session serves the current direction only.
+        for segment in segments where segment.translationError != nil && segment.direction == selectedDirection {
             enqueue(TranslationJob(segmentID: segment.id, revision: segment.revision,
                                    source: segment.source, isSourceFinal: segment.sourceIsFinal))
         }

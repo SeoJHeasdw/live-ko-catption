@@ -1,7 +1,8 @@
 import Foundation
 
-/// One input language is selected before each conversation. Changing it starts
-/// a different session; it is never inferred from individual speech fragments.
+/// One input language is active at a time. The user chooses it before a
+/// conversation and may switch it between runs of that conversation; it is
+/// never inferred from individual speech fragments.
 public enum CaptionDirection: String, CaseIterable, Hashable, Sendable {
     case englishToKorean
     case koreanToEnglish
