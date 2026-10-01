@@ -361,6 +361,11 @@ private struct CaptionSettingsPopover: View {
                     .help("번역 자막과 그 아래 원문의 글자 크기를 함께 조절합니다.")
                 explanation("원문 크기도 자막에 맞춰 함께 조절됩니다.")
             }
+            VStack(alignment: .leading, spacing: 8) {
+                Toggle("발표·전체 화면 위에도 간략 창 표시", isOn: $model.compactStaysAbovePresentations).toggleStyle(.checkbox)
+                    .help("슬라이드쇼나 전체 화면 영상이 간략 자막 창을 가리지 않게 맨 위에 둡니다. 다음에 간략 보기로 전환할 때 적용됩니다.")
+                explanation("간략 자막 창을 다른 모든 창보다 위에 둡니다. 메뉴나 시스템 알림을 가리면 창을 옮기거나 이 설정을 끄세요.")
+            }
         }
     }
 

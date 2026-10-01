@@ -85,6 +85,11 @@ final class CaptionModel {
     var fontSize: Double {
         didSet { UserDefaults.standard.set(fontSize, forKey: "fontSize") }
     }
+    /// The small caption window also stays above slideshows and other
+    /// presentations that cover ordinary floating windows.
+    var compactStaysAbovePresentations: Bool {
+        didSet { UserDefaults.standard.set(compactStaysAbovePresentations, forKey: "compactStaysAbovePresentations") }
+    }
     var contextCorrectionEnabled: Bool {
         didSet {
             UserDefaults.standard.set(contextCorrectionEnabled, forKey: "contextCorrectionEnabled")
@@ -252,6 +257,7 @@ final class CaptionModel {
         let savedFontSize = UserDefaults.standard.object(forKey: "fontSize") as? Double ?? 35
         fontSize = savedFontSize.isFinite ? min(52, max(24, savedFontSize)) : 35
         contextCorrectionEnabled = UserDefaults.standard.object(forKey: "contextCorrectionEnabled") as? Bool ?? true
+        compactStaysAbovePresentations = UserDefaults.standard.object(forKey: "compactStaysAbovePresentations") as? Bool ?? true
         isPreview = preview
         refreshDevices()
         if preview { loadPreview() }

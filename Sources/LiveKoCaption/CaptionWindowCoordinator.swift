@@ -15,6 +15,9 @@ final class CaptionWindowCoordinator: NSObject, NSWindowDelegate {
     @ObservationIgnored private weak var model: CaptionModel?
     @ObservationIgnored private var fullScreenObserver: NSObjectProtocol?
     @ObservationIgnored private var compactAfterFullScreen = false
+    /// One above the level macOS uses to cover a display that a presentation
+    /// has taken over, so the caption window is not hidden by a slideshow.
+    private static let presentationLevel = NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()) + 1)
 
     func attach(window: NSWindow, model: CaptionModel) {
         guard detailWindow !== window else { return }
@@ -72,6 +75,8 @@ final class CaptionWindowCoordinator: NSObject, NSWindowDelegate {
             panel.setFrameAutosaveName("CompactCaptionPanel")
             self.compactPanel = panel
         }
+        // The setting can change while the detailed window is in front.
+        panel.level = model.compactStaysAbovePresentations ? Self.presentationLevel : .floating
         keepOnScreen(panel, preferredScreen: detailWindow.screen)
         isCompact = true
         panel.orderFrontRegardless()
