@@ -39,16 +39,16 @@
 
 ## 용어집
 
-- **인식기 용어 힌트는 효과가 없었습니다.** 제품·회사 이름 일곱 개가 든 합성 영어 문장을 `SpeechTranscriber`에 넣고 `AnalysisContext.contextualStrings`를 준 경우와 주지 않은 경우를 비교했을 때 받아쓰기가 글자까지 같았습니다. 그래서 사용자가 적은 잘못 들리는 표기를 원문에서 고쳐 쓰는 방식을 넣었습니다.
+- **인식기 용어 힌트는 효과가 없었습니다.** 낯선 이름 일곱 개가 든 합성 영어 문장을 `SpeechTranscriber`에 넣고 `AnalysisContext.contextualStrings`를 준 경우와 주지 않은 경우를 비교했을 때 받아쓰기가 글자까지 같았습니다. 그래서 사용자가 적은 잘못 들리는 표기를 원문에서 고쳐 쓰는 방식을 넣었습니다.
 - **다듬기 모델은 용어를 대체로 따랐습니다.** 실제 1.8B로 가상의 이름이 든 세 문장을 IT 분야와 내 용어집 분야로 번역했습니다.
 
-| 원문 | IT 분야 | 내 용어집 (`Northwind = 노스윈드`, `workload = 워크로드`, `Granite`, `WebSphere Liberty`) |
+| 원문 | IT 분야 | 내 용어집 (`Northwind = 노스윈드`, `workload = 워크로드`, `Quartz`, `Harbor Gateway`) |
 |---|---|---|
-| We will deploy the order service on WebSphere Liberty and review the Granite model results for Northwind. | `Northwind`를 그대로 둠 | `노스윈드`로 옮김. `Liberty` 뒤에 한자 한 글자가 섞임 |
-| The Northwind workload moves to Liberty next quarter. | `작업량`, `Northwind` | `워크로드`, `노스윈드`. 용어집에 없는 `Liberty`는 `리버티`로 옮김 |
-| Granite handles the summarization workload. | `그랜이트` | `Granite`. `workload`는 `작업`으로 옮겨 용어를 따르지 않음 |
+| We will deploy the order service on Harbor Gateway and review the Quartz model results for Northwind. | `Northwind`를 그대로 둠 | `노스윈드`로 옮김 |
+| The Northwind workload moves to Gateway next quarter. | `작업량`, `Northwind` | `워크로드`, `노스윈드`. 용어집에 없는 `Gateway`는 `게이트웨이`로 옮김 |
+| Quartz handles the summarization workload. | `요약 작업` | `요약 작업`. `workload`의 용어를 따르지 않음 |
 
-한자가 섞인 출력은 이후 원문에 없는 한자를 거부하는 검사를 추가해, 이런 경우 빠른 번역을 유지하도록 했습니다. 문장 세 개의 관찰이며 용어 준수율을 보장하지 않습니다.
+용어집을 따른 곳과 따르지 않은 곳이 함께 있습니다. 문장 세 개의 관찰이며 용어 준수율을 보장하지 않습니다. 다른 이름으로 한 앞선 실행에서는 출력에 한자 한 글자가 섞였고, 이후 원문에 없는 한자가 든 출력을 거부하는 검사를 추가해 그런 경우 빠른 번역을 유지하도록 했습니다.
 
 ## 확인하지 않은 것
 
