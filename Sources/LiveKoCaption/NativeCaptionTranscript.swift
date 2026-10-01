@@ -56,13 +56,18 @@ struct NativeCaptionTranscript: NSViewRepresentable {
         let followBinding = $followsLatest
         // This callback only runs for actual user scroll input, never for a
         // programmatic scroll or during updateNSView/layout.
-        view.userDidScroll = { followBinding.wrappedValue = false }
+        view.userDidScroll = { [weak coordinator = context.coordinator] in
+            coordinator?.userStartedBrowsing()
+            followBinding.wrappedValue = false
+        }
+        (view.documentView as? CaptionTextView)?.followLatestForTesting = { followBinding.wrappedValue = true }
         context.coordinator.submit(.init(segments: segments, fontSize: fontSize,
             showEnglish: showEnglish, isIdle: isIdle), followsLatest: followsLatest)
     }
 
     static func dismantleNSView(_ view: CaptionScrollView, coordinator: Coordinator) {
         view.userDidScroll = nil
+        (view.documentView as? CaptionTextView)?.followLatestForTesting = nil
         coordinator.cancel()
     }
 
@@ -81,6 +86,9 @@ struct NativeCaptionTranscript: NSViewRepresentable {
         private var pending: Snapshot?
         private var rowLengths: [Int] = []
         private var renderTask: Task<Void, Never>?
+        private var widthTask: Task<Void, Never>?
+        private var widthAnchor: ViewportAnchor?
+        private var widthOrigin: NSPoint?
         private var followsLatest = true
         private var needsFollowScroll = false
         private var forceFollowScroll = false
@@ -90,6 +98,8 @@ struct NativeCaptionTranscript: NSViewRepresentable {
             self.scroll = scroll
             self.text = text
             if let captionText = text as? CaptionTextView {
+                captionText.viewportWidthWillChange = { [weak self] in self?.captureWidthAnchor() }
+                captionText.viewportWidthDidChange = { [weak self] in self?.scheduleWidthRestore() }
                 captionText.viewportInspection = { [weak self, weak text] in
                     guard let self, let text else { return (nil, true, nil) }
                     return (self.visibleAnchor()?.address.segmentID, self.followsLatest,
@@ -99,7 +109,11 @@ struct NativeCaptionTranscript: NSViewRepresentable {
         }
 
         func submit(_ snapshot: Snapshot, followsLatest: Bool) {
-            if followsLatest && !self.followsLatest { needsFollowScroll = true; forceFollowScroll = true }
+            if followsLatest && !self.followsLatest {
+                widthAnchor = nil
+                needsFollowScroll = true
+                forceFollowScroll = true
+            }
             self.followsLatest = followsLatest
             pending = snapshot == rendered ? nil : snapshot
             guard (pending != nil || needsFollowScroll), renderTask == nil else { return }
@@ -116,14 +130,63 @@ struct NativeCaptionTranscript: NSViewRepresentable {
         func cancel() {
             renderTask?.cancel()
             renderTask = nil
+            widthTask?.cancel()
+            widthTask = nil
+            widthAnchor = nil
+            widthOrigin = nil
+            if let text = text as? CaptionTextView {
+                text.viewportWidthWillChange = nil
+                text.viewportWidthDidChange = nil
+                text.viewportInspection = nil
+            }
             pending = nil
+        }
+
+        func userStartedBrowsing() {
+            followsLatest = false
+            needsFollowScroll = false
+            forceFollowScroll = false
+            // A gesture during an animated resize takes precedence over the
+            // position captured before that resize.
+            widthTask?.cancel()
+            widthTask = nil
+            widthAnchor = nil
+            widthOrigin = nil
+        }
+
+        private func captureWidthAnchor() {
+            guard widthOrigin == nil, let scroll else { return }
+            widthOrigin = scroll.contentView.bounds.origin
+            widthAnchor = followsLatest ? nil : visibleAnchor()
+        }
+
+        private func scheduleWidthRestore() {
+            widthTask?.cancel()
+            // TextKit reflows after its view receives the new width. Coalesce
+            // animation frames without publishing native geometry into SwiftUI.
+            widthTask = Task { @MainActor [weak self] in
+                try? await Task.sleep(for: .milliseconds(60))
+                guard !Task.isCancelled, let self, let text = self.text,
+                      let layout = text.layoutManager, let container = text.textContainer else { return }
+                self.widthTask = nil
+                layout.ensureLayout(for: container)
+                if self.followsLatest {
+                    text.scrollRangeToVisible(NSRange(location: text.textStorage?.length ?? 0, length: 0))
+                } else if let anchor = self.widthAnchor, let origin = self.widthOrigin {
+                    self.restore(anchor, oldOrigin: origin)
+                } else if let origin = self.widthOrigin {
+                    self.restorePixelOrigin(origin)
+                }
+                self.widthAnchor = nil
+                self.widthOrigin = nil
+            }
         }
 
         private func renderLatest() {
             guard let scroll, let text, let storage = text.textStorage else { return }
             let oldOrigin = scroll.contentView.bounds.origin
             let oldSelection = text.selectedRange()
-            let viewportAnchor = followsLatest ? nil : visibleAnchor()
+            let viewportAnchor = followsLatest ? nil : (widthAnchor ?? visibleAnchor())
             let selectionStart = rowAddress(at: oldSelection.location)
             let selectionEnd = rowAddress(at: oldSelection.location + oldSelection.length)
             if let next = pending {
@@ -323,8 +386,13 @@ final class CaptionManualScroller: NSScroller {
 @MainActor
 final class CaptionTextView: NSTextView {
     var userDidNavigate: (() -> Void)?
+    var viewportWidthWillChange: (() -> Void)?
+    var viewportWidthDidChange: (() -> Void)?
     // Passive test inspection; no observation, notification or layout callbacks.
     var viewportInspection: (() -> (segmentID: UUID?, followsLatest: Bool, selectedStartSegmentID: UUID?))?
+    // The dedicated UI soak uses the same binding as the visible follow button
+    // to establish its latest-mode precondition before testing width changes.
+    var followLatestForTesting: (() -> Void)?
     private static let navigationCommands: Set<String> = [
         "pageUp:", "pageDown:", "scrollPageUp:", "scrollPageDown:",
         "scrollLineUp:", "scrollLineDown:",
@@ -339,6 +407,13 @@ final class CaptionTextView: NSTextView {
         "moveWordForward:", "moveWordBackward:",
         "moveWordForwardAndModifySelection:", "moveWordBackwardAndModifySelection:"
     ]
+
+    override func setFrameSize(_ newSize: NSSize) {
+        let changesWidth = frame.width > 0 && abs(newSize.width - frame.width) > 0.5
+        if changesWidth { viewportWidthWillChange?() }
+        super.setFrameSize(newSize)
+        if changesWidth { viewportWidthDidChange?() }
+    }
 
     override func doCommand(by selector: Selector) {
         if Self.navigationCommands.contains(NSStringFromSelector(selector)) { userDidNavigate?() }

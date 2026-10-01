@@ -7,6 +7,9 @@ import SwiftUI
 @MainActor @Observable
 final class CaptionWindowCoordinator: NSObject, NSWindowDelegate {
     private(set) var isCompact = false
+    var sidebarExpanded = UserDefaults.standard.object(forKey: "captionSidebarExpanded") as? Bool ?? true {
+        didSet { UserDefaults.standard.set(sidebarExpanded, forKey: "captionSidebarExpanded") }
+    }
     @ObservationIgnored private(set) weak var detailWindow: NSWindow?
     @ObservationIgnored private(set) var compactPanel: NSPanel?
     @ObservationIgnored private weak var model: CaptionModel?

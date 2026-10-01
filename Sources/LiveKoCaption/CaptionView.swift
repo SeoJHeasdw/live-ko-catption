@@ -18,12 +18,23 @@ struct CaptionView: View {
     @Bindable var model: CaptionModel
     let windows: CaptionWindowCoordinator
     @ViewState private var confirmsNewSession = false
+    @ViewState private var settingsTab: CaptionSettingsTab?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(spacing: 0) {
-            CaptionHeader(model: model, windows: windows) { confirmsNewSession = true }
+            CaptionHeader(model: model, windows: windows)
             Rectangle().fill(CaptionPalette.border).frame(height: 1)
-            CaptionArea(model: model).frame(maxHeight: .infinity)
+            HStack(spacing: 0) {
+                CaptionSidebar(model: model, windows: windows,
+                    requestNewSession: { confirmsNewSession = true },
+                    openSettings: { settingsTab = $0 })
+                    .frame(width: windows.sidebarExpanded ? 260 : 56, alignment: .leading)
+                    .contentShape(Rectangle()).clipped()
+                    .overlay(alignment: .trailing) { Rectangle().fill(CaptionPalette.border).frame(width: 1) }
+                    .animation(reduceMotion ? nil : .easeInOut(duration: 0.22), value: windows.sidebarExpanded)
+                CaptionArea(model: model)
+            }.frame(maxHeight: .infinity)
             Rectangle().fill(CaptionPalette.border).frame(height: 1)
             CaptionFooter(model: model)
         }
@@ -50,6 +61,9 @@ struct CaptionView: View {
         .onChange(of: model.phase) { oldPhase, newPhase in
             if oldPhase == .starting && newPhase == .listening { windows.showCompact() }
         }
+        .sheet(item: $settingsTab) { tab in
+            CaptionSettingsPopover(model: model, initialTab: tab) { settingsTab = nil }
+        }
         .alert("새 대화를 시작할까요?", isPresented: $confirmsNewSession) {
             Button("취소", role: .cancel) {}
             Button("저장 후 새 대화") {
@@ -71,11 +85,14 @@ enum CaptionType {
 private struct CaptionHeader: View {
     @Bindable var model: CaptionModel
     let windows: CaptionWindowCoordinator
-    var requestNewSession: () -> Void
-    @ViewState private var showsSettings = false
 
     var body: some View {
         HStack(spacing: 12) {
+            CaptionIconButton(windows.sidebarExpanded ? "사이드바 접기" : "사이드바 펼치기", symbol: "sidebar.left",
+                help: windows.sidebarExpanded ? "조작 이름과 빠른 설정을 접고 자막 영역을 넓힙니다. 아이콘은 계속 사용할 수 있습니다. · ⌘\\" :
+                    "조작 이름과 번역 분야를 펼쳐 봅니다. · ⌘\\") { windows.sidebarExpanded.toggle() }
+                .accessibilityValue(windows.sidebarExpanded ? "펼침" : "접힘")
+                .keyboardShortcut("\\", modifiers: .command)
             Label("라이브 자막", systemImage: "captions.bubble.fill")
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(CaptionPalette.ink)
@@ -84,25 +101,6 @@ private struct CaptionHeader: View {
             if model.isPreview {
                 Label("예시 대화 · 미리보기", systemImage: "eye")
                     .font(CaptionType.supporting).foregroundStyle(CaptionPalette.blue)
-            }
-            HStack(spacing: 4) {
-                CaptionIconButton("새 대화", symbol: "plus.bubble",
-                    help: "현재 기록을 저장하거나 지운 뒤 새 대화를 시작합니다.") {
-                    if model.hasContent { requestNewSession() } else { model.newSession() }
-                }.disabled(model.phase != .idle || model.isPreparing || model.isPreparingLocalModel)
-                CaptionIconButton("기록 저장", symbol: "square.and.arrow.down",
-                    help: "전체 원문과 번역을 텍스트 파일로 저장합니다. 기록은 자동 저장되지 않습니다. · ⌘S") {
-                    model.exportTranscript()
-                }.disabled(!model.hasContent)
-                CaptionIconButton("간략 보기", symbol: "pip",
-                    help: "다른 앱 위에 떠 있는 작은 자막 창으로 전환합니다. · ⌘2") { windows.showCompact() }
-                CaptionIconButton("전체 화면", symbol: "arrow.up.left.and.arrow.down.right",
-                    help: "전체 화면을 켜거나 끕니다.") { windows.detailWindow?.toggleFullScreen(nil) }
-                CaptionIconButton("설정", symbol: "gearshape",
-                    help: "원문 표시, 글자 크기, 문장 다듬기와 마이크 설정을 엽니다.") { showsSettings.toggle() }
-                    .sheet(isPresented: $showsSettings) {
-                        CaptionSettingsPopover(model: model) { showsSettings = false }
-                    }
             }
         }.padding(.leading, 88).padding(.trailing, 20).frame(height: 54)
     }
@@ -125,6 +123,112 @@ private struct CaptionHeader: View {
                 .help(model.hasContent ? "방향을 바꾸려면 현재 기록을 저장하고 새 대화를 시작하세요." :
                     "준비하거나 자막을 진행하는 동안에는 번역 방향을 유지합니다.")
         }
+    }
+}
+
+private struct CaptionSidebar: View {
+    @Bindable var model: CaptionModel
+    let windows: CaptionWindowCoordinator
+    var requestNewSession: () -> Void
+    var openSettings: (CaptionSettingsTab) -> Void
+
+    private var expanded: Bool { windows.sidebarExpanded }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(spacing: 4) {
+                action("간략 보기", symbol: "pip",
+                    help: "다른 앱 위에 떠 있는 작은 자막 창으로 전환합니다. · ⌘2") { windows.showCompact() }
+                action("전체 화면", symbol: "arrow.up.left.and.arrow.down.right",
+                    help: "전체 화면을 켜거나 끕니다.") { windows.detailWindow?.toggleFullScreen(nil) }
+                action("기록 저장", symbol: "square.and.arrow.down",
+                    help: "전체 원문과 번역을 저장합니다. 기록은 자동 저장되지 않습니다. · ⌘S") {
+                    model.exportTranscript()
+                }.disabled(!model.hasContent)
+                action("새 대화", symbol: "plus.bubble",
+                    help: "현재 기록을 저장하거나 지운 뒤 새 대화를 시작합니다.") {
+                    if model.hasContent { requestNewSession() } else { model.newSession() }
+                }.disabled(model.phase != .idle || model.isPreparing || model.isPreparingLocalModel)
+            }
+            Rectangle().fill(CaptionPalette.border).frame(height: 1)
+                .padding(.horizontal, 16).padding(.vertical, 8)
+            quickDomain
+                .frame(width: 228, alignment: .leading).padding(.horizontal, 16)
+                .frame(height: expanded ? 140 : 0, alignment: .top)
+                .opacity(expanded ? 1 : 0).clipped()
+                .disabled(!expanded).allowsHitTesting(expanded).accessibilityHidden(!expanded)
+            Spacer(minLength: 0)
+            action("설정", symbol: "gearshape",
+                help: "원문 표시, 글자 크기, 문장 다듬기와 마이크 설정을 엽니다.") { openSettings(.captions) }
+        }.padding(.vertical, 12).frame(width: 260, alignment: .leading)
+            .frame(maxHeight: .infinity)
+            .background(CaptionPalette.panel)
+    }
+
+    private var quickDomain: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            Text("번역 분야").font(CaptionType.section)
+            if model.canChangeSessionSettings {
+                Picker("번역 분야", selection: $model.translationDomain) {
+                    Text("일반").tag(TranslationDomain.general)
+                    Text("IT").tag(TranslationDomain.it)
+                }.pickerStyle(.segmented).controlSize(.large).labelsHidden()
+                    .help("작은 모델로 문장을 다듬을 때 참고할 분야를 선택합니다. 빠른 Apple 번역에는 적용되지 않습니다.")
+            } else {
+                HStack {
+                    Text(model.translationDomain.label).font(CaptionType.body)
+                    Spacer()
+                    Image(systemName: "lock").font(CaptionType.supporting)
+                }.padding(.horizontal, 12).frame(height: 30)
+                    .background(Color.white.opacity(0.045), in: RoundedRectangle(cornerRadius: 7))
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("번역 분야").accessibilityValue(model.translationDomain.label)
+                    .help("분야 변경은 빈 대화에서 시작 전에 가능합니다.")
+            }
+            Text(model.hasContent ? "새 대화에서 변경 · 문장 다듬기에 적용" : "문장 다듬기에 적용")
+                .font(CaptionType.supporting).foregroundStyle(CaptionPalette.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            Button { openSettings(.translation) } label: {
+                Text(model.polishEnabled ? "문장 다듬기 설정" : "문장 다듬기 꺼짐 · 설정")
+                    .font(CaptionType.supporting).foregroundStyle(CaptionPalette.blue)
+            }.buttonStyle(.plain).help("문장 다듬기의 사용 여부와 상세 번역 설정을 확인합니다.")
+        }
+    }
+
+    private func action(_ title: String, symbol: String, help: String,
+                        perform: @escaping () -> Void) -> some View {
+        CaptionSidebarAction(title: title, symbol: symbol, help: help, expanded: expanded, action: perform)
+    }
+}
+
+private struct CaptionSidebarAction: View {
+    let title: String
+    let symbol: String
+    let help: String
+    let expanded: Bool
+    let action: () -> Void
+    @ViewState private var isHovered = false
+    @SwiftUI.FocusState private var isFocused: Bool
+    @Environment(\.isEnabled) private var isEnabled
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: symbol).font(.system(size: 16, weight: .medium)).frame(width: 32)
+                Text(title).font(CaptionType.body).lineLimit(1)
+                    .frame(width: 172, alignment: .leading).opacity(expanded ? 1 : 0)
+            }.foregroundStyle(CaptionPalette.ink.opacity(isEnabled ? 1 : 0.4))
+                .padding(.horizontal, 12).frame(width: 260, height: 40, alignment: .leading)
+                .background(Color.white.opacity(isEnabled && isHovered ? 0.08 : 0))
+        }.buttonStyle(.plain).focused($isFocused)
+            .frame(width: expanded ? 260 : 56, height: 40, alignment: .leading)
+            .contentShape(Rectangle()).clipped()
+            .overlay {
+                Rectangle().strokeBorder(isFocused ? CaptionPalette.blue : .clear, lineWidth: 2)
+                    .allowsHitTesting(false)
+            }
+            .onHover { isHovered = $0 }
+            .help(help).accessibilityLabel(title).accessibilityHint(help)
     }
 }
 
@@ -163,10 +267,11 @@ private struct CaptionIconButton: View {
     }
 }
 
-private enum CaptionSettingsTab: String, CaseIterable {
+private enum CaptionSettingsTab: String, CaseIterable, Identifiable {
     case captions = "자막"
     case translation = "번역"
     case microphone = "마이크"
+    var id: String { rawValue }
 }
 
 private struct CaptionSettingsTabButton: View {
@@ -197,7 +302,13 @@ private struct CaptionSettingsTabButton: View {
 private struct CaptionSettingsPopover: View {
     @Bindable var model: CaptionModel
     var dismiss: () -> Void
-    @ViewState private var tab = CaptionSettingsTab.captions
+    @ViewState private var tab: CaptionSettingsTab
+
+    init(model: CaptionModel, initialTab: CaptionSettingsTab, dismiss: @escaping () -> Void) {
+        self.model = model
+        self.dismiss = dismiss
+        self._tab = ViewState(wrappedValue: initialTab)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
@@ -378,7 +489,7 @@ private struct LocalPolishControls: View {
                     Text("일반").tag(TranslationDomain.general)
                     Text("IT").tag(TranslationDomain.it)
                 }.pickerStyle(.segmented).controlSize(.large)
-                    .disabled(!model.polishEnabled || !model.canChangeSessionSettings)
+                    .disabled(!model.canChangeSessionSettings)
                     .help("새 대화에서 일반 또는 IT 분야를 선택합니다. IT 분야는 관련 용어를 참고합니다.")
                 if model.isPreparingLocalModel { ProgressView().controlSize(.small) }
                 if model.polishEnabled {

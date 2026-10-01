@@ -64,9 +64,11 @@ enum CaptionUISoakRunner {
         let initialFontSize = model.fontSize
         let initialShowEnglish = model.showEnglish
         let compactState = CommandLine.arguments.contains("--ui-soak-compact") ? CompactSoakState() : nil
+        let sidebarState = CommandLine.arguments.contains("--ui-soak-sidebar") ? SidebarSoakState(seconds: seconds) : nil
         if let compactState {
             await compactState.prepare(model: model)
         }
+        if let sidebarState { await sidebarState.prepare(model: model) }
         let began = ProcessInfo.processInfo.systemUptime
         var lastTick = began
         var lastReport = began
@@ -84,6 +86,7 @@ enum CaptionUISoakRunner {
                "phraseTicks": phraseTicks, "nominalInputLevelHz": 40,
                "nominalSourceUpdateHz": 10, "nominalFinalPeriodSeconds": Double(phraseTicks) / 40]
         if compactState != nil { begin["compactModeExercise"] = true }
+        if sidebarState != nil { begin["sidebarExercise"] = true }
         write(begin, to: file)
         compactState?.showCompact(model: model, reason: "initial", file: file)
         while !Task.isCancelled, ProcessInfo.processInfo.systemUptime - began < seconds {
@@ -108,6 +111,7 @@ enum CaptionUISoakRunner {
                 if final { segmentNumber += 1 }
             }
             compactState?.exercise(model: model, elapsed: now - began, file: file)
+            sidebarState?.exercise(model: model, elapsed: now - began, file: file)
             if now - lastReport >= 1 {
                 var usage = rusage()
                 getrusage(RUSAGE_SELF, &usage)
@@ -126,6 +130,10 @@ enum CaptionUISoakRunner {
                 if let compactState {
                     compactState.inspect(model: model)
                     heartbeat.merge(compactState.report) { _, new in new }
+                }
+                if let sidebarState {
+                    sidebarState.inspect(model: model)
+                    heartbeat.merge(sidebarState.report) { _, new in new }
                 }
                 write(heartbeat, to: file)
                 lastReport = now
@@ -163,6 +171,7 @@ enum CaptionUISoakRunner {
             compactState.inspect(model: model, verifyLatest: true, file: file)
             compactState.showDetailed(model: model, reason: "restore-detail", file: file)
         }
+        if let sidebarState { await sidebarState.exerciseSettled(model: model, file: file) }
         model.phase = .idle
         model.audioLevel = 0
         model.fontSize = initialFontSize
@@ -179,6 +188,7 @@ enum CaptionUISoakRunner {
         let passed = maxPause < 2 && visible.count <= 100 && !model.hasPendingTranslations
             && translated == model.segments.count && documentMatchesLatest
             && (compactState?.passed ?? true)
+            && (sidebarState?.passed ?? true)
         var complete: [String: Any] = ["event": "complete", "passed": passed, "elapsedSeconds": now - began,
                "rawSegments": model.segments.count, "translatedSegments": translated,
                "visibleSegments": visible.count, "maxMainActorPauseSeconds": maxPause,
@@ -186,6 +196,7 @@ enum CaptionUISoakRunner {
                "nativeDocumentCharacters": document?.string.count ?? 0,
                "nativeDocumentMatchesLatest": documentMatchesLatest]
         if let compactState { complete.merge(compactState.report) { _, new in new } }
+        if let sidebarState { complete.merge(sidebarState.report) { _, new in new } }
         write(complete, to: file)
         try? file.synchronize()
         fputs("UI soak \(passed ? "passed" : "failed"): \(output)\n", stderr)
@@ -210,6 +221,194 @@ enum CaptionUISoakRunner {
             return nil
         }
         return find(in: view)
+    }
+
+    /// Sidebar layout must preserve the mounted transcript while synthetic ASR
+    /// continues. Settled probes also catch native text reflow losing its tail
+    /// or a reader's selected older passage; no events are posted to the OS.
+    @MainActor
+    private final class SidebarSoakState {
+        private let toggleInterval: Double
+        private var windows: CaptionWindowCoordinator?
+        private var initialExpanded = true
+        private var detailContentID: ObjectIdentifier?
+        private var detailDocumentID: ObjectIdentifier?
+        private var modelID: ObjectIdentifier?
+        private var switches = 0
+        private var coordinatorAvailable = false
+        private var identityPreserved = true
+        private var historyPreserved = true
+        private var phasePreserved = true
+        private var latestPreconditionEstablished = false
+        private var settledLatestChecks = 0
+        private var latestTailVisible = true
+        private var settledBrowseChecks = 0
+        private var selectionPreserved = true
+        private var browseAnchorPreserved = true
+        private var browsingRemainsPaused = true
+
+        init(seconds: Double) { toggleInterval = max(1, seconds / 7) }
+
+        func prepare(model: CaptionModel) async {
+            for _ in 0..<40 {
+                if let candidate = CaptionAppDelegate.windows,
+                   let content = candidate.detailWindow?.contentView {
+                    windows = candidate
+                    initialExpanded = candidate.sidebarExpanded
+                    detailContentID = ObjectIdentifier(content)
+                    modelID = ObjectIdentifier(model)
+                    coordinatorAvailable = true
+                    return
+                }
+                try? await Task.sleep(for: .milliseconds(50))
+            }
+        }
+
+        func exercise(model: CaptionModel, elapsed: Double, file: FileHandle) {
+            guard switches < 6, elapsed >= Double(switches + 1) * toggleInterval,
+                  let windows else { return }
+            switchSidebar(to: !windows.sidebarExpanded, model: model, reason: "during-synthetic-ASR", file: file)
+        }
+
+        private func switchSidebar(to expanded: Bool, model: CaptionModel, reason: String, file: FileHandle) {
+            guard let windows else { return }
+            let history = model.segments.map(\.id)
+            let phase = String(describing: model.phase)
+            windows.sidebarExpanded = expanded
+            if reason == "during-synthetic-ASR" { switches += 1 }
+            historyPreserved = historyPreserved && model.segments.map(\.id) == history
+            phasePreserved = phasePreserved && String(describing: model.phase) == phase
+            inspect(model: model)
+            write(["event": "sidebar-toggle", "reason": reason, "expanded": expanded,
+                   "switchesDuringASR": switches, "rawSegments": model.segments.count,
+                   "identityPreserved": identityPreserved, "historyPreserved": historyPreserved,
+                   "phasePreserved": phasePreserved], to: file)
+        }
+
+        func inspect(model: CaptionModel) {
+            let content = windows?.detailWindow?.contentView
+            let document = content.flatMap { nativeDocument(in: $0) }
+            if detailDocumentID == nil, let document { detailDocumentID = ObjectIdentifier(document) }
+            identityPreserved = identityPreserved && modelID == ObjectIdentifier(model)
+                && CaptionAppDelegate.model === model && CaptionAppDelegate.windows === windows
+                && content.map { ObjectIdentifier($0) } == detailContentID
+                && (detailDocumentID == nil || document.map { ObjectIdentifier($0) } == detailDocumentID)
+        }
+
+        func exerciseSettled(model: CaptionModel, file: FileHandle) async {
+            guard let windows else { return }
+            windows.showDetailed()
+            try? await Task.sleep(for: .milliseconds(350))
+            let latestDocument = windows.detailWindow?.contentView.flatMap { nativeDocument(in: $0) } as? CaptionTextView
+            let previouslyFollowing = latestDocument?.viewportInspection?().followsLatest
+            // Establish the same binding as the visible latest-caption button.
+            // A dedicated soak window can receive reader input while running;
+            // a paused reader is not a failure of sidebar width reflow.
+            latestDocument?.followLatestForTesting?()
+            try? await Task.sleep(for: .milliseconds(350))
+            latestPreconditionEstablished = latestDocument?.viewportInspection?().followsLatest == true
+            write(["event": "sidebar-latest-precondition", "previouslyFollowing": previouslyFollowing ?? false,
+                   "documentPresent": latestDocument != nil,
+                   "bindingBridgeAvailable": latestDocument?.followLatestForTesting != nil,
+                   "followsLatestEstablished": latestPreconditionEstablished], to: file)
+            let history = model.segments
+            let transcript = model.transcriptText
+            for expanded in [false, true] {
+                switchSidebar(to: expanded, model: model, reason: "settled-latest", file: file)
+                try? await Task.sleep(for: .milliseconds(350))
+                windows.detailWindow?.contentView?.layoutSubtreeIfNeeded()
+                let document = windows.detailWindow?.contentView.flatMap { nativeDocument(in: $0) }
+                let viewport = (document as? CaptionTextView)?.viewportInspection?()
+                let visible = document.map { latestGlyphIsVisible(in: $0) } ?? false
+                let tail = model.recentDisplaySegments(limit: 100).last?.translation
+                let matchesTail = tail.map { document?.string.contains($0) == true } ?? false
+                latestTailVisible = latestTailVisible && visible && matchesTail && viewport?.followsLatest == true
+                settledLatestChecks += 1
+                inspect(model: model)
+                write(["event": "sidebar-settled-latest", "expanded": expanded,
+                       "tailVisible": visible, "matchesLatest": matchesTail,
+                       "followsLatest": viewport?.followsLatest ?? false,
+                       "documentWidth": document?.bounds.width ?? 0,
+                       "visibleOriginY": document?.visibleRect.minY ?? 0], to: file)
+            }
+            if let document = windows.detailWindow?.contentView.flatMap({ nativeDocument(in: $0) }) as? CaptionTextView {
+                // A real responder navigation command suspends following. A
+                // retained middle passage makes width reflow observable.
+                document.doCommand(by: NSSelectorFromString("scrollToBeginningOfDocument:"))
+                let visible = model.recentDisplaySegments(limit: 100)
+                if let source = visible.dropLast().dropFirst(visible.count / 2).first?.source {
+                    let range = (document.string as NSString).range(of: source)
+                    if range.location != NSNotFound {
+                        document.setSelectedRange(range)
+                        document.scrollRangeToVisible(range)
+                        try? await Task.sleep(for: .milliseconds(200))
+                        let anchor = document.viewportInspection?().segmentID
+                        for expanded in [false, true] {
+                            switchSidebar(to: expanded, model: model, reason: "settled-browse", file: file)
+                            try? await Task.sleep(for: .milliseconds(350))
+                            windows.detailWindow?.contentView?.layoutSubtreeIfNeeded()
+                            let viewport = document.viewportInspection?()
+                            let selection = document.selectedRange()
+                            let selected = selection.location != NSNotFound && NSMaxRange(selection) <= (document.string as NSString).length
+                                ? (document.string as NSString).substring(with: selection) : ""
+                            let sameSelection = selected == source
+                            let sameAnchor = anchor != nil && viewport?.segmentID == anchor
+                            let paused = viewport?.followsLatest == false
+                            selectionPreserved = selectionPreserved && sameSelection
+                            browseAnchorPreserved = browseAnchorPreserved && sameAnchor
+                            browsingRemainsPaused = browsingRemainsPaused && paused
+                            settledBrowseChecks += 1
+                            inspect(model: model)
+                            write(["event": "sidebar-settled-browse", "expanded": expanded,
+                                   "selectionPreserved": sameSelection, "browseAnchorPreserved": sameAnchor,
+                                   "browsingRemainsPaused": paused,
+                                   "expectedAnchor": anchor?.uuidString ?? "",
+                                   "actualAnchor": viewport?.segmentID?.uuidString ?? "",
+                                   "documentWidth": document.bounds.width,
+                                   "visibleOriginY": document.visibleRect.minY], to: file)
+                        }
+                    }
+                }
+            }
+            historyPreserved = historyPreserved && model.segments == history && model.transcriptText == transcript
+            switchSidebar(to: initialExpanded, model: model, reason: "restore-sidebar", file: file)
+            try? await Task.sleep(for: .milliseconds(350))
+            inspect(model: model)
+        }
+
+        private func latestGlyphIsVisible(in text: NSTextView) -> Bool {
+            guard let layout = text.layoutManager, let container = text.textContainer else { return false }
+            let character = (text.string as NSString).rangeOfCharacter(
+                from: CharacterSet.whitespacesAndNewlines.inverted, options: .backwards)
+            guard character.location != NSNotFound else { return false }
+            layout.ensureLayout(for: container)
+            let glyph = layout.glyphRange(forCharacterRange: character, actualCharacterRange: nil)
+            guard glyph.length > 0 else { return false }
+            let rect = layout.boundingRect(forGlyphRange: glyph, in: container)
+                .offsetBy(dx: text.textContainerOrigin.x, dy: text.textContainerOrigin.y)
+            return rect.width > 0 && rect.height > 0 && text.visibleRect.insetBy(dx: -1, dy: -1).contains(rect)
+        }
+
+        var passed: Bool {
+            coordinatorAvailable && switches == 6 && detailDocumentID != nil
+                && identityPreserved && historyPreserved && phasePreserved
+                && latestPreconditionEstablished
+                && settledLatestChecks == 2 && latestTailVisible
+                && settledBrowseChecks == 2 && selectionPreserved
+                && browseAnchorPreserved && browsingRemainsPaused
+        }
+
+        var report: [String: Any] {
+            ["sidebarCoordinatorAvailable": coordinatorAvailable, "sidebarSwitchesDuringASR": switches,
+             "sidebarDocumentObserved": detailDocumentID != nil,
+             "sidebarIdentityPreserved": identityPreserved, "sidebarHistoryPreserved": historyPreserved,
+             "sidebarPhasePreserved": phasePreserved,
+             "sidebarLatestPreconditionEstablished": latestPreconditionEstablished,
+             "sidebarSettledLatestChecks": settledLatestChecks,
+             "sidebarLatestTailVisible": latestTailVisible, "sidebarSettledBrowseChecks": settledBrowseChecks,
+             "sidebarSelectionPreserved": selectionPreserved, "sidebarBrowseAnchorPreserved": browseAnchorPreserved,
+             "sidebarBrowsingRemainsPaused": browsingRemainsPaused]
+        }
     }
 
     /// Optional window-mode checks do not change the original transcript soak.
