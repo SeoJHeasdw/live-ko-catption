@@ -1,0 +1,387 @@
+{
+  "applePreparation_ms" : {
+    "englishToKorean" : 4.459541640244424,
+    "koreanToEnglish" : 4.363333340734243
+  },
+  "appleReadiness" : {
+    "englishToKorean" : "installed",
+    "koreanToEnglish" : "installed"
+  },
+  "coldLoad_ms" : 415.72562500368804,
+  "conditions" : [
+    "Apple: installed local lowLatency translation, source sentence only, one reusable lease per language direction.",
+    "Local source-only: same source plus explicit direction/domain instructions and matching bounded IT terms; no previous sentence.",
+    "Local with context: same request plus exactly one previous source sentence, where the fixture supplies one.",
+    "The local model translates source directly. Apple output is used only for the production numeric/output guard, not included in the local prompt.",
+    "Raw completed local candidates are captured with validateResult=false; guardAccepted is reported separately.",
+    "Native measurements include prefill and output generation. The wall measurement includes the Swift/native call. Cold model load and first generation are reported separately."
+  ],
+  "firstTranslationAfterLoad" : {
+    "guardAccepted" : true,
+    "native" : {
+      "cancelled" : false,
+      "decode_ms" : 74.435,
+      "output_tokens" : 5,
+      "prefill_ms" : 72.025,
+      "prompt_tokens" : 25,
+      "timed_out" : false,
+      "total_ms" : 148.214,
+      "truncated" : false,
+      "ttft_ms" : 73.888
+    },
+    "nativeStatus" : 0,
+    "text" : "안녕하세요.",
+    "wall_ms" : 149.2054583504796
+  },
+  "fixtureResults" : [
+    {
+      "appleSourceOnly" : {
+        "text" : "우리는 오후에 카누를 빌렸습니다. 점심 식사 후에 은행에서 뵙겠습니다.",
+        "wall_ms" : 87.31700002681464
+      },
+      "fixture" : {
+        "ambiguityNote" : "이 검사는 앞 문장을 배경 메타데이터로 숨기지 않는다. source의 두 문장 모두가 실제 번역 대상이다.",
+        "direction" : "englishToKorean",
+        "domain" : "general",
+        "goldenMeaning" : "오후에 카누를 빌렸고, 점심 후 강둑 근처에서 만나겠다는 두 문장을 모두 번역한다. 카누 문맥에서 bank는 강둑이다. 오후와 점심 이후라는 시간을 유지한다.",
+        "id" : "joined-en-bank-2-sentences",
+        "source" : "We rented a canoe for the afternoon. I'll meet you by the bank after lunch."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 529.961,
+          "output_tokens" : 36,
+          "prefill_ms" : 110.955,
+          "prompt_tokens" : 41,
+          "timed_out" : false,
+          "total_ms" : 642.274,
+          "truncated" : false,
+          "ttft_ms" : 112.393
+        },
+        "nativeStatus" : 0,
+        "text" : "오후에 카누를 빌렸어요. 점심 먹고 나서 강가에서 만나요.",
+        "wall_ms" : 642.6641666330397
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\nWe rented a canoe for the afternoon. I'll meet you by the bank after lunch.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "I borrowed a canoe in the afternoon. Let's have lunch and meet near the riverbank.",
+        "wall_ms" : 44.264875003136694
+      },
+      "fixture" : {
+        "direction" : "koreanToEnglish",
+        "domain" : "general",
+        "goldenMeaning" : "The speaker rented a canoe for the afternoon and proposes meeting near the river bank after lunch. Translate both sentences, preserving the location and times.",
+        "id" : "joined-ko-bank-2-sentences",
+        "source" : "오후에 카누를 빌렸어요. 점심을 먹고 강둑 근처에서 만나요."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 265.298,
+          "output_tokens" : 18,
+          "prefill_ms" : 146.638,
+          "prompt_tokens" : 65,
+          "timed_out" : false,
+          "total_ms" : 413.346,
+          "truncated" : false,
+          "ttft_ms" : 148.104
+        },
+        "nativeStatus" : 0,
+        "text" : "I rented a canoe in the afternoon. Let’s meet near the riverbank after lunch.",
+        "wall_ms" : 413.5612917598337
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\n오후에 카누를 빌렸어요. 점심을 먹고 강둑 근처에서 만나요.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "우리는 피구 경기를 보고 있었습니다. 저는 공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 모습을 보았습니다.",
+        "wall_ms" : 46.82904155924916
+      },
+      "fixture" : {
+        "ambiguityNote" : "duck는 몸을 숙이는 동사다. 오리, 숨기, 야구 경기를 새로 만들지 않는다.",
+        "direction" : "englishToKorean",
+        "domain" : "general",
+        "goldenMeaning" : "피구 경기를 보고 있었고, 공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 모습을 보았다는 뜻이다. 두 문장을 모두 번역한다. 종목, 몸을 숙이는 동작, 공이 맞은 대상과 사건 순서를 보존한다.",
+        "id" : "joined-en-duck-2-sentences",
+        "source" : "We were watching a dodgeball match. I saw her duck just before the ball hit the wall."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 806.948,
+          "output_tokens" : 55,
+          "prefill_ms" : 98.456,
+          "prompt_tokens" : 43,
+          "timed_out" : false,
+          "total_ms" : 906.76,
+          "truncated" : false,
+          "ttft_ms" : 99.875
+        },
+        "nativeStatus" : 0,
+        "text" : "우리는 도드볼 경기를 보고 있었어요. 공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 것을 봤죠.",
+        "wall_ms" : 906.9832917302847
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\nWe were watching a dodgeball match. I saw her duck just before the ball hit the wall.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "I was watching the dodgeball game. I saw her bend down just before the ball hit the wall.",
+        "wall_ms" : 40.797124966047704
+      },
+      "fixture" : {
+        "direction" : "koreanToEnglish",
+        "domain" : "general",
+        "goldenMeaning" : "The speaker was watching dodgeball and saw her duck/bend down just before the ball hit the wall. Translate both sentences; preserve dodgeball, the action, event order, and the wall as the impact target.",
+        "id" : "joined-ko-duck-2-sentences",
+        "source" : "피구 경기를 보고 있었어요. 공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 걸 봤어요."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 308.434,
+          "output_tokens" : 21,
+          "prefill_ms" : 139.435,
+          "prompt_tokens" : 74,
+          "timed_out" : false,
+          "total_ms" : 449.239,
+          "truncated" : false,
+          "ttft_ms" : 140.86
+        },
+        "nativeStatus" : 0,
+        "text" : "I was watching a pickleball game. I saw her duck down just before the ball hit the wall.",
+        "wall_ms" : 449.4286666158587
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\n피구 경기를 보고 있었어요. 공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 걸 봤어요.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "우리는 스팸 분류기를 평가하고 있습니다. 정밀도는 실제로 스팸인 플래그가 지정된 메시지의 비율을 의미합니다. 리콜은 우리가 포착하는 모든 스팸 메시지의 비율을 의미합니다.",
+        "wall_ms" : 70.54104167036712
+      },
+      "fixture" : {
+        "direction" : "englishToKorean",
+        "domain" : "it",
+        "goldenMeaning" : "스팸 분류기를 평가한다. 정밀도는 스팸으로 탐지한 메시지 중 실제 스팸의 비율이고, 재현율은 전체 실제 스팸 중 탐지한 스팸의 비율이다. 세 문장과 서로 다른 두 지표의 분모를 모두 유지한다.",
+        "id" : "joined-en-classifier-3-sentences",
+        "requiredTerms" : [
+          "정밀도",
+          "재현율"
+        ],
+        "source" : "We are evaluating a spam classifier. Precision is the share of flagged messages that are actually spam. Recall is the share of all spam messages that we catch."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 1761.798,
+          "output_tokens" : 120,
+          "prefill_ms" : 154.385,
+          "prompt_tokens" : 83,
+          "timed_out" : false,
+          "total_ms" : 1917.614,
+          "truncated" : false,
+          "ttft_ms" : 155.87
+        },
+        "nativeStatus" : 0,
+        "text" : "저희는 스팸 분류기를 평가하고 있습니다. 정밀도란, 실제로 스팸인 메시지 중에서 올바르게 식별된 비율을 의미합니다. 반면 재현율은 저희가 포착한 모든 스팸 메시지 중에서 실제로 스팸인 메시지의 비율을 나타냅니다.",
+        "wall_ms" : 1923.7876249244437
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Reference the following translations:\nprecision translates to 정밀도\nrecall translates to 재현율\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\nWe are evaluating a spam classifier. Precision is the share of flagged messages that are actually spam. Recall is the share of all spam messages that we catch.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "I'm evaluating the spam classifier. Precision is the percentage of actual spam among messages detected by spam. The reproduction rate is the percentage of spam we have detected out of all actual spam.",
+        "wall_ms" : 60.681083356030285
+      },
+      "fixture" : {
+        "direction" : "koreanToEnglish",
+        "domain" : "it",
+        "goldenMeaning" : "We are evaluating a spam classifier. Precision measures actual spam among messages flagged as spam; recall measures detected spam among all actual spam. Preserve all three sentences and the distinct denominators.",
+        "id" : "joined-ko-classifier-3-sentences",
+        "requiredTerms" : [
+          "precision",
+          "recall"
+        ],
+        "source" : "스팸 분류기를 평가하고 있어요. 정밀도는 스팸으로 탐지한 메시지 중 실제 스팸의 비율입니다. 재현율은 전체 실제 스팸 중 우리가 탐지한 스팸의 비율입니다."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 671.153,
+          "output_tokens" : 45,
+          "prefill_ms" : 323.33,
+          "prompt_tokens" : 134,
+          "timed_out" : false,
+          "total_ms" : 995.99,
+          "truncated" : false,
+          "ttft_ms" : 324.954
+        },
+        "nativeStatus" : 0,
+        "text" : "I’m evaluating the spam classifier. Precision refers to the proportion of messages identified as spam that are actually spam. Recall, on the other hand, is the proportion of all actual spam messages that were successfully detected by the classifier.",
+        "wall_ms" : 996.4080416830257
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Reference the following translations:\n정밀도 translates to precision\n재현율 translates to recall\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\n스팸 분류기를 평가하고 있어요. 정밀도는 스팸으로 탐지한 메시지 중 실제 스팸의 비율입니다. 재현율은 전체 실제 스팸 중 우리가 탐지한 스팸의 비율입니다.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "이번 릴리스는 애플리케이션 코드만 변경합니다. 배포가 실패하면 이전 버전으로 롤백하십시오. 데이터베이스를 삭제하지 마십시오. 구성이 변경되지 않는 한 서비스를 재시작할 필요가 없습니다.",
+        "wall_ms" : 89.61775002535433
+      },
+      "fixture" : {
+        "direction" : "englishToKorean",
+        "domain" : "it",
+        "goldenMeaning" : "이번 릴리스는 애플리케이션 코드만 변경한다. 배포 실패 시 이전 버전으로 롤백한다. 데이터베이스는 삭제하지 않는다. 설정이 바뀌지 않는 한 서비스를 재시작할 필요가 없다. 네 문장의 범위, 조건, 부정과 예외를 보존한다.",
+        "id" : "joined-en-rollback-4-sentences",
+        "source" : "This release changes only application code. If the deployment fails, roll back to the previous version. Do not drop the database. We do not need to restart the service unless the configuration changes."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 1218.425,
+          "output_tokens" : 83,
+          "prefill_ms" : 140.703,
+          "prompt_tokens" : 79,
+          "timed_out" : false,
+          "total_ms" : 1360.606,
+          "truncated" : false,
+          "ttft_ms" : 142.248
+        },
+        "nativeStatus" : 0,
+        "text" : "이번 릴리스에서는 애플리케이션 코드만 변경됩니다. 배포에 실패할 경우 이전 버전으로 롤백해 주세요. 데이터베이스는 삭제하지 마십시오. 설정에 변동이 없는 한 서비스를 재시작할 필요는 없습니다.",
+        "wall_ms" : 1366.140624973923
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Reference the following translations:\ndeployment translates to 배포\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\nThis release changes only application code. If the deployment fails, roll back to the previous version. Do not drop the database. We do not need to restart the service unless the configuration changes.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "This release only changes the application code. If the distribution fails, roll back to the previous version. Don't delete the database. You don't need to restart the service unless the settings are changed.",
+        "wall_ms" : 58.02216660231352
+      },
+      "fixture" : {
+        "direction" : "koreanToEnglish",
+        "domain" : "it",
+        "goldenMeaning" : "This release changes application code only. If deployment fails, roll back to the previous version. Keep the database intact. There is no need to restart the service unless configuration changes. Preserve all four sentences, conditions, and negations.",
+        "id" : "joined-ko-rollback-4-sentences",
+        "source" : "이번 릴리스는 애플리케이션 코드만 변경합니다. 배포에 실패하면 이전 버전으로 롤백하세요. 데이터베이스는 삭제하지 마세요. 설정이 바뀌지 않는 한 서비스를 다시 시작할 필요가 없습니다."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 606.36,
+          "output_tokens" : 41,
+          "prefill_ms" : 185.414,
+          "prompt_tokens" : 127,
+          "timed_out" : false,
+          "total_ms" : 793.29,
+          "truncated" : false,
+          "ttft_ms" : 186.993
+        },
+        "nativeStatus" : 0,
+        "text" : "This release only changes the application code. If the deployment fails, perform a rollback to the previous version. Do not delete the database. There’s no need to restart the service, unless the settings change.",
+        "wall_ms" : 793.7024167040363
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Reference the following translations:\n배포 translates to deployment\n롤백 translates to rollback\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\n이번 릴리스는 애플리케이션 코드만 변경합니다. 배포에 실패하면 이전 버전으로 롤백하세요. 데이터베이스는 삭제하지 마세요. 설정이 바뀌지 않는 한 서비스를 다시 시작할 필요가 없습니다.<｜hy_Assistant｜>"
+    }
+  ],
+  "fixturesSHA256" : "ee76507f3bc04f784584c4f6c007a7bd29ce9bada0db3bc337b75a354c1485df",
+  "generatedAt" : "2026-10-01T05:15:38Z",
+  "lifecycle" : {
+    "busyRejected" : true,
+    "cancellationObserved" : true,
+    "cancellationReturn_ms" : 156.72362502664328,
+    "details" : [
+
+    ],
+    "lateCancellationOfCompletedTaskDidNotCancelNextRequest" : true,
+    "recoverySucceeded" : true
+  },
+  "limitations" : [
+    "Authored text fixtures are not a representative translation benchmark or live speech-recognition test.",
+    "Guard acceptance is a syntax/number check, not a semantic accuracy score. goldenMeaning and review notes require human semantic review.",
+    "Apple source-only and local context-enabled conditions have different information; do not attribute contextual gains solely to the model.",
+    "This sequential native-engine soak does not establish live microphone, full application scheduling, end-to-end caption latency, or fan noise.",
+    "Peak RSS is process lifetime high-water memory in bytes on macOS; current resident RSS is sampled separately. Thermal state is the OS-reported category.",
+    "Samples that time out have no usable completed caption and are included in timeout counts. Timing distributions include available native statistics from failures."
+  ],
+  "machine" : "arm64",
+  "model" : {
+    "actualByteCount" : 4624648896,
+    "expectedByteCount" : 4624648896,
+    "expectedRevision" : "ab8472660ac61fac25f1af43fac2599d52a8a775",
+    "expectedSHA256" : "9f96256500f3fc1ab4d64336b58f52a949a95ad7516b0c229476eef782f9f77b",
+    "model" : "Tencent Hy-MT2-7B",
+    "modelPath" : "/Users/jaehoseo/Desktop/vswrk/javis/live-ko-caption/.build/experiments/models/Hy-MT2-7B-Q4_K_M.gguf",
+    "provenanceVerification" : "Pinned manifest metadata and file size recorded. This driver does not rehash the 1.47 GB model; installation verifies SHA-256 separately.",
+    "quantization" : "Q4_K_M",
+    "repository" : "tencent/Hy-MT2-7B-GGUF"
+  },
+  "physicalMemoryBytes" : 38654705664,
+  "platform" : "Version 26.7 (Build 25G229)",
+  "processors" : 14,
+  "productTimeoutMilliseconds" : 1500,
+  "qualityTimeoutMilliseconds" : 8000,
+  "runtimePath" : "/Users/jaehoseo/Desktop/vswrk/javis/live-ko-caption/.build/local-runtime/libcaption_local_translation.dylib",
+  "schemaVersion" : 1,
+  "sourceOnlySummary" : {
+    "acceptedByGuard" : 8,
+    "attempts" : 8,
+    "completedWithinProductBudget" : 7,
+    "nativeTTFT_ms" : {
+      "count" : 8,
+      "maximum" : 324.954,
+      "p50" : 142.248,
+      "p95" : 324.954,
+      "p99" : 324.954
+    },
+    "nativeTotal_ms" : {
+      "count" : 8,
+      "maximum" : 1917.614,
+      "p50" : 793.29,
+      "p95" : 1917.614,
+      "p99" : 1917.614
+    },
+    "successful" : 8,
+    "timedOut" : 0,
+    "wall_ms" : {
+      "count" : 8,
+      "maximum" : 1923.7876249244437,
+      "p50" : 793.7024167040363,
+      "p95" : 1923.7876249244437,
+      "p99" : 1923.7876249244437
+    }
+  },
+  "withContextSummary" : {
+    "acceptedByGuard" : 0,
+    "attempts" : 0,
+    "completedWithinProductBudget" : 0,
+    "nativeTTFT_ms" : {
+      "count" : 0
+    },
+    "nativeTotal_ms" : {
+      "count" : 0
+    },
+    "successful" : 0,
+    "timedOut" : 0,
+    "wall_ms" : {
+      "count" : 0
+    }
+  }
+}

@@ -1,0 +1,5356 @@
+{
+  "applePreparation_ms" : {
+    "englishToKorean" : 4.218249931000173,
+    "koreanToEnglish" : 4.147916682995856
+  },
+  "appleReadiness" : {
+    "englishToKorean" : "installed",
+    "koreanToEnglish" : "installed"
+  },
+  "coldLoad_ms" : 15592.948583420366,
+  "conditions" : [
+    "Apple: installed local lowLatency translation, source sentence only, one reusable lease per language direction.",
+    "Local source-only: same source plus explicit direction/domain instructions and matching bounded IT terms; no previous sentence.",
+    "Local with context: same request plus exactly one previous source sentence, where the fixture supplies one.",
+    "The local model translates source directly. Apple output is used only for the production numeric/output guard, not included in the local prompt.",
+    "Raw completed local candidates are captured with validateResult=false; guardAccepted is reported separately.",
+    "Native measurements include prefill and output generation. The wall measurement includes the Swift/native call. Cold model load and first generation are reported separately."
+  ],
+  "firstTranslationAfterLoad" : {
+    "guardAccepted" : true,
+    "native" : {
+      "cancelled" : false,
+      "decode_ms" : 74.969,
+      "output_tokens" : 5,
+      "prefill_ms" : 69.116,
+      "prompt_tokens" : 25,
+      "timed_out" : false,
+      "total_ms" : 145.623,
+      "truncated" : false,
+      "ttft_ms" : 70.801
+    },
+    "nativeStatus" : 0,
+    "text" : "안녕하세요.",
+    "wall_ms" : 146.6799583286047
+  },
+  "fixtureResults" : [
+    {
+      "appleSourceOnly" : {
+        "text" : "Precision은 플래그된 요청이 실제로 악의적이었던 수를 알려줍니다; 기억은 우리가 포착한 악성 요청의 수를 알려줍니다.",
+        "wall_ms" : 88.9973749872297
+      },
+      "fixture" : {
+        "direction" : "englishToKorean",
+        "domain" : "it",
+        "goldenMeaning" : "분류기의 정밀도는 탐지한 요청 중 실제 악성 요청의 비율이고, 재현율은 전체 악성 요청 중 탐지한 비율이다. 두 지표의 분모를 뒤바꾸지 않는다.",
+        "id" : "en-it-precision-recall",
+        "previousSentence" : "We are evaluating a binary classifier that blocks malicious requests.",
+        "requiredTerms" : [
+          "정밀도",
+          "재현율"
+        ],
+        "source" : "Precision tells us how many flagged requests were truly malicious; recall tells us how many malicious requests we caught."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 1356.241,
+          "output_tokens" : 92,
+          "prefill_ms" : 151.448,
+          "prompt_tokens" : 73,
+          "timed_out" : false,
+          "total_ms" : 1509.063,
+          "truncated" : false,
+          "ttft_ms" : 152.882
+        },
+        "nativeStatus" : 0,
+        "text" : "정밀도는 실제로 악성인 요청들 중에서 얼마나 많은 것을 올바르게 식별했는지를 나타냅니다. 반면, 재현율은 우리가 적발한 악성 요청들의 총 수를 나타냅니다.",
+        "wall_ms" : 1515.243291738443
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 1414.03,
+          "output_tokens" : 78,
+          "prefill_ms" : 183.507,
+          "prompt_tokens" : 104,
+          "timed_out" : false,
+          "total_ms" : 1598.971,
+          "truncated" : false,
+          "ttft_ms" : 184.996
+        },
+        "nativeStatus" : 0,
+        "text" : "정밀도는 실제로 악성으로 분류된 요청들 중 정말 악성인 경우가 몇 개인지를 나타내며, 재현율은 우리가 포착한 악성 요청의 총 수를 나타냅니다.",
+        "wall_ms" : 1604.5099582988769
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Reference the following translations:\nprecision translates to 정밀도\nrecall translates to 재현율\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\nPrecision tells us how many flagged requests were truly malicious; recall tells us how many malicious requests we caught.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nWe are evaluating a binary classifier that blocks malicious requests.\n\nReference the following translations:\nprecision translates to 정밀도\nrecall translates to 재현율\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion. Translate only [Source Text], using the background for context.\n[Source Text]\nPrecision tells us how many flagged requests were truly malicious; recall tells us how many malicious requests we caught.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "저는 지난 목요일에 회의를 누가 진행하였는지 기억이 나지 않습니다.",
+        "wall_ms" : 27.619833359494805
+      },
+      "fixture" : {
+        "ambiguityNote" : "일반 문맥의 recall은 기억해 내는 행위다. IT의 재현율이나 제품 리콜로 바꾸지 않는다.",
+        "direction" : "englishToKorean",
+        "domain" : "general",
+        "goldenMeaning" : "지난 목요일 회의를 누가 진행했는지 기억이 나지 않는다는 뜻이다. 기억하지 못한다는 부정과 목요일을 보존한다.",
+        "id" : "en-general-recall-meeting",
+        "previousSentence" : "We were talking about last week's planning meeting.",
+        "source" : "I can't recall who led the meeting last Thursday."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 443.911,
+          "output_tokens" : 30,
+          "prefill_ms" : 97.8,
+          "prompt_tokens" : 34,
+          "timed_out" : false,
+          "total_ms" : 542.988,
+          "truncated" : false,
+          "ttft_ms" : 99.126
+        },
+        "nativeStatus" : 0,
+        "text" : "지난 목요일 회의를 주재한 사람이 누군지 기억나지 않습니다.",
+        "wall_ms" : 543.2156666647643
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 472.45,
+          "output_tokens" : 32,
+          "prefill_ms" : 98.463,
+          "prompt_tokens" : 64,
+          "timed_out" : false,
+          "total_ms" : 572.199,
+          "truncated" : false,
+          "ttft_ms" : 99.802
+        },
+        "nativeStatus" : 0,
+        "text" : "지난 목요일 회의를 주재한 분이 누구였는지 기억나지 않아요.",
+        "wall_ms" : 572.4069999996573
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\nI can't recall who led the meeting last Thursday.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nWe were talking about last week's planning meeting.\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Translate only [Source Text], using the background for context.\n[Source Text]\nI can't recall who led the meeting last Thursday.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "배포가 실패하면 데이터베이스를 삭제하지 않고 이전 버전으로 롤백하십시오.",
+        "wall_ms" : 32.22041658591479
+      },
+      "fixture" : {
+        "direction" : "englishToKorean",
+        "domain" : "it",
+        "goldenMeaning" : "배포에 실패했을 때 이전 버전으로 되돌리되 데이터베이스는 삭제하지 않는다. 조건, 이전 버전, 데이터 보존을 모두 유지한다.",
+        "id" : "en-it-deployment-rollback",
+        "previousSentence" : "The release includes only application changes.",
+        "source" : "If the deployment fails, roll back to the previous version without dropping the database."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 588.584,
+          "output_tokens" : 40,
+          "prefill_ms" : 99.17,
+          "prompt_tokens" : 57,
+          "timed_out" : false,
+          "total_ms" : 689.108,
+          "truncated" : false,
+          "ttft_ms" : 100.57
+        },
+        "nativeStatus" : 0,
+        "text" : "배포에 실패할 경우, 데이터베이스는 그대로 유지한 채 이전 버전으로 롤백해야 합니다.",
+        "wall_ms" : 694.2044999450445
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 586.613,
+          "output_tokens" : 40,
+          "prefill_ms" : 139.844,
+          "prompt_tokens" : 84,
+          "timed_out" : false,
+          "total_ms" : 727.973,
+          "truncated" : false,
+          "ttft_ms" : 141.42
+        },
+        "nativeStatus" : 0,
+        "text" : "배포에 실패할 경우, 데이터베이스는 그대로 유지한 채 이전 버전으로 롤백해야 합니다.",
+        "wall_ms" : 733.0258750589564
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Reference the following translations:\ndeployment translates to 배포\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\nIf the deployment fails, roll back to the previous version without dropping the database.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nThe release includes only application changes.\n\nReference the following translations:\ndeployment translates to 배포\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion. Translate only [Source Text], using the background for context.\n[Source Text]\nIf the deployment fails, roll back to the previous version without dropping the database.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "팟은 실행 중이지만, 준비도 프로브가 아직 실패하고 있으므로 Kubernetes는 아직 트래픽을 전송해서는 안 됩니다.",
+        "wall_ms" : 39.85633340198547
+      },
+      "fixture" : {
+        "ambiguityNote" : "pod는 쿠버네티스 파드다. 파드/pod, 쿠버네티스/Kubernetes, 준비 상태 검사/readiness probe 등 의미가 같은 표기는 모두 허용한다.",
+        "direction" : "englishToKorean",
+        "domain" : "it",
+        "goldenMeaning" : "파드가 실행 중이어도 준비 상태 검사가 실패하므로 쿠버네티스가 아직 그 파드에 트래픽을 보내면 안 된다. 실행 상태와 준비 상태를 같은 뜻으로 합치지 않는다.",
+        "id" : "en-it-kubernetes-readiness",
+        "previousSentence" : "We're debugging why the new deployment isn't receiving requests.",
+        "source" : "The pod is running, but the readiness probe is still failing, so Kubernetes should not send traffic to it yet."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 878.867,
+          "output_tokens" : 60,
+          "prefill_ms" : 109.09,
+          "prompt_tokens" : 63,
+          "timed_out" : false,
+          "total_ms" : 989.35,
+          "truncated" : false,
+          "ttft_ms" : 110.53
+        },
+        "nativeStatus" : 0,
+        "text" : "팟은 실행 중이지만, 준비 상태 확인 프로브가 여전히 실패하고 있으므로, Kubernetes는 아직 해당 팟으로 트래픽을 보내서는 안 됩니다.",
+        "wall_ms" : 994.4520415738225
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 823.049,
+          "output_tokens" : 56,
+          "prefill_ms" : 140.713,
+          "prompt_tokens" : 95,
+          "timed_out" : false,
+          "total_ms" : 965.177,
+          "truncated" : false,
+          "ttft_ms" : 142.175
+        },
+        "nativeStatus" : 0,
+        "text" : "팟은 실행 중이지만 레디니스 프로브가 여전히 실패하고 있어, Kubernetes는 아직 해당 팟으로 트래픽을 보내서는 안 됩니다.",
+        "wall_ms" : 970.2006665756926
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Reference the following translations:\nKubernetes translates to Kubernetes\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\nThe pod is running, but the readiness probe is still failing, so Kubernetes should not send traffic to it yet.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nWe're debugging why the new deployment isn't receiving requests.\n\nReference the following translations:\nKubernetes translates to Kubernetes\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion. Translate only [Source Text], using the background for context.\n[Source Text]\nThe pod is running, but the readiness probe is still failing, so Kubernetes should not send traffic to it yet.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "점심 식사 후에 은행에서 뵙겠습니다.",
+        "wall_ms" : 25.432916707359254
+      },
+      "fixture" : {
+        "ambiguityNote" : "원문만 있으면 bank는 은행과 강둑 사이에서 모호하다. 앞 문장을 제공한 경우의 문맥 선택을 평가하며, 앞 문장을 번역 결과에 덧붙이지 않는다.",
+        "direction" : "englishToKorean",
+        "domain" : "general",
+        "goldenMeaning" : "카누를 타는 문맥에서 점심 후 강둑 근처에서 만나겠다는 뜻으로 해석한다. 장소와 점심 이후라는 순서를 유지한다.",
+        "id" : "en-general-bank-context",
+        "previousSentence" : "We rented a canoe for the afternoon.",
+        "source" : "I'll meet you by the bank after lunch."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 266.418,
+          "output_tokens" : 18,
+          "prefill_ms" : 97.366,
+          "prompt_tokens" : 33,
+          "timed_out" : false,
+          "total_ms" : 365.06,
+          "truncated" : false,
+          "ttft_ms" : 98.698
+        },
+        "nativeStatus" : 0,
+        "text" : "점심 먹고 나서 강가에서 만나요.",
+        "wall_ms" : 365.2320000110194
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 265.611,
+          "output_tokens" : 18,
+          "prefill_ms" : 99.536,
+          "prompt_tokens" : 61,
+          "timed_out" : false,
+          "total_ms" : 366.411,
+          "truncated" : false,
+          "ttft_ms" : 100.856
+        },
+        "nativeStatus" : 0,
+        "text" : "점심 먹고 나서 강가에서 만나요.",
+        "wall_ms" : 366.58475000876933
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\nI'll meet you by the bank after lunch.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nWe rented a canoe for the afternoon.\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Translate only [Source Text], using the background for context.\n[Source Text]\nI'll meet you by the bank after lunch.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "저는 공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 모습을 보았습니다.",
+        "wall_ms" : 28.635333408601582
+      },
+      "fixture" : {
+        "ambiguityNote" : "her duck의 명사/동사 중의성은 피구라는 최근 문맥으로 판단한다. 공이 그녀에게 맞았다는 사건을 새로 만들지 않는다.",
+        "direction" : "englishToKorean",
+        "domain" : "general",
+        "goldenMeaning" : "피구 경기에서 공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 모습을 보았다는 뜻이다. 오리를 보았다는 뜻으로 번역하지 않는다.",
+        "id" : "en-general-duck-context",
+        "previousSentence" : "We were watching a dodgeball match.",
+        "source" : "I saw her duck just before the ball hit the wall."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 514.13,
+          "output_tokens" : 35,
+          "prefill_ms" : 97.988,
+          "prompt_tokens" : 35,
+          "timed_out" : false,
+          "total_ms" : 613.438,
+          "truncated" : false,
+          "ttft_ms" : 99.357
+        },
+        "nativeStatus" : 0,
+        "text" : "공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 것을 봤어요.",
+        "wall_ms" : 613.6279166676104
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 515.559,
+          "output_tokens" : 35,
+          "prefill_ms" : 99.536,
+          "prompt_tokens" : 63,
+          "timed_out" : false,
+          "total_ms" : 616.361,
+          "truncated" : false,
+          "ttft_ms" : 100.854
+        },
+        "nativeStatus" : 0,
+        "text" : "공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 것을 봤어요.",
+        "wall_ms" : 616.5572917088866
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\nI saw her duck just before the ball hit the wall.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nWe were watching a dodgeball match.\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Translate only [Source Text], using the background for context.\n[Source Text]\nI saw her duck just before the ball hit the wall.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "종속성이 설치되면 식은 죽 먹기입니다.",
+        "wall_ms" : 26.07083332259208
+      },
+      "fixture" : {
+        "ambiguityNote" : "식은 죽 먹기나 아주 쉽다는 표현 등 자연스러운 동등 의역을 허용한다.",
+        "direction" : "englishToKorean",
+        "domain" : "general",
+        "goldenMeaning" : "의존성을 설치하고 나면 그 작업은 매우 쉽다는 뜻이다. 의존성 설치가 선행 조건이며, 실제 케이크에 대한 발언이 아니다.",
+        "id" : "en-general-piece-of-cake",
+        "previousSentence" : "She has done this setup dozens of times.",
+        "source" : "That's a piece of cake once the dependencies are installed."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 310.215,
+          "output_tokens" : 21,
+          "prefill_ms" : 97.11,
+          "prompt_tokens" : 35,
+          "timed_out" : false,
+          "total_ms" : 408.649,
+          "truncated" : false,
+          "ttft_ms" : 98.481
+        },
+        "nativeStatus" : 0,
+        "text" : "의존성들이 설치되면 정말 쉬운 일이에요.",
+        "wall_ms" : 408.85679167695343
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 340.203,
+          "output_tokens" : 23,
+          "prefill_ms" : 97.975,
+          "prompt_tokens" : 64,
+          "timed_out" : false,
+          "total_ms" : 439.54,
+          "truncated" : false,
+          "ttft_ms" : 99.414
+        },
+        "nativeStatus" : 0,
+        "text" : "의존성들을 설치하고 나면 정말 쉬운 일이에요.",
+        "wall_ms" : 439.723041607067
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\nThat's a piece of cake once the dependencies are installed.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nShe has done this setup dozens of times.\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Translate only [Source Text], using the background for context.\n[Source Text]\nThat's a piece of cake once the dependencies are installed.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "이 패치는 충돌을 해결할 뿐만 아니라 메모리 사용량도 감소시킵니다.",
+        "wall_ms" : 29.320208355784416
+      },
+      "fixture" : {
+        "direction" : "englishToKorean",
+        "domain" : "it",
+        "goldenMeaning" : "패치는 충돌 문제를 해결할 뿐 아니라 메모리 사용량도 줄인다. 두 효과를 모두 긍정적으로 유지한다. not only를 충돌이 고쳐지지 않는다는 부정으로 해석하지 않는다.",
+        "id" : "en-it-not-only",
+        "source" : "The patch not only fixes the crash but also reduces memory use."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 570.749,
+          "output_tokens" : 39,
+          "prefill_ms" : 97.997,
+          "prompt_tokens" : 42,
+          "timed_out" : false,
+          "total_ms" : 670.047,
+          "truncated" : false,
+          "ttft_ms" : 99.362
+        },
+        "nativeStatus" : 0,
+        "text" : "이 패치는 시스템 크래시를 해결할 뿐만 아니라 메모리 사용량도 줄여줍니다.",
+        "wall_ms" : 675.2655417658389
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\nThe patch not only fixes the crash but also reduces memory use.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "구성이 변경되지 않는 한 서비스를 재시작할 필요가 없습니다.",
+        "wall_ms" : 26.686000055633485
+      },
+      "fixture" : {
+        "direction" : "englishToKorean",
+        "domain" : "it",
+        "goldenMeaning" : "설정이 바뀌지 않는 한 서비스를 재시작할 필요가 없다. 부정과 예외 조건을 유지하며, 항상 재시작해야 한다거나 절대로 재시작하지 말라는 뜻으로 바꾸지 않는다.",
+        "id" : "en-it-unless-negation",
+        "source" : "We do not need to restart the service unless the configuration changes."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 349.63,
+          "output_tokens" : 24,
+          "prefill_ms" : 98.458,
+          "prompt_tokens" : 42,
+          "timed_out" : false,
+          "total_ms" : 449.424,
+          "truncated" : false,
+          "ttft_ms" : 99.847
+        },
+        "nativeStatus" : 0,
+        "text" : "구성이 변경되지 않는 한 서비스를 재시작할 필요는 없습니다.",
+        "wall_ms" : 454.61866667028517
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\nWe do not need to restart the service unless the configuration changes.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "화요일에 만나겠습니다—죄송합니다, 목요일—내일이 아니라.",
+        "wall_ms" : 29.456708347424865
+      },
+      "fixture" : {
+        "ambiguityNote" : "화요일과 목요일을 별개의 두 약속으로 만들지 않는다. 캡션의 말하기 중 정정을 모델의 새로운 사실로 확대하지 않는다.",
+        "direction" : "englishToKorean",
+        "domain" : "general",
+        "goldenMeaning" : "화요일이라고 말했다가 목요일로 바로잡았으며, 내일은 만나지 않는다는 뜻이다. 최종 약속은 목요일이다. 정정 표현을 자연스럽게 보존해도 된다.",
+        "id" : "en-general-corrected-weekday",
+        "previousSentence" : "Today is Monday.",
+        "source" : "Let's meet on Tuesday—sorry, Thursday—not tomorrow."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 456.998,
+          "output_tokens" : 31,
+          "prefill_ms" : 97.397,
+          "prompt_tokens" : 35,
+          "timed_out" : false,
+          "total_ms" : 555.693,
+          "truncated" : false,
+          "ttft_ms" : 98.754
+        },
+        "nativeStatus" : 0,
+        "text" : "화요일에 만나요. 아니, 내일이 아니라 목요일에요. 죄송합니다.",
+        "wall_ms" : 555.8898750459775
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 455.779,
+          "output_tokens" : 31,
+          "prefill_ms" : 98.835,
+          "prompt_tokens" : 59,
+          "timed_out" : false,
+          "total_ms" : 555.95,
+          "truncated" : false,
+          "ttft_ms" : 100.219
+        },
+        "nativeStatus" : 0,
+        "text" : "화요일에 만나요. 아니, 내일이 아니라 목요일에요. 죄송합니다.",
+        "wall_ms" : 556.1466250801459
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\nLet's meet on Tuesday—sorry, Thursday—not tomorrow.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nToday is Monday.\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Translate only [Source Text], using the background for context.\n[Source Text]\nLet's meet on Tuesday—sorry, Thursday—not tomorrow.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "오류율이 2.5%에서 0.8%로 감소했으며, 중앙값 지연 시간은 120밀리초에 머물렀습니다.",
+        "wall_ms" : 37.600249983370304
+      },
+      "fixture" : {
+        "direction" : "englishToKorean",
+        "domain" : "it",
+        "expectedNumbers" : [
+          "2.5%",
+          "0.8%",
+          "120 milliseconds"
+        ],
+        "goldenMeaning" : "오류율이 2.5%에서 0.8%로 감소했고, 지연 시간 중앙값은 120밀리초로 유지됐다. 전후 수치, 단위, 중앙값과 유지됐다는 의미를 보존한다.",
+        "id" : "en-it-percentages-latency",
+        "source" : "The error rate fell from 2.5% to 0.8%, and the median latency stayed at 120 milliseconds."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 810.427,
+          "output_tokens" : 55,
+          "prefill_ms" : 139.427,
+          "prompt_tokens" : 72,
+          "timed_out" : false,
+          "total_ms" : 951.2,
+          "truncated" : false,
+          "ttft_ms" : 140.827
+        },
+        "nativeStatus" : 0,
+        "text" : "오류율은 2.5%에서 0.8%로 감소했으며, 평균 지연 시간은 120밀리초 그대로 유지되었습니다.",
+        "wall_ms" : 956.6655833041295
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Reference the following translations:\nlatency translates to 지연 시간\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\nThe error rate fell from 2.5% to 0.8%, and the median latency stayed at 120 milliseconds.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "검토 일정을 2026년 10월 15일 오전 9시 30분에 잡으십시오. 한국 표준시.",
+        "wall_ms" : 44.29774999152869
+      },
+      "fixture" : {
+        "direction" : "englishToKorean",
+        "domain" : "general",
+        "expectedNumbers" : [
+          "2026",
+          "October 15",
+          "9:30 a.m. KST"
+        ],
+        "goldenMeaning" : "검토 회의를 한국 표준시 2026년 10월 15일 오전 9시 30분으로 잡아 달라는 요청이다. 날짜, 오전, 시각과 시간대를 유지한다.",
+        "id" : "en-general-date-time-zone",
+        "source" : "Schedule the review for October 15, 2026, at 9:30 a.m. Korea Standard Time."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 722.561,
+          "output_tokens" : 49,
+          "prefill_ms" : 98.512,
+          "prompt_tokens" : 51,
+          "timed_out" : false,
+          "total_ms" : 822.39,
+          "truncated" : false,
+          "ttft_ms" : 99.886
+        },
+        "nativeStatus" : 0,
+        "text" : "2026년 10월 15일 오전 9시 30분, 한국 표준시에 리뷰를 진행하기로 예약하세요.",
+        "wall_ms" : 822.6852916413918
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\nSchedule the review for October 15, 2026, at 9:30 a.m. Korea Standard Time.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "Accuracy is the ratio of actual positives among the detected items, and the reproduction rate is the ratio of the detected items among the actual positive items.",
+        "wall_ms" : 43.21591672487557
+      },
+      "fixture" : {
+        "direction" : "koreanToEnglish",
+        "domain" : "it",
+        "goldenMeaning" : "Precision is the fraction of detected items that are actually positive; recall is the fraction of actual positive items that were detected. Keep the two denominators distinct.",
+        "id" : "ko-it-precision-recall",
+        "previousSentence" : "지금은 스팸 분류기의 성능을 비교하고 있습니다.",
+        "requiredTerms" : [
+          "precision",
+          "recall"
+        ],
+        "source" : "정밀도는 탐지한 항목 중 실제 양성의 비율이고, 재현율은 실제 양성 중 탐지한 항목의 비율입니다."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 427.927,
+          "output_tokens" : 29,
+          "prefill_ms" : 183.166,
+          "prompt_tokens" : 104,
+          "timed_out" : false,
+          "total_ms" : 612.56,
+          "truncated" : false,
+          "ttft_ms" : 184.689
+        },
+        "nativeStatus" : 0,
+        "text" : "Precision is the ratio of actual positives among the items that were detected, while recall is the ratio of items that were detected among the actual positives.",
+        "wall_ms" : 612.8851249814034
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 401.069,
+          "output_tokens" : 27,
+          "prefill_ms" : 241.654,
+          "prompt_tokens" : 149,
+          "timed_out" : false,
+          "total_ms" : 644.167,
+          "truncated" : false,
+          "ttft_ms" : 243.243
+        },
+        "nativeStatus" : 0,
+        "text" : "Precision is the ratio of actual positives among the items that were detected, while recall is the ratio of detected items among the actual positives.",
+        "wall_ms" : 644.4647499592975
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Reference the following translations:\n정밀도 translates to precision\n재현율 translates to recall\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\n정밀도는 탐지한 항목 중 실제 양성의 비율이고, 재현율은 실제 양성 중 탐지한 항목의 비율입니다.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\n지금은 스팸 분류기의 성능을 비교하고 있습니다.\n\nReference the following translations:\n정밀도 translates to precision\n재현율 translates to recall\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion. Translate only [Source Text], using the background for context.\n[Source Text]\n정밀도는 탐지한 항목 중 실제 양성의 비율이고, 재현율은 실제 양성 중 탐지한 항목의 비율입니다.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "I don't remember who made a presentation at the meeting last Thursday.",
+        "wall_ms" : 22.404000046662986
+      },
+      "fixture" : {
+        "ambiguityNote" : "Remember, recall, and equivalent natural expressions are valid here. Do not introduce a technical recall metric.",
+        "direction" : "koreanToEnglish",
+        "domain" : "general",
+        "goldenMeaning" : "The speaker cannot quite remember who presented at last Thursday's meeting. Preserve the memory uncertainty and Thursday.",
+        "id" : "ko-general-recall-meeting",
+        "previousSentence" : "지난주 기획 회의를 이야기하는 중입니다.",
+        "source" : "지난 목요일 회의에서 누가 발표했는지 잘 기억이 나지 않아요."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 221.24,
+          "output_tokens" : 15,
+          "prefill_ms" : 98.501,
+          "prompt_tokens" : 55,
+          "timed_out" : false,
+          "total_ms" : 321.053,
+          "truncated" : false,
+          "ttft_ms" : 99.866
+        },
+        "nativeStatus" : 0,
+        "text" : "I can’t remember clearly who gave the presentation at the meeting last Thursday.",
+        "wall_ms" : 321.2812083074823
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 225.674,
+          "output_tokens" : 15,
+          "prefill_ms" : 141.335,
+          "prompt_tokens" : 92,
+          "timed_out" : false,
+          "total_ms" : 368.364,
+          "truncated" : false,
+          "ttft_ms" : 142.749
+        },
+        "nativeStatus" : 0,
+        "text" : "I can’t remember clearly who gave the presentation at last Thursday’s meeting.",
+        "wall_ms" : 368.60991665162146
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\n지난 목요일 회의에서 누가 발표했는지 잘 기억이 나지 않아요.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\n지난주 기획 회의를 이야기하는 중입니다.\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Translate only [Source Text], using the background for context.\n[Source Text]\n지난 목요일 회의에서 누가 발표했는지 잘 기억이 나지 않아요.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "If the distribution fails, roll back to the previous version, but do not delete the database.",
+        "wall_ms" : 28.950874926522374
+      },
+      "fixture" : {
+        "direction" : "koreanToEnglish",
+        "domain" : "it",
+        "goldenMeaning" : "If deployment fails, roll back to the previous version while keeping the database intact. Preserve the condition and the instruction not to delete the database.",
+        "id" : "ko-it-deployment-rollback",
+        "previousSentence" : "이번 릴리스에서는 애플리케이션 코드만 변경했습니다.",
+        "source" : "배포에 실패하면 이전 버전으로 롤백하되, 데이터베이스는 삭제하지 마세요."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 296.55,
+          "output_tokens" : 20,
+          "prefill_ms" : 139.958,
+          "prompt_tokens" : 82,
+          "timed_out" : false,
+          "total_ms" : 437.952,
+          "truncated" : false,
+          "ttft_ms" : 141.457
+        },
+        "nativeStatus" : 0,
+        "text" : "If the deployment fails, perform a rollback to the previous version, but do not delete the database.",
+        "wall_ms" : 438.2398333400488
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 294.666,
+          "output_tokens" : 20,
+          "prefill_ms" : 184.671,
+          "prompt_tokens" : 127,
+          "timed_out" : false,
+          "total_ms" : 480.777,
+          "truncated" : false,
+          "ttft_ms" : 186.171
+        },
+        "nativeStatus" : 0,
+        "text" : "If the deployment fails, perform a rollback to the previous version, but do not delete the database.",
+        "wall_ms" : 481.0564583167434
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Reference the following translations:\n배포 translates to deployment\n롤백 translates to rollback\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\n배포에 실패하면 이전 버전으로 롤백하되, 데이터베이스는 삭제하지 마세요.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\n이번 릴리스에서는 애플리케이션 코드만 변경했습니다.\n\nReference the following translations:\n배포 translates to deployment\n롤백 translates to rollback\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion. Translate only [Source Text], using the background for context.\n[Source Text]\n배포에 실패하면 이전 버전으로 롤백하되, 데이터베이스는 삭제하지 마세요.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "The pod is running but failed to check the readiness status, so Kubernetes should not send traffic yet.",
+        "wall_ms" : 32.46858331840485
+      },
+      "fixture" : {
+        "ambiguityNote" : "Readiness check and readiness probe are acceptable in this context. Avoid inventing a failed liveness probe or a stopped pod.",
+        "direction" : "koreanToEnglish",
+        "domain" : "it",
+        "goldenMeaning" : "The pod is running but failing its readiness check, so Kubernetes should not send traffic to it yet. Running and ready are different states.",
+        "id" : "ko-it-kubernetes-readiness",
+        "previousSentence" : "새 배포에 요청이 들어오지 않는 이유를 확인하고 있습니다.",
+        "source" : "파드는 실행 중이지만 준비 상태 검사에 실패하고 있으니, 쿠버네티스가 아직 트래픽을 보내면 안 됩니다."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 324.715,
+          "output_tokens" : 22,
+          "prefill_ms" : 140.246,
+          "prompt_tokens" : 82,
+          "timed_out" : false,
+          "total_ms" : 466.332,
+          "truncated" : false,
+          "ttft_ms" : 141.669
+        },
+        "nativeStatus" : 0,
+        "text" : "The pod is running, but it fails the readiness check, so Kubernetes shouldn’t send traffic to it yet.",
+        "wall_ms" : 466.66583325713873
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 323.898,
+          "output_tokens" : 22,
+          "prefill_ms" : 199.148,
+          "prompt_tokens" : 129,
+          "timed_out" : false,
+          "total_ms" : 524.507,
+          "truncated" : false,
+          "ttft_ms" : 200.662
+        },
+        "nativeStatus" : 0,
+        "text" : "The pod is running, but it fails the readiness check, so Kubernetes still shouldn’t send traffic to it.",
+        "wall_ms" : 524.8272499302402
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\n파드는 실행 중이지만 준비 상태 검사에 실패하고 있으니, 쿠버네티스가 아직 트래픽을 보내면 안 됩니다.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\n새 배포에 요청이 들어오지 않는 이유를 확인하고 있습니다.\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion. Translate only [Source Text], using the background for context.\n[Source Text]\n파드는 실행 중이지만 준비 상태 검사에 실패하고 있으니, 쿠버네티스가 아직 트래픽을 보내면 안 됩니다.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "Let's meet next to the bank after lunch.",
+        "wall_ms" : 21.487249992787838
+      },
+      "fixture" : {
+        "ambiguityNote" : "Korean 은행 can name a bank or ginkgo. Use the branch/account context, and do not add the account-opening sentence to the translated caption.",
+        "direction" : "koreanToEnglish",
+        "domain" : "general",
+        "goldenMeaning" : "Meet beside the bank after lunch. The previous sentence identifies a financial bank, rather than a ginkgo tree.",
+        "id" : "ko-general-bank-context",
+        "previousSentence" : "계좌를 개설하려고 오늘 지점에 들를 거예요.",
+        "source" : "점심 먹고 은행 옆에서 만나요."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 147.323,
+          "output_tokens" : 10,
+          "prefill_ms" : 97.816,
+          "prompt_tokens" : 42,
+          "timed_out" : false,
+          "total_ms" : 246.421,
+          "truncated" : false,
+          "ttft_ms" : 99.153
+        },
+        "nativeStatus" : 0,
+        "text" : "Let’s meet next to the bank after lunch.",
+        "wall_ms" : 246.61870824638754
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 147.999,
+          "output_tokens" : 10,
+          "prefill_ms" : 140.847,
+          "prompt_tokens" : 91,
+          "timed_out" : false,
+          "total_ms" : 290.318,
+          "truncated" : false,
+          "ttft_ms" : 142.375
+        },
+        "nativeStatus" : 0,
+        "text" : "Let’s meet next to the bank after lunch.",
+        "wall_ms" : 290.5065000522882
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\n점심 먹고 은행 옆에서 만나요.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\n계좌를 개설하려고 오늘 지점에 들를 거예요.\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Translate only [Source Text], using the background for context.\n[Source Text]\n점심 먹고 은행 옆에서 만나요.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "I saw her bend down just before the ball hit the wall.",
+        "wall_ms" : 23.948541609570384
+      },
+      "fixture" : {
+        "ambiguityNote" : "Ducked, bent down, and other accurate natural descriptions are valid. The ball hit the wall, not the woman.",
+        "direction" : "koreanToEnglish",
+        "domain" : "general",
+        "goldenMeaning" : "The speaker saw her duck or bend down just before the ball hit the wall. Preserve the action and event order; do not turn the action into an animal.",
+        "id" : "ko-general-duck-action",
+        "previousSentence" : "피구 경기를 보고 있었어요.",
+        "source" : "공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 걸 봤어요."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 177.019,
+          "output_tokens" : 12,
+          "prefill_ms" : 99.153,
+          "prompt_tokens" : 58,
+          "timed_out" : false,
+          "total_ms" : 277.47,
+          "truncated" : false,
+          "ttft_ms" : 100.504
+        },
+        "nativeStatus" : 0,
+        "text" : "I saw her duck just before the ball hit the wall.",
+        "wall_ms" : 277.65900001395494
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 177.083,
+          "output_tokens" : 12,
+          "prefill_ms" : 140.562,
+          "prompt_tokens" : 93,
+          "timed_out" : false,
+          "total_ms" : 319.005,
+          "truncated" : false,
+          "ttft_ms" : 141.975
+        },
+        "nativeStatus" : 0,
+        "text" : "I saw her duck just before the ball hit the wall.",
+        "wall_ms" : 319.1837917547673
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\n공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 걸 봤어요.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\n피구 경기를 보고 있었어요.\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Translate only [Source Text], using the background for context.\n[Source Text]\n공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 걸 봤어요.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "After installing dependency, this task is a piece of cake.",
+        "wall_ms" : 31.000624992884696
+      },
+      "fixture" : {
+        "ambiguityNote" : "A piece of cake, straightforward, or very easy are acceptable natural translations.",
+        "direction" : "koreanToEnglish",
+        "domain" : "general",
+        "goldenMeaning" : "Once the dependencies are installed, the task is very easy. Preserve the prerequisite and idiomatic meaning rather than describing food.",
+        "id" : "ko-general-easy-idiom",
+        "previousSentence" : "그녀는 이 설정을 수십 번 해 봤어요.",
+        "source" : "의존성만 설치하고 나면 이 작업은 식은 죽 먹기예요."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 206.748,
+          "output_tokens" : 14,
+          "prefill_ms" : 98.348,
+          "prompt_tokens" : 53,
+          "timed_out" : false,
+          "total_ms" : 306.386,
+          "truncated" : false,
+          "ttft_ms" : 99.691
+        },
+        "nativeStatus" : 0,
+        "text" : "Once the dependencies are installed, this task is a piece of cake.",
+        "wall_ms" : 306.5830833511427
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 206.784,
+          "output_tokens" : 14,
+          "prefill_ms" : 140.525,
+          "prompt_tokens" : 91,
+          "timed_out" : false,
+          "total_ms" : 348.673,
+          "truncated" : false,
+          "ttft_ms" : 141.943
+        },
+        "nativeStatus" : 0,
+        "text" : "Once the dependencies are installed, this task is a piece of cake.",
+        "wall_ms" : 348.85041671805084
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\n의존성만 설치하고 나면 이 작업은 식은 죽 먹기예요.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\n그녀는 이 설정을 수십 번 해 봤어요.\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Translate only [Source Text], using the background for context.\n[Source Text]\n의존성만 설치하고 나면 이 작업은 식은 죽 먹기예요.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "This patch not only fixes crashes but also reduces memory usage.",
+        "wall_ms" : 26.214416604489088
+      },
+      "fixture" : {
+        "direction" : "koreanToEnglish",
+        "domain" : "it",
+        "goldenMeaning" : "The patch both fixes the crash and reduces memory usage. Keep both effects affirmative; a not-only construction is optional.",
+        "id" : "ko-it-not-only",
+        "source" : "이번 패치는 충돌을 고칠 뿐 아니라 메모리 사용량도 줄여 줍니다."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 192.717,
+          "output_tokens" : 13,
+          "prefill_ms" : 99.502,
+          "prompt_tokens" : 63,
+          "timed_out" : false,
+          "total_ms" : 293.565,
+          "truncated" : false,
+          "ttft_ms" : 100.899
+        },
+        "nativeStatus" : 0,
+        "text" : "This patch not only fixes the conflicts but also reduces memory usage.",
+        "wall_ms" : 293.8267083372921
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\n이번 패치는 충돌을 고칠 뿐 아니라 메모리 사용량도 줄여 줍니다.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "You don't need to restart the service unless the settings are changed.",
+        "wall_ms" : 19.87120835110545
+      },
+      "fixture" : {
+        "direction" : "koreanToEnglish",
+        "domain" : "it",
+        "goldenMeaning" : "There is no need to restart the service unless the configuration changes. Preserve the negative statement and its exception, without claiming restart is always required or never allowed.",
+        "id" : "ko-it-unless-negation",
+        "source" : "설정이 바뀌지 않는 한 서비스를 다시 시작할 필요가 없습니다."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 214.33,
+          "output_tokens" : 14,
+          "prefill_ms" : 100.084,
+          "prompt_tokens" : 55,
+          "timed_out" : false,
+          "total_ms" : 315.824,
+          "truncated" : false,
+          "ttft_ms" : 101.548
+        },
+        "nativeStatus" : 0,
+        "text" : "Unless the settings change, there’s no need to restart the service.",
+        "wall_ms" : 316.12383329775184
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\n설정이 바뀌지 않는 한 서비스를 다시 시작할 필요가 없습니다.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "Let's meet on Tuesday. No, Thursday. Not tomorrow.",
+        "wall_ms" : 37.97133325133473
+      },
+      "fixture" : {
+        "ambiguityNote" : "A natural self-correction is valid. Do not silently treat the abandoned Tuesday as a confirmed meeting.",
+        "direction" : "koreanToEnglish",
+        "domain" : "general",
+        "goldenMeaning" : "The speaker corrects Tuesday to Thursday and rules out tomorrow. The final meeting day is Thursday, rather than two separate dates.",
+        "id" : "ko-general-corrected-weekday",
+        "previousSentence" : "오늘은 월요일입니다.",
+        "source" : "화요일에 만납시다. 아니, 목요일이요. 내일은 아닙니다."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 197.884,
+          "output_tokens" : 13,
+          "prefill_ms" : 100.286,
+          "prompt_tokens" : 51,
+          "timed_out" : false,
+          "total_ms" : 299.476,
+          "truncated" : false,
+          "ttft_ms" : 101.645
+        },
+        "nativeStatus" : 0,
+        "text" : "Let’s meet on Tuesday. No, Thursday. Not tomorrow.",
+        "wall_ms" : 299.67058333568275
+      },
+      "localWithPreviousSentence" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 197.838,
+          "output_tokens" : 13,
+          "prefill_ms" : 143.011,
+          "prompt_tokens" : 81,
+          "timed_out" : false,
+          "total_ms" : 342.193,
+          "truncated" : false,
+          "ttft_ms" : 144.408
+        },
+        "nativeStatus" : 0,
+        "text" : "Let’s meet on Tuesday. No, Thursday. Not tomorrow.",
+        "wall_ms" : 342.380499932915
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\n화요일에 만납시다. 아니, 목요일이요. 내일은 아닙니다.<｜hy_Assistant｜>",
+      "withContextPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\n오늘은 월요일입니다.\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Translate only [Source Text], using the background for context.\n[Source Text]\n화요일에 만납시다. 아니, 목요일이요. 내일은 아닙니다.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "The error rate dropped from 2.5% to 0.8%, and the median delay time remained at 120 milliseconds.",
+        "wall_ms" : 32.438666676171124
+      },
+      "fixture" : {
+        "direction" : "koreanToEnglish",
+        "domain" : "it",
+        "expectedNumbers" : [
+          "2.5%",
+          "0.8%",
+          "120 milliseconds"
+        ],
+        "goldenMeaning" : "The error rate fell from 2.5% to 0.8%, while median latency stayed at 120 milliseconds. Preserve the old and new rates, milliseconds, median, and unchanged latency.",
+        "id" : "ko-it-percentages-latency",
+        "source" : "오류율은 2.5%에서 0.8%로 떨어졌고, 지연 시간 중앙값은 120밀리초로 유지됐어요."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 428.074,
+          "output_tokens" : 28,
+          "prefill_ms" : 186.658,
+          "prompt_tokens" : 97,
+          "timed_out" : false,
+          "total_ms" : 616.084,
+          "truncated" : false,
+          "ttft_ms" : 188.06
+        },
+        "nativeStatus" : 0,
+        "text" : "The error rate dropped from 2.5% to 0.8%, while the latency median remained at 120 milliseconds.",
+        "wall_ms" : 616.5731666842476
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Reference the following translations:\n지연 시간 translates to latency\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. This is an IT discussion.\n\n오류율은 2.5%에서 0.8%로 떨어졌고, 지연 시간 중앙값은 120밀리초로 유지됐어요.<｜hy_Assistant｜>"
+    },
+    {
+      "appleSourceOnly" : {
+        "text" : "Please schedule the review meeting at 9:30 a.m. on October 15, 2026 in Korean standard time.",
+        "wall_ms" : 38.19658327847719
+      },
+      "fixture" : {
+        "direction" : "koreanToEnglish",
+        "domain" : "general",
+        "expectedNumbers" : [
+          "2026",
+          "October 15",
+          "9:30 a.m. KST"
+        ],
+        "goldenMeaning" : "Schedule the review for October 15, 2026, at 9:30 a.m. Korea Standard Time. Preserve the date, morning time, and time zone.",
+        "id" : "ko-general-date-time-zone",
+        "source" : "검토 회의는 한국 표준시로 2026년 10월 15일 오전 9시 30분에 잡아 주세요."
+      },
+      "guardBaseline" : "Apple source-only translation",
+      "localSourceOnly" : {
+        "guardAccepted" : true,
+        "native" : {
+          "cancelled" : false,
+          "decode_ms" : 461.284,
+          "output_tokens" : 31,
+          "prefill_ms" : 142.234,
+          "prompt_tokens" : 72,
+          "timed_out" : false,
+          "total_ms" : 605.022,
+          "truncated" : false,
+          "ttft_ms" : 143.794
+        },
+        "nativeStatus" : 0,
+        "text" : "Please schedule the review meeting for 9:30 a.m. on October 15, 2026, in Korean Standard Time.",
+        "wall_ms" : 605.2915833424777
+      },
+      "sourceOnlyPrompt" : "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\n검토 회의는 한국 표준시로 2026년 10월 15일 오전 9시 30분에 잡아 주세요.<｜hy_Assistant｜>"
+    }
+  ],
+  "fixturesSHA256" : "17acf256c3fa34ae339694d2f81b7cc04da6806fc1ba1b70a5c8a6b69e7cfd62",
+  "generatedAt" : "2026-10-01T05:20:46Z",
+  "lifecycle" : {
+    "busyRejected" : true,
+    "cancellationObserved" : true,
+    "cancellationReturn_ms" : 155.2477916702628,
+    "details" : [
+
+    ],
+    "lateCancellationOfCompletedTaskDidNotCancelNextRequest" : true,
+    "recoverySucceeded" : true
+  },
+  "limitations" : [
+    "Authored text fixtures are not a representative translation benchmark or live speech-recognition test.",
+    "Guard acceptance is a syntax/number check, not a semantic accuracy score. goldenMeaning and review notes require human semantic review.",
+    "Apple source-only and local context-enabled conditions have different information; do not attribute contextual gains solely to the model.",
+    "This sequential native-engine soak does not establish live microphone, full application scheduling, end-to-end caption latency, or fan noise.",
+    "Peak RSS is process lifetime high-water memory in bytes on macOS; current resident RSS is sampled separately. Thermal state is the OS-reported category.",
+    "Samples that time out have no usable completed caption and are included in timeout counts. Timing distributions include available native statistics from failures."
+  ],
+  "machine" : "arm64",
+  "model" : {
+    "actualByteCount" : 4624648896,
+    "expectedByteCount" : 4624648896,
+    "expectedRevision" : "ab8472660ac61fac25f1af43fac2599d52a8a775",
+    "expectedSHA256" : "9f96256500f3fc1ab4d64336b58f52a949a95ad7516b0c229476eef782f9f77b",
+    "model" : "Tencent Hy-MT2-7B",
+    "modelPath" : "/Users/jaehoseo/Desktop/vswrk/javis/live-ko-caption/.build/experiments/models/Hy-MT2-7B-Q4_K_M.gguf",
+    "provenanceVerification" : "Pinned manifest metadata and file size recorded. This driver does not rehash the model file; its SHA-256 is verified separately before use.",
+    "quantization" : "Q4_K_M",
+    "repository" : "tencent/Hy-MT2-7B-GGUF"
+  },
+  "physicalMemoryBytes" : 38654705664,
+  "platform" : "Version 26.7 (Build 25G229)",
+  "processors" : 14,
+  "productTimeoutMilliseconds" : 1500,
+  "qualityTimeoutMilliseconds" : 6000,
+  "runtimePath" : "/Users/jaehoseo/Desktop/vswrk/javis/live-ko-caption/.build/local-runtime/libcaption_local_translation.dylib",
+  "schemaVersion" : 1,
+  "soak" : {
+    "elapsedSeconds" : 300.2848961666459,
+    "intervalSeconds" : 2,
+    "maximumConcurrentNativeRequests" : 1,
+    "queuedCatchUpRequests" : 0,
+    "requestedSeconds" : 300,
+    "samples" : [
+      {
+        "elapsedSeconds" : 1.3610941666411236,
+        "fixtureID" : "en-it-precision-recall",
+        "index" : 0,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 1170.769,
+            "output_tokens" : 78,
+            "prefill_ms" : 182.648,
+            "prompt_tokens" : 104,
+            "timed_out" : false,
+            "total_ms" : 1354.834,
+            "truncated" : false,
+            "ttft_ms" : 184.12
+          },
+          "nativeStatus" : 0,
+          "text" : "정밀도는 실제로 악성으로 분류된 요청들 중 정말 악성인 경우가 몇 개인지를 나타내며, 재현율은 우리가 포착한 악성 요청의 총 수를 나타냅니다.",
+          "wall_ms" : 1360.8124166494235
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978229248,
+          "processCPUSeconds" : 2.072134,
+          "residentRSSBytes" : 4978196480,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 2.6271504999604076,
+        "fixtureID" : "en-general-recall-meeting",
+        "index" : 1,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 487.77,
+            "output_tokens" : 32,
+            "prefill_ms" : 114.197,
+            "prompt_tokens" : 64,
+            "timed_out" : false,
+            "total_ms" : 608.163,
+            "truncated" : false,
+            "ttft_ms" : 120.667
+          },
+          "nativeStatus" : 0,
+          "text" : "지난 목요일 회의를 주재한 분이 누구였는지 기억나지 않아요.",
+          "wall_ms" : 608.6357083404437
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978245632,
+          "processCPUSeconds" : 2.164384,
+          "residentRSSBytes" : 4978212864,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 4.872419208288193,
+        "fixtureID" : "en-it-deployment-rollback",
+        "index" : 2,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 594.324,
+            "output_tokens" : 40,
+            "prefill_ms" : 153.064,
+            "prompt_tokens" : 84,
+            "timed_out" : false,
+            "total_ms" : 749.784,
+            "truncated" : false,
+            "ttft_ms" : 155.558
+          },
+          "nativeStatus" : 0,
+          "text" : "배포에 실패할 경우, 데이터베이스는 그대로 유지한 채 이전 버전으로 롤백해야 합니다.",
+          "wall_ms" : 761.1262917052954
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978245632,
+          "processCPUSeconds" : 2.224966,
+          "residentRSSBytes" : 4978212864,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 7.191374541609548,
+        "fixtureID" : "en-it-kubernetes-readiness",
+        "index" : 3,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 829.47,
+            "output_tokens" : 56,
+            "prefill_ms" : 155.918,
+            "prompt_tokens" : 95,
+            "timed_out" : false,
+            "total_ms" : 987.764,
+            "truncated" : false,
+            "ttft_ms" : 158.446
+          },
+          "nativeStatus" : 0,
+          "text" : "팟은 실행 중이지만 레디니스 프로브가 여전히 실패하고 있어, Kubernetes는 아직 해당 팟으로 트래픽을 보내서는 안 됩니다.",
+          "wall_ms" : 998.6195000819862
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978245632,
+          "processCPUSeconds" : 2.303852,
+          "residentRSSBytes" : 4978212864,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 8.625340124941431,
+        "fixtureID" : "en-general-bank-context",
+        "index" : 4,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 271.684,
+            "output_tokens" : 18,
+            "prefill_ms" : 112.095,
+            "prompt_tokens" : 61,
+            "timed_out" : false,
+            "total_ms" : 390.161,
+            "truncated" : false,
+            "ttft_ms" : 118.639
+          },
+          "nativeStatus" : 0,
+          "text" : "점심 먹고 나서 강가에서 만나요.",
+          "wall_ms" : 390.8407083945349
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978245632,
+          "processCPUSeconds" : 2.363681,
+          "residentRSSBytes" : 4978212864,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 10.98867166659329,
+        "fixtureID" : "en-general-duck-context",
+        "index" : 5,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 519.568,
+            "output_tokens" : 35,
+            "prefill_ms" : 120.843,
+            "prompt_tokens" : 63,
+            "timed_out" : false,
+            "total_ms" : 646.6,
+            "truncated" : false,
+            "ttft_ms" : 127.292
+          },
+          "nativeStatus" : 0,
+          "text" : "공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 것을 봤어요.",
+          "wall_ms" : 646.8782082665712
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978245632,
+          "processCPUSeconds" : 2.420949,
+          "residentRSSBytes" : 4978212864,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 12.892495749983937,
+        "fixtureID" : "en-general-piece-of-cake",
+        "index" : 6,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 345.429,
+            "output_tokens" : 23,
+            "prefill_ms" : 114.308,
+            "prompt_tokens" : 64,
+            "timed_out" : false,
+            "total_ms" : 461.621,
+            "truncated" : false,
+            "ttft_ms" : 116.278
+          },
+          "nativeStatus" : 0,
+          "text" : "의존성들을 설치하고 나면 정말 쉬운 일이에요.",
+          "wall_ms" : 461.85562503524125
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978245632,
+          "processCPUSeconds" : 2.455962,
+          "residentRSSBytes" : 4978212864,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 15.229692124994472,
+        "fixtureID" : "en-it-not-only",
+        "index" : 7,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 573.767,
+            "output_tokens" : 39,
+            "prefill_ms" : 110.611,
+            "prompt_tokens" : 42,
+            "timed_out" : false,
+            "total_ms" : 685.678,
+            "truncated" : false,
+            "ttft_ms" : 112.784
+          },
+          "nativeStatus" : 0,
+          "text" : "이 패치는 시스템 크래시를 해결할 뿐만 아니라 메모리 사용량도 줄여줍니다.",
+          "wall_ms" : 697.3419166170061
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978327552,
+          "processCPUSeconds" : 2.512645,
+          "residentRSSBytes" : 4978294784,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 17.09829999995418,
+        "fixtureID" : "en-it-unless-negation",
+        "index" : 8,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 358.265,
+            "output_tokens" : 24,
+            "prefill_ms" : 109.279,
+            "prompt_tokens" : 42,
+            "timed_out" : false,
+            "total_ms" : 470.371,
+            "truncated" : false,
+            "ttft_ms" : 112.261
+          },
+          "nativeStatus" : 0,
+          "text" : "구성이 변경되지 않는 한 서비스를 재시작할 필요는 없습니다.",
+          "wall_ms" : 484.63954171165824
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978327552,
+          "processCPUSeconds" : 2.5687439999999997,
+          "residentRSSBytes" : 4978294784,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 19.282156541594304,
+        "fixtureID" : "en-general-corrected-weekday",
+        "index" : 9,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 458.641,
+            "output_tokens" : 31,
+            "prefill_ms" : 113.925,
+            "prompt_tokens" : 59,
+            "timed_out" : false,
+            "total_ms" : 574.273,
+            "truncated" : false,
+            "ttft_ms" : 115.764
+          },
+          "nativeStatus" : 0,
+          "text" : "화요일에 만나요. 아니, 내일이 아니라 목요일에요. 죄송합니다.",
+          "wall_ms" : 574.48925008066
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978327552,
+          "processCPUSeconds" : 2.608809,
+          "residentRSSBytes" : 4978294784,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 21.76734466664493,
+        "fixtureID" : "en-it-percentages-latency",
+        "index" : 10,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 812.111,
+            "output_tokens" : 55,
+            "prefill_ms" : 154.928,
+            "prompt_tokens" : 72,
+            "timed_out" : false,
+            "total_ms" : 969.789,
+            "truncated" : false,
+            "ttft_ms" : 157.819
+          },
+          "nativeStatus" : 0,
+          "text" : "오류율은 2.5%에서 0.8%로 감소했으며, 평균 지연 시간은 120밀리초 그대로 유지되었습니다.",
+          "wall_ms" : 978.7298750597984
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978327552,
+          "processCPUSeconds" : 2.67968,
+          "residentRSSBytes" : 4978294784,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 23.696465999935754,
+        "fixtureID" : "en-general-date-time-zone",
+        "index" : 11,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 722.989,
+            "output_tokens" : 49,
+            "prefill_ms" : 115.737,
+            "prompt_tokens" : 51,
+            "timed_out" : false,
+            "total_ms" : 846.064,
+            "truncated" : false,
+            "ttft_ms" : 123.235
+          },
+          "nativeStatus" : 0,
+          "text" : "2026년 10월 15일 오전 9시 30분, 한국 표준시에 리뷰를 진행하기로 예약하세요.",
+          "wall_ms" : 846.4311249554157
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978327552,
+          "processCPUSeconds" : 2.749276,
+          "residentRSSBytes" : 4978294784,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 25.59252683329396,
+        "fixtureID" : "ko-it-precision-recall",
+        "index" : 12,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 406.382,
+            "output_tokens" : 27,
+            "prefill_ms" : 264.694,
+            "prompt_tokens" : 149,
+            "timed_out" : false,
+            "total_ms" : 677.109,
+            "truncated" : false,
+            "ttft_ms" : 270.936
+          },
+          "nativeStatus" : 0,
+          "text" : "Precision is the ratio of actual positives among the items that were detected, while recall is the ratio of detected items among the actual positives.",
+          "wall_ms" : 677.7745001018047
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978343936,
+          "processCPUSeconds" : 2.836247,
+          "residentRSSBytes" : 4978311168,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 27.297066583298147,
+        "fixtureID" : "ko-general-recall-meeting",
+        "index" : 13,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 222.862,
+            "output_tokens" : 15,
+            "prefill_ms" : 154.964,
+            "prompt_tokens" : 92,
+            "timed_out" : false,
+            "total_ms" : 379.438,
+            "truncated" : false,
+            "ttft_ms" : 156.707
+          },
+          "nativeStatus" : 0,
+          "text" : "I can’t remember clearly who gave the presentation at last Thursday’s meeting.",
+          "wall_ms" : 379.65412496123463
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978343936,
+          "processCPUSeconds" : 2.860927,
+          "residentRSSBytes" : 4978311168,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 29.52394404169172,
+        "fixtureID" : "ko-it-deployment-rollback",
+        "index" : 14,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 299.437,
+            "output_tokens" : 20,
+            "prefill_ms" : 203.148,
+            "prompt_tokens" : 127,
+            "timed_out" : false,
+            "total_ms" : 508.252,
+            "truncated" : false,
+            "ttft_ms" : 209.158
+          },
+          "nativeStatus" : 0,
+          "text" : "If the deployment fails, perform a rollback to the previous version, but do not delete the database.",
+          "wall_ms" : 508.75666667707264
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978376704,
+          "processCPUSeconds" : 2.9085780000000003,
+          "residentRSSBytes" : 4978343936,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 31.658765041618608,
+        "fixtureID" : "ko-it-kubernetes-readiness",
+        "index" : 15,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 325.756,
+            "output_tokens" : 22,
+            "prefill_ms" : 215.413,
+            "prompt_tokens" : 129,
+            "timed_out" : false,
+            "total_ms" : 548.116,
+            "truncated" : false,
+            "ttft_ms" : 222.423
+          },
+          "nativeStatus" : 0,
+          "text" : "The pod is running, but it fails the readiness check, so Kubernetes still shouldn’t send traffic to it.",
+          "wall_ms" : 548.9591250661761
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978376704,
+          "processCPUSeconds" : 2.9524410000000003,
+          "residentRSSBytes" : 4978343936,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 33.51846974994987,
+        "fixtureID" : "ko-general-bank-context",
+        "index" : 16,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 148.821,
+            "output_tokens" : 10,
+            "prefill_ms" : 156.798,
+            "prompt_tokens" : 91,
+            "timed_out" : false,
+            "total_ms" : 311.895,
+            "truncated" : false,
+            "ttft_ms" : 163.168
+          },
+          "nativeStatus" : 0,
+          "text" : "Let’s meet next to the bank after lunch.",
+          "wall_ms" : 312.2036249842495
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978409472,
+          "processCPUSeconds" : 2.986182,
+          "residentRSSBytes" : 4978376704,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 35.60730720835272,
+        "fixtureID" : "ko-general-duck-action",
+        "index" : 17,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 179.503,
+            "output_tokens" : 12,
+            "prefill_ms" : 160.777,
+            "prompt_tokens" : 93,
+            "timed_out" : false,
+            "total_ms" : 347.355,
+            "truncated" : false,
+            "ttft_ms" : 167.981
+          },
+          "nativeStatus" : 0,
+          "text" : "I saw her duck just before the ball hit the wall.",
+          "wall_ms" : 347.6089999312535
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978409472,
+          "processCPUSeconds" : 3.022619,
+          "residentRSSBytes" : 4978376704,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 37.74438674992416,
+        "fixtureID" : "ko-general-easy-idiom",
+        "index" : 18,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 216.7,
+            "output_tokens" : 14,
+            "prefill_ms" : 159.37,
+            "prompt_tokens" : 91,
+            "timed_out" : false,
+            "total_ms" : 379.259,
+            "truncated" : false,
+            "ttft_ms" : 162.927
+          },
+          "nativeStatus" : 0,
+          "text" : "Once the dependencies are installed, this task is a piece of cake.",
+          "wall_ms" : 379.6652916353196
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978409472,
+          "processCPUSeconds" : 3.082769,
+          "residentRSSBytes" : 4978376704,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 39.775738499942236,
+        "fixtureID" : "ko-it-not-only",
+        "index" : 19,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 197.804,
+            "output_tokens" : 13,
+            "prefill_ms" : 119.028,
+            "prompt_tokens" : 63,
+            "timed_out" : false,
+            "total_ms" : 324.232,
+            "truncated" : false,
+            "ttft_ms" : 126.793
+          },
+          "nativeStatus" : 0,
+          "text" : "This patch not only fixes the conflicts but also reduces memory usage.",
+          "wall_ms" : 325.0193749554455
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978409472,
+          "processCPUSeconds" : 3.143738,
+          "residentRSSBytes" : 4978376704,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 41.89168916665949,
+        "fixtureID" : "ko-it-unless-negation",
+        "index" : 20,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 213.525,
+            "output_tokens" : 14,
+            "prefill_ms" : 112.667,
+            "prompt_tokens" : 55,
+            "timed_out" : false,
+            "total_ms" : 328.88,
+            "truncated" : false,
+            "ttft_ms" : 115.557
+          },
+          "nativeStatus" : 0,
+          "text" : "Unless the settings change, there’s no need to restart the service.",
+          "wall_ms" : 329.75725003052503
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978409472,
+          "processCPUSeconds" : 3.1911359999999998,
+          "residentRSSBytes" : 4978376704,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 44.03767841658555,
+        "fixtureID" : "ko-general-corrected-weekday",
+        "index" : 21,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 202.38,
+            "output_tokens" : 13,
+            "prefill_ms" : 158.517,
+            "prompt_tokens" : 81,
+            "timed_out" : false,
+            "total_ms" : 366.065,
+            "truncated" : false,
+            "ttft_ms" : 164.063
+          },
+          "nativeStatus" : 0,
+          "text" : "Let’s meet on Tuesday. No, Thursday. Not tomorrow.",
+          "wall_ms" : 366.61779158748686
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978409472,
+          "processCPUSeconds" : 3.248784,
+          "residentRSSBytes" : 4978376704,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 46.39610625000205,
+        "fixtureID" : "ko-it-percentages-latency",
+        "index" : 22,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 414.805,
+            "output_tokens" : 28,
+            "prefill_ms" : 204.339,
+            "prompt_tokens" : 97,
+            "timed_out" : false,
+            "total_ms" : 627.54,
+            "truncated" : false,
+            "ttft_ms" : 212.829
+          },
+          "nativeStatus" : 0,
+          "text" : "The error rate dropped from 2.5% to 0.8%, while the latency median remained at 120 milliseconds.",
+          "wall_ms" : 628.321333322674
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978409472,
+          "processCPUSeconds" : 3.301456,
+          "residentRSSBytes" : 4978376704,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 48.49023487500381,
+        "fixtureID" : "ko-general-date-time-zone",
+        "index" : 23,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 477.478,
+            "output_tokens" : 31,
+            "prefill_ms" : 163.698,
+            "prompt_tokens" : 72,
+            "timed_out" : false,
+            "total_ms" : 646.867,
+            "truncated" : false,
+            "ttft_ms" : 169.617
+          },
+          "nativeStatus" : 0,
+          "text" : "Please schedule the review meeting for 9:30 a.m. on October 15, 2026, in Korean Standard Time.",
+          "wall_ms" : 647.2963333362713
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978409472,
+          "processCPUSeconds" : 3.372192,
+          "residentRSSBytes" : 4978376704,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 51.28043641662225,
+        "fixtureID" : "en-it-precision-recall",
+        "index" : 24,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 1148.012,
+            "output_tokens" : 78,
+            "prefill_ms" : 199.083,
+            "prompt_tokens" : 104,
+            "timed_out" : false,
+            "total_ms" : 1350.446,
+            "truncated" : false,
+            "ttft_ms" : 202.492
+          },
+          "nativeStatus" : 0,
+          "text" : "정밀도는 실제로 악성으로 분류된 요청들 중 정말 악성인 경우가 몇 개인지를 나타내며, 재현율은 우리가 포착한 악성 요청의 총 수를 나타냅니다.",
+          "wall_ms" : 1366.4997500600293
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978409472,
+          "processCPUSeconds" : 3.47455,
+          "residentRSSBytes" : 4978376704,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 52.55171575001441,
+        "fixtureID" : "en-general-recall-meeting",
+        "index" : 25,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 483.695,
+            "output_tokens" : 32,
+            "prefill_ms" : 113.423,
+            "prompt_tokens" : 64,
+            "timed_out" : false,
+            "total_ms" : 600.52,
+            "truncated" : false,
+            "ttft_ms" : 117.01
+          },
+          "nativeStatus" : 0,
+          "text" : "지난 목요일 회의를 주재한 분이 누구였는지 기억나지 않아요.",
+          "wall_ms" : 600.7722917711362
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978409472,
+          "processCPUSeconds" : 3.556619,
+          "residentRSSBytes" : 4978376704,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 54.8197562500136,
+        "fixtureID" : "en-it-deployment-rollback",
+        "index" : 26,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 600.954,
+            "output_tokens" : 40,
+            "prefill_ms" : 159.196,
+            "prompt_tokens" : 84,
+            "timed_out" : false,
+            "total_ms" : 763.279,
+            "truncated" : false,
+            "ttft_ms" : 162.699
+          },
+          "nativeStatus" : 0,
+          "text" : "배포에 실패할 경우, 데이터베이스는 그대로 유지한 채 이전 버전으로 롤백해야 합니다.",
+          "wall_ms" : 777.163291699253
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978409472,
+          "processCPUSeconds" : 3.6499420000000002,
+          "residentRSSBytes" : 4978376704,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 57.104319749982096,
+        "fixtureID" : "en-it-kubernetes-readiness",
+        "index" : 27,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 826.539,
+            "output_tokens" : 56,
+            "prefill_ms" : 155.916,
+            "prompt_tokens" : 95,
+            "timed_out" : false,
+            "total_ms" : 984.621,
+            "truncated" : false,
+            "ttft_ms" : 158.159
+          },
+          "nativeStatus" : 0,
+          "text" : "팟은 실행 중이지만 레디니스 프로브가 여전히 실패하고 있어, Kubernetes는 아직 해당 팟으로 트래픽을 보내서는 안 됩니다.",
+          "wall_ms" : 994.1593749681488
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978409472,
+          "processCPUSeconds" : 3.718705,
+          "residentRSSBytes" : 4978376704,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 58.566326833330095,
+        "fixtureID" : "en-general-bank-context",
+        "index" : 28,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 268.132,
+            "output_tokens" : 18,
+            "prefill_ms" : 114.775,
+            "prompt_tokens" : 61,
+            "timed_out" : false,
+            "total_ms" : 388.972,
+            "truncated" : false,
+            "ttft_ms" : 121.052
+          },
+          "nativeStatus" : 0,
+          "text" : "점심 먹고 나서 강가에서 만나요.",
+          "wall_ms" : 389.2229166813195
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978409472,
+          "processCPUSeconds" : 3.755682,
+          "residentRSSBytes" : 4978376704,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 60.92241429165006,
+        "fixtureID" : "en-general-duck-context",
+        "index" : 29,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 518.737,
+            "output_tokens" : 35,
+            "prefill_ms" : 116.057,
+            "prompt_tokens" : 63,
+            "timed_out" : false,
+            "total_ms" : 643.202,
+            "truncated" : false,
+            "ttft_ms" : 124.928
+          },
+          "nativeStatus" : 0,
+          "text" : "공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 것을 봤어요.",
+          "wall_ms" : 643.5565000865608
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978409472,
+          "processCPUSeconds" : 3.8207640000000005,
+          "residentRSSBytes" : 4978376704,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 62.85853162501007,
+        "fixtureID" : "en-general-piece-of-cake",
+        "index" : 30,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 366.911,
+            "output_tokens" : 23,
+            "prefill_ms" : 115.991,
+            "prompt_tokens" : 64,
+            "timed_out" : false,
+            "total_ms" : 490.322,
+            "truncated" : false,
+            "ttft_ms" : 123.78
+          },
+          "nativeStatus" : 0,
+          "text" : "의존성들을 설치하고 나면 정말 쉬운 일이에요.",
+          "wall_ms" : 490.6659167027101
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978409472,
+          "processCPUSeconds" : 3.904884,
+          "residentRSSBytes" : 4978376704,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 65.12394433328882,
+        "fixtureID" : "en-it-not-only",
+        "index" : 31,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 576.343,
+            "output_tokens" : 39,
+            "prefill_ms" : 115.474,
+            "prompt_tokens" : 42,
+            "timed_out" : false,
+            "total_ms" : 694.879,
+            "truncated" : false,
+            "ttft_ms" : 118.74
+          },
+          "nativeStatus" : 0,
+          "text" : "이 패치는 시스템 크래시를 해결할 뿐만 아니라 메모리 사용량도 줄여줍니다.",
+          "wall_ms" : 709.3866666546091
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978425856,
+          "processCPUSeconds" : 3.9736409999999998,
+          "residentRSSBytes" : 4978393088,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 66.99639400001615,
+        "fixtureID" : "en-it-unless-negation",
+        "index" : 32,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 366.152,
+            "output_tokens" : 24,
+            "prefill_ms" : 116.31,
+            "prompt_tokens" : 42,
+            "timed_out" : false,
+            "total_ms" : 485.623,
+            "truncated" : false,
+            "ttft_ms" : 119.744
+          },
+          "nativeStatus" : 0,
+          "text" : "구성이 변경되지 않는 한 서비스를 재시작할 필요는 없습니다.",
+          "wall_ms" : 500.2226249780506
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978425856,
+          "processCPUSeconds" : 4.0571459999999995,
+          "residentRSSBytes" : 4978393088,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 69.12452595832292,
+        "fixtureID" : "en-general-corrected-weekday",
+        "index" : 33,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 459.97,
+            "output_tokens" : 31,
+            "prefill_ms" : 120.692,
+            "prompt_tokens" : 59,
+            "timed_out" : false,
+            "total_ms" : 587.865,
+            "truncated" : false,
+            "ttft_ms" : 128.138
+          },
+          "nativeStatus" : 0,
+          "text" : "화요일에 만나요. 아니, 내일이 아니라 목요일에요. 죄송합니다.",
+          "wall_ms" : 588.1626250920817
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978425856,
+          "processCPUSeconds" : 4.117107,
+          "residentRSSBytes" : 4978393088,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 71.60131433326751,
+        "fixtureID" : "en-it-percentages-latency",
+        "index" : 34,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 809.209,
+            "output_tokens" : 55,
+            "prefill_ms" : 157.042,
+            "prompt_tokens" : 72,
+            "timed_out" : false,
+            "total_ms" : 968.82,
+            "truncated" : false,
+            "ttft_ms" : 159.687
+          },
+          "nativeStatus" : 0,
+          "text" : "오류율은 2.5%에서 0.8%로 감소했으며, 평균 지연 시간은 120밀리초 그대로 유지되었습니다.",
+          "wall_ms" : 980.0167916109785
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 4.185554,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 73.52733945834916,
+        "fixtureID" : "en-general-date-time-zone",
+        "index" : 35,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 724.449,
+            "output_tokens" : 49,
+            "prefill_ms" : 111.184,
+            "prompt_tokens" : 51,
+            "timed_out" : false,
+            "total_ms" : 839.285,
+            "truncated" : false,
+            "ttft_ms" : 115.053
+          },
+          "nativeStatus" : 0,
+          "text" : "2026년 10월 15일 오전 9시 30분, 한국 표준시에 리뷰를 진행하기로 예약하세요.",
+          "wall_ms" : 839.6092499606311
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 4.247961,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 75.4243939582957,
+        "fixtureID" : "ko-it-precision-recall",
+        "index" : 36,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 395.972,
+            "output_tokens" : 27,
+            "prefill_ms" : 257.729,
+            "prompt_tokens" : 149,
+            "timed_out" : false,
+            "total_ms" : 660.845,
+            "truncated" : false,
+            "ttft_ms" : 264.939
+          },
+          "nativeStatus" : 0,
+          "text" : "Precision is the ratio of actual positives among the items that were detected, while recall is the ratio of detected items among the actual positives.",
+          "wall_ms" : 661.6095417411998
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 4.29701,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 77.22661212494131,
+        "fixtureID" : "ko-general-recall-meeting",
+        "index" : 37,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 223.649,
+            "output_tokens" : 15,
+            "prefill_ms" : 159.14,
+            "prompt_tokens" : 92,
+            "timed_out" : false,
+            "total_ms" : 384.781,
+            "truncated" : false,
+            "ttft_ms" : 161.218
+          },
+          "nativeStatus" : 0,
+          "text" : "I can’t remember clearly who gave the presentation at last Thursday’s meeting.",
+          "wall_ms" : 385.0260416511446
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 4.330842,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 79.40365062491037,
+        "fixtureID" : "ko-it-deployment-rollback",
+        "index" : 38,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 306.315,
+            "output_tokens" : 20,
+            "prefill_ms" : 198.88,
+            "prompt_tokens" : 127,
+            "timed_out" : false,
+            "total_ms" : 513.027,
+            "truncated" : false,
+            "ttft_ms" : 207.086
+          },
+          "nativeStatus" : 0,
+          "text" : "If the deployment fails, perform a rollback to the previous version, but do not delete the database.",
+          "wall_ms" : 513.5798749979585
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 4.406674,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 81.48175679158885,
+        "fixtureID" : "ko-it-kubernetes-readiness",
+        "index" : 39,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 335.59,
+            "output_tokens" : 22,
+            "prefill_ms" : 224.008,
+            "prompt_tokens" : 129,
+            "timed_out" : false,
+            "total_ms" : 566.162,
+            "truncated" : false,
+            "ttft_ms" : 230.897
+          },
+          "nativeStatus" : 0,
+          "text" : "The pod is running, but it fails the readiness check, so Kubernetes still shouldn’t send traffic to it.",
+          "wall_ms" : 566.7678333120421
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 4.4922889999999995,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 83.32838566659484,
+        "fixtureID" : "ko-general-bank-context",
+        "index" : 40,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 150.619,
+            "output_tokens" : 10,
+            "prefill_ms" : 162.087,
+            "prompt_tokens" : 91,
+            "timed_out" : false,
+            "total_ms" : 319.231,
+            "truncated" : false,
+            "ttft_ms" : 168.741
+          },
+          "nativeStatus" : 0,
+          "text" : "Let’s meet next to the bank after lunch.",
+          "wall_ms" : 319.5189166581258
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 4.526387,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 85.43151983327698,
+        "fixtureID" : "ko-general-duck-action",
+        "index" : 41,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 187.516,
+            "output_tokens" : 12,
+            "prefill_ms" : 160.561,
+            "prompt_tokens" : 93,
+            "timed_out" : false,
+            "total_ms" : 354.797,
+            "truncated" : false,
+            "ttft_ms" : 167.648
+          },
+          "nativeStatus" : 0,
+          "text" : "I saw her duck just before the ball hit the wall.",
+          "wall_ms" : 355.321874958463
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 4.589701,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 87.54425904166419,
+        "fixtureID" : "ko-general-easy-idiom",
+        "index" : 42,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 215.527,
+            "output_tokens" : 14,
+            "prefill_ms" : 156.375,
+            "prompt_tokens" : 91,
+            "timed_out" : false,
+            "total_ms" : 378.998,
+            "truncated" : false,
+            "ttft_ms" : 163.752
+          },
+          "nativeStatus" : 0,
+          "text" : "Once the dependencies are installed, this task is a piece of cake.",
+          "wall_ms" : 379.37883334234357
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 4.654212,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 89.58824087493122,
+        "fixtureID" : "ko-it-not-only",
+        "index" : 43,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 194.397,
+            "output_tokens" : 13,
+            "prefill_ms" : 117.867,
+            "prompt_tokens" : 63,
+            "timed_out" : false,
+            "total_ms" : 316.794,
+            "truncated" : false,
+            "ttft_ms" : 122.612
+          },
+          "nativeStatus" : 0,
+          "text" : "This patch not only fixes the conflicts but also reduces memory usage.",
+          "wall_ms" : 317.51308334060013
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 4.687921,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 91.67931787495036,
+        "fixtureID" : "ko-it-unless-negation",
+        "index" : 44,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 215.495,
+            "output_tokens" : 14,
+            "prefill_ms" : 113.912,
+            "prompt_tokens" : 55,
+            "timed_out" : false,
+            "total_ms" : 335.875,
+            "truncated" : false,
+            "ttft_ms" : 120.755
+          },
+          "nativeStatus" : 0,
+          "text" : "Unless the settings change, there’s no need to restart the service.",
+          "wall_ms" : 336.5738750435412
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 4.749339,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 93.8219318332849,
+        "fixtureID" : "ko-general-corrected-weekday",
+        "index" : 45,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 203.614,
+            "output_tokens" : 13,
+            "prefill_ms" : 160.258,
+            "prompt_tokens" : 81,
+            "timed_out" : false,
+            "total_ms" : 370.349,
+            "truncated" : false,
+            "ttft_ms" : 167.182
+          },
+          "nativeStatus" : 0,
+          "text" : "Let’s meet on Tuesday. No, Thursday. Not tomorrow.",
+          "wall_ms" : 370.7183749647811
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 4.814803,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 96.17275758332107,
+        "fixtureID" : "ko-it-percentages-latency",
+        "index" : 46,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 412.568,
+            "output_tokens" : 28,
+            "prefill_ms" : 204.279,
+            "prompt_tokens" : 97,
+            "timed_out" : false,
+            "total_ms" : 623.542,
+            "truncated" : false,
+            "ttft_ms" : 211.037
+          },
+          "nativeStatus" : 0,
+          "text" : "The error rate dropped from 2.5% to 0.8%, while the latency median remained at 120 milliseconds.",
+          "wall_ms" : 624.4093333370984
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 4.862322,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 98.23479633335955,
+        "fixtureID" : "ko-general-date-time-zone",
+        "index" : 47,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 458.694,
+            "output_tokens" : 31,
+            "prefill_ms" : 159.251,
+            "prompt_tokens" : 72,
+            "timed_out" : false,
+            "total_ms" : 624.27,
+            "truncated" : false,
+            "ttft_ms" : 165.708
+          },
+          "nativeStatus" : 0,
+          "text" : "Please schedule the review meeting for 9:30 a.m. on October 15, 2026, in Korean Standard Time.",
+          "wall_ms" : 624.6369166765362
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 4.917727,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 101.03443666663952,
+        "fixtureID" : "en-it-precision-recall",
+        "index" : 48,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 1149.155,
+            "output_tokens" : 78,
+            "prefill_ms" : 198.543,
+            "prompt_tokens" : 104,
+            "timed_out" : false,
+            "total_ms" : 1349.584,
+            "truncated" : false,
+            "ttft_ms" : 200.507
+          },
+          "nativeStatus" : 0,
+          "text" : "정밀도는 실제로 악성으로 분류된 요청들 중 정말 악성인 경우가 몇 개인지를 나타내며, 재현율은 우리가 포착한 악성 요청의 총 수를 나타냅니다.",
+          "wall_ms" : 1358.6448333226144
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 4.997682,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 102.31807433324866,
+        "fixtureID" : "en-general-recall-meeting",
+        "index" : 49,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 482.12,
+            "output_tokens" : 32,
+            "prefill_ms" : 110.293,
+            "prompt_tokens" : 64,
+            "timed_out" : false,
+            "total_ms" : 599.498,
+            "truncated" : false,
+            "ttft_ms" : 117.593
+          },
+          "nativeStatus" : 0,
+          "text" : "지난 목요일 회의를 주재한 분이 누구였는지 기억나지 않아요.",
+          "wall_ms" : 600.0413750298321
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 5.082901,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 104.56920070829801,
+        "fixtureID" : "en-it-deployment-rollback",
+        "index" : 50,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 589.124,
+            "output_tokens" : 40,
+            "prefill_ms" : 153.476,
+            "prompt_tokens" : 84,
+            "timed_out" : false,
+            "total_ms" : 745.879,
+            "truncated" : false,
+            "ttft_ms" : 156.837
+          },
+          "nativeStatus" : 0,
+          "text" : "배포에 실패할 경우, 데이터베이스는 그대로 유지한 채 이전 버전으로 롤백해야 합니다.",
+          "wall_ms" : 760.186166735366
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 5.146371,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 106.89168783335481,
+        "fixtureID" : "en-it-kubernetes-readiness",
+        "index" : 51,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 873.417,
+            "output_tokens" : 56,
+            "prefill_ms" : 161.876,
+            "prompt_tokens" : 95,
+            "timed_out" : false,
+            "total_ms" : 1038.866,
+            "truncated" : false,
+            "ttft_ms" : 165.727
+          },
+          "nativeStatus" : 0,
+          "text" : "팟은 실행 중이지만 레디니스 프로브가 여전히 실패하고 있어, Kubernetes는 아직 해당 팟으로 트래픽을 보내서는 안 됩니다.",
+          "wall_ms" : 1053.979124990292
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 5.267868999999999,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 108.29253229161259,
+        "fixtureID" : "en-general-bank-context",
+        "index" : 52,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 269.233,
+            "output_tokens" : 18,
+            "prefill_ms" : 114.987,
+            "prompt_tokens" : 61,
+            "timed_out" : false,
+            "total_ms" : 391.887,
+            "truncated" : false,
+            "ttft_ms" : 122.835
+          },
+          "nativeStatus" : 0,
+          "text" : "점심 먹고 나서 강가에서 만나요.",
+          "wall_ms" : 392.172958352603
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 5.309798,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 110.55581387493294,
+        "fixtureID" : "en-general-duck-context",
+        "index" : 53,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 518.4,
+            "output_tokens" : 35,
+            "prefill_ms" : 115.99,
+            "prompt_tokens" : 63,
+            "timed_out" : false,
+            "total_ms" : 642.336,
+            "truncated" : false,
+            "ttft_ms" : 124.149
+          },
+          "nativeStatus" : 0,
+          "text" : "공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 것을 봤어요.",
+          "wall_ms" : 642.6212500082329
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 5.369229,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 112.39862991659902,
+        "fixtureID" : "en-general-piece-of-cake",
+        "index" : 54,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 342.073,
+            "output_tokens" : 23,
+            "prefill_ms" : 112.324,
+            "prompt_tokens" : 64,
+            "timed_out" : false,
+            "total_ms" : 456.508,
+            "truncated" : false,
+            "ttft_ms" : 114.62
+          },
+          "nativeStatus" : 0,
+          "text" : "의존성들을 설치하고 나면 정말 쉬운 일이에요.",
+          "wall_ms" : 456.7208333173767
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 5.406943,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 114.74301108333748,
+        "fixtureID" : "en-it-not-only",
+        "index" : 55,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 575.608,
+            "output_tokens" : 39,
+            "prefill_ms" : 116.327,
+            "prompt_tokens" : 42,
+            "timed_out" : false,
+            "total_ms" : 694.633,
+            "truncated" : false,
+            "ttft_ms" : 119.304
+          },
+          "nativeStatus" : 0,
+          "text" : "이 패치는 시스템 크래시를 해결할 뿐만 아니라 메모리 사용량도 줄여줍니다.",
+          "wall_ms" : 708.8999582920223
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 5.473134,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 116.59937020833604,
+        "fixtureID" : "en-it-unless-negation",
+        "index" : 56,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 355.067,
+            "output_tokens" : 24,
+            "prefill_ms" : 110.244,
+            "prompt_tokens" : 42,
+            "timed_out" : false,
+            "total_ms" : 467.938,
+            "truncated" : false,
+            "ttft_ms" : 112.994
+          },
+          "nativeStatus" : 0,
+          "text" : "구성이 변경되지 않는 한 서비스를 재시작할 필요는 없습니다.",
+          "wall_ms" : 481.194541673176
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 5.521764,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 118.71335974999238,
+        "fixtureID" : "en-general-corrected-weekday",
+        "index" : 57,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 458.666,
+            "output_tokens" : 31,
+            "prefill_ms" : 111.217,
+            "prompt_tokens" : 59,
+            "timed_out" : false,
+            "total_ms" : 573.115,
+            "truncated" : false,
+            "ttft_ms" : 114.6
+          },
+          "nativeStatus" : 0,
+          "text" : "화요일에 만나요. 아니, 내일이 아니라 목요일에요. 죄송합니다.",
+          "wall_ms" : 573.3425000216812
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 5.567099000000001,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 121.15621874993667,
+        "fixtureID" : "en-it-percentages-latency",
+        "index" : 58,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 810.676,
+            "output_tokens" : 55,
+            "prefill_ms" : 160.642,
+            "prompt_tokens" : 72,
+            "timed_out" : false,
+            "total_ms" : 973.78,
+            "truncated" : false,
+            "ttft_ms" : 163.214
+          },
+          "nativeStatus" : 0,
+          "text" : "오류율은 2.5%에서 0.8%로 감소했으며, 평균 지연 시간은 120밀리초 그대로 유지되었습니다.",
+          "wall_ms" : 988.3998750010505
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 5.639206,
+          "residentRSSBytes" : 4978409472,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 123.06743587495293,
+        "fixtureID" : "en-general-date-time-zone",
+        "index" : 59,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 722.484,
+            "output_tokens" : 49,
+            "prefill_ms" : 107.79,
+            "prompt_tokens" : 51,
+            "timed_out" : false,
+            "total_ms" : 832.648,
+            "truncated" : false,
+            "ttft_ms" : 110.362
+          },
+          "nativeStatus" : 0,
+          "text" : "2026년 10월 15일 오전 9시 30분, 한국 표준시에 리뷰를 진행하기로 예약하세요.",
+          "wall_ms" : 832.9445000272244
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978442240,
+          "processCPUSeconds" : 5.689108,
+          "residentRSSBytes" : 4978425856,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 124.98984529159497,
+        "fixtureID" : "ko-it-precision-recall",
+        "index" : 60,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 408.022,
+            "output_tokens" : 27,
+            "prefill_ms" : 263.269,
+            "prompt_tokens" : 149,
+            "timed_out" : false,
+            "total_ms" : 678.222,
+            "truncated" : false,
+            "ttft_ms" : 270.574
+          },
+          "nativeStatus" : 0,
+          "text" : "Precision is the ratio of actual positives among the items that were detected, while recall is the ratio of detected items among the actual positives.",
+          "wall_ms" : 678.9870000211522
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978458624,
+          "processCPUSeconds" : 5.767395,
+          "residentRSSBytes" : 4978425856,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 126.7981318749953,
+        "fixtureID" : "ko-general-recall-meeting",
+        "index" : 61,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 236.625,
+            "output_tokens" : 15,
+            "prefill_ms" : 159.852,
+            "prompt_tokens" : 92,
+            "timed_out" : false,
+            "total_ms" : 403.008,
+            "truncated" : false,
+            "ttft_ms" : 166.839
+          },
+          "nativeStatus" : 0,
+          "text" : "I can’t remember clearly who gave the presentation at last Thursday’s meeting.",
+          "wall_ms" : 403.47491670399904
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978475008,
+          "processCPUSeconds" : 5.840933,
+          "residentRSSBytes" : 4978442240,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 128.99099995824508,
+        "fixtureID" : "ko-it-deployment-rollback",
+        "index" : 62,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 295.36,
+            "output_tokens" : 20,
+            "prefill_ms" : 205.414,
+            "prompt_tokens" : 127,
+            "timed_out" : false,
+            "total_ms" : 506.665,
+            "truncated" : false,
+            "ttft_ms" : 211.399
+          },
+          "nativeStatus" : 0,
+          "text" : "If the deployment fails, perform a rollback to the previous version, but do not delete the database.",
+          "wall_ms" : 507.2432500310242
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978475008,
+          "processCPUSeconds" : 5.881657000000001,
+          "residentRSSBytes" : 4978442240,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 131.09261454164516,
+        "fixtureID" : "ko-it-kubernetes-readiness",
+        "index" : 63,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 326.012,
+            "output_tokens" : 22,
+            "prefill_ms" : 222.628,
+            "prompt_tokens" : 129,
+            "timed_out" : false,
+            "total_ms" : 555.668,
+            "truncated" : false,
+            "ttft_ms" : 229.779
+          },
+          "nativeStatus" : 0,
+          "text" : "The pod is running, but it fails the readiness check, so Kubernetes still shouldn’t send traffic to it.",
+          "wall_ms" : 556.4961250638589
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978475008,
+          "processCPUSeconds" : 5.945323,
+          "residentRSSBytes" : 4978442240,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 132.9523149583256,
+        "fixtureID" : "ko-general-bank-context",
+        "index" : 64,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 154.021,
+            "output_tokens" : 10,
+            "prefill_ms" : 160.003,
+            "prompt_tokens" : 91,
+            "timed_out" : false,
+            "total_ms" : 320.653,
+            "truncated" : false,
+            "ttft_ms" : 167.003
+          },
+          "nativeStatus" : 0,
+          "text" : "Let’s meet next to the bank after lunch.",
+          "wall_ms" : 321.02512498386204
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978475008,
+          "processCPUSeconds" : 5.990232000000001,
+          "residentRSSBytes" : 4978442240,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 135.0461360833142,
+        "fixtureID" : "ko-general-duck-action",
+        "index" : 65,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 188.228,
+            "output_tokens" : 12,
+            "prefill_ms" : 159.868,
+            "prompt_tokens" : 93,
+            "timed_out" : false,
+            "total_ms" : 355.308,
+            "truncated" : false,
+            "ttft_ms" : 167.552
+          },
+          "nativeStatus" : 0,
+          "text" : "I saw her duck just before the ball hit the wall.",
+          "wall_ms" : 355.9680833714083
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978475008,
+          "processCPUSeconds" : 6.056647,
+          "residentRSSBytes" : 4978442240,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 137.17211887496524,
+        "fixtureID" : "ko-general-easy-idiom",
+        "index" : 66,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 213.632,
+            "output_tokens" : 14,
+            "prefill_ms" : 155.791,
+            "prompt_tokens" : 91,
+            "timed_out" : false,
+            "total_ms" : 371.921,
+            "truncated" : false,
+            "ttft_ms" : 158.659
+          },
+          "nativeStatus" : 0,
+          "text" : "Once the dependencies are installed, this task is a piece of cake.",
+          "wall_ms" : 372.4987499881536
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978475008,
+          "processCPUSeconds" : 6.109850999999999,
+          "residentRSSBytes" : 4978442240,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 139.25105808326043,
+        "fixtureID" : "ko-it-not-only",
+        "index" : 67,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 207.611,
+            "output_tokens" : 13,
+            "prefill_ms" : 129.605,
+            "prompt_tokens" : 63,
+            "timed_out" : false,
+            "total_ms" : 343.401,
+            "truncated" : false,
+            "ttft_ms" : 136.155
+          },
+          "nativeStatus" : 0,
+          "text" : "This patch not only fixes the conflicts but also reduces memory usage.",
+          "wall_ms" : 344.03649996966124
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978475008,
+          "processCPUSeconds" : 6.179921,
+          "residentRSSBytes" : 4978442240,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 141.34274300001562,
+        "fixtureID" : "ko-it-unless-negation",
+        "index" : 68,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 219.388,
+            "output_tokens" : 14,
+            "prefill_ms" : 119.101,
+            "prompt_tokens" : 55,
+            "timed_out" : false,
+            "total_ms" : 344.627,
+            "truncated" : false,
+            "ttft_ms" : 125.677
+          },
+          "nativeStatus" : 0,
+          "text" : "Unless the settings change, there’s no need to restart the service.",
+          "wall_ms" : 345.598041662015
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978475008,
+          "processCPUSeconds" : 6.252625,
+          "residentRSSBytes" : 4978442240,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 143.47169154160656,
+        "fixtureID" : "ko-general-corrected-weekday",
+        "index" : 69,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 206.155,
+            "output_tokens" : 13,
+            "prefill_ms" : 154.434,
+            "prompt_tokens" : 81,
+            "timed_out" : false,
+            "total_ms" : 363.908,
+            "truncated" : false,
+            "ttft_ms" : 158.116
+          },
+          "nativeStatus" : 0,
+          "text" : "Let’s meet on Tuesday. No, Thursday. Not tomorrow.",
+          "wall_ms" : 364.5712083671242
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978475008,
+          "processCPUSeconds" : 6.317579,
+          "residentRSSBytes" : 4978442240,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 145.83420204161666,
+        "fixtureID" : "ko-it-percentages-latency",
+        "index" : 70,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 411.632,
+            "output_tokens" : 28,
+            "prefill_ms" : 204.28,
+            "prompt_tokens" : 97,
+            "timed_out" : false,
+            "total_ms" : 622.292,
+            "truncated" : false,
+            "ttft_ms" : 210.721
+          },
+          "nativeStatus" : 0,
+          "text" : "The error rate dropped from 2.5% to 0.8%, while the latency median remained at 120 milliseconds.",
+          "wall_ms" : 622.861958341673
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978475008,
+          "processCPUSeconds" : 6.363964999999999,
+          "residentRSSBytes" : 4978442240,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 147.92274683329742,
+        "fixtureID" : "ko-general-date-time-zone",
+        "index" : 71,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 459.023,
+            "output_tokens" : 31,
+            "prefill_ms" : 160.11,
+            "prompt_tokens" : 72,
+            "timed_out" : false,
+            "total_ms" : 626.789,
+            "truncated" : false,
+            "ttft_ms" : 167.969
+          },
+          "nativeStatus" : 0,
+          "text" : "Please schedule the review meeting for 9:30 a.m. on October 15, 2026, in Korean Standard Time.",
+          "wall_ms" : 627.138958312571
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978475008,
+          "processCPUSeconds" : 6.4144000000000005,
+          "residentRSSBytes" : 4978442240,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 150.73070295830257,
+        "fixtureID" : "en-it-precision-recall",
+        "index" : 72,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 1149.007,
+            "output_tokens" : 78,
+            "prefill_ms" : 199.716,
+            "prompt_tokens" : 104,
+            "timed_out" : false,
+            "total_ms" : 1351.89,
+            "truncated" : false,
+            "ttft_ms" : 202.957
+          },
+          "nativeStatus" : 0,
+          "text" : "정밀도는 실제로 악성으로 분류된 요청들 중 정말 악성인 경우가 몇 개인지를 나타내며, 재현율은 우리가 포착한 악성 요청의 총 수를 나타냅니다.",
+          "wall_ms" : 1366.7339583626017
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978491392,
+          "processCPUSeconds" : 6.503489999999999,
+          "residentRSSBytes" : 4978458624,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 152.00529258325696,
+        "fixtureID" : "en-general-recall-meeting",
+        "index" : 73,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 490.001,
+            "output_tokens" : 32,
+            "prefill_ms" : 109.899,
+            "prompt_tokens" : 64,
+            "timed_out" : false,
+            "total_ms" : 606.342,
+            "truncated" : false,
+            "ttft_ms" : 116.669
+          },
+          "nativeStatus" : 0,
+          "text" : "지난 목요일 회의를 주재한 분이 누구였는지 기억나지 않아요.",
+          "wall_ms" : 607.0978333009407
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978491392,
+          "processCPUSeconds" : 6.59904,
+          "residentRSSBytes" : 4978458624,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 154.24514799995814,
+        "fixtureID" : "en-it-deployment-rollback",
+        "index" : 74,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 589.213,
+            "output_tokens" : 40,
+            "prefill_ms" : 157.493,
+            "prompt_tokens" : 84,
+            "timed_out" : false,
+            "total_ms" : 749.994,
+            "truncated" : false,
+            "ttft_ms" : 160.902
+          },
+          "nativeStatus" : 0,
+          "text" : "배포에 실패할 경우, 데이터베이스는 그대로 유지한 채 이전 버전으로 롤백해야 합니다.",
+          "wall_ms" : 764.7164582740515
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978491392,
+          "processCPUSeconds" : 6.662492,
+          "residentRSSBytes" : 4978458624,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 156.55893595831003,
+        "fixtureID" : "en-it-kubernetes-readiness",
+        "index" : 75,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 825.652,
+            "output_tokens" : 56,
+            "prefill_ms" : 153.018,
+            "prompt_tokens" : 95,
+            "timed_out" : false,
+            "total_ms" : 981.936,
+            "truncated" : false,
+            "ttft_ms" : 156.423
+          },
+          "nativeStatus" : 0,
+          "text" : "팟은 실행 중이지만 레디니스 프로브가 여전히 실패하고 있어, Kubernetes는 아직 해당 팟으로 트래픽을 보내서는 안 됩니다.",
+          "wall_ms" : 999.181583407335
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978491392,
+          "processCPUSeconds" : 6.741018,
+          "residentRSSBytes" : 4978458624,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 158.00979862501845,
+        "fixtureID" : "en-general-bank-context",
+        "index" : 76,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 276.583,
+            "output_tokens" : 18,
+            "prefill_ms" : 111.197,
+            "prompt_tokens" : 61,
+            "timed_out" : false,
+            "total_ms" : 394.718,
+            "truncated" : false,
+            "ttft_ms" : 118.514
+          },
+          "nativeStatus" : 0,
+          "text" : "점심 먹고 나서 강가에서 만나요.",
+          "wall_ms" : 394.999458338134
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978491392,
+          "processCPUSeconds" : 6.803405000000001,
+          "residentRSSBytes" : 4978458624,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 160.35314533335622,
+        "fixtureID" : "en-general-duck-context",
+        "index" : 77,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 516.231,
+            "output_tokens" : 35,
+            "prefill_ms" : 115.91,
+            "prompt_tokens" : 63,
+            "timed_out" : false,
+            "total_ms" : 635.824,
+            "truncated" : false,
+            "ttft_ms" : 119.798
+          },
+          "nativeStatus" : 0,
+          "text" : "공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 것을 봤어요.",
+          "wall_ms" : 636.0587916569784
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978524160,
+          "processCPUSeconds" : 6.855708,
+          "residentRSSBytes" : 4978491392,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 162.2730543332873,
+        "fixtureID" : "en-general-piece-of-cake",
+        "index" : 78,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 360.48,
+            "output_tokens" : 23,
+            "prefill_ms" : 116.189,
+            "prompt_tokens" : 64,
+            "timed_out" : false,
+            "total_ms" : 479.841,
+            "truncated" : false,
+            "ttft_ms" : 119.825
+          },
+          "nativeStatus" : 0,
+          "text" : "의존성들을 설치하고 나면 정말 쉬운 일이에요.",
+          "wall_ms" : 480.234874994494
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978524160,
+          "processCPUSeconds" : 6.933372,
+          "residentRSSBytes" : 4978491392,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 164.6042242916301,
+        "fixtureID" : "en-it-not-only",
+        "index" : 79,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 577.609,
+            "output_tokens" : 39,
+            "prefill_ms" : 115.698,
+            "prompt_tokens" : 42,
+            "timed_out" : false,
+            "total_ms" : 696.541,
+            "truncated" : false,
+            "ttft_ms" : 119.089
+          },
+          "nativeStatus" : 0,
+          "text" : "이 패치는 시스템 크래시를 해결할 뿐만 아니라 메모리 사용량도 줄여줍니다.",
+          "wall_ms" : 711.433416698128
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978524160,
+          "processCPUSeconds" : 7.000398,
+          "residentRSSBytes" : 4978491392,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 166.39654666662682,
+        "fixtureID" : "en-it-unless-negation",
+        "index" : 80,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 356.913,
+            "output_tokens" : 24,
+            "prefill_ms" : 112.966,
+            "prompt_tokens" : 42,
+            "timed_out" : false,
+            "total_ms" : 472.92,
+            "truncated" : false,
+            "ttft_ms" : 116.207
+          },
+          "nativeStatus" : 0,
+          "text" : "구성이 변경되지 않는 한 서비스를 재시작할 필요는 없습니다.",
+          "wall_ms" : 484.7719583194703
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978524160,
+          "processCPUSeconds" : 7.052118999999999,
+          "residentRSSBytes" : 4978491392,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 168.57838249998167,
+        "fixtureID" : "en-general-corrected-weekday",
+        "index" : 81,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 473.795,
+            "output_tokens" : 31,
+            "prefill_ms" : 116.989,
+            "prompt_tokens" : 59,
+            "timed_out" : false,
+            "total_ms" : 594.528,
+            "truncated" : false,
+            "ttft_ms" : 120.955
+          },
+          "nativeStatus" : 0,
+          "text" : "화요일에 만나요. 아니, 내일이 아니라 목요일에요. 죄송합니다.",
+          "wall_ms" : 594.7735833469778
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978524160,
+          "processCPUSeconds" : 7.103137,
+          "residentRSSBytes" : 4978491392,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 170.9958417082671,
+        "fixtureID" : "en-it-percentages-latency",
+        "index" : 82,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 811.09,
+            "output_tokens" : 55,
+            "prefill_ms" : 155.571,
+            "prompt_tokens" : 72,
+            "timed_out" : false,
+            "total_ms" : 969.977,
+            "truncated" : false,
+            "ttft_ms" : 158.951
+          },
+          "nativeStatus" : 0,
+          "text" : "오류율은 2.5%에서 0.8%로 감소했으며, 평균 지연 시간은 120밀리초 그대로 유지되었습니다.",
+          "wall_ms" : 983.8612083112821
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978524160,
+          "processCPUSeconds" : 7.176061,
+          "residentRSSBytes" : 4978491392,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 172.94883991661482,
+        "fixtureID" : "en-general-date-time-zone",
+        "index" : 83,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 746.803,
+            "output_tokens" : 49,
+            "prefill_ms" : 116.58,
+            "prompt_tokens" : 51,
+            "timed_out" : false,
+            "total_ms" : 869.907,
+            "truncated" : false,
+            "ttft_ms" : 123.477
+          },
+          "nativeStatus" : 0,
+          "text" : "2026년 10월 15일 오전 9시 30분, 한국 표준시에 리뷰를 진행하기로 예약하세요.",
+          "wall_ms" : 870.2786667272449
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978524160,
+          "processCPUSeconds" : 7.3101519999999995,
+          "residentRSSBytes" : 4978491392,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 174.8344366250094,
+        "fixtureID" : "ko-it-precision-recall",
+        "index" : 84,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 423.706,
+            "output_tokens" : 27,
+            "prefill_ms" : 264.182,
+            "prompt_tokens" : 149,
+            "timed_out" : false,
+            "total_ms" : 694.656,
+            "truncated" : false,
+            "ttft_ms" : 271.156
+          },
+          "nativeStatus" : 0,
+          "text" : "Precision is the ratio of actual positives among the items that were detected, while recall is the ratio of detected items among the actual positives.",
+          "wall_ms" : 695.4224166693166
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978524160,
+          "processCPUSeconds" : 7.405824,
+          "residentRSSBytes" : 4978491392,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 176.6210683749523,
+        "fixtureID" : "ko-general-recall-meeting",
+        "index" : 85,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 231.393,
+            "output_tokens" : 15,
+            "prefill_ms" : 159.16,
+            "prompt_tokens" : 92,
+            "timed_out" : false,
+            "total_ms" : 397.329,
+            "truncated" : false,
+            "ttft_ms" : 166.31
+          },
+          "nativeStatus" : 0,
+          "text" : "I can’t remember clearly who gave the presentation at last Thursday’s meeting.",
+          "wall_ms" : 397.61695836205035
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978524160,
+          "processCPUSeconds" : 7.468514,
+          "residentRSSBytes" : 4978491392,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 178.80767620832194,
+        "fixtureID" : "ko-it-deployment-rollback",
+        "index" : 86,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 298.349,
+            "output_tokens" : 20,
+            "prefill_ms" : 201.406,
+            "prompt_tokens" : 127,
+            "timed_out" : false,
+            "total_ms" : 506.52,
+            "truncated" : false,
+            "ttft_ms" : 208.278
+          },
+          "nativeStatus" : 0,
+          "text" : "If the deployment fails, perform a rollback to the previous version, but do not delete the database.",
+          "wall_ms" : 507.09266657941043
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978524160,
+          "processCPUSeconds" : 7.520787,
+          "residentRSSBytes" : 4978491392,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 180.93742358335294,
+        "fixtureID" : "ko-it-kubernetes-readiness",
+        "index" : 87,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 323.668,
+            "output_tokens" : 22,
+            "prefill_ms" : 215.927,
+            "prompt_tokens" : 129,
+            "timed_out" : false,
+            "total_ms" : 541.476,
+            "truncated" : false,
+            "ttft_ms" : 217.896
+          },
+          "nativeStatus" : 0,
+          "text" : "The pod is running, but it fails the readiness check, so Kubernetes still shouldn’t send traffic to it.",
+          "wall_ms" : 541.8519166996703
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978524160,
+          "processCPUSeconds" : 7.552173,
+          "residentRSSBytes" : 4978491392,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 182.79731808335055,
+        "fixtureID" : "ko-general-bank-context",
+        "index" : 88,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 148.977,
+            "output_tokens" : 10,
+            "prefill_ms" : 156.637,
+            "prompt_tokens" : 91,
+            "timed_out" : false,
+            "total_ms" : 308.408,
+            "truncated" : false,
+            "ttft_ms" : 159.528
+          },
+          "nativeStatus" : 0,
+          "text" : "Let’s meet next to the bank after lunch.",
+          "wall_ms" : 308.63058334216475
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978524160,
+          "processCPUSeconds" : 7.576785,
+          "residentRSSBytes" : 4978491392,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 184.95437016664073,
+        "fixtureID" : "ko-general-duck-action",
+        "index" : 89,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 187.953,
+            "output_tokens" : 12,
+            "prefill_ms" : 157.892,
+            "prompt_tokens" : 93,
+            "timed_out" : false,
+            "total_ms" : 352.441,
+            "truncated" : false,
+            "ttft_ms" : 164.926
+          },
+          "nativeStatus" : 0,
+          "text" : "I saw her duck just before the ball hit the wall.",
+          "wall_ms" : 353.09987503569573
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978524160,
+          "processCPUSeconds" : 7.643004,
+          "residentRSSBytes" : 4978491392,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 187.08957537496462,
+        "fixtureID" : "ko-general-easy-idiom",
+        "index" : 90,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 214.402,
+            "output_tokens" : 14,
+            "prefill_ms" : 161.115,
+            "prompt_tokens" : 91,
+            "timed_out" : false,
+            "total_ms" : 382.143,
+            "truncated" : false,
+            "ttft_ms" : 168.102
+          },
+          "nativeStatus" : 0,
+          "text" : "Once the dependencies are installed, this task is a piece of cake.",
+          "wall_ms" : 383.0180000513792
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978524160,
+          "processCPUSeconds" : 7.706429,
+          "residentRSSBytes" : 4978491392,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 189.1024612915935,
+        "fixtureID" : "ko-it-not-only",
+        "index" : 91,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 195.167,
+            "output_tokens" : 13,
+            "prefill_ms" : 116.972,
+            "prompt_tokens" : 63,
+            "timed_out" : false,
+            "total_ms" : 318.177,
+            "truncated" : false,
+            "ttft_ms" : 123.236
+          },
+          "nativeStatus" : 0,
+          "text" : "This patch not only fixes the conflicts but also reduces memory usage.",
+          "wall_ms" : 318.817958352156
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 7.746976,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 191.15893462498207,
+        "fixtureID" : "ko-it-unless-negation",
+        "index" : 92,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 216.702,
+            "output_tokens" : 14,
+            "prefill_ms" : 117.338,
+            "prompt_tokens" : 55,
+            "timed_out" : false,
+            "total_ms" : 340.934,
+            "truncated" : false,
+            "ttft_ms" : 124.387
+          },
+          "nativeStatus" : 0,
+          "text" : "Unless the settings change, there’s no need to restart the service.",
+          "wall_ms" : 341.43116674385965
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 7.785035,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 193.27885816665366,
+        "fixtureID" : "ko-general-corrected-weekday",
+        "index" : 93,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 197.86,
+            "output_tokens" : 13,
+            "prefill_ms" : 160.181,
+            "prompt_tokens" : 81,
+            "timed_out" : false,
+            "total_ms" : 363.633,
+            "truncated" : false,
+            "ttft_ms" : 166.661
+          },
+          "nativeStatus" : 0,
+          "text" : "Let’s meet on Tuesday. No, Thursday. Not tomorrow.",
+          "wall_ms" : 364.1317916335538
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 7.839748,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 195.65495462494437,
+        "fixtureID" : "ko-it-percentages-latency",
+        "index" : 94,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 426.514,
+            "output_tokens" : 28,
+            "prefill_ms" : 198.093,
+            "prompt_tokens" : 97,
+            "timed_out" : false,
+            "total_ms" : 631.232,
+            "truncated" : false,
+            "ttft_ms" : 205.089
+          },
+          "nativeStatus" : 0,
+          "text" : "The error rate dropped from 2.5% to 0.8%, while the latency median remained at 120 milliseconds.",
+          "wall_ms" : 632.0121249882504
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 7.927944,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 197.73350020835642,
+        "fixtureID" : "ko-general-date-time-zone",
+        "index" : 95,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 460.42,
+            "output_tokens" : 31,
+            "prefill_ms" : 156.227,
+            "prompt_tokens" : 72,
+            "timed_out" : false,
+            "total_ms" : 619.91,
+            "truncated" : false,
+            "ttft_ms" : 159.855
+          },
+          "nativeStatus" : 0,
+          "text" : "Please schedule the review meeting for 9:30 a.m. on October 15, 2026, in Korean Standard Time.",
+          "wall_ms" : 620.2188333263621
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 7.978561,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 200.56771145830862,
+        "fixtureID" : "en-it-precision-recall",
+        "index" : 96,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 1148.443,
+            "output_tokens" : 78,
+            "prefill_ms" : 197.624,
+            "prompt_tokens" : 104,
+            "timed_out" : false,
+            "total_ms" : 1348.57,
+            "truncated" : false,
+            "ttft_ms" : 200.194
+          },
+          "nativeStatus" : 0,
+          "text" : "정밀도는 실제로 악성으로 분류된 요청들 중 정말 악성인 경우가 몇 개인지를 나타내며, 재현율은 우리가 포착한 악성 요청의 총 수를 나타냅니다.",
+          "wall_ms" : 1362.9993334179744
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 8.066372000000001,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 201.84895858331583,
+        "fixtureID" : "en-general-recall-meeting",
+        "index" : 97,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 481.24,
+            "output_tokens" : 32,
+            "prefill_ms" : 113.607,
+            "prompt_tokens" : 64,
+            "timed_out" : false,
+            "total_ms" : 601.514,
+            "truncated" : false,
+            "ttft_ms" : 120.72
+          },
+          "nativeStatus" : 0,
+          "text" : "지난 목요일 회의를 주재한 분이 누구였는지 기억나지 않아요.",
+          "wall_ms" : 601.8153332406655
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 8.132316,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 204.09576587495394,
+        "fixtureID" : "en-it-deployment-rollback",
+        "index" : 98,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 589.232,
+            "output_tokens" : 40,
+            "prefill_ms" : 154.725,
+            "prompt_tokens" : 84,
+            "timed_out" : false,
+            "total_ms" : 746.169,
+            "truncated" : false,
+            "ttft_ms" : 157.017
+          },
+          "nativeStatus" : 0,
+          "text" : "배포에 실패할 경우, 데이터베이스는 그대로 유지한 채 이전 버전으로 롤백해야 합니다.",
+          "wall_ms" : 757.0080000441521
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 8.188822,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 206.41701829165686,
+        "fixtureID" : "en-it-kubernetes-readiness",
+        "index" : 99,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 826.109,
+            "output_tokens" : 56,
+            "prefill_ms" : 156.936,
+            "prompt_tokens" : 95,
+            "timed_out" : false,
+            "total_ms" : 986.452,
+            "truncated" : false,
+            "ttft_ms" : 160.443
+          },
+          "nativeStatus" : 0,
+          "text" : "팟은 실행 중이지만 레디니스 프로브가 여전히 실패하고 있어, Kubernetes는 아직 해당 팟으로 트래픽을 보내서는 안 됩니다.",
+          "wall_ms" : 1001.4167915796861
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 8.267225,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 207.8024562082719,
+        "fixtureID" : "en-general-bank-context",
+        "index" : 100,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 269.594,
+            "output_tokens" : 18,
+            "prefill_ms" : 111.759,
+            "prompt_tokens" : 61,
+            "timed_out" : false,
+            "total_ms" : 384.606,
+            "truncated" : false,
+            "ttft_ms" : 115.193
+          },
+          "nativeStatus" : 0,
+          "text" : "점심 먹고 나서 강가에서 만나요.",
+          "wall_ms" : 384.84320836141706
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 8.304853,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 210.163684249972,
+        "fixtureID" : "en-general-duck-context",
+        "index" : 101,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 518.151,
+            "output_tokens" : 35,
+            "prefill_ms" : 116.545,
+            "prompt_tokens" : 63,
+            "timed_out" : false,
+            "total_ms" : 641.532,
+            "truncated" : false,
+            "ttft_ms" : 123.606
+          },
+          "nativeStatus" : 0,
+          "text" : "공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 것을 봤어요.",
+          "wall_ms" : 641.884500044398
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 8.36275,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 212.08926120831165,
+        "fixtureID" : "en-general-piece-of-cake",
+        "index" : 102,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 363.697,
+            "output_tokens" : 23,
+            "prefill_ms" : 117.856,
+            "prompt_tokens" : 64,
+            "timed_out" : false,
+            "total_ms" : 487.516,
+            "truncated" : false,
+            "ttft_ms" : 123.99
+          },
+          "nativeStatus" : 0,
+          "text" : "의존성들을 설치하고 나면 정말 쉬운 일이에요.",
+          "wall_ms" : 487.99816670361906
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 8.44974,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 214.41159924992826,
+        "fixtureID" : "en-it-not-only",
+        "index" : 103,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 576.647,
+            "output_tokens" : 39,
+            "prefill_ms" : 116.286,
+            "prompt_tokens" : 42,
+            "timed_out" : false,
+            "total_ms" : 695.976,
+            "truncated" : false,
+            "ttft_ms" : 119.485
+          },
+          "nativeStatus" : 0,
+          "text" : "이 패치는 시스템 크래시를 해결할 뿐만 아니라 메모리 사용량도 줄여줍니다.",
+          "wall_ms" : 710.7978333951905
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 8.517091,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 216.25368566659745,
+        "fixtureID" : "en-it-unless-negation",
+        "index" : 104,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 356.02,
+            "output_tokens" : 24,
+            "prefill_ms" : 113.606,
+            "prompt_tokens" : 42,
+            "timed_out" : false,
+            "total_ms" : 472.527,
+            "truncated" : false,
+            "ttft_ms" : 116.655
+          },
+          "nativeStatus" : 0,
+          "text" : "구성이 변경되지 않는 한 서비스를 재시작할 필요는 없습니다.",
+          "wall_ms" : 487.4628749676049
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 8.570763,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 218.4369349166518,
+        "fixtureID" : "en-general-corrected-weekday",
+        "index" : 105,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 468,
+            "output_tokens" : 31,
+            "prefill_ms" : 119.583,
+            "prompt_tokens" : 59,
+            "timed_out" : false,
+            "total_ms" : 593.666,
+            "truncated" : false,
+            "ttft_ms" : 126.037
+          },
+          "nativeStatus" : 0,
+          "text" : "화요일에 만나요. 아니, 내일이 아니라 목요일에요. 죄송합니다.",
+          "wall_ms" : 594.0105833578855
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 8.634679,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 220.88606166664977,
+        "fixtureID" : "en-it-percentages-latency",
+        "index" : 106,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 809.202,
+            "output_tokens" : 55,
+            "prefill_ms" : 153.882,
+            "prompt_tokens" : 72,
+            "timed_out" : false,
+            "total_ms" : 966.326,
+            "truncated" : false,
+            "ttft_ms" : 157.186
+          },
+          "nativeStatus" : 0,
+          "text" : "오류율은 2.5%에서 0.8%로 감소했으며, 평균 지연 시간은 120밀리초 그대로 유지되었습니다.",
+          "wall_ms" : 976.7941667232662
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 8.705812,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 222.8212418332696,
+        "fixtureID" : "en-general-date-time-zone",
+        "index" : 107,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 731.731,
+            "output_tokens" : 49,
+            "prefill_ms" : 117.652,
+            "prompt_tokens" : 51,
+            "timed_out" : false,
+            "total_ms" : 851.891,
+            "truncated" : false,
+            "ttft_ms" : 120.439
+          },
+          "nativeStatus" : 0,
+          "text" : "2026년 10월 15일 오전 9시 30분, 한국 표준시에 리뷰를 진행하기로 예약하세요.",
+          "wall_ms" : 852.1910416893661
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 8.810196999999999,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 224.7265803749906,
+        "fixtureID" : "ko-it-precision-recall",
+        "index" : 108,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 414.674,
+            "output_tokens" : 27,
+            "prefill_ms" : 261.301,
+            "prompt_tokens" : 149,
+            "timed_out" : false,
+            "total_ms" : 683.942,
+            "truncated" : false,
+            "ttft_ms" : 269.643
+          },
+          "nativeStatus" : 0,
+          "text" : "Precision is the ratio of actual positives among the items that were detected, while recall is the ratio of detected items among the actual positives.",
+          "wall_ms" : 684.5978333149105
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 8.89933,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 226.51078433333896,
+        "fixtureID" : "ko-general-recall-meeting",
+        "index" : 109,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 221.396,
+            "output_tokens" : 15,
+            "prefill_ms" : 158.361,
+            "prompt_tokens" : 92,
+            "timed_out" : false,
+            "total_ms" : 386.458,
+            "truncated" : false,
+            "ttft_ms" : 165.127
+          },
+          "nativeStatus" : 0,
+          "text" : "I can’t remember clearly who gave the presentation at last Thursday’s meeting.",
+          "wall_ms" : 386.7767082992941
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 8.931967,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 228.74401762499474,
+        "fixtureID" : "ko-it-deployment-rollback",
+        "index" : 110,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 309.774,
+            "output_tokens" : 20,
+            "prefill_ms" : 200.4,
+            "prompt_tokens" : 127,
+            "timed_out" : false,
+            "total_ms" : 520.461,
+            "truncated" : false,
+            "ttft_ms" : 210.742
+          },
+          "nativeStatus" : 0,
+          "text" : "If the deployment fails, perform a rollback to the previous version, but do not delete the database.",
+          "wall_ms" : 521.016624988988
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 8.97721,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 230.857385625015,
+        "fixtureID" : "ko-it-kubernetes-readiness",
+        "index" : 111,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 322.538,
+            "output_tokens" : 22,
+            "prefill_ms" : 219.447,
+            "prompt_tokens" : 129,
+            "timed_out" : false,
+            "total_ms" : 549.798,
+            "truncated" : false,
+            "ttft_ms" : 227.312
+          },
+          "nativeStatus" : 0,
+          "text" : "The pod is running, but it fails the readiness check, so Kubernetes still shouldn’t send traffic to it.",
+          "wall_ms" : 550.4872499732301
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.020285000000001,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 232.72733241668902,
+        "fixtureID" : "ko-general-bank-context",
+        "index" : 112,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 157.284,
+            "output_tokens" : 10,
+            "prefill_ms" : 158.987,
+            "prompt_tokens" : 91,
+            "timed_out" : false,
+            "total_ms" : 323.322,
+            "truncated" : false,
+            "ttft_ms" : 166.401
+          },
+          "nativeStatus" : 0,
+          "text" : "Let’s meet next to the bank after lunch.",
+          "wall_ms" : 324.01958340778947
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.078088,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 234.860989708337,
+        "fixtureID" : "ko-general-duck-action",
+        "index" : 113,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 182.282,
+            "output_tokens" : 12,
+            "prefill_ms" : 160.631,
+            "prompt_tokens" : 93,
+            "timed_out" : false,
+            "total_ms" : 351.157,
+            "truncated" : false,
+            "ttft_ms" : 169.092
+          },
+          "nativeStatus" : 0,
+          "text" : "I saw her duck just before the ball hit the wall.",
+          "wall_ms" : 351.5022916253656
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.124286,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 236.99469566659536,
+        "fixtureID" : "ko-general-easy-idiom",
+        "index" : 114,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 209.085,
+            "output_tokens" : 14,
+            "prefill_ms" : 159.228,
+            "prompt_tokens" : 91,
+            "timed_out" : false,
+            "total_ms" : 376.419,
+            "truncated" : false,
+            "ttft_ms" : 167.431
+          },
+          "nativeStatus" : 0,
+          "text" : "Once the dependencies are installed, this task is a piece of cake.",
+          "wall_ms" : 376.71175005380064
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.160948,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 239.04847783327568,
+        "fixtureID" : "ko-it-not-only",
+        "index" : 115,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 202.51,
+            "output_tokens" : 13,
+            "prefill_ms" : 116.709,
+            "prompt_tokens" : 63,
+            "timed_out" : false,
+            "total_ms" : 325.688,
+            "truncated" : false,
+            "ttft_ms" : 123.644
+          },
+          "nativeStatus" : 0,
+          "text" : "This patch not only fixes the conflicts but also reduces memory usage.",
+          "wall_ms" : 326.45329169463366
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.226912,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 241.17419170832727,
+        "fixtureID" : "ko-it-unless-negation",
+        "index" : 116,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 209.467,
+            "output_tokens" : 14,
+            "prefill_ms" : 117.512,
+            "prompt_tokens" : 55,
+            "timed_out" : false,
+            "total_ms" : 339.243,
+            "truncated" : false,
+            "ttft_ms" : 129.896
+          },
+          "nativeStatus" : 0,
+          "text" : "Unless the settings change, there’s no need to restart the service.",
+          "wall_ms" : 340.4754167422652
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.267444000000001,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 243.23399345832877,
+        "fixtureID" : "ko-general-corrected-weekday",
+        "index" : 117,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 198.67,
+            "output_tokens" : 13,
+            "prefill_ms" : 157.255,
+            "prompt_tokens" : 81,
+            "timed_out" : false,
+            "total_ms" : 363.112,
+            "truncated" : false,
+            "ttft_ms" : 164.568
+          },
+          "nativeStatus" : 0,
+          "text" : "Let’s meet on Tuesday. No, Thursday. Not tomorrow.",
+          "wall_ms" : 363.3810000028461
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.304896,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 245.58846608328167,
+        "fixtureID" : "ko-it-percentages-latency",
+        "index" : 118,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 431.343,
+            "output_tokens" : 28,
+            "prefill_ms" : 202.325,
+            "prompt_tokens" : 97,
+            "timed_out" : false,
+            "total_ms" : 640.222,
+            "truncated" : false,
+            "ttft_ms" : 209.146
+          },
+          "nativeStatus" : 0,
+          "text" : "The error rate dropped from 2.5% to 0.8%, while the latency median remained at 120 milliseconds.",
+          "wall_ms" : 641.0087082767859
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.410271,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 247.65712658327539,
+        "fixtureID" : "ko-general-date-time-zone",
+        "index" : 119,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 468.295,
+            "output_tokens" : 31,
+            "prefill_ms" : 157.88,
+            "prompt_tokens" : 72,
+            "timed_out" : false,
+            "total_ms" : 629.683,
+            "truncated" : false,
+            "ttft_ms" : 161.665
+          },
+          "nativeStatus" : 0,
+          "text" : "Please schedule the review meeting for 9:30 a.m. on October 15, 2026, in Korean Standard Time.",
+          "wall_ms" : 629.9809999763966
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.484472,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 250.48342966660857,
+        "fixtureID" : "en-it-precision-recall",
+        "index" : 120,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 1146.733,
+            "output_tokens" : 78,
+            "prefill_ms" : 198.417,
+            "prompt_tokens" : 104,
+            "timed_out" : false,
+            "total_ms" : 1348.399,
+            "truncated" : false,
+            "ttft_ms" : 201.722
+          },
+          "nativeStatus" : 0,
+          "text" : "정밀도는 실제로 악성으로 분류된 요청들 중 정말 악성인 경우가 몇 개인지를 나타내며, 재현율은 우리가 포착한 악성 요청의 총 수를 나타냅니다.",
+          "wall_ms" : 1366.388124995865
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.577953,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 251.75225929159205,
+        "fixtureID" : "en-general-recall-meeting",
+        "index" : 121,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 483.264,
+            "output_tokens" : 32,
+            "prefill_ms" : 109.594,
+            "prompt_tokens" : 64,
+            "timed_out" : false,
+            "total_ms" : 599.546,
+            "truncated" : false,
+            "ttft_ms" : 116.655
+          },
+          "nativeStatus" : 0,
+          "text" : "지난 목요일 회의를 주재한 분이 누구였는지 기억나지 않아요.",
+          "wall_ms" : 599.8431249754503
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.650008,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 254.00270270835608,
+        "fixtureID" : "en-it-deployment-rollback",
+        "index" : 122,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 590.708,
+            "output_tokens" : 40,
+            "prefill_ms" : 151.374,
+            "prompt_tokens" : 84,
+            "timed_out" : false,
+            "total_ms" : 744.21,
+            "truncated" : false,
+            "ttft_ms" : 153.615
+          },
+          "nativeStatus" : 0,
+          "text" : "배포에 실패할 경우, 데이터베이스는 그대로 유지한 채 이전 버전으로 롤백해야 합니다.",
+          "wall_ms" : 758.5244999499992
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.710273,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 256.3287387082819,
+        "fixtureID" : "en-it-kubernetes-readiness",
+        "index" : 123,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 826.218,
+            "output_tokens" : 56,
+            "prefill_ms" : 161.003,
+            "prompt_tokens" : 95,
+            "timed_out" : false,
+            "total_ms" : 990.705,
+            "truncated" : false,
+            "ttft_ms" : 164.58
+          },
+          "nativeStatus" : 0,
+          "text" : "팟은 실행 중이지만 레디니스 프로브가 여전히 실패하고 있어, Kubernetes는 아직 해당 팟으로 트래픽을 보내서는 안 됩니다.",
+          "wall_ms" : 1006.6490833414719
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.789105,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 257.7733112083515,
+        "fixtureID" : "en-general-bank-context",
+        "index" : 124,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 270.506,
+            "output_tokens" : 18,
+            "prefill_ms" : 117.441,
+            "prompt_tokens" : 61,
+            "timed_out" : false,
+            "total_ms" : 391.903,
+            "truncated" : false,
+            "ttft_ms" : 121.633
+          },
+          "nativeStatus" : 0,
+          "text" : "점심 먹고 나서 강가에서 만나요.",
+          "wall_ms" : 392.14129163883626
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.831051,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 260.13206120824907,
+        "fixtureID" : "en-general-duck-context",
+        "index" : 125,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 527.687,
+            "output_tokens" : 35,
+            "prefill_ms" : 117.325,
+            "prompt_tokens" : 63,
+            "timed_out" : false,
+            "total_ms" : 651.507,
+            "truncated" : false,
+            "ttft_ms" : 124.296
+          },
+          "nativeStatus" : 0,
+          "text" : "공이 벽에 부딪히기 직전에 그녀가 몸을 숙이는 것을 봤어요.",
+          "wall_ms" : 651.81495831348
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.916328,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 262.041894499911,
+        "fixtureID" : "en-general-piece-of-cake",
+        "index" : 126,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 352.86,
+            "output_tokens" : 23,
+            "prefill_ms" : 117.517,
+            "prompt_tokens" : 64,
+            "timed_out" : false,
+            "total_ms" : 476.466,
+            "truncated" : false,
+            "ttft_ms" : 123.978
+          },
+          "nativeStatus" : 0,
+          "text" : "의존성들을 설치하고 나면 정말 쉬운 일이에요.",
+          "wall_ms" : 476.9119583070278
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 9.998085,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 264.3701473749243,
+        "fixtureID" : "en-it-not-only",
+        "index" : 127,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 576.301,
+            "output_tokens" : 39,
+            "prefill_ms" : 114.467,
+            "prompt_tokens" : 42,
+            "timed_out" : false,
+            "total_ms" : 693.684,
+            "truncated" : false,
+            "ttft_ms" : 117.601
+          },
+          "nativeStatus" : 0,
+          "text" : "이 패치는 시스템 크래시를 해결할 뿐만 아니라 메모리 사용량도 줄여줍니다.",
+          "wall_ms" : 707.6116249663755
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.066143,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 266.223968999926,
+        "fixtureID" : "en-it-unless-negation",
+        "index" : 128,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 354.982,
+            "output_tokens" : 24,
+            "prefill_ms" : 111.741,
+            "prompt_tokens" : 42,
+            "timed_out" : false,
+            "total_ms" : 469.384,
+            "truncated" : false,
+            "ttft_ms" : 114.53
+          },
+          "nativeStatus" : 0,
+          "text" : "구성이 변경되지 않는 한 서비스를 재시작할 필요는 없습니다.",
+          "wall_ms" : 480.7226250413805
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.113599,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 268.4401920416858,
+        "fixtureID" : "en-general-corrected-weekday",
+        "index" : 129,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 470.704,
+            "output_tokens" : 31,
+            "prefill_ms" : 119.597,
+            "prompt_tokens" : 59,
+            "timed_out" : false,
+            "total_ms" : 596.927,
+            "truncated" : false,
+            "ttft_ms" : 126.591
+          },
+          "nativeStatus" : 0,
+          "text" : "화요일에 만나요. 아니, 내일이 아니라 목요일에요. 죄송합니다.",
+          "wall_ms" : 597.2344999900088
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.207341,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 270.8685039166594,
+        "fixtureID" : "en-it-percentages-latency",
+        "index" : 130,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 809.363,
+            "output_tokens" : 55,
+            "prefill_ms" : 157.591,
+            "prompt_tokens" : 72,
+            "timed_out" : false,
+            "total_ms" : 969.416,
+            "truncated" : false,
+            "ttft_ms" : 160.118
+          },
+          "nativeStatus" : 0,
+          "text" : "오류율은 2.5%에서 0.8%로 감소했으며, 평균 지연 시간은 120밀리초 그대로 유지되었습니다.",
+          "wall_ms" : 979.6149999601766
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.273237,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 272.78412820829544,
+        "fixtureID" : "en-general-date-time-zone",
+        "index" : 131,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 748.339,
+            "output_tokens" : 49,
+            "prefill_ms" : 116.608,
+            "prompt_tokens" : 51,
+            "timed_out" : false,
+            "total_ms" : 869.021,
+            "truncated" : false,
+            "ttft_ms" : 121.063
+          },
+          "nativeStatus" : 0,
+          "text" : "2026년 10월 15일 오전 9시 30분, 한국 표준시에 리뷰를 진행하기로 예약하세요.",
+          "wall_ms" : 869.3974167108536
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.420617,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 274.5766088332748,
+        "fixtureID" : "ko-it-precision-recall",
+        "index" : 132,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 397.8,
+            "output_tokens" : 27,
+            "prefill_ms" : 259.535,
+            "prompt_tokens" : 149,
+            "timed_out" : false,
+            "total_ms" : 660.647,
+            "truncated" : false,
+            "ttft_ms" : 262.905
+          },
+          "nativeStatus" : 0,
+          "text" : "Precision is the ratio of actual positives among the items that were detected, while recall is the ratio of detected items among the actual positives.",
+          "wall_ms" : 661.1152082914487
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.458345,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 276.3597273749765,
+        "fixtureID" : "ko-general-recall-meeting",
+        "index" : 133,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 222.637,
+            "output_tokens" : 15,
+            "prefill_ms" : 156.593,
+            "prompt_tokens" : 92,
+            "timed_out" : false,
+            "total_ms" : 386.115,
+            "truncated" : false,
+            "ttft_ms" : 163.607
+          },
+          "nativeStatus" : 0,
+          "text" : "I can’t remember clearly who gave the presentation at last Thursday’s meeting.",
+          "wall_ms" : 386.3998749293387
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.495444,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 278.5940130832605,
+        "fixtureID" : "ko-it-deployment-rollback",
+        "index" : 134,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 306.099,
+            "output_tokens" : 20,
+            "prefill_ms" : 203.444,
+            "prompt_tokens" : 127,
+            "timed_out" : false,
+            "total_ms" : 516.745,
+            "truncated" : false,
+            "ttft_ms" : 211.014
+          },
+          "nativeStatus" : 0,
+          "text" : "If the deployment fails, perform a rollback to the previous version, but do not delete the database.",
+          "wall_ms" : 517.7489166380838
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.578199999999999,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 280.71064808324445,
+        "fixtureID" : "ko-it-kubernetes-readiness",
+        "index" : 135,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 324.5,
+            "output_tokens" : 22,
+            "prefill_ms" : 218.242,
+            "prompt_tokens" : 129,
+            "timed_out" : false,
+            "total_ms" : 546.328,
+            "truncated" : false,
+            "ttft_ms" : 221.883
+          },
+          "nativeStatus" : 0,
+          "text" : "The pod is running, but it fails the readiness check, so Kubernetes still shouldn’t send traffic to it.",
+          "wall_ms" : 546.8954166863114
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.622933,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 282.54496049997397,
+        "fixtureID" : "ko-general-bank-context",
+        "index" : 136,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 157.958,
+            "output_tokens" : 10,
+            "prefill_ms" : 158.46,
+            "prompt_tokens" : 91,
+            "timed_out" : false,
+            "total_ms" : 322.753,
+            "truncated" : false,
+            "ttft_ms" : 165.165
+          },
+          "nativeStatus" : 0,
+          "text" : "Let’s meet next to the bank after lunch.",
+          "wall_ms" : 323.0777499265969
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.681132999999999,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 284.6781278332928,
+        "fixtureID" : "ko-general-duck-action",
+        "index" : 137,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 183.863,
+            "output_tokens" : 12,
+            "prefill_ms" : 161.533,
+            "prompt_tokens" : 93,
+            "timed_out" : false,
+            "total_ms" : 352.052,
+            "truncated" : false,
+            "ttft_ms" : 168.376
+          },
+          "nativeStatus" : 0,
+          "text" : "I saw her duck just before the ball hit the wall.",
+          "wall_ms" : 352.5503750424832
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.742982,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 286.79448212496936,
+        "fixtureID" : "ko-general-easy-idiom",
+        "index" : 138,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 207.899,
+            "output_tokens" : 14,
+            "prefill_ms" : 153.889,
+            "prompt_tokens" : 91,
+            "timed_out" : false,
+            "total_ms" : 364.323,
+            "truncated" : false,
+            "ttft_ms" : 156.519
+          },
+          "nativeStatus" : 0,
+          "text" : "Once the dependencies are installed, this task is a piece of cake.",
+          "wall_ms" : 364.53612498007715
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.771694,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 288.83839991665445,
+        "fixtureID" : "ko-it-not-only",
+        "index" : 139,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 193.735,
+            "output_tokens" : 13,
+            "prefill_ms" : 117.588,
+            "prompt_tokens" : 63,
+            "timed_out" : false,
+            "total_ms" : 313.548,
+            "truncated" : false,
+            "ttft_ms" : 119.939
+          },
+          "nativeStatus" : 0,
+          "text" : "This patch not only fixes the conflicts but also reduces memory usage.",
+          "wall_ms" : 313.86829167604446
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.799711,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 290.9693132916,
+        "fixtureID" : "ko-it-unless-negation",
+        "index" : 140,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 208.832,
+            "output_tokens" : 14,
+            "prefill_ms" : 118.73,
+            "prompt_tokens" : 55,
+            "timed_out" : false,
+            "total_ms" : 333.883,
+            "truncated" : false,
+            "ttft_ms" : 125.208
+          },
+          "nativeStatus" : 0,
+          "text" : "Unless the settings change, there’s no need to restart the service.",
+          "wall_ms" : 334.52812500763685
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.839283,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 293.0580255415989,
+        "fixtureID" : "ko-general-corrected-weekday",
+        "index" : 141,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 192.999,
+            "output_tokens" : 13,
+            "prefill_ms" : 158.737,
+            "prompt_tokens" : 81,
+            "timed_out" : false,
+            "total_ms" : 358.531,
+            "truncated" : false,
+            "ttft_ms" : 165.661
+          },
+          "nativeStatus" : 0,
+          "text" : "Let’s meet on Tuesday. No, Thursday. Not tomorrow.",
+          "wall_ms" : 358.82479161955416
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.876664,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 295.437733333325,
+        "fixtureID" : "ko-it-percentages-latency",
+        "index" : 142,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 422.392,
+            "output_tokens" : 28,
+            "prefill_ms" : 200.355,
+            "prompt_tokens" : 97,
+            "timed_out" : false,
+            "total_ms" : 628.37,
+            "truncated" : false,
+            "ttft_ms" : 206.353
+          },
+          "nativeStatus" : 0,
+          "text" : "The error rate dropped from 2.5% to 0.8%, while the latency median remained at 120 milliseconds.",
+          "wall_ms" : 629.0479167364538
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.952038,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 297.48177362501156,
+        "fixtureID" : "ko-general-date-time-zone",
+        "index" : 143,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 458.472,
+            "output_tokens" : 31,
+            "prefill_ms" : 154.291,
+            "prompt_tokens" : 72,
+            "timed_out" : false,
+            "total_ms" : 614.913,
+            "truncated" : false,
+            "ttft_ms" : 156.538
+          },
+          "nativeStatus" : 0,
+          "text" : "Please schedule the review meeting for 9:30 a.m. on October 15, 2026, in Korean Standard Time.",
+          "wall_ms" : 615.1672083651647
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 10.991753,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      },
+      {
+        "elapsedSeconds" : 300.28488341660704,
+        "fixtureID" : "en-it-precision-recall",
+        "index" : 144,
+        "local" : {
+          "guardAccepted" : true,
+          "native" : {
+            "cancelled" : false,
+            "decode_ms" : 1159.503,
+            "output_tokens" : 78,
+            "prefill_ms" : 204.373,
+            "prompt_tokens" : 104,
+            "timed_out" : false,
+            "total_ms" : 1367.204,
+            "truncated" : false,
+            "ttft_ms" : 207.786
+          },
+          "nativeStatus" : 0,
+          "text" : "정밀도는 실제로 악성으로 분류된 요청들 중 정말 악성인 경우가 몇 개인지를 나타내며, 재현율은 우리가 포착한 악성 요청의 총 수를 나타냅니다.",
+          "wall_ms" : 1381.8830417003483
+        },
+        "telemetry" : {
+          "peakProcessRSSBytes" : 4978540544,
+          "processCPUSeconds" : 11.085789,
+          "residentRSSBytes" : 4978507776,
+          "thermalState" : "nominal"
+        }
+      }
+    ],
+    "scheduling" : "Sequential fixed start-to-start cadence; slow requests discard missed schedule ticks; no catch-up queue.",
+    "telemetryAfter" : {
+      "peakProcessRSSBytes" : 4978540544,
+      "processCPUSeconds" : 11.086369000000001,
+      "residentRSSBytes" : 4978540544,
+      "thermalState" : "nominal"
+    },
+    "telemetryBefore" : {
+      "peakProcessRSSBytes" : 4978163712,
+      "processCPUSeconds" : 1.9933779999999999,
+      "residentRSSBytes" : 4978163712,
+      "thermalState" : "nominal"
+    },
+    "timeoutMilliseconds" : 3000,
+    "timing" : {
+      "acceptedByGuard" : 145,
+      "attempts" : 145,
+      "completedWithinProductBudget" : 145,
+      "nativeTTFT_ms" : {
+        "count" : 145,
+        "maximum" : 271.156,
+        "p50" : 158.446,
+        "p95" : 229.779,
+        "p99" : 270.936
+      },
+      "nativeTotal_ms" : {
+        "count" : 145,
+        "maximum" : 1367.204,
+        "p50" : 573.115,
+        "p95" : 1038.866,
+        "p99" : 1354.834
+      },
+      "successful" : 145,
+      "timedOut" : 0,
+      "wall_ms" : {
+        "count" : 145,
+        "maximum" : 1381.8830417003483,
+        "p50" : 573.3425000216812,
+        "p95" : 1053.979124990292,
+        "p99" : 1366.7339583626017
+      }
+    }
+  },
+  "sourceOnlySummary" : {
+    "acceptedByGuard" : 24,
+    "attempts" : 24,
+    "completedWithinProductBudget" : 23,
+    "nativeTTFT_ms" : {
+      "count" : 24,
+      "maximum" : 188.06,
+      "p50" : 100.504,
+      "p95" : 184.689,
+      "p99" : 188.06
+    },
+    "nativeTotal_ms" : {
+      "count" : 24,
+      "maximum" : 1509.063,
+      "p50" : 466.332,
+      "p95" : 989.35,
+      "p99" : 1509.063
+    },
+    "successful" : 24,
+    "timedOut" : 0,
+    "wall_ms" : {
+      "count" : 24,
+      "maximum" : 1515.243291738443,
+      "p50" : 466.66583325713873,
+      "p95" : 994.4520415738225,
+      "p99" : 1515.243291738443
+    }
+  },
+  "withContextSummary" : {
+    "acceptedByGuard" : 16,
+    "attempts" : 16,
+    "completedWithinProductBudget" : 15,
+    "nativeTTFT_ms" : {
+      "count" : 16,
+      "maximum" : 243.243,
+      "p50" : 141.975,
+      "p95" : 243.243,
+      "p99" : 243.243
+    },
+    "nativeTotal_ms" : {
+      "count" : 16,
+      "maximum" : 1598.971,
+      "p50" : 480.777,
+      "p95" : 1598.971,
+      "p99" : 1598.971
+    },
+    "successful" : 16,
+    "timedOut" : 0,
+    "wall_ms" : {
+      "count" : 16,
+      "maximum" : 1604.5099582988769,
+      "p50" : 481.0564583167434,
+      "p95" : 1604.5099582988769,
+      "p99" : 1604.5099582988769
+    }
+  }
+}

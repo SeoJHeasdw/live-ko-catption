@@ -41,7 +41,7 @@ open "dist/Live Korean Captions.app"
 | [CaptionWindowCoordinator.swift](../Sources/LiveKoCaption/CaptionWindowCoordinator.swift) | 같은 대화 모델을 유지하는 보기 전환과 창 상태 |
 | [TranslationSessionLease.swift](../Sources/LiveKoCaption/TranslationSessionLease.swift) | Apple 번역 요청의 실제 반환과 세션 정리 추적 |
 | [LocalModelStore.swift](../Sources/LiveKoCaption/LocalModelStore.swift) | 선택 모델 다운로드, 크기·SHA-256 검증과 설치 |
-| [LocalTranslationEngine.swift](../Sources/LiveKoCaption/LocalTranslationEngine.swift) | 네이티브 모델 로딩, 직렬 추론, 작업별 취소와 시간 제한 |
+| [LocalTranslationEngine.swift](../Sources/LiveKoCaption/LocalTranslationEngine.swift) | 네이티브 모델 로딩, 모델 크기별 프롬프트 형식 선택, 직렬 추론, 작업별 취소와 시간 제한 |
 | [Runtime](../Runtime) | 고정 llama.cpp/ggml을 정적으로 연결하는 C++/Metal 런타임 |
 | [Tests](../Tests) | 상태·스케줄링·앱 모델·오디오·실제 엔진 검사와 공개 예문 |
 
@@ -68,8 +68,9 @@ open "dist/Live Korean Captions.app"
 - 이전 수정 버전, 취소된 작업, 이전 대화의 결과는 최신 자막을 덮어쓰지 않습니다.
 - 초안 작업은 최신 상태로 합치고 확정 원문을 우선합니다. 전체 세션 기록을 매번 재번역하지 않습니다.
 - 문맥 보정은 인접한 2~4개 구절, 12초, 원문 500자 이내의 제한된 묶음입니다. 긴 무음과 일시정지를 넘어 묶지 않으며, 오래된 문맥 묶음을 반복 수정하지 않습니다.
-- 선택 모델은 확정된 원문만 보완합니다. 빠른 Apple 결과를 표시하면서 다음 확정 원문에 우선권을 주고, 지연·실패 시 빠른 결과를 유지합니다.
-- 새 미확정 원문도 선택 보완·문맥 작업보다 우선합니다. 다음 초안이 대기 중이면 앞 구절의 선택 보완을 시작하지 않습니다.
+- 선택 모델은 확정된 원문만 보완합니다. 빠른 Apple 결과를 회색으로 표시한 뒤 실시간 번역과 분리된 작업 줄에서 보완하므로, 다음 초안이나 확정 원문의 빠른 번역을 기다리게 하지 않습니다. 지연·실패 시 빠른 결과를 유지합니다.
+- 보완은 한 번에 하나만 실행합니다. 대기는 2문장까지이며, 넘치면 가장 오래 기다린 문장을 빠른 번역으로 확정합니다. 새 초안은 진행 중인 보완을 취소하지 않습니다. 로컬 엔진을 쓰는 문맥 묶음과 보완은 동시에 실행하지 않습니다.
+- 새 미확정 원문은 문맥 작업보다 우선합니다.
 - 음성 인식은 여러 수정본을 몇 ms 안에 한꺼번에 전달합니다. 초안은 원문 갱신이 50ms 동안 멈추면 최신 수정본만 번역하고, 갱신이 끊이지 않아도 150ms 안에 번역을 시작합니다. 확정 원문은 이 대기를 건너뛰고 먼저 처리합니다.
 - 상세·간략 자막의 네이티브 갱신은 직전 갱신에서 1/30초가 지났으면 바로 그리고, 그 안의 연속 갱신은 최신 내용 하나로 묶습니다. 상세 화면의 최신 따라가기 스크롤은 0.2초 간격을 유지합니다.
 - 문맥 작업은 마지막 원문 구절이 확정되고 750ms 동안 새 원문 갱신이 없을 때 시작합니다. 뒤에 미확정 구절이 있으면 이전 문맥 작업을 대기열에 다시 넣지 않습니다.
