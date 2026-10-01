@@ -36,8 +36,15 @@ final class CaptionModel {
     private var localPolishDegraded = false
     private var localPolishReady = false
     private var finalFastBaselines: [UUID: (revision: Int, translation: String)] = [:]
-    private var activeFastBaseline: (job: TranslationJob, translation: String, worker: UUID)?
+    /// A source-final caption that shows its fast baseline while the optional
+    /// local model decides the final wording on a lane of its own.
+    private struct PolishItem { let job: TranslationJob; let baseline: String }
+    static let polishWaitingLimit = 2
+    private var polishWaiting: [PolishItem] = []
+    private var activePolish: PolishItem?
     private var polishTask: Task<String, any Error>?
+    private var polishWorker: Task<Void, Never>?
+    private var polishLaneID: UUID?
     private let localEngine: LocalTranslationEngine
     var selectedDirection: CaptionDirection {
         get { storedDirection }
@@ -200,7 +207,7 @@ final class CaptionModel {
     var isBusy: Bool { phase == .starting || phase == .stopping || isPreparing || isPreparingLocalModel }
     var isListening: Bool { phase == .listening }
     var canStop: Bool { phase == .listening || phase == .starting }
-    var hasPendingTranslations: Bool { queuedTranslations > 0 || workerTask != nil }
+    var hasPendingTranslations: Bool { queuedTranslations > 0 || workerTask != nil || polishWorker != nil }
     var statusText: String {
         if isUISoak { return "화면 안정성 검사 · 합성 자막" }
         if isPreview { return "화면 미리보기" }
@@ -543,6 +550,11 @@ final class CaptionModel {
                 // ASR-final jobs drain within the same overall stop deadline.
                 self.scheduleWorker()
                 await self.workerTask?.value
+                // Refinement finalizes on its own lane and can admit one last
+                // context group to the worker.
+                await self.polishWorker?.value
+                self.scheduleWorker()
+                await self.workerTask?.value
             }
         } catch {
             guard runID == token, phase == .stopping else { return }
@@ -553,12 +565,7 @@ final class CaptionModel {
     }
 
     private func finishRun() {
-        localEngine.cancelActive()
-        polishTask?.cancel(); polishTask = nil
-        if let baseline = activeFastBaseline, timeline.isCurrent(baseline.job) {
-            timeline.apply(translation: baseline.translation, for: baseline.job)
-        }
-        activeFastBaseline = nil
+        settlePolishWithBaselines()
         finalFastBaselines.removeAll()
         analysisTask?.cancel(); analysisTask = nil
         resultTask?.cancel(); resultTask = nil
@@ -596,9 +603,12 @@ final class CaptionModel {
         contextSession?.retire(); contextSession = nil
         contextTask?.cancel(); contextTask = nil
         activeContext = nil
-        localEngine.cancelActive()
+        polishLaneID = nil
+        polishWorker?.cancel(); polishWorker = nil
         polishTask?.cancel(); polishTask = nil
-        activeFastBaseline = nil
+        localEngine.cancelActive()
+        activePolish = nil
+        polishWaiting.removeAll()
         finalFastBaselines.removeAll()
         localPolishDegraded = false
         localPolishMilliseconds = nil
@@ -726,13 +736,6 @@ final class CaptionModel {
     }
 
     private func enqueue(_ job: TranslationJob) {
-        if let activeTranslation, let polishTask,
-           activeTranslation.segmentID != job.segmentID || activeTranslation.revision != job.revision {
-            // Optional refinement yields to new live speech. Its exact
-            // fast baseline is finalized before the next Apple job runs.
-            polishTask.cancel()
-            localEngine.cancelActive()
-        }
         if job.isSourceFinal, let activeTranslation, !activeTranslation.isSourceFinal,
            activeTranslation.segmentID != job.segmentID || activeTranslation.revision != job.revision {
             if timeline.needsTranslation(activeTranslation) { translationQueue.enqueue(activeTranslation) }
@@ -807,9 +810,14 @@ final class CaptionModel {
                         do { try await Task.sleep(for: .seconds(min(quietWait, 0.05))) } catch { return }
                         continue
                     }
+                    let useLocal = shouldPolish
+                    if useLocal, activePolish != nil || !polishWaiting.isEmpty {
+                        // The local engine runs one request at a time.
+                        do { try await Task.sleep(for: .milliseconds(50)) } catch { return }
+                        continue
+                    }
                     contextJobs.removeFirst()
                     activeContext = contextJob
-                    let useLocal = shouldPolish
                     let contextSession = useLocal ? nil : TranslationSessionLease(installedSource: sourceLanguage,
                         target: targetLanguage, preferredStrategy: .highFidelity)
                     self.contextSession = contextSession
@@ -864,20 +872,21 @@ final class CaptionModel {
             }
             if !job.isSourceFinal { draftHeldSince = nil }
             queuedTranslations = translationQueue.count + contextJobs.count
-            guard timeline.needsTranslation(job) else { continue }
+            // A sentence already handed to refinement keeps its gray baseline
+            // until that lane finalizes it. Do not translate it again.
+            guard timeline.needsTranslation(job), !polishOwns(job) else { continue }
             let began = ProcessInfo.processInfo.systemUptime
             activeTranslation = job
             do {
                 let override = translationOverride
                 let cached = finalFastBaselines.removeValue(forKey: job.segmentID)
                 let task = Task {
-                    let baseline = try await OperationDeadline.run(seconds: 6, name: "자막 번역", onTimeout: { session?.retire() }) {
+                    try await OperationDeadline.run(seconds: 6, name: "자막 번역", onTimeout: { session?.retire() }) {
                         if let cached, cached.revision == job.revision { return cached.translation }
                         if let override { return try await override(job.source, false) }
                         guard let session else { throw CancellationError() }
                         return try await session.translate(job.source)
                     }
-                    return try await self.refineFinal(baseline, for: job, worker: token)
                 }
                 translationTask = task
                 let translation = try await task.value
@@ -885,14 +894,17 @@ final class CaptionModel {
                 guard !translation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
                     throw CaptionError.message("번역 결과가 비어 있습니다.")
                 }
-                if timeline.apply(translation: translation, for: job) {
+                // Refinement never holds this worker. An admitted sentence shows
+                // its baseline in gray and the refinement lane finalizes it.
+                let refining = admitPolish(baseline: translation, for: job)
+                if refining || timeline.apply(translation: translation, for: job) {
                     if message == "일부 자막을 번역하지 못했습니다. 다시 번역하거나 원문을 확인해 주세요.",
                        !segments.contains(where: { $0.translationError != nil }) { message = nil }
                     translationMilliseconds = (ProcessInfo.processInfo.systemUptime - began) * 1000
                     if runHasAudio, let segment = segments.first(where: { $0.id == job.segmentID }) {
                         captionDelaySeconds = max(0, ProcessInfo.processInfo.systemUptime - runUptime - (segment.audioEnd - audioOffset))
                     }
-                    enqueueContextIfAvailable()
+                    if !refining { enqueueContextIfAvailable() }
                 }
             } catch {
                 guard !Task.isCancelled, workerID == token else { return }
@@ -913,6 +925,7 @@ final class CaptionModel {
                                 : "번역 응답이 지연돼 입력을 멈춥니다. 미완료 원문은 보존했습니다. 다시 번역하거나 새로 시작해 주세요."
                             Task { await self.stop(aborting: true) }
                         }
+                        settlePolishWithBaselines()
                         for segment in segments where segment.translatedRevision != segment.revision {
                             timeline.fail(TranslationJob(segmentID: segment.id, revision: segment.revision,
                                 source: segment.source, isSourceFinal: segment.sourceIsFinal),
@@ -931,35 +944,80 @@ final class CaptionModel {
 
     private var shouldPolish: Bool { polishEnabled && !localPolishDegraded && !isPreview && !isUISoak }
 
-    private func refineFinal(_ baseline: String, for job: TranslationJob, worker token: UUID) async throws -> String {
-        guard shouldPolish, timeline.isCurrent(job),
-              let segment = segments.first(where: { $0.id == job.segmentID }), segment.sourceIsFinal else { return baseline }
-        translationQueue.prune(using: timeline)
-        if translationQueue.hasFinal(excluding: job) || translationQueue.count > translationQueue.finalCount {
-            localPolishMessage = "새 문장을 우선해 빠른 번역을 유지했습니다."
-            return baseline
+    private func polishOwns(_ job: TranslationJob) -> Bool {
+        ((activePolish.map { [$0] } ?? []) + polishWaiting).contains {
+            $0.job.segmentID == job.segmentID && $0.job.revision == job.revision
         }
+    }
+
+    /// Shows the fast baseline as a gray preview and hands the exact final
+    /// revision to the refinement lane. Returns false when the baseline itself
+    /// should finalize the caption.
+    private func admitPolish(baseline: String, for job: TranslationJob) -> Bool {
+        guard shouldPolish, timeline.isCurrent(job),
+              let segment = segments.first(where: { $0.id == job.segmentID }), segment.sourceIsFinal else { return false }
         let finalJob = TranslationJob(segmentID: job.segmentID, revision: job.revision,
             source: job.source, isSourceFinal: true)
-        activeTranslation = finalJob
-        guard timeline.preview(translation: baseline, for: finalJob) else { return baseline }
-        activeFastBaseline = (finalJob, baseline, token)
-        defer {
-            if activeFastBaseline?.worker == token, activeFastBaseline?.job == finalJob {
-                activeFastBaseline = nil
-                polishTask = nil
-            }
+        let request = LocalTranslationRequest(source: job.source, baseline: baseline,
+            direction: selectedDirection, domain: translationDomain)
+        guard request.isWithinBudget, timeline.preview(translation: baseline, for: finalJob) else { return false }
+        polishWaiting.append(PolishItem(job: finalJob, baseline: baseline))
+        while polishWaiting.count > Self.polishWaitingLimit {
+            // The newest sentences are the ones being read. An older sentence
+            // the model never reached keeps its fast translation.
+            let skipped = polishWaiting.removeFirst()
+            timeline.apply(translation: skipped.baseline, for: skipped.job)
+            localPolishMessage = "새 문장을 우선해 빠른 번역을 유지했습니다."
         }
+        schedulePolish()
+        return true
+    }
+
+    private func schedulePolish() {
+        guard polishWorker == nil, !polishWaiting.isEmpty else { return }
+        let token = UUID()
+        polishLaneID = token
+        polishWorker = Task { [weak self] in
+            guard let self else { return }
+            await self.drainPolish(lane: token)
+            guard self.polishLaneID == token else { return }
+            self.polishWorker = nil
+            self.polishLaneID = nil
+        }
+    }
+
+    private func drainPolish(lane token: UUID) async {
+        while polishLaneID == token, !Task.isCancelled, !polishWaiting.isEmpty {
+            if activeContext != nil, shouldPolish {
+                // A context group using the single local engine was preempted
+                // by this sentence's source. Wait for it to release the engine.
+                do { try await Task.sleep(for: .milliseconds(20)) } catch { return }
+                continue
+            }
+            let item = polishWaiting.removeFirst()
+            var refined: String?
+            if shouldPolish, timeline.needsTranslation(item.job) {
+                activePolish = item
+                refined = await refine(item, lane: token)
+                guard polishLaneID == token, !Task.isCancelled else { return }
+                activePolish = nil
+            }
+            if timeline.apply(translation: refined ?? item.baseline, for: item.job) { enqueueContextIfAvailable() }
+        }
+    }
+
+    /// Returns the validated local wording, or nil to keep the fast baseline.
+    private func refine(_ item: PolishItem, lane token: UUID) async -> String? {
         // Separate background prompts leaked earlier sentences in actual QA.
         // Adjacent context is translated only as an explicit bounded group by
         // the existing context lane, preserving all member source records.
-        let request = LocalTranslationRequest(source: job.source, baseline: baseline,
+        let request = LocalTranslationRequest(source: item.job.source, baseline: item.baseline,
             direction: selectedDirection, domain: translationDomain)
-        guard request.isWithinBudget else { return baseline }
-        do {
-            let engine = localEngine
-            let polisher = polishOverride
-            let started = ProcessInfo.processInfo.systemUptime
+        let engine = localEngine
+        let polisher = polishOverride
+        let started = ProcessInfo.processInfo.systemUptime
+        // A just-preempted context request can still hold the engine briefly.
+        for attempt in 0..<3 {
             let task = Task {
                 try await OperationDeadline.run(seconds: self.polishTimeoutSeconds, name: "문맥 다듬기",
                     onTimeout: { engine.cancelActive() }) {
@@ -968,29 +1026,50 @@ final class CaptionModel {
                 }
             }
             polishTask = task
-            let text = try await task.value
-            try Task.checkCancellation()
-            guard workerID == token, timeline.isCurrent(job) else { throw CancellationError() }
-            guard request.accepts(text) else {
-                localPolishMessage = "이번 구절은 빠른 번역을 유지했습니다."
-                return baseline
+            do {
+                let text = try await task.value
+                guard polishLaneID == token, !Task.isCancelled, timeline.isCurrent(item.job) else { return nil }
+                polishTask = nil
+                guard request.accepts(text) else {
+                    localPolishMessage = "이번 구절은 빠른 번역을 유지했습니다."
+                    return nil
+                }
+                localPolishMilliseconds = (ProcessInfo.processInfo.systemUptime - started) * 1_000
+                localPolishMessage = "문맥 다듬기 사용 중 · \(translationDomain.label)"
+                return text
+            } catch {
+                guard polishLaneID == token, !Task.isCancelled else { return nil }
+                polishTask = nil
+                if case LocalTranslationError.busy = error {
+                    if attempt < 2, (try? await Task.sleep(for: .milliseconds(30))) != nil,
+                       polishLaneID == token { continue }
+                    localPolishMessage = "이번 구절은 빠른 번역을 유지했습니다."
+                } else if case LocalTranslationError.unsafeOutput = error {
+                    localPolishMessage = "이번 구절은 빠른 번역을 유지했습니다."
+                } else if !(error is CancellationError) {
+                    localPolishDegraded = true
+                    localEngine.cancelActive()
+                    localPolishMessage = "보완이 지연되거나 실패해 이번 실행은 빠른 번역을 유지합니다."
+                    message = localPolishMessage
+                }
+                return nil
             }
-            localPolishMilliseconds = (ProcessInfo.processInfo.systemUptime - started) * 1_000
-            localPolishMessage = "문맥 다듬기 사용 중 · \(translationDomain.label)"
-            return text
-        } catch {
-            guard workerID == token, !Task.isCancelled else { throw CancellationError() }
-            if error is CancellationError, polishTask?.isCancelled == true {
-                localPolishMessage = "새 문장을 우선해 빠른 번역을 유지했습니다."
-            } else if case LocalTranslationError.unsafeOutput = error {
-                localPolishMessage = "이번 구절은 빠른 번역을 유지했습니다."
-            } else {
-                localPolishDegraded = true
-                localEngine.cancelActive()
-                localPolishMessage = "보완이 지연되거나 실패해 이번 실행은 빠른 번역을 유지합니다."
-                message = localPolishMessage
-            }
-            return baseline
+        }
+        return nil
+    }
+
+    /// Ends the refinement lane and finalizes each still-current sentence with
+    /// the fast baseline it already displays. Late local output is ignored.
+    private func settlePolishWithBaselines() {
+        polishLaneID = nil
+        polishWorker?.cancel(); polishWorker = nil
+        polishTask?.cancel(); polishTask = nil
+        localEngine.cancelActive()
+        let items = (activePolish.map { [$0] } ?? []) + polishWaiting
+        activePolish = nil
+        polishWaiting.removeAll()
+        for item in items where timeline.needsTranslation(item.job) {
+            timeline.apply(translation: item.baseline, for: item.job)
         }
     }
 

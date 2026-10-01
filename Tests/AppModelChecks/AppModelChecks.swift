@@ -420,8 +420,8 @@ struct AppModelChecks {
                     "Late aborted refinement changed the old or resumed caption")
                 await model.stop(aborting: true)
             }),
-            ("a current draft preempts held optional refinement and preserves its exact final baseline", {
-                let suite = "LiveKoCaption.DraftPolishPreemptionChecks.\(UUID().uuidString)"
+            ("a held refinement never delays a current draft and still finalizes its own sentence", {
+                let suite = "LiveKoCaption.DraftPolishLaneChecks.\(UUID().uuidString)"
                 let defaults = UserDefaults(suiteName: suite)!
                 defer { defaults.removePersistentDomain(forName: suite) }
                 let translator = TranslatorProbe()
@@ -433,21 +433,23 @@ struct AppModelChecks {
                 try await waitUntil("Held optional refinement did not start") { polisher.calls.count == 1 }
                 let began = ProcessInfo.processInfo.systemUptime
                 model.receive(source: "Now speaking quickly", audioStart: 1, audioEnd: 2, isFinal: false)
-                try await waitUntil("Current draft waited behind old optional refinement", seconds: 0.35) {
-                    model.segments.count == 2 && model.segments[1].translation == "KO: Now speaking quickly" &&
-                        !model.hasPendingTranslations
+                try await waitUntil("Current draft waited behind optional refinement", seconds: 0.35) {
+                    model.segments.count == 2 && model.segments[1].translation == "KO: Now speaking quickly"
                 }
                 try expect(ProcessInfo.processInfo.systemUptime - began < 0.35 &&
-                    model.segments[0].isFinal && model.segments[0].translation == "KO: Already spoken." &&
+                    !model.segments[0].isFinal && model.segments[0].translation == "KO: Already spoken." &&
                     !model.segments[1].isFinal && model.segments.allSatisfy { $0.translationError == nil },
-                    "Draft preemption lost the final fast baseline or falsely finalized live speech")
-                let beforeLateResult = model.segments
-                polisher.release(source: "Already spoken.", translation: "양보한 뒤 늦게 온 문장입니다.")
-                try await Task.sleep(for: .milliseconds(50))
-                try expect(model.segments == beforeLateResult && model.message == nil,
-                    "Late optional output changed the baseline or current draft")
+                    "Live speech canceled the earlier refinement, lost its baseline or falsely finalized a caption")
+                polisher.release(source: "Already spoken.", translation: "먼저 말한 문장을 다듬었습니다.")
+                try await waitUntil("Held refinement did not finalize after live speech continued") {
+                    model.segments[0].isFinal && !model.hasPendingTranslations
+                }
+                try expect(model.segments[0].translation == "먼저 말한 문장을 다듬었습니다." &&
+                    model.segments[1].translation == "KO: Now speaking quickly" && !model.segments[1].isFinal &&
+                    polisher.calls.count == 1 && model.message == nil,
+                    "Refinement finishing during live speech changed the draft or was not applied")
             }),
-            ("a draft already queued during Apple work skips earlier optional polish", {
+            ("a draft queued during Apple work translates at once and the earlier final is still refined", {
                 let suite = "LiveKoCaption.QueuedDraftPolishChecks.\(UUID().uuidString)"
                 let defaults = UserDefaults(suiteName: suite)!
                 defer { defaults.removePersistentDomain(forName: suite) }
@@ -460,49 +462,54 @@ struct AppModelChecks {
                 try await waitUntil("Final Apple baseline did not start") { translator.calls.count == 1 }
                 model.receive(source: "Following live speech", audioStart: 1, audioEnd: 2, isFinal: false)
                 translator.release(source: "First final.", translation: "첫 문장의 빠른 번역입니다.")
-                try await waitUntil("Queued live speech did not translate") {
-                    model.segments.last?.translation == "KO: Following live speech" && !model.hasPendingTranslations
+                try await waitUntil("Queued live speech or the earlier refinement did not finish") {
+                    model.segments.last?.translation == "KO: Following live speech" &&
+                        model.segments[0].isFinal && !model.hasPendingTranslations
                 }
-                try expect(polisher.calls.isEmpty && model.segments[0].isFinal &&
-                    model.segments[0].translation == "첫 문장의 빠른 번역입니다.",
-                    "Optional polish started while a current draft was already waiting")
+                try expect(polisher.calls.count == 1 && polisher.calls[0].baseline == "첫 문장의 빠른 번역입니다." &&
+                    model.segments[0].translation == "다듬은 자막: First final." && !model.segments[1].isFinal,
+                    "A waiting draft skipped the earlier refinement or refinement touched live speech")
             }),
-            ("a new final preempts held optional refinement before its timeout and preserves fast captions", {
-                let suite = "LiveKoCaption.PolishPreemptionChecks.\(UUID().uuidString)"
+            ("following finals show fast baselines while a refinement is held and the waiting limit keeps baselines", {
+                let suite = "LiveKoCaption.PolishWaitingLimitChecks.\(UUID().uuidString)"
                 let defaults = UserDefaults(suiteName: suite)!
                 defer { defaults.removePersistentDomain(forName: suite) }
                 let translator = TranslatorProbe()
                 let polisher = PolisherProbe()
-                polisher.heldSources = ["First quick caption.", "Second quick caption."]
+                polisher.heldSources = ["First quick caption."]
                 defer { polisher.releaseAll() }
                 let model = makePolishModel(translator, polisher: polisher, defaults: defaults, timeout: 1.8)
                 model.receive(source: "First quick caption.", audioStart: 0, audioEnd: 1, isFinal: true)
                 try await waitUntil("First held local refinement never started") { polisher.calls.count == 1 }
                 let began = ProcessInfo.processInfo.systemUptime
                 model.receive(source: "Second quick caption.", audioStart: 1, audioEnd: 2, isFinal: true)
-                try await waitUntil("Second fast caption waited for the first optional timeout", seconds: 0.6) {
-                    model.segments.count == 2 && model.segments[1].translation == "KO: Second quick caption." && polisher.calls.count == 2
+                try await waitUntil("Second fast caption waited for the held refinement", seconds: 0.6) {
+                    model.segments.count == 2 && model.segments[1].translation == "KO: Second quick caption."
                 }
-                try expect(ProcessInfo.processInfo.systemUptime - began < 0.8,
-                    "Optional refinement blocked fast translation for its full deadline")
-                try expect(model.segments[0].isFinal && model.segments[0].translation == "KO: First quick caption." &&
-                    model.segments[0].translationError == nil && !model.segments[1].isFinal,
-                    "Preemption lost the exact first baseline or finalized the second pending refinement")
+                try expect(ProcessInfo.processInfo.systemUptime - began < 0.6 && polisher.calls.count == 1 &&
+                    !model.segments[0].isFinal && !model.segments[1].isFinal,
+                    "Held refinement blocked a fast baseline, ran two local requests at once or finalized early")
                 model.receive(source: "Third quick caption.", audioStart: 2, audioEnd: 3, isFinal: true)
-                try await waitUntil("Further fast speech was blocked by canceled local work", seconds: 0.6) {
-                    model.segments.count == 3 && model.segments.allSatisfy(\.isFinal) && !model.hasPendingTranslations
+                model.receive(source: "Fourth quick caption.", audioStart: 3, audioEnd: 4, isFinal: true)
+                try await waitUntil("Further fast speech was blocked by held local work", seconds: 0.6) {
+                    model.segments.count == 4 && model.segments[3].translation == "KO: Fourth quick caption."
                 }
-                let finalized = model.segments
-                try expect(polisher.calls.count == 3 && finalized[1].translation == "KO: Second quick caption." &&
-                    finalized[2].translation == "다듬은 자막: Third quick caption.",
-                    "Preemption disabled all later optional work or changed the second fallback")
-                polisher.release(source: "First quick caption.", translation: "첫 문장의 늦은 결과입니다.")
-                polisher.release(source: "Second quick caption.", translation: "둘째 문장의 늦은 결과입니다.")
-                try await Task.sleep(for: .milliseconds(50))
-                try expect(model.segments == finalized && model.message == nil && model.canStart,
-                    "Canceled refinement overwrote a finalized baseline or polluted later captions")
+                // Two sentences may wait. The oldest waiting one keeps its baseline.
+                try expect(model.segments[1].isFinal && model.segments[1].translation == "KO: Second quick caption." &&
+                    !model.segments[0].isFinal && !model.segments[2].isFinal && !model.segments[3].isFinal &&
+                    polisher.calls.count == 1 && model.segments.allSatisfy { $0.translationError == nil },
+                    "Waiting limit did not finalize the oldest waiting baseline or dropped a newer sentence")
+                polisher.release(source: "First quick caption.", translation: "첫 문장을 다듬었습니다.")
+                try await waitUntil("Waiting refinements did not finish in order") {
+                    model.segments.allSatisfy(\.isFinal) && !model.hasPendingTranslations
+                }
+                try expect(model.segments.map(\.translation) == ["첫 문장을 다듬었습니다.", "KO: Second quick caption.",
+                        "다듬은 자막: Third quick caption.", "다듬은 자막: Fourth quick caption."] &&
+                    polisher.calls.map(\.source) == ["First quick caption.", "Third quick caption.", "Fourth quick caption."] &&
+                    translator.calls.count == 4 && model.message == nil && model.canStart,
+                    "Refinement lane changed order, repeated work or reported a degraded run")
             }),
-            ("a final already queued during Apple work skips earlier optional polish", {
+            ("a final queued during Apple work gets its baseline without waiting for the earlier refinement", {
                 let suite = "LiveKoCaption.PolishAlreadyQueuedChecks.\(UUID().uuidString)"
                 let defaults = UserDefaults(suiteName: suite)!
                 defer { defaults.removePersistentDomain(forName: suite) }
@@ -518,21 +525,25 @@ struct AppModelChecks {
                 model.receive(source: "Second queued final.", audioStart: 1, audioEnd: 2, isFinal: true)
                 let began = ProcessInfo.processInfo.systemUptime
                 translator.release(source: "First queued final.", translation: "첫 원문의 빠른 번역입니다.")
-                try await waitUntil("Already queued second baseline waited for earlier optional polish", seconds: 0.6) {
+                try await waitUntil("Queued second baseline waited for the earlier refinement", seconds: 0.6) {
                     model.segments.count == 2 && model.segments[1].translation == "KO: Second queued final." && polisher.calls.count == 1
                 }
-                try expect(ProcessInfo.processInfo.systemUptime - began < 0.8 &&
-                    polisher.calls[0].source == "Second queued final.",
-                    "Earlier optional refinement ran despite another final waiting for its fast baseline")
-                try expect(model.segments[0].translation == "첫 원문의 빠른 번역입니다." && model.segments[0].isFinal &&
-                    model.segments[0].translationError == nil && !model.segments[1].isFinal,
-                    "Skipping earlier polish lost final baseline or falsely finalized the second pending refinement")
+                try expect(ProcessInfo.processInfo.systemUptime - began < 0.6 &&
+                    polisher.calls[0].source == "First queued final." &&
+                    model.segments[0].translation == "첫 원문의 빠른 번역입니다." &&
+                    !model.segments[0].isFinal && !model.segments[1].isFinal,
+                    "Refinement order changed, or a gray baseline was lost or finalized early")
+                polisher.release(source: "First queued final.", translation: "첫 문장을 다듬었습니다.")
+                try await waitUntil("Second refinement did not start after the first") {
+                    polisher.calls.count == 2 && model.segments[0].isFinal
+                }
                 polisher.release(source: "Second queued final.", translation: "두 번째 문장을 다듬었습니다.")
-                try await waitUntil("Latest queued final did not finish optional refinement") {
+                try await waitUntil("Queued finals did not finish optional refinement") {
                     model.segments.allSatisfy(\.isFinal) && !model.hasPendingTranslations
                 }
-                try expect(translator.calls.count == 2 && polisher.calls.count == 1 && model.message == nil,
-                    "Prioritizing queued finals repeated work or incorrectly degraded local refinement")
+                try expect(translator.calls.count == 2 && polisher.calls.count == 2 && model.message == nil &&
+                    model.segments.map(\.translation) == ["첫 문장을 다듬었습니다.", "두 번째 문장을 다듬었습니다."],
+                    "Queued finals repeated work, degraded refinement or applied the wrong wording")
             }),
             ("native local context timeout disables only further context for the current run", {
                 let suite = "LiveKoCaption.NativeContextTimeoutChecks.\(UUID().uuidString)"
