@@ -90,7 +90,7 @@ private struct CaptionHeader: View {
         HStack(spacing: 12) {
             CaptionIconButton(windows.sidebarExpanded ? "사이드바 접기" : "사이드바 펼치기", symbol: "sidebar.left",
                 help: windows.sidebarExpanded ? "조작 이름과 빠른 설정을 접고 자막 영역을 넓힙니다. 아이콘은 계속 사용할 수 있습니다. · ⌘\\" :
-                    "조작 이름과 번역 분야를 펼쳐 봅니다. · ⌘\\") { windows.sidebarExpanded.toggle() }
+                    "조작 이름과 적용할 용어사전을 펼쳐 봅니다. · ⌘\\") { windows.sidebarExpanded.toggle() }
                 .accessibilityValue(windows.sidebarExpanded ? "펼침" : "접힘")
                 .keyboardShortcut("\\", modifiers: .command)
             Label("라이브 자막", systemImage: "captions.bubble.fill")
@@ -156,7 +156,7 @@ private struct CaptionSidebar: View {
             }
             Rectangle().fill(CaptionPalette.border).frame(height: 1)
                 .padding(.horizontal, 16).padding(.vertical, 8)
-            quickDomain
+            quickDictionaries
                 .frame(width: 228, alignment: .leading).padding(.horizontal, 16)
                 .frame(height: expanded ? 140 : 0, alignment: .top)
                 .opacity(expanded ? 1 : 0).clipped()
@@ -169,35 +169,22 @@ private struct CaptionSidebar: View {
             .background(CaptionPalette.panel)
     }
 
-    private var quickDomain: some View {
+    private var quickDictionaries: some View {
         VStack(alignment: .leading, spacing: 9) {
-            Text("번역 분야").font(CaptionType.section)
-            if model.canChangeSessionSettings {
-                Picker("번역 분야", selection: $model.translationDomain) {
-                    Text("일반").tag(TranslationDomain.general)
-                    Text("IT").tag(TranslationDomain.it)
-                    Text("내 용어집").tag(TranslationDomain.custom)
-                }.pickerStyle(.segmented).controlSize(.large).labelsHidden()
-                    .help("작은 모델로 문장을 다듬을 때 참고할 분야를 선택합니다. 내 용어집은 IT 용어에 직접 적은 용어를 더하고, 적어 둔 잘못 들리는 표기를 원문에서 고칩니다.")
-            } else {
-                HStack {
-                    Text(model.translationDomain.label).font(CaptionType.body)
-                    Spacer()
-                    Image(systemName: "lock").font(CaptionType.supporting)
-                }.padding(.horizontal, 12).frame(height: 30)
-                    .background(Color.white.opacity(0.045), in: RoundedRectangle(cornerRadius: 7))
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("번역 분야").accessibilityValue(model.translationDomain.label)
-                    .help("분야 변경은 빈 대화에서 시작 전에 가능합니다.")
-            }
-            Text(model.hasContent ? "새 대화에서 변경 · 문장 다듬기에 적용"
-                 : model.translationDomain == .custom ? "원문 고쳐 쓰기와 문장 다듬기에 적용" : "문장 다듬기에 적용")
+            Text("용어사전 적용").font(CaptionType.section)
+            HStack(alignment: .top) {
+                Text(model.dictionarySelectionLabel).font(CaptionType.body).lineLimit(2)
+                Spacer(minLength: 4)
+                if !model.canChangeSessionSettings { Image(systemName: "lock").font(CaptionType.supporting) }
+            }.accessibilityElement(children: .ignore)
+                .accessibilityLabel("적용할 용어사전").accessibilityValue(model.dictionarySelectionLabel)
+            Text(model.hasContent ? "새 대화에서 변경" : "여러 사전을 함께 선택할 수 있어요")
                 .font(CaptionType.supporting).foregroundStyle(CaptionPalette.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             Button { openSettings(.translation) } label: {
-                Text(model.polishEnabled ? "문장 다듬기 설정" : "문장 다듬기 꺼짐 · 설정")
+                Text("사전 선택 및 번역 설정")
                     .font(CaptionType.supporting).foregroundStyle(CaptionPalette.blue)
-            }.buttonStyle(.plain).help("문장 다듬기의 사용 여부와 상세 번역 설정을 확인합니다.")
+            }.buttonStyle(.plain).help("AI·IBM·금융권 및 개인 사전을 선택하고 문장 다듬기를 설정합니다.")
         }
     }
 
@@ -384,19 +371,9 @@ private struct CaptionSettingsPopover: View {
                 explanation("묶음 번역은 상세 보기와 저장 기록에 표시합니다. 간략 보기는 문장별 자막을 유지합니다.")
             }
             Divider().overlay(CaptionPalette.border)
-            LocalPolishControls(model: model, store: LocalModelStore.shared)
+            DictionaryControls(model: model)
             Divider().overlay(CaptionPalette.border)
-            VStack(alignment: .leading, spacing: 10) {
-                Text("내 용어집").font(CaptionType.section)
-                explanation("제품 이름이나 전문 용어를 이 Mac의 텍스트 파일에 적어 둡니다. 번역 분야가 ‘내 용어집’인 대화에서, 적어 둔 잘못 들리는 표기를 원문에서 고치고 확정 문장을 다듬을 때 용어 번역을 참고합니다. 문장 다듬기가 꺼져 있으면 원문 고쳐 쓰기만 적용됩니다.")
-                HStack(spacing: 10) {
-                    Button("용어집 파일 열기") { model.openGlossaryFile() }.controlSize(.large)
-                        .help("용어집을 텍스트 편집기로 엽니다. 처음에는 형식 설명이 있는 파일을 만듭니다.")
-                    Button("다시 읽기") { model.reloadGlossary() }.controlSize(.large).disabled(model.phase != .idle)
-                        .help("저장한 용어집을 지금 다시 읽습니다. 자막을 시작할 때도 자동으로 다시 읽습니다.")
-                }
-                explanation(model.glossaryMessage)
-            }
+            LocalPolishControls(model: model, store: LocalModelStore.shared)
         }
     }
 
@@ -496,6 +473,58 @@ private struct CaptionSessionButtonStyle: ButtonStyle {
     }
 }
 
+private struct DictionaryControls: View {
+    @Bindable var model: CaptionModel
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("용어사전 적용").font(CaptionType.section)
+                Spacer()
+                Button("선택 해제") { model.selectedDictionaryIDs = [] }
+                    .buttonStyle(.plain).foregroundStyle(CaptionPalette.blue)
+                    .disabled(!model.canChangeSessionSettings || model.selectedDictionaryIDs.isEmpty)
+            }
+            Text("여러 개 선택 가능 · 선택하지 않으면 일반 번역")
+                .font(CaptionType.supporting).foregroundStyle(CaptionPalette.secondary)
+            ForEach(model.dictionaries) { dictionary in
+                HStack(spacing: 10) {
+                    Toggle(dictionary.name, isOn: Binding(
+                        get: { model.selectedDictionaryIDs.contains(dictionary.id) },
+                        set: { model.setDictionary(dictionary.id, enabled: $0) }))
+                        .toggleStyle(.checkbox).disabled(!model.canChangeSessionSettings)
+                        .help(dictionary.isPersonal ? "직접 적은 용어와 표기를 적용합니다." : "이 분야의 설명과 공개 용어를 번역 모델에 참고로 전달합니다.")
+                    Spacer(minLength: 4)
+                    Text("\(dictionary.glossary.entries.count)개 용어")
+                        .font(CaptionType.supporting).foregroundStyle(CaptionPalette.secondary)
+                    if dictionary.isPersonal {
+                        Button("편집") { model.openDictionaryFile(dictionary.id) }
+                            .buttonStyle(.plain).foregroundStyle(CaptionPalette.blue)
+                            .disabled(!model.canChangeSessionSettings)
+                            .accessibilityLabel("\(dictionary.name) 사전 편집")
+                    }
+                }
+            }
+            HStack(spacing: 12) {
+                Button("용어사전 추가…") { model.addDictionary() }.disabled(!model.canChangeSessionSettings)
+                Button("다시 읽기") { model.reloadGlossary() }
+                    .disabled(model.phase != .idle || model.hasPendingTranslations || model.isPreview || model.isUISoak)
+                    .help("편집한 개인 사전을 다시 읽습니다. 자막을 시작할 때도 다시 읽습니다.")
+            }
+            Text(model.canChangeSessionSettings ? "선택은 다음 실행에도 유지됩니다." : "사전 선택은 새 대화에서 변경할 수 있습니다.")
+                .font(CaptionType.supporting).foregroundStyle(CaptionPalette.secondary)
+            Text(model.polishEnabled ? "선택한 분야와 관련 용어를 확정 문장 다듬기에 참고합니다." : "분야와 번역 용어를 적용하려면 아래의 문장 다듬기를 켜세요.")
+                .font(CaptionType.supporting).foregroundStyle(CaptionPalette.secondary)
+            Text("개인 사전에 직접 적은 잘못 들리는 표기는 원문에 적용됩니다. 개인 용어는 기본 사전보다 우선하며 이 Mac에만 저장됩니다.")
+                .font(CaptionType.supporting).foregroundStyle(CaptionPalette.secondary).lineSpacing(3)
+            Text(model.glossaryMessage).font(CaptionType.supporting).foregroundStyle(CaptionPalette.secondary)
+            if !model.dictionaryConflictMessage.isEmpty {
+                Text(model.dictionaryConflictMessage).font(CaptionType.supporting).foregroundStyle(CaptionPalette.secondary)
+            }
+        }
+    }
+}
+
 private struct LocalPolishControls: View {
     @Bindable var model: CaptionModel
     @Bindable var store: LocalModelStore
@@ -514,13 +543,6 @@ private struct LocalPolishControls: View {
             Text("빠른 자막을 먼저 표시하고 확정 문장만 보완합니다. 오역이 생길 수 있습니다.")
                 .font(CaptionType.supporting).foregroundStyle(CaptionPalette.secondary).lineSpacing(3)
             if store.isInstalled {
-                Picker("번역 분야", selection: $model.translationDomain) {
-                    Text("일반").tag(TranslationDomain.general)
-                    Text("IT").tag(TranslationDomain.it)
-                    Text("내 용어집").tag(TranslationDomain.custom)
-                }.pickerStyle(.segmented).controlSize(.large)
-                    .disabled(!model.canChangeSessionSettings)
-                    .help("새 대화에서 분야를 선택합니다. IT 분야는 관련 용어를 참고하고, 내 용어집은 직접 적은 용어를 더합니다.")
                 if model.isPreparingLocalModel { ProgressView().controlSize(.small) }
                 if model.polishEnabled {
                     Text(model.localPolishMessage)

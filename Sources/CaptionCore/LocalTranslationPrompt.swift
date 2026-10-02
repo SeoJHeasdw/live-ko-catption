@@ -26,20 +26,24 @@ public struct LocalTranslationRequest: Sendable, Equatable {
     public var source: String
     public var baseline: String
     public var direction: CaptionDirection
-    public var domain: TranslationDomain
+    public var dictionaries: [CaptionDictionary]
     public var previousSentence: String
-    /// The user's own terms. They are used only with the custom domain.
-    public var glossary: [GlossaryEntry]
+    public var glossary: [GlossaryEntry] { dictionaries.filter(\.isPersonal).flatMap { $0.glossary.entries } }
 
     public init(source: String, baseline: String = "", direction: CaptionDirection,
-                domain: TranslationDomain = .general, previousSentence: String = "",
-                glossary: [GlossaryEntry] = []) {
+                dictionaries: [CaptionDictionary] = [], previousSentence: String = "") {
         self.source = source
         self.baseline = baseline
         self.direction = direction
-        self.domain = domain
+        self.dictionaries = dictionaries
         self.previousSentence = String(previousSentence.suffix(300))
-        self.glossary = domain == .custom ? glossary : []
+    }
+
+    /// Historical QA fixtures can keep their original single-domain inputs.
+    public init(source: String, baseline: String = "", direction: CaptionDirection,
+                domain: TranslationDomain, previousSentence: String = "", glossary: [GlossaryEntry] = []) {
+        self.init(source: source, baseline: baseline, direction: direction,
+                  dictionaries: BuiltInDictionaries.legacy(domain, glossary: glossary), previousSentence: previousSentence)
     }
 
     public var isWithinBudget: Bool { !source.isEmpty && source.count <= 1_000 }
@@ -49,51 +53,63 @@ public struct LocalTranslationRequest: Sendable, Equatable {
     public func prompt(template: LocalPromptTemplate) -> String {
         let target = direction == .englishToKorean ? "Korean" : "English"
         var instructions = ""
-        if !previousSentence.isEmpty {
-            instructions += "[Background Information]\n" + previousSentence + "\n\n"
-        }
-        if domain != .general {
+        let areas = dictionaries.map(\.context).filter { !$0.isEmpty }.joined(separator: " ")
+        let background = [String(areas.prefix(900)), previousSentence].filter { !$0.isEmpty }.joined(separator: "\n")
+        if !background.isEmpty { instructions += "[Background Information]\n" + background + "\n\n" }
+        if !dictionaries.isEmpty {
             let terms = relevantTerms
             if !terms.isEmpty {
                 instructions += "Reference the following translations:\n" + terms.map { "\($0.0) translates to \($0.1)" }.joined(separator: "\n") + "\n\n"
             }
         }
         instructions += "Translate the following segment into \(target), without additional explanation. Use natural subtitle phrasing and preserve all meaning."
-        if domain == .it { instructions += " This is an IT discussion." }
-        instructions += previousSentence.isEmpty ? "\n\n" + source : " Translate only [Source Text], using the background for context.\n[Source Text]\n" + source
+        if !dictionaries.isEmpty {
+            instructions += " Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise."
+        }
+        instructions += background.isEmpty && dictionaries.isEmpty ? "\n\n" + source
+            : " Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\n" + source
         return template.wrap(instructions)
     }
 
     public var relevantTerms: [(String, String)] {
-        let pairs: [(String, String)] = [
-            ("deployment", "배포"), ("rollback", "롤백"), ("latency", "지연 시간"),
-            ("throughput", "처리량"), ("memory leak", "메모리 누수"),
-            ("authentication", "인증"), ("authorization", "권한 부여"),
-            ("load balancer", "로드 밸런서"), ("container", "컨테이너"),
-            ("namespace", "네임스페이스"), ("cache", "캐시"),
-            ("API", "API"), ("Kubernetes", "Kubernetes")
-        ]
-        let mlTerms: [(String, String)] = [("precision", "정밀도"), ("recall", "재현율")]
         let context = (source + " " + previousSentence).lowercased()
         let mlContext = ["classifier", "classification", "machine learning", "f1", "prediction", "flagged requests",
                          "정밀도", "재현율", "분류기", "분류 모델", "머신러닝"].contains { context.contains($0) }
-        // The owner's terms come first and win over a built-in term of the same name.
-        let custom = glossary.map { ($0.english, $0.korean) }
-        let builtIn = (pairs + (mlContext ? mlTerms : [])).filter { pair in
-            !custom.contains { $0.0.caseInsensitiveCompare(pair.0) == .orderedSame }
-        }
-        return (custom + builtIn).compactMap { pair in
-            let term = direction == .englishToKorean ? pair.0 : pair.1
-            let escaped = NSRegularExpression.escapedPattern(for: term)
-            let pattern = "(?i)(?<![\\p{L}\\p{N}_])" + escaped + "(?![\\p{L}\\p{N}_])"
+        let resolved = DictionaryTerms(dictionaries: dictionaries, direction: direction)
+        let personalTerms = Set(glossary.map { (direction == .englishToKorean ? $0.english : $0.korean).lowercased() })
+        let legacy = dictionaries.contains { $0.id == "legacy:it" }
+        let loweredSource = source.lowercased()
+        let compactSource = loweredSource.filter { !$0.isWhitespace }
+        let spacedSource = loweredSource.split(whereSeparator: { $0.isWhitespace || $0 == "-" }).joined(separator: " ")
+        var matches: [(String, String)] = []
+        for pair in resolved.pairs {
+            let term = pair.0
+            // Only legacy fixture dictionaries contain these ambiguous bare words.
+            if legacy, !mlContext,
+               !personalTerms.contains(term.lowercased()),
+               ["precision", "recall", "정밀도", "재현율"].contains(term.lowercased()) { continue }
             let matched: Bool
             if direction == .koreanToEnglish {
                 // Korean particles may follow a technical noun without a space.
-                matched = source.contains(term)
-            } else { matched = source.range(of: pattern, options: .regularExpression) != nil }
-            guard matched else { return nil }
-            return direction == .englishToKorean ? pair : (pair.1, pair.0)
-        }.prefix(8).map { $0 }
+                let compactTerm = term.lowercased().filter { !$0.isWhitespace }
+                matched = compactSource.contains(compactTerm)
+            } else {
+                let normalizedTerm = term.lowercased().split(whereSeparator: { $0.isWhitespace || $0 == "-" }).joined(separator: " ")
+                // A cheap literal check avoids compiling a regex for every
+                // unrelated entry in large combined personal dictionaries.
+                guard normalizedTerm.isEmpty ? loweredSource.contains(term.lowercased()) : spacedSource.contains(normalizedTerm) else { continue }
+                let pieces = term.split(whereSeparator: { $0 == " " || $0 == "-" })
+                    .map { NSRegularExpression.escapedPattern(for: String($0)) }
+                let escaped = pieces.isEmpty ? NSRegularExpression.escapedPattern(for: term) : pieces.joined(separator: "[-\\s]+")
+                let plural = term.last?.isLowercase == true ? "(?:s)?" : ""
+                let pattern = "(?i)(?<![\\p{L}\\p{N}_])" + escaped + plural + "(?![\\p{L}\\p{N}_])"
+                matched = source.range(of: pattern, options: .regularExpression) != nil
+            }
+            guard matched else { continue }
+            matches.append(pair)
+            if matches.count == 8 { break }
+        }
+        return matches
     }
 
     /// This rejects obvious output/number corruption; it is not a semantic
@@ -103,6 +119,7 @@ public struct LocalTranslationRequest: Sendable, Equatable {
         guard !text.isEmpty, text.count <= max(120, source.count * 4),
               !text.contains("<｜hy_"), !text.contains("<|"), !text.contains("<think>"), !text.contains("</think>") else { return false }
         let labels = ["source text:", "[source text]", "background information:", "[background information]",
+                      "subject areas:", "[subject areas]", "reference the following translations:",
                       "원문:", "배경 정보:", "번역:", "translation:"]
         guard !labels.contains(where: { text.lowercased().hasPrefix($0) }),
               !(text.contains("\n\n") && !source.contains("\n\n")) else { return false }

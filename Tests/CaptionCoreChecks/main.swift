@@ -201,6 +201,291 @@ let checks: [(String, () throws -> Void)] = [
         let many = CaptionGlossary(text: (0..<400).map { "term\($0) = 용어\($0)" }.joined(separator: "\n"))
         try expect(many.entries.count == CaptionGlossary.entryLimit, "The glossary admitted an unbounded number of terms")
     }),
+    ("selected dictionaries combine subject areas and reference only current-source terms", {
+        let selected = BuiltInDictionaries.all
+        try expect(selected.count == 3 && Set(selected.map(\.id)).count == 3,
+            "The three public dictionaries do not have independent identities")
+        let request = LocalTranslationRequest(source: "IBM watsonx.ai uses a large language model to assess credit risk.",
+            direction: .englishToKorean, dictionaries: selected,
+            previousSentence: "The previous discussion covered retrieval-augmented generation.")
+        let terms = Dictionary(uniqueKeysWithValues: request.relevantTerms)
+        try expect(terms["watsonx.ai"] == "watsonx.ai" && terms["large language model"] == "대규모 언어 모델" &&
+            terms["credit risk"] != nil, "Combining AI, IBM and finance dropped a selected source term: \(terms)")
+        try expect(selected.allSatisfy { request.prompt.contains($0.context) },
+            "A selected subject area's context was not included")
+        try expect(!terms.keys.contains("retrieval-augmented generation") &&
+            !request.prompt.contains("retrieval-augmented generation translates to"),
+            "A term from an earlier sentence leaked into current-source references")
+        let aiOnly = LocalTranslationRequest(source: request.source, direction: .englishToKorean,
+            dictionaries: [BuiltInDictionaries.ai])
+        try expect(aiOnly.relevantTerms.contains { $0.0 == "large language model" } &&
+            !aiOnly.relevantTerms.contains { $0.0 == "watsonx.ai" || $0.0 == "credit risk" },
+            "An unselected dictionary supplied terminology")
+    }),
+    ("reference terms stay bounded after combining dictionaries in either direction", {
+        let entries = (0..<12).map { GlossaryEntry(english: "term\($0)", korean: "용어\($0)") }
+        let first = CaptionDictionary(id: "test:first", name: "First", glossary: CaptionGlossary(entries: Array(entries.prefix(6))))
+        let second = CaptionDictionary(id: "test:second", name: "Second", glossary: CaptionGlossary(entries: Array(entries.suffix(6))))
+        let english = LocalTranslationRequest(source: entries.map(\.english).joined(separator: ", "),
+            direction: .englishToKorean, dictionaries: [first, second])
+        let korean = LocalTranslationRequest(source: entries.map { $0.korean + "를" }.joined(separator: ", "),
+            direction: .koreanToEnglish, dictionaries: [first, second])
+        try expect(english.relevantTerms.count == 8 && korean.relevantTerms.count == 8,
+            "Combining dictionaries bypassed the eight-reference budget")
+        let boundary = LocalTranslationRequest(source: "term10 and an unrelated term100.",
+            direction: .englishToKorean, dictionaries: [first, second])
+        try expect(boundary.relevantTerms.count == 1 && boundary.relevantTerms[0].0 == "term10",
+            "A reference matched inside a different source word")
+    }),
+    ("dictionary references match plural and spacing variants without rewriting source", {
+        let english = LocalTranslationRequest(source: "Large language models use retrieval augmented generation.",
+            direction: .englishToKorean, dictionaries: [BuiltInDictionaries.ai])
+        try expect(english.relevantTerms.contains { $0.0 == "large language model" } &&
+            english.relevantTerms.contains { $0.0 == "retrieval-augmented generation" },
+            "Plural or hyphen variants were missed")
+        try expect(english.source == "Large language models use retrieval augmented generation." &&
+            english.prompt.contains("Translate ONLY [Source Text]") &&
+            english.prompt.contains("[Source Text]\n" + english.source),
+            "Reference matching rewrote source or failed to isolate it from background")
+        let korean = LocalTranslationRequest(source: "머신러닝과 자금 세탁 방지를 논의합니다.",
+            direction: .koreanToEnglish, dictionaries: [BuiltInDictionaries.ai, BuiltInDictionaries.finance])
+        try expect(korean.relevantTerms.contains { $0.1 == "machine learning" } &&
+            korean.relevantTerms.contains { $0.1 == "anti-money laundering" },
+            "Korean spacing variants were missed")
+        try expect(!english.accepts("[Subject Areas] AI terminology") &&
+            !english.accepts("[Background Information] AI terminology"), "Leaked prompt labels were accepted")
+    }),
+    ("personal reference terms override public suggestions regardless of selection order", {
+        guard let publicRisk = BuiltInDictionaries.finance.glossary.entries.first(where: { $0.english == "credit risk" }) else {
+            throw CheckFailure(description: "The finance dictionary is missing the credit-risk reference")
+        }
+        let personal = CaptionDictionary.local(fileName: "test-personal.txt", text: """
+            # 이름: 개인 참고
+            # 문맥: Use the owner's chosen terminology when it fits the sentence.
+            credit risk = 개인 지정 신용 위험
+            credit exposure = \(publicRisk.korean)
+            """)
+        try expect(personal.isPersonal && personal.id == CaptionDictionary.localID(fileName: "test-personal.txt") &&
+            personal.name == "개인 참고" && !personal.context.isEmpty,
+            "A local dictionary lost its identity, display name or subject information")
+        for selected in [[BuiltInDictionaries.finance, personal], [personal, BuiltInDictionaries.finance]] {
+            let forward = LocalTranslationRequest(source: "Assess credit risk.", direction: .englishToKorean,
+                dictionaries: selected)
+            try expect(forward.relevantTerms.count == 1 && forward.relevantTerms[0] == ("credit risk", "개인 지정 신용 위험"),
+                "The public English term overrode the personal translation")
+            let reverse = LocalTranslationRequest(source: publicRisk.korean + "를 평가합니다.", direction: .koreanToEnglish,
+                dictionaries: selected)
+            try expect(reverse.relevantTerms.count == 1 && reverse.relevantTerms[0] == (publicRisk.korean, "credit exposure"),
+                "The public Korean term overrode the personal translation")
+            try expect(!DictionaryTerms(dictionaries: selected, direction: .englishToKorean).conflicts.contains { $0.source == "credit risk" } &&
+                !DictionaryTerms(dictionaries: selected, direction: .koreanToEnglish).conflicts.contains { $0.source == publicRisk.korean },
+                "A resolved personal override was incorrectly reported as an unresolved conflict")
+        }
+    }),
+    ("same-priority conflicts are omitted in either direction without depending on checkbox order", {
+        for personal in [false, true] {
+            let first = CaptionDictionary(id: "test:first", name: "First", glossary: CaptionGlossary(text: """
+                shared phrase = 같은 표현
+                choice = 선택
+                risk exposure = 익스포저
+                """), isPersonal: personal)
+            let second = CaptionDictionary(id: "test:second", name: "Second", glossary: CaptionGlossary(text: """
+                shared phrase = 같은 표현
+                choice = 고르기
+                credit exposure = 익스포저
+                """), isPersonal: personal)
+            for selected in [[first, second], [second, first]] {
+                let forward = DictionaryTerms(dictionaries: selected, direction: .englishToKorean)
+                try expect(!forward.pairs.contains { $0.0 == "choice" } && forward.conflicts.count == 1 &&
+                    forward.conflicts[0].source == "choice" && forward.conflicts[0].dictionaries == ["First", "Second"],
+                    "An English conflict was silently resolved by selection order")
+                try expect(forward.pairs.filter { $0 == ("shared phrase", "같은 표현") }.count == 1,
+                    "Identical references were treated as a conflict or duplicated")
+                let reverse = DictionaryTerms(dictionaries: selected, direction: .koreanToEnglish)
+                try expect(!reverse.pairs.contains { $0.0 == "익스포저" } && reverse.conflicts.count == 1 &&
+                    reverse.conflicts[0].source == "익스포저" && reverse.conflicts[0].dictionaries == ["First", "Second"],
+                    "A Korean conflict was silently resolved by selection order")
+                let forwardRequest = LocalTranslationRequest(source: "choice and shared phrase.",
+                    direction: .englishToKorean, dictionaries: selected)
+                let reverseRequest = LocalTranslationRequest(source: "익스포저와 같은 표현을 검토합니다.",
+                    direction: .koreanToEnglish, dictionaries: selected)
+                try expect(forwardRequest.relevantTerms.count == 1 && reverseRequest.relevantTerms.count == 1 &&
+                    !forwardRequest.prompt.contains("choice translates to") &&
+                    !reverseRequest.prompt.contains("익스포저 translates to"),
+                    "An omitted conflict still entered a model reference prompt")
+            }
+        }
+    }),
+    ("only unambiguous selected personal aliases can correct recognized source text", {
+        // Public aliases are intentionally present here to test that even an
+        // accidentally supplied alias cannot turn public hints into rewriting.
+        let publicDictionary = CaptionDictionary(id: "test:public", name: "Public", glossary: CaptionGlossary(text: """
+            IBM = IBM | eye bee em, 아이 비 엠
+            """))
+        for direction in [CaptionDirection.englishToKorean, .koreanToEnglish] {
+            let publicCorrections = DictionaryTerms.corrections(dictionaries: [publicDictionary], direction: direction)
+            try expect(publicCorrections.entries.isEmpty &&
+                publicCorrections.correcting("eye bee em 아이 비 엠", direction: direction) == "eye bee em 아이 비 엠",
+                "A public dictionary rewrote recognized text")
+        }
+        let first = CaptionDictionary.local(fileName: "first.txt", text: """
+            OpenShift = 오픈시프트 | open shift, 오픈 시프트
+            service mesh = 서비스 메시 | service mash, 서비스 매시
+            """)
+        let second = CaptionDictionary.local(fileName: "second.txt", text: """
+            OpenSearch = 오픈서치 | open shift, 오픈 시프트
+            """)
+        for selected in [[publicDictionary, first, second], [second, first, publicDictionary]] {
+            let english = DictionaryTerms.corrections(dictionaries: selected, direction: .englishToKorean)
+            try expect(english.correcting("eye bee em on open shift with service mash.", direction: .englishToKorean) ==
+                "eye bee em on open shift with service mesh.",
+                "Public or ambiguous aliases changed English source, or a safe personal alias was lost")
+            let korean = DictionaryTerms.corrections(dictionaries: selected, direction: .koreanToEnglish)
+            try expect(korean.correcting("아이 비 엠과 오픈 시프트에서 서비스 매시를 확인합니다.", direction: .koreanToEnglish) ==
+                "아이 비 엠과 오픈 시프트에서 서비스 메시를 확인합니다.",
+                "Public or ambiguous aliases changed Korean source, or a safe personal alias was lost")
+        }
+        let firstOnly = DictionaryTerms.corrections(dictionaries: [first], direction: .englishToKorean)
+        try expect(firstOnly.correcting("open shift", direction: .englishToKorean) == "OpenShift",
+            "An unselected personal dictionary blocked a selected dictionary's unambiguous alias")
+    }),
+    ("composed corrections match original text once and prefer the longest listed phrase", {
+        let first = CaptionDictionary.local(fileName: "first.txt", text: """
+            OpenShift = 오픈시프트 | open shift, 오픈 시프트
+            ShiftEngine = 시프트엔진 | open shift platform, 오픈 시프트 플랫폼
+            """)
+        let second = CaptionDictionary.local(fileName: "second.txt", text: """
+            PlatformSuite = 플랫폼스위트 | OpenShift, 오픈시프트
+            """)
+        for selected in [[first, second], [second, first]] {
+            let english = DictionaryTerms.corrections(dictionaries: selected, direction: .englishToKorean)
+            try expect(english.correcting("We use open shift.", direction: .englishToKorean) == "We use OpenShift.",
+                "A canonical spelling inserted by one dictionary cascaded into another dictionary's alias")
+            try expect(english.correcting("We use open shift platform and open shift. Reopen shifts later.", direction: .englishToKorean) ==
+                "We use ShiftEngine and OpenShift. Reopen shifts later.",
+                "A shorter alias defeated the longest listed phrase or a Latin alias crossed a word boundary")
+            let korean = DictionaryTerms.corrections(dictionaries: selected, direction: .koreanToEnglish)
+            try expect(korean.correcting("오픈 시프트 플랫폼과 오픈 시프트를 확인합니다.", direction: .koreanToEnglish) ==
+                "시프트엔진과 오픈시프트를 확인합니다.",
+                "Korean corrections cascaded, lost the longest phrase or dropped following particles")
+        }
+    }),
+    ("maximum-size unrelated dictionaries preserve partial text and still correct a last-file alias", {
+        let dictionaries = (0..<32).map { dictionary in
+            CaptionDictionary(id: "local:synthetic-\(dictionary).txt", name: "Synthetic \(dictionary)",
+                glossary: CaptionGlossary(entries: (0..<300).map { term in
+                    GlossaryEntry(english: "term\(dictionary)-\(term)", korean: "term\(dictionary)-\(term)",
+                        heardAs: (0..<8).map { "misheard-\(dictionary)-\(term)-\($0)" })
+                }), isPersonal: true)
+        }
+        let corrections = DictionaryTerms.corrections(dictionaries: dictionaries, direction: .englishToKorean)
+        try expect(corrections.entries.count == 32 * 300 && corrections.entries.reduce(0) { $0 + $1.heardAs.count } == 32 * 300 * 8,
+            "The maximum-size fixture did not cover all permitted local terms and aliases")
+        let unrelated = String(repeating: "This is a synthetic partial caption with no matching aliases. ", count: 4)
+        try expect(corrections.correcting(unrelated, direction: .englishToKorean) == unrelated,
+            "Unrelated aliases changed a partial caption")
+        try expect(corrections.correcting("Use misheard-31-299-7.", direction: .englishToKorean) == "Use term31-299.",
+            "Combining dictionaries silently discarded a valid alias in the last local file")
+    }),
+    ("maximum-size shared-prefix aliases require a complete match and preserve the last valid alias", {
+        let entries = (0..<(32 * 300)).map { index in
+            GlossaryEntry(english: "Term\(index)", korean: "용어\(index)",
+                heardAs: (0..<8).map { "ordinary alias \(index) spelling \($0)" })
+        }
+        let glossary = CaptionGlossary(entries: entries)
+        try expect(glossary.entries.reduce(0) { $0 + $1.heardAs.count } == 32 * 300 * 8,
+            "The common-prefix fixture did not cover the permitted maximum alias count")
+        let source = String(repeating: "We discuss ordinary matters before the next planning meeting. ", count: 4)
+        try expect(glossary.correcting(source, direction: .englishToKorean) == source,
+            "A shared prefix admitted an incomplete alias into source correction")
+        try expect(glossary.correcting("ordinary alias 9599 spelling", direction: .englishToKorean) == "ordinary alias 9599 spelling",
+            "A prefix ending inside a compressed alias edge was treated as a complete spelling")
+        try expect(glossary.correcting("Use ORDINARY ALIAS 9599 spelling 7.", direction: .englishToKorean) == "Use Term9599.",
+            "The last shared-prefix alias was discarded or lost case-insensitive matching")
+        try expect(glossary.correcting("ordinary alias 9599 spelling 7을 확인합니다.", direction: .koreanToEnglish) ==
+            "ordinary alias 9599 spelling 7을 확인합니다.",
+            "A Latin-ending alias lost its word boundary when followed by Korean text")
+        try expect(glossary.correcting("ordinary alias 9599 spelling 7", direction: .koreanToEnglish) == "용어9599",
+            "A shared-prefix alias used the wrong canonical spelling for Korean input")
+    }),
+    ("maximum-size reference catalogs preserve late matches and the eight-term budget", {
+        let dictionaries = (0..<32).map { dictionary in
+            CaptionDictionary(id: "local:references-\(dictionary).txt", name: "References \(dictionary)",
+                glossary: CaptionGlossary(entries: (0..<300).map { term in
+                    GlossaryEntry(english: "reference_\(dictionary)_\(term)", korean: "참고\(dictionary)_\(term)")
+                }), isPersonal: true)
+        }
+        let unrelated = LocalTranslationRequest(source: "We discuss ordinary matters before the next planning meeting.",
+            direction: .englishToKorean, dictionaries: dictionaries)
+        try expect(unrelated.relevantTerms.isEmpty,
+            "An unrelated source acquired references from a maximum-size catalog")
+        let lastTerms = (292..<300).map { "reference_31_\($0)" }
+        let late = LocalTranslationRequest(source: lastTerms.joined(separator: ", "),
+            direction: .englishToKorean, dictionaries: dictionaries)
+        try expect(late.relevantTerms.map(\.0) == lastTerms,
+            "Scanning a large catalog discarded matching entries from its last dictionary")
+        let firstTerms = (0..<8).map { "reference_0_\($0)" }
+        let capped = LocalTranslationRequest(source: (lastTerms + firstTerms).joined(separator: ", "),
+            direction: .englishToKorean, dictionaries: dictionaries)
+        try expect(capped.relevantTerms.map(\.0) == firstTerms,
+            "Later matching terms changed reference priority or bypassed the eight-term limit")
+        let sharedPrefix = LocalTranslationRequest(source: "reference_31_299_extra and reference_31_2999 are different names.",
+            direction: .englishToKorean, dictionaries: dictionaries)
+        try expect(sharedPrefix.relevantTerms.isEmpty,
+            "A shared word prefix became an unrelated glossary reference")
+        let punctuation = CaptionDictionary.local(fileName: "punctuation.txt", text: "- = 대시\n-- = 이중대시")
+        let withoutHyphen = LocalTranslationRequest(source: "An ordinary sentence.", direction: .englishToKorean,
+            dictionaries: [punctuation])
+        let withHyphen = LocalTranslationRequest(source: "Use - as a separator.", direction: .englishToKorean,
+            dictionaries: [punctuation])
+        let punctuationTerms = DictionaryTerms(dictionaries: [punctuation], direction: .englishToKorean)
+        try expect(punctuationTerms.conflicts.isEmpty && punctuationTerms.pairs.count == 2 &&
+            withoutHyphen.relevantTerms.isEmpty && withHyphen.relevantTerms.count == 1 &&
+            withHyphen.relevantTerms[0] == ("-", "대시"),
+            "Punctuation terms collided, became an empty regex or confused a single hyphen with a double hyphen")
+    }),
+    ("normalized source variants conflict while exact target spellings remain distinct", {
+        let englishFirst = CaptionDictionary.local(fileName: "english-first.txt", text: "risk factor = 위험 요인")
+        let englishSecond = CaptionDictionary.local(fileName: "english-second.txt", text: "risk-factor = 위험 요소")
+        let koreanFirst = CaptionDictionary.local(fileName: "korean-first.txt", text: "risk factor = 위험 요인")
+        let koreanSecond = CaptionDictionary.local(fileName: "korean-second.txt", text: "risk driver = 위험요인")
+        let caseFirst = CaptionDictionary.local(fileName: "case-first.txt", text: "product name = MQ")
+        let caseSecond = CaptionDictionary.local(fileName: "case-second.txt", text: "product name = mq")
+        for reverseOrder in [false, true] {
+            let english = reverseOrder ? [englishSecond, englishFirst] : [englishFirst, englishSecond]
+            let korean = reverseOrder ? [koreanSecond, koreanFirst] : [koreanFirst, koreanSecond]
+            let casing = reverseOrder ? [caseSecond, caseFirst] : [caseFirst, caseSecond]
+            let englishTerms = DictionaryTerms(dictionaries: english, direction: .englishToKorean)
+            let koreanTerms = DictionaryTerms(dictionaries: korean, direction: .koreanToEnglish)
+            let caseTerms = DictionaryTerms(dictionaries: casing, direction: .englishToKorean)
+            try expect(englishTerms.pairs.isEmpty && englishTerms.conflicts.count == 1,
+                "Hyphen and space variants bypassed English translation conflict detection")
+            try expect(koreanTerms.pairs.isEmpty && koreanTerms.conflicts.count == 1,
+                "Korean spacing variants bypassed reverse translation conflict detection")
+            try expect(caseTerms.pairs.isEmpty && caseTerms.conflicts.count == 1,
+                "Distinct target case spellings were silently treated as interchangeable")
+            let aliases = DictionaryTerms.corrections(dictionaries: [
+                CaptionDictionary.local(fileName: "upper.txt", text: "OpenShift | open shift"),
+                CaptionDictionary.local(fileName: "lower.txt", text: "Openshift | open shift")
+            ], direction: .englishToKorean)
+            try expect(aliases.correcting("Use open shift.", direction: .englishToKorean) == "Use open shift.",
+                "An alias with distinct canonical case spellings was resolved silently")
+        }
+    }),
+    ("no dictionary selection supplies no subject or terms and AI preserves everyday recall", {
+        let source = "IBM watsonx.ai uses a large language model to assess credit risk."
+        let none = LocalTranslationRequest(source: source, direction: .englishToKorean, dictionaries: [])
+        try expect(none.relevantTerms.isEmpty && none.glossary.isEmpty &&
+            !none.prompt.contains("[Background Information]") && !none.prompt.contains("Reference the following translations:"),
+            "An empty selection silently supplied domain context or terminology")
+        try expect(DictionaryTerms.corrections(dictionaries: [], direction: .englishToKorean)
+            .correcting(source, direction: .englishToKorean) == source,
+            "An empty selection changed recognized source text")
+        let ordinary = LocalTranslationRequest(source: "I cannot recall our last planning meeting.",
+            direction: .englishToKorean, dictionaries: BuiltInDictionaries.all)
+        try expect(ordinary.relevantTerms.isEmpty && !ordinary.prompt.contains("recall translates to"),
+            "AI selection mapped ordinary remembering to a classification metric")
+    }),
     ("optional output checks reject obvious number and language corruption", {
         let request = LocalTranslationRequest(source: "The error rate is 2.5 percent, and latency is 120 milliseconds.",
             baseline: "오류율은 2.5%이며 지연 시간은 120밀리초입니다.", direction: .englishToKorean, domain: .it)

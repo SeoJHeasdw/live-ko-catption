@@ -19,6 +19,7 @@ public enum CaptionDirection: String, CaseIterable, Hashable, Sendable {
     public static let preferenceKey = "captionDirection"
 }
 
+/// Old preference/QA fixture values. The app now selects independent dictionaries.
 public enum TranslationDomain: String, CaseIterable, Hashable, Sendable {
     case general
     case it

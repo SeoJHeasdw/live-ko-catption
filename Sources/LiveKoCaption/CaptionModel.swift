@@ -13,7 +13,7 @@ final class CaptionModel {
     enum Phase { case idle, starting, listening, stopping }
     var phase: Phase = .idle
     private var storedDirection: CaptionDirection
-    private var storedDomain: TranslationDomain
+    private var storedDictionaryIDs: Set<String>
     private let preferencesDefaults: UserDefaults
     private var storedPolishEnabled: Bool
     var polishEnabled: Bool {
@@ -59,20 +59,31 @@ final class CaptionModel {
             assetsReady = false
             isChecking = true
             translationConfiguration = nil
+            refreshDictionaryStatus()
             message = nil
             Task { [weak self] in await self?.checkReadiness() }
         }
     }
-    var translationDomain: TranslationDomain {
-        get { storedDomain }
+    var selectedDictionaryIDs: Set<String> {
+        get { storedDictionaryIDs }
         set {
-            guard newValue != storedDomain, canChangeSessionSettings else { return }
-            storedDomain = newValue
-            preferencesDefaults.set(newValue.rawValue, forKey: TranslationDomain.preferenceKey)
+            guard newValue != storedDictionaryIDs, canChangeSessionSettings else { return }
+            storedDictionaryIDs = newValue
+            preferencesDefaults.set(newValue.sorted(), forKey: CaptionDictionary.preferenceKey)
+            refreshDictionaryStatus()
         }
     }
-    /// The user's own terms, read from a text file on this Mac when a run
-    /// starts. Used only while the translation domain is the custom one.
+    private(set) var dictionaries = BuiltInDictionaries.all
+    var selectedDictionaries: [CaptionDictionary] { dictionaries.filter { storedDictionaryIDs.contains($0.id) } }
+    var dictionarySelectionLabel: String {
+        let names = selectedDictionaries.map(\.name)
+        return names.isEmpty ? "선택 없음 · 일반 번역" : names.joined(separator: " · ")
+    }
+    private(set) var dictionaryConflictMessage = ""
+    private var dictionaryFiles: [String: URL] = [:]
+    private var englishCorrections = CaptionGlossary.empty
+    private var koreanCorrections = CaptionGlossary.empty
+    /// Kept at its original path so existing personal terms survive migration.
     private(set) var glossary = CaptionGlossary.empty
     private(set) var glossaryMessage = ""
     let glossaryURL: URL
@@ -82,7 +93,8 @@ final class CaptionModel {
         # Live Korean Captions 용어집
         # 한 줄에 용어 하나:  영어 = 한국어 | 잘못 들리는 표기, 잘못 들리는 표기
         # "= 한국어"를 빼면 이름을 번역하지 않고 그대로 둡니다. "| ..."는 뺄 수 있습니다.
-        # 번역 분야에서 "내 용어집"을 고른 대화에 적용하고, 자막을 시작할 때마다 다시 읽습니다.
+        # 이 사전을 선택한 대화에 적용하고, 자막을 시작할 때마다 다시 읽습니다.
+        # 이름과 선택적인 분야 설명: # 이름: 내 사전 / # 문맥: 짧은 분야 설명
         # "잘못 들리는 표기"는 음성 인식 원문에서 그 용어로 고쳐 씁니다. 적은 표기만 고칩니다.
         #
         # 예시 (앞의 "# "를 지우면 적용됩니다):
@@ -130,7 +142,12 @@ final class CaptionModel {
             // the user last used Korean input. Do not overwrite user preferences.
             storedDirection = .englishToKorean
             timeline.direction = .englishToKorean
-            storedDomain = .general
+            storedDictionaryIDs = []
+            dictionaries = BuiltInDictionaries.all
+            dictionaryFiles = [:]
+            glossary = .empty
+            glossaryMessage = "화면 검사에서는 개인 사전을 읽지 않습니다."
+            refreshDictionaryStatus()
             readinessID = nil
         }
     }
@@ -280,8 +297,17 @@ final class CaptionModel {
         storedPolishEnabled = !preview && translationOverride == nil && preferencesDefaults.bool(forKey: "localPolishEnabled")
         storedDirection = preview ? .englishToKorean :
             CaptionDirection(rawValue: preferencesDefaults.string(forKey: CaptionDirection.preferenceKey) ?? "") ?? .englishToKorean
-        storedDomain = preview ? .general :
-            TranslationDomain(rawValue: preferencesDefaults.string(forKey: TranslationDomain.preferenceKey) ?? "") ?? .general
+        if preview { storedDictionaryIDs = [] }
+        else if let saved = preferencesDefaults.stringArray(forKey: CaptionDictionary.preferenceKey) {
+            storedDictionaryIDs = Set(saved)
+        } else {
+            let legacy = TranslationDomain(rawValue: preferencesDefaults.string(forKey: TranslationDomain.preferenceKey) ?? "") ?? .general
+            switch legacy {
+            case .general: storedDictionaryIDs = []
+            case .it: storedDictionaryIDs = [BuiltInDictionaries.aiID]
+            case .custom: storedDictionaryIDs = [BuiltInDictionaries.aiID, CaptionDictionary.localID(fileName: glossaryURL.lastPathComponent)]
+            }
+        }
         selectedDeviceUID = UserDefaults.standard.string(forKey: "inputDeviceUID") ?? ""
         showEnglish = UserDefaults.standard.object(forKey: "showEnglish") as? Bool ?? true
         let savedFontSize = UserDefaults.standard.object(forKey: "fontSize") as? Double ?? 35
@@ -295,30 +321,104 @@ final class CaptionModel {
         if preview { loadPreview() }
     }
 
-    /// Reads the glossary file. A missing file is an empty glossary.
+    /// Read local files only between runs. Pending translation uses its current
+    /// dictionary snapshot, and previews never expose personal dictionary names.
     func reloadGlossary() {
-        guard let data = try? Data(contentsOf: glossaryURL), data.count <= 262_144 else {
+        guard (phase == .idle || phase == .starting), !hasPendingTranslations else { return }
+        if isPreview || isUISoak {
+            dictionaries = BuiltInDictionaries.all
             glossary = .empty
-            glossaryMessage = FileManager.default.fileExists(atPath: glossaryURL.path)
-                ? "용어집 파일을 읽지 못했습니다. 크기와 형식을 확인해 주세요." : "아직 용어집 파일이 없습니다."
+            glossaryMessage = "미리보기에서는 개인 사전을 읽지 않습니다."
+            refreshDictionaryStatus()
             return
         }
-        glossary = CaptionGlossary(text: String(decoding: data, as: UTF8.self))
-        let corrections = glossary.entries.reduce(0) { $0 + $1.heardAs.count }
-        glossaryMessage = glossary.entries.isEmpty ? "용어집에 적용할 용어가 없습니다."
-            : "용어 \(glossary.entries.count)개, 고쳐 쓸 표기 \(corrections)개를 읽었습니다."
+        let directory = glossaryURL.deletingLastPathComponent()
+        let files = ((try? FileManager.default.contentsOfDirectory(at: directory,
+            includingPropertiesForKeys: [.isRegularFileKey, .isSymbolicLinkKey], options: [.skipsHiddenFiles])) ?? [])
+            .filter { $0.pathExtension.lowercased() == "txt" }.sorted {
+                let aSelected = storedDictionaryIDs.contains(CaptionDictionary.localID(fileName: $0.lastPathComponent))
+                let bSelected = storedDictionaryIDs.contains(CaptionDictionary.localID(fileName: $1.lastPathComponent))
+                return aSelected == bSelected ? $0.lastPathComponent < $1.lastPathComponent : aSelected
+            }
+        var personal: [CaptionDictionary] = []
+        var unread = 0
+        dictionaryFiles = [:]
+        glossary = .empty
+        for file in files {
+            if personal.count == 32 { break }
+            guard let values = try? file.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey]),
+                  values.isRegularFile == true, values.isSymbolicLink != true,
+                  let bytes = try? FileManager.default.attributesOfItem(atPath: file.path)[.size] as? NSNumber,
+                  bytes.intValue <= 262_144, let data = try? Data(contentsOf: file),
+                  data.count <= 262_144, let text = String(data: data, encoding: .utf8) else { unread += 1; continue }
+            let dictionary = CaptionDictionary.local(fileName: file.lastPathComponent, text: text)
+            personal.append(dictionary)
+            dictionaryFiles[dictionary.id] = file
+            if file == glossaryURL { glossary = dictionary.glossary }
+        }
+        dictionaries = BuiltInDictionaries.all + personal.sorted { $0.id < $1.id }
+        let terms = personal.reduce(0) { $0 + $1.glossary.entries.count }
+        glossaryMessage = personal.isEmpty ? "개인 용어사전을 추가할 수 있습니다."
+            : "개인 사전 \(personal.count)개 · 용어 \(terms)개를 읽었습니다."
+        if unread > 0 { glossaryMessage += " 파일 \(unread)개는 읽지 못했습니다. UTF-8 형식과 크기를 확인하세요." }
+        if files.count > 32 { glossaryMessage += " 개인 사전은 32개까지 읽습니다." }
+        refreshDictionaryStatus()
     }
 
-    /// Opens the glossary in the user's text editor, creating a commented
-    /// template the first time. The file stays on this Mac.
-    func openGlossaryFile() {
-        do {
-            if !FileManager.default.fileExists(atPath: glossaryURL.path) {
-                try FileManager.default.createDirectory(at: glossaryURL.deletingLastPathComponent(), withIntermediateDirectories: true)
-                try Data(Self.glossaryTemplate.utf8).write(to: glossaryURL, options: .atomic)
-            }
-            NSWorkspace.shared.open(glossaryURL)
-        } catch { glossaryMessage = "용어집 파일을 만들지 못했습니다: \(error.localizedDescription)" }
+    private func refreshDictionaryStatus() {
+        let selected = selectedDictionaries
+        englishCorrections = DictionaryTerms.corrections(dictionaries: selected, direction: .englishToKorean)
+        koreanCorrections = DictionaryTerms.corrections(dictionaries: selected, direction: .koreanToEnglish)
+        let conflicts = DictionaryTerms(dictionaries: selected, direction: selectedDirection).conflicts
+        let missing = storedDictionaryIDs.subtracting(Set(dictionaries.map(\.id))).count
+        dictionaryConflictMessage = conflicts.isEmpty ? "" :
+            "번역이 다른 용어는 참고에서 제외합니다: " + conflicts.prefix(4).map(\.source).joined(separator: ", ")
+        if conflicts.count > 4 { dictionaryConflictMessage += " 외 \(conflicts.count - 4)개" }
+        if missing > 0 {
+            dictionaryConflictMessage += (dictionaryConflictMessage.isEmpty ? "" : "\n") + "선택한 사전 \(missing)개를 찾지 못했습니다."
+        }
+    }
+
+    func setDictionary(_ id: String, enabled: Bool) {
+        var ids = selectedDictionaryIDs
+        if enabled { ids.insert(id) } else { ids.remove(id) }
+        selectedDictionaryIDs = ids
+    }
+
+    func openDictionaryFile(_ id: String) {
+        if let file = dictionaryFiles[id] { NSWorkspace.shared.open(file) }
+    }
+
+    @discardableResult
+    func createDictionary(named name: String) throws -> URL {
+        guard canChangeSessionSettings else { throw CaptionError.message("새 대화에서 용어사전을 추가하세요.") }
+        guard dictionaries.filter(\.isPersonal).count < 32 else { throw CaptionError.message("개인 용어사전은 32개까지 추가할 수 있습니다.") }
+        let name = String(name.split(whereSeparator: \.isNewline).joined(separator: " ").prefix(60))
+            .trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { throw CaptionError.message("용어사전 이름을 입력하세요.") }
+        let file = glossaryURL.deletingLastPathComponent().appendingPathComponent("\(UUID().uuidString).txt")
+        try FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try Data(("# 이름: \(name)\n# 문맥: \n" + Self.glossaryTemplate).utf8).write(to: file, options: .atomic)
+        reloadGlossary()
+        setDictionary(CaptionDictionary.localID(fileName: file.lastPathComponent), enabled: true)
+        return file
+    }
+
+    func addDictionary() {
+        guard canChangeSessionSettings else { return }
+        let alert = NSAlert()
+        alert.messageText = "용어사전 추가"
+        alert.informativeText = "이름을 정하면 이 Mac에 사전 파일을 만들고 편집기로 엽니다. 회사 내부 용어도 여기에 적을 수 있습니다."
+        let field = NSTextField(string: "")
+        field.placeholderString = "예: 내 IBM 용어"
+        field.frame = NSRect(x: 0, y: 0, width: 280, height: 26)
+        alert.accessoryView = field
+        alert.addButton(withTitle: "추가")
+        alert.addButton(withTitle: "취소")
+        alert.window.initialFirstResponder = field
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        do { NSWorkspace.shared.open(try createDictionary(named: field.stringValue)) }
+        catch { glossaryMessage = error.localizedDescription }
     }
 
     func refreshDevices() {
@@ -429,6 +529,7 @@ final class CaptionModel {
         if resume { await stop() }
         guard phase == .idle, !hasPendingTranslations else { return }
         storedDirection = next
+        refreshDictionaryStatus()
         timeline.direction = next
         preferencesDefaults.set(next.rawValue, forKey: CaptionDirection.preferenceKey)
         readinessID = nil
@@ -816,7 +917,8 @@ final class CaptionModel {
     /// integration checks, with an injected translator and no microphone access.
     func receive(source: String, audioStart: Double, audioEnd: Double, isFinal: Bool) {
         // Only spellings the user listed are corrected, before any translation.
-        let source = translationDomain == .custom ? glossary.correcting(source, direction: selectedDirection) : source
+        let corrections = selectedDirection == .englishToKorean ? englishCorrections : koreanCorrections
+        let source = corrections.correcting(source, direction: selectedDirection)
         let previousTail = segments.last
         let previousCount = segments.count
         let reusable = isFinal && shouldPolish ? segments.suffix(6).filter {
@@ -951,7 +1053,7 @@ final class CaptionModel {
                             segments.first(where: { $0.id == member.segmentID && $0.revision == member.revision })?.translation
                         }.joined(separator: " ")
                         let request = LocalTranslationRequest(source: contextJob.source, baseline: baseline,
-                            direction: selectedDirection, domain: translationDomain, glossary: glossary.entries)
+                            direction: selectedDirection, dictionaries: selectedDictionaries)
                         let engine = localEngine
                         let polisher = polishOverride
                         let task = Task {
@@ -1082,7 +1184,7 @@ final class CaptionModel {
         let finalJob = TranslationJob(segmentID: job.segmentID, revision: job.revision,
             source: job.source, isSourceFinal: true)
         let request = LocalTranslationRequest(source: job.source, baseline: baseline,
-            direction: selectedDirection, domain: translationDomain, glossary: glossary.entries)
+            direction: selectedDirection, dictionaries: selectedDictionaries)
         guard request.isWithinBudget, timeline.preview(translation: baseline, for: finalJob) else { return false }
         polishWaiting.append(PolishItem(job: finalJob, baseline: baseline))
         while polishWaiting.count > Self.polishWaitingLimit {
@@ -1135,7 +1237,7 @@ final class CaptionModel {
         // Adjacent context is translated only as an explicit bounded group by
         // the existing context lane, preserving all member source records.
         let request = LocalTranslationRequest(source: item.job.source, baseline: item.baseline,
-            direction: selectedDirection, domain: translationDomain, glossary: glossary.entries)
+            direction: selectedDirection, dictionaries: selectedDictionaries)
         let engine = localEngine
         let polisher = polishOverride
         let started = ProcessInfo.processInfo.systemUptime
@@ -1158,7 +1260,7 @@ final class CaptionModel {
                     return nil
                 }
                 localPolishMilliseconds = (ProcessInfo.processInfo.systemUptime - started) * 1_000
-                localPolishMessage = "문맥 다듬기 사용 중 · \(translationDomain.label)"
+                localPolishMessage = "문맥 다듬기 사용 중 · \(dictionarySelectionLabel)"
                 return text
             } catch {
                 guard polishLaneID == token, !Task.isCancelled else { return nil }

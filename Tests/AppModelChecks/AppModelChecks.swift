@@ -663,11 +663,19 @@ struct AppModelChecks {
                 let suite = "LiveKoCaption.DirectionSwitchChecks.\(UUID().uuidString)"
                 let defaults = UserDefaults(suiteName: suite)!
                 defer { defaults.removePersistentDomain(forName: suite) }
+                let directory = FileManager.default.temporaryDirectory.appendingPathComponent("dictionary-direction-\(UUID().uuidString)")
+                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+                defer { try? FileManager.default.removeItem(at: directory) }
+                let file = directory.appendingPathComponent("glossary.txt")
+                try Data("risk factor = 위험 요인\nrisk-factor = 위험 요소\n".utf8).write(to: file)
                 let probe = TranslatorProbe()
                 let model = CaptionModel(translationOverride: { source, isContext in
                     try await probe.translate(source, context: isContext)
-                }, readinessOverride: { _ in true }, preferencesDefaults: defaults)
+                }, readinessOverride: { _ in true }, preferencesDefaults: defaults, glossaryURL: file)
                 model.isChecking = false; model.assetsReady = true; model.contextCorrectionEnabled = false
+                model.selectedDictionaryIDs = [CaptionDictionary.legacyPersonalID]
+                try expect(model.dictionaryConflictMessage.contains("risk factor"),
+                    "The initial direction did not report its normalized dictionary conflict")
                 model.receive(source: "Any questions?", audioStart: 0, audioEnd: 1, isFinal: true)
                 try await waitUntil("English caption did not finish") { model.segments.first?.isFinal == true && !model.hasPendingTranslations }
                 let english = model.segments[0]
@@ -677,6 +685,8 @@ struct AppModelChecks {
                 try expect(model.selectedDirection == .koreanToEnglish && model.segments == [english] &&
                     model.sourceDisplayName == "한국어" && model.canStart && model.message == nil,
                     "Switching changed recorded captions, kept the old input language or blocked Start")
+                try expect(model.dictionaryConflictMessage.isEmpty && model.selectedDictionaryIDs == [CaptionDictionary.legacyPersonalID],
+                    "Switching kept a stale direction-specific conflict or changed dictionary selection")
                 try expect(defaults.string(forKey: CaptionDirection.preferenceKey) == CaptionDirection.koreanToEnglish.rawValue,
                     "The switched direction was not kept for the next launch")
                 model.receive(source: "질문이 있습니다.", audioStart: 2, audioEnd: 3, isFinal: true)
@@ -687,8 +697,9 @@ struct AppModelChecks {
                 try expect(text.contains("]\nEN: Any questions?\nKO: ") && text.contains("]\nKO: 질문이 있습니다.\nEN: "),
                     "Saved rows did not carry their own source and target language labels")
                 await model.switchDirection()
-                try expect(model.selectedDirection == .englishToKorean && model.segments.count == 2,
-                    "Switching back lost captions or did not restore the first direction")
+                try expect(model.selectedDirection == .englishToKorean && model.segments.count == 2 &&
+                    model.dictionaryConflictMessage.contains("risk factor"),
+                    "Switching back lost captions, kept the wrong direction or failed to refresh dictionary conflicts")
             }),
             ("a direction switch is refused when the other language is not installed", {
                 let suite = "LiveKoCaption.DirectionSwitchMissingChecks.\(UUID().uuidString)"
@@ -736,12 +747,15 @@ struct AppModelChecks {
                 try expect(model.message?.contains("마이크 접근") == true && !model.isSwitchingDirection,
                     "A failed restart hid its reason or left the switch in progress")
             }),
-            ("the custom domain corrects listed spellings before translation and gives refinement its terms", {
+            ("only selected local dictionaries correct listed spellings before translation and guide refinement", {
                 let suite = "LiveKoCaption.GlossaryChecks.\(UUID().uuidString)"
                 let defaults = UserDefaults(suiteName: suite)!
                 defer { defaults.removePersistentDomain(forName: suite) }
-                let file = FileManager.default.temporaryDirectory.appendingPathComponent("glossary-\(UUID().uuidString).txt")
-                defer { try? FileManager.default.removeItem(at: file) }
+                let directory = FileManager.default.temporaryDirectory.appendingPathComponent("glossary-check-\(UUID().uuidString)")
+                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+                defer { try? FileManager.default.removeItem(at: directory) }
+                let file = directory.appendingPathComponent("glossary.txt")
+                let personalID = CaptionDictionary.localID(fileName: file.lastPathComponent)
                 try Data("Northwind = 노스윈드 | north wind\nOpenShift | open shift\n".utf8).write(to: file)
                 let translator = TranslatorProbe()
                 let polisher = PolisherProbe()
@@ -750,70 +764,265 @@ struct AppModelChecks {
                 }, preferencesDefaults: defaults, polishOverride: { try await polisher.polish($0) }, glossaryURL: file)
                 model.isChecking = false; model.assetsReady = true; model.contextCorrectionEnabled = false
                 model.polishEnabled = true
-                try expect(model.glossary.entries.count == 2 && model.glossaryMessage.contains("용어 2개"),
+                try expect(model.dictionaries.first(where: { $0.id == personalID })?.glossary.entries.count == 2 && !model.glossaryMessage.isEmpty,
                     "The glossary file was not read at launch")
                 model.receive(source: "The north wind team uses open shift.", audioStart: 0, audioEnd: 1, isFinal: true)
-                try await waitUntil("General-domain caption did not finish") { model.segments.first?.isFinal == true && !model.hasPendingTranslations }
+                try await waitUntil("Caption without dictionaries did not finish") { model.segments.first?.isFinal == true && !model.hasPendingTranslations }
                 try expect(model.segments[0].source == "The north wind team uses open shift." &&
-                    polisher.calls.count == 1 && polisher.calls[0].glossary.isEmpty,
-                    "The glossary changed a conversation that did not select the custom domain")
+                    polisher.calls.count == 1 && polisher.calls[0].dictionaries.isEmpty,
+                    "A local dictionary changed a conversation that did not select it")
                 model.newSession()
-                model.translationDomain = .custom
-                try expect(model.translationDomain == .custom, "The custom domain could not be selected in an empty conversation")
+                model.selectedDictionaryIDs = [BuiltInDictionaries.aiID, personalID]
+                try expect(model.selectedDictionaryIDs == [BuiltInDictionaries.aiID, personalID],
+                    "Multiple dictionaries could not be selected in an empty conversation")
                 model.receive(source: "The north wind team uses", audioStart: 0, audioEnd: 1, isFinal: false)
                 model.receive(source: "The north wind team uses open shift.", audioStart: 0, audioEnd: 2, isFinal: true)
-                try await waitUntil("Custom-domain caption did not finish") { model.segments.first?.isFinal == true && !model.hasPendingTranslations }
+                try await waitUntil("Caption with a local dictionary did not finish") { model.segments.first?.isFinal == true && !model.hasPendingTranslations }
                 try expect(model.segments[0].source == "The Northwind team uses OpenShift." &&
                     translator.calls.last?.source == "The Northwind team uses OpenShift.",
                     "Listed spellings were not corrected before the fast translation: \(model.segments[0].source)")
                 let request = polisher.calls.last
                 try expect(polisher.calls.count == 2 && request?.source == "The Northwind team uses OpenShift." &&
+                    Set(request?.dictionaries.map(\.id) ?? []) == [BuiltInDictionaries.aiID, personalID] &&
                     request?.prompt.contains("Northwind translates to 노스윈드") == true,
                     "Refinement was not given the corrected source and the owner's terms")
                 try Data("Northwind = 노스윈드\n".utf8).write(to: file)
                 model.reloadGlossary()
-                try expect(model.glossary.entries.count == 1 && model.glossary.entries[0].heardAs.isEmpty,
+                let reloaded = model.dictionaries.first(where: { $0.id == personalID })?.glossary.entries
+                try expect(reloaded?.count == 1 && reloaded?.first?.heardAs.isEmpty == true,
                     "An edited glossary file was not read again")
             }),
-            ("direction and domain persist and cannot mix recorded session languages", {
+            ("multiple local files compose their terms and report conflicting translations", {
+                let suite = "LiveKoCaption.DictionaryCompositionChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let directory = FileManager.default.temporaryDirectory.appendingPathComponent("dictionary-composition-\(UUID().uuidString)")
+                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+                defer { try? FileManager.default.removeItem(at: directory) }
+                let primary = directory.appendingPathComponent("glossary.txt")
+                let secondary = directory.appendingPathComponent("product-names.txt")
+                try Data("# 이름: 이름 사전\n# 문맥: Technical team names.\nNorthwind = 노스윈드 | north wind\nHarbor = 하버\n".utf8).write(to: primary)
+                try Data("# 이름: 제품 사전\n# 문맥: Product platform names.\nOpenShift | open shift\nHarbor = 항구\n".utf8).write(to: secondary)
+                let translator = TranslatorProbe()
+                let polisher = PolisherProbe()
+                let model = CaptionModel(translationOverride: { source, isContext in
+                    try await translator.translate(source, context: isContext)
+                }, preferencesDefaults: defaults, polishOverride: { try await polisher.polish($0) }, glossaryURL: primary)
+                model.isChecking = false; model.assetsReady = true; model.contextCorrectionEnabled = false
+                model.polishEnabled = true
+                let personalIDs: Set<String> = [CaptionDictionary.legacyPersonalID, CaptionDictionary.localID(fileName: secondary.lastPathComponent)]
+                try expect(Set(model.dictionaries.filter(\.isPersonal).map(\.id)) == personalIDs &&
+                    model.dictionaries.first(where: { $0.id == CaptionDictionary.legacyPersonalID })?.name == "이름 사전" &&
+                    model.dictionaries.first(where: { $0.id == CaptionDictionary.localID(fileName: secondary.lastPathComponent) })?.name == "제품 사전",
+                    "The dictionary folder did not load both local files with their names")
+                model.selectedDictionaryIDs = personalIDs.union([BuiltInDictionaries.aiID, BuiltInDictionaries.ibmID])
+                try expect(model.dictionaryConflictMessage.contains("Harbor"),
+                    "The selected local translation conflict was not visible")
+                model.receive(source: "The north wind team uses open shift near Harbor.", audioStart: 0, audioEnd: 2, isFinal: true)
+                try await waitUntil("Multiple dictionary caption did not finish") { model.segments.first?.isFinal == true && !model.hasPendingTranslations }
+                let request = polisher.calls.last
+                try expect(model.segments[0].source == "The Northwind team uses OpenShift near Harbor." &&
+                    Set(request?.dictionaries.map(\.id) ?? []) == model.selectedDictionaryIDs,
+                    "The selected files did not compose source corrections and translation references")
+                try expect(request?.prompt.contains("Northwind translates to 노스윈드") == true &&
+                    request?.prompt.contains("OpenShift translates to OpenShift") == true &&
+                    request?.prompt.contains("Technical team names.") == true &&
+                    request?.prompt.contains("Product platform names.") == true &&
+                    request?.relevantTerms.contains(where: { $0.0 == "Harbor" }) == false,
+                    "A selected term/context was lost or a conflicting term was passed to refinement")
+            }),
+            ("dictionary reload waits for pending translations and preserves completed captions", {
+                let suite = "LiveKoCaption.DictionaryReloadChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let directory = FileManager.default.temporaryDirectory.appendingPathComponent("dictionary-reload-\(UUID().uuidString)")
+                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+                defer { try? FileManager.default.removeItem(at: directory) }
+                let file = directory.appendingPathComponent("glossary.txt")
+                try Data("Northwind = 노스윈드 | north wind\n".utf8).write(to: file)
+                let translator = TranslatorProbe()
+                defer { translator.releaseAll() }
+                let correctedSource = "The Northwind team is ready."
+                translator.heldSources = [correctedSource]
+                let model = CaptionModel(translationOverride: { source, isContext in
+                    try await translator.translate(source, context: isContext)
+                }, preferencesDefaults: defaults, glossaryURL: file)
+                model.isChecking = false; model.assetsReady = true; model.contextCorrectionEnabled = false
+                model.selectedDictionaryIDs = [CaptionDictionary.legacyPersonalID]
+                model.receive(source: "The north wind team is ready.", audioStart: 0, audioEnd: 1, isFinal: true)
+                try await waitUntil("The held translation did not start") { translator.calls.count == 1 }
+                try expect(model.hasPendingTranslations, "The pending-translation reload fixture did not hold any work")
+                try Data("Northwind = 북쪽바람 | northern wind\n".utf8).write(to: file)
+                model.reloadGlossary()
+                let pendingEntries = model.dictionaries.first(where: { $0.id == CaptionDictionary.legacyPersonalID })?.glossary.entries
+                try expect(pendingEntries?.first?.korean == "노스윈드" && pendingEntries?.first?.heardAs == ["north wind"],
+                    "Reload changed dictionary content while a translation was pending")
+                translator.release(source: correctedSource, translation: "KO: \(correctedSource)")
+                try await waitUntil("The held translation did not finish") { model.segments.first?.isFinal == true && !model.hasPendingTranslations }
+                let completed = model.segments[0]
+                model.reloadGlossary()
+                let completedEntries = model.dictionaries.first(where: { $0.id == CaptionDictionary.legacyPersonalID })?.glossary.entries
+                try expect(completedEntries?.first?.korean == "북쪽바람" && completedEntries?.first?.heardAs == ["northern wind"],
+                    "Reload did not read edited local terms after translation completed")
+                try expect(model.segments[0] == completed,
+                    "Reload rewrote a completed caption using later dictionary content")
+            }),
+            ("legacy domains migrate once and an explicit empty selection takes precedence", {
+                let directory = FileManager.default.temporaryDirectory.appendingPathComponent("dictionary-migration-\(UUID().uuidString)")
+                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+                defer { try? FileManager.default.removeItem(at: directory) }
+                let file = directory.appendingPathComponent("glossary.txt")
+                let cases: [(domain: TranslationDomain, personalFileExists: Bool, expected: Set<String>)] = [
+                    (.general, false, []),
+                    (.it, false, [BuiltInDictionaries.aiID]),
+                    (.custom, true, [BuiltInDictionaries.aiID, CaptionDictionary.legacyPersonalID]),
+                    (.custom, false, [BuiltInDictionaries.aiID, CaptionDictionary.legacyPersonalID])
+                ]
+                for fixture in cases {
+                    if fixture.personalFileExists { try Data("Northwind = 노스윈드\n".utf8).write(to: file) }
+                    else { try? FileManager.default.removeItem(at: file) }
+                    let suite = "LiveKoCaption.DictionaryMigrationChecks.\(UUID().uuidString)"
+                    let defaults = UserDefaults(suiteName: suite)!
+                    defer { defaults.removePersistentDomain(forName: suite) }
+                    defaults.set(fixture.domain.rawValue, forKey: TranslationDomain.preferenceKey)
+                    let model = CaptionModel(preferencesDefaults: defaults, glossaryURL: file)
+                    try expect(model.selectedDictionaryIDs == fixture.expected,
+                        "Legacy \(fixture.domain.rawValue) domain did not preserve its dictionary selection")
+                    if fixture.domain == .custom && !fixture.personalFileExists {
+                        try expect(model.dictionaryConflictMessage.contains("찾지 못") &&
+                            model.selectedDictionaries.map(\.id) == [BuiltInDictionaries.aiID],
+                            "A missing legacy local file was not reported or supplied unavailable terms")
+                    }
+                    let restored = CaptionModel(preferencesDefaults: defaults, glossaryURL: file)
+                    try expect(restored.selectedDictionaryIDs == fixture.expected,
+                        "Migrated dictionary selection did not survive restoration")
+                    defaults.set([String](), forKey: CaptionDictionary.preferenceKey)
+                    let explicitlyEmpty = CaptionModel(preferencesDefaults: defaults, glossaryURL: file)
+                    try expect(explicitlyEmpty.selectedDictionaryIDs.isEmpty,
+                        "A legacy domain re-enabled dictionaries after an explicit empty selection")
+                }
+            }),
+            ("creating a local dictionary selects and restores it while previews keep personal data private", {
+                let suite = "LiveKoCaption.DictionaryCreationChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let directory = FileManager.default.temporaryDirectory.appendingPathComponent("dictionary-creation-\(UUID().uuidString)")
+                defer { try? FileManager.default.removeItem(at: directory) }
+                let glossaryURL = directory.appendingPathComponent("glossary.txt")
+                let model = CaptionModel(preferencesDefaults: defaults, glossaryURL: glossaryURL)
+                let createdFile = try model.createDictionary(named: "회의\n이름")
+                let createdID = CaptionDictionary.localID(fileName: createdFile.lastPathComponent)
+                let createdDictionary = model.dictionaries.first(where: { $0.id == createdID })
+                try expect(createdFile.deletingLastPathComponent().path == directory.path && createdFile.pathExtension == "txt" &&
+                    FileManager.default.fileExists(atPath: createdFile.path) &&
+                    createdDictionary?.name == "회의 이름" && createdDictionary?.isPersonal == true &&
+                    createdDictionary?.glossary.entries.isEmpty == true && model.selectedDictionaryIDs == [createdID],
+                    "Creating a named dictionary did not save and select a usable empty local file: path=\(createdFile.path), name=\(createdDictionary?.name ?? "missing"), terms=\(createdDictionary?.glossary.entries.count ?? -1), ids=\(model.selectedDictionaryIDs)")
+                try expect(defaults.stringArray(forKey: CaptionDictionary.preferenceKey) == [createdID],
+                    "Creating a dictionary did not persist its selection")
+                try Data("# 이름: 회의 이름\nPrivateTerm = 개인용어\n".utf8).write(to: createdFile)
+                model.reloadGlossary()
+                let restored = CaptionModel(preferencesDefaults: defaults, glossaryURL: glossaryURL)
+                try expect(restored.selectedDictionaryIDs == [createdID] &&
+                    restored.selectedDictionaries.first?.glossary.entries.first?.english == "PrivateTerm",
+                    "A created dictionary's edited terms or selection did not survive restoration")
+                let preview = CaptionModel(preview: true, preferencesDefaults: defaults, glossaryURL: glossaryURL)
+                try expect(preview.selectedDictionaryIDs.isEmpty && preview.glossary.entries.isEmpty &&
+                    preview.dictionaries.allSatisfy({ !$0.isPersonal }) &&
+                    !preview.dictionarySelectionLabel.contains("회의 이름"),
+                    "Preview exposed personal dictionary names, terms or selection")
+                try expect(defaults.stringArray(forKey: CaptionDictionary.preferenceKey) == [createdID],
+                    "Preview overwrote the user's created dictionary selection")
+                model.phase = .listening
+                var refused = false
+                do { _ = try model.createDictionary(named: "실행 중 사전") }
+                catch { refused = true }
+                try expect(refused && model.selectedDictionaryIDs == [createdID] &&
+                    model.dictionaries.filter(\.isPersonal).count == 1,
+                    "Creating a dictionary changed the active conversation's settings")
+            }),
+            ("invalid leading files do not consume the local limit or displace selected legacy terms on creation", {
+                let suite = "LiveKoCaption.DictionaryLimitChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let directory = FileManager.default.temporaryDirectory.appendingPathComponent("dictionary-limit-\(UUID().uuidString)")
+                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+                defer { try? FileManager.default.removeItem(at: directory) }
+                try Data([0xFF]).write(to: directory.appendingPathComponent("000-invalid.txt"))
+                for index in 0..<30 {
+                    let name = String(format: "dictionary-%02d.txt", index)
+                    try Data("term\(index) = 용어\(index)\n".utf8).write(to: directory.appendingPathComponent(name))
+                }
+                let glossaryURL = directory.appendingPathComponent("glossary.txt")
+                try Data("LegacyName = 기존이름\n".utf8).write(to: glossaryURL)
+                defaults.set([CaptionDictionary.legacyPersonalID], forKey: CaptionDictionary.preferenceKey)
+                let model = CaptionModel(preferencesDefaults: defaults, glossaryURL: glossaryURL)
+                let originalIDs = Set(model.dictionaries.filter(\.isPersonal).map(\.id))
+                try expect(originalIDs.count == 31 && originalIDs.contains(CaptionDictionary.legacyPersonalID) &&
+                    model.glossaryMessage.contains("읽지 못"),
+                    "The invalid leading file was not reported or consumed a valid local dictionary slot")
+                let createdFile = try model.createDictionary(named: "마지막 개인 사전")
+                let createdID = CaptionDictionary.localID(fileName: createdFile.lastPathComponent)
+                try expect(Set(model.dictionaries.filter(\.isPersonal).map(\.id)) == originalIDs.union([createdID]) &&
+                    model.selectedDictionaryIDs == [CaptionDictionary.legacyPersonalID, createdID] &&
+                    model.selectedDictionaries.first(where: { $0.id == CaptionDictionary.legacyPersonalID })?.glossary.entries.first?.english == "LegacyName" &&
+                    model.dictionaryConflictMessage.isEmpty,
+                    "Creating a dictionary at the valid-file limit displaced selected existing terms")
+                let restored = CaptionModel(preferencesDefaults: defaults, glossaryURL: glossaryURL)
+                try expect(Set(restored.dictionaries.filter(\.isPersonal).map(\.id)) == originalIDs.union([createdID]) &&
+                    restored.selectedDictionaryIDs == model.selectedDictionaryIDs && restored.dictionaryConflictMessage.isEmpty,
+                    "Restoration changed the retained valid dictionaries or selected legacy file")
+                var refused = false
+                do { _ = try model.createDictionary(named: "제한을 넘는 사전") }
+                catch { refused = true }
+                try expect(refused && Set(model.dictionaries.filter(\.isPersonal).map(\.id)) == originalIDs.union([createdID]),
+                    "Creating beyond the valid dictionary limit succeeded or changed the catalog")
+            }),
+            ("direction and multiple dictionary selections persist and freeze for recorded sessions", {
                 let suite = "LiveKoCaption.ModelChecks.\(UUID().uuidString)"
                 let defaults = UserDefaults(suiteName: suite)!
                 defer { defaults.removePersistentDomain(forName: suite) }
                 let model = CaptionModel(readinessOverride: { _ in true }, preferencesDefaults: defaults)
-                try expect(model.selectedDirection == .englishToKorean && model.translationDomain == .general,
-                    "Empty preferences did not use English to Korean/general")
+                try expect(model.selectedDirection == .englishToKorean && model.selectedDictionaryIDs.isEmpty,
+                    "Empty preferences did not use English to Korean with no dictionaries")
                 model.isChecking = false; model.assetsReady = true
                 model.selectedDirection = .koreanToEnglish
                 try expect(!model.canStart && model.isChecking && !model.assetsReady,
                     "Changing direction left the previous pair ready before checking")
-                model.translationDomain = .it
+                let selection: Set<String> = [BuiltInDictionaries.aiID, BuiltInDictionaries.ibmID, BuiltInDictionaries.financeID]
+                model.selectedDictionaryIDs = selection
                 try await waitUntil("Changed pair readiness never finished") { !model.isChecking && model.assetsReady }
                 let restored = CaptionModel(preferencesDefaults: defaults)
-                try expect(restored.selectedDirection == .koreanToEnglish && restored.translationDomain == .it,
-                    "Direction/domain were not restored")
+                try expect(restored.selectedDirection == .koreanToEnglish && restored.selectedDictionaryIDs == selection &&
+                    Set(restored.selectedDictionaries.map(\.id)) == selection,
+                    "Direction or multiple dictionary selections were not restored")
                 try expect(model.sourceDisplayName == "한국어" && model.targetDisplayName == "영어",
                     "Selected direction labels remained English input")
                 model.phase = .listening
                 try expect(model.statusText == "한국어를 듣고 있습니다", "Listening status used the wrong input language")
                 for phase in [CaptionModel.Phase.starting, .listening, .stopping] {
                     model.phase = phase
-                    model.selectedDirection = .englishToKorean; model.translationDomain = .general
-                    try expect(model.selectedDirection == .koreanToEnglish && model.translationDomain == .it,
+                    model.selectedDirection = .englishToKorean; model.selectedDictionaryIDs = []
+                    try expect(model.selectedDirection == .koreanToEnglish && model.selectedDictionaryIDs == selection,
                         "Session settings changed during an active phase")
                 }
                 model.phase = .idle; model.isPreparing = true
-                model.selectedDirection = .englishToKorean; model.translationDomain = .general
-                try expect(model.selectedDirection == .koreanToEnglish && model.translationDomain == .it,
+                model.selectedDirection = .englishToKorean; model.selectedDictionaryIDs = []
+                try expect(model.selectedDirection == .koreanToEnglish && model.selectedDictionaryIDs == selection,
                     "Session settings changed during model preparation")
                 model.isPreparing = false
                 model.receive(source: "캐시를 비웁니다.", audioStart: 0, audioEnd: 1, isFinal: true)
-                model.selectedDirection = .englishToKorean; model.translationDomain = .general
-                try expect(!model.canChangeSessionSettings && model.selectedDirection == .koreanToEnglish && model.translationDomain == .it,
+                model.selectedDirection = .englishToKorean; model.selectedDictionaryIDs = []
+                try expect(!model.canChangeSessionSettings && model.selectedDirection == .koreanToEnglish && model.selectedDictionaryIDs == selection,
                     "Recorded sources were relabeled without a new session")
                 try expect(model.transcriptText.contains("KO: 캐시를 비웁니다.\nEN: 번역 없음"),
                     "Korean input export used English input labels")
                 model.newSession()
                 try expect(model.canChangeSessionSettings, "New conversation did not unlock settings")
+                model.selectedDictionaryIDs = []
+                let withoutDictionaries = CaptionModel(preferencesDefaults: defaults)
+                try expect(withoutDictionaries.selectedDictionaryIDs.isEmpty,
+                    "An explicitly empty dictionary selection did not persist")
                 model.requestPreparation()
                 try expect(model.translationConfiguration != nil, "Preparation did not create a translation configuration")
                 model.isPreparing = false
@@ -821,16 +1030,18 @@ struct AppModelChecks {
                 try expect(model.translationConfiguration == nil, "Old direction translation configuration survived")
                 try await waitUntil("New conversation readiness never finished") { !model.isChecking }
                 let preview = CaptionModel(preview: true, preferencesDefaults: defaults)
-                try expect(preview.selectedDirection == .englishToKorean && preview.translationDomain == .general,
-                    "Preview used persisted non-fixture languages")
+                try expect(preview.selectedDirection == .englishToKorean && preview.selectedDictionaryIDs.isEmpty,
+                    "Preview used persisted non-fixture languages or dictionaries")
                 defaults.set(CaptionDirection.koreanToEnglish.rawValue, forKey: CaptionDirection.preferenceKey)
-                defaults.set(TranslationDomain.it.rawValue, forKey: TranslationDomain.preferenceKey)
+                defaults.set([BuiltInDictionaries.ibmID], forKey: CaptionDictionary.preferenceKey)
                 let soak = CaptionModel(preferencesDefaults: defaults)
                 soak.isUISoak = true
-                try expect(soak.selectedDirection == .englishToKorean && soak.translationDomain == .general,
-                    "Synthetic soak used persisted non-fixture languages")
+                try expect(soak.selectedDirection == .englishToKorean && soak.selectedDictionaryIDs.isEmpty,
+                    "Synthetic soak used persisted non-fixture languages or dictionaries")
                 try expect(defaults.string(forKey: CaptionDirection.preferenceKey) == CaptionDirection.koreanToEnglish.rawValue,
                     "Synthetic fixtures overwrote user direction")
+                try expect(defaults.stringArray(forKey: CaptionDictionary.preferenceKey) == [BuiltInDictionaries.ibmID],
+                    "Synthetic fixtures overwrote user dictionary selection")
             }),
             ("stale readiness cannot enable Start or overwrite the current direction error", {
                 let suite = "LiveKoCaption.ReadinessChecks.\(UUID().uuidString)"
