@@ -701,6 +701,43 @@ struct AppModelChecks {
                     model.dictionaryConflictMessage.contains("risk factor"),
                     "Switching back lost captions, kept the wrong direction or failed to refresh dictionary conflicts")
             }),
+            ("direction asset checks exclude public resume and conversation edits until the new language is committed", {
+                let suite = "LiveKoCaption.DirectionAdmissionChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let readiness = ReadinessProbe()
+                defer { readiness.releaseAll() }
+                var microphoneDirections: [CaptionDirection] = []
+                var model: CaptionModel!
+                model = CaptionModel(translationOverride: { source, _ in "KO: " + source },
+                    microphoneAccessOverride: {
+                        microphoneDirections.append(model.selectedDirection)
+                        return false
+                    }, readinessOverride: { try await readiness.check($0) }, preferencesDefaults: defaults)
+                model.isChecking = false; model.assetsReady = true; model.contextCorrectionEnabled = false
+                model.selectedDeviceUID = ""
+                model.receive(source: "Keep this conversation.", audioStart: 0, audioEnd: 1, isFinal: true)
+                try await waitUntil("Original caption did not finish") { !model.hasPendingTranslations }
+                let original = model.segments
+                let switching = Task { await model.switchDirection() }
+                try await waitUntil("Direction check did not suspend") { readiness.calls == [.koreanToEnglish] }
+                try expect(model.isSwitchingDirection && !model.canStart && !model.canChangeSessionSettings && model.isBusy,
+                    "Pending direction lookup left public start or settings available")
+                await model.start()
+                model.newSession()
+                model.polishEnabled = true
+                model.retryFailedTranslations()
+                try expect(microphoneDirections.isEmpty && model.phase == .idle && model.segments == original && !model.polishEnabled,
+                    "Public action raced the direction check or discarded the conversation")
+                readiness.release(.koreanToEnglish, ready: true)
+                await switching.value
+                try expect(model.selectedDirection == .koreanToEnglish && model.canStart && !model.isSwitchingDirection &&
+                           model.segments == original,
+                    "Direction was lost or admission remained closed after readiness returned")
+                await model.start()
+                try expect(microphoneDirections == [.koreanToEnglish] && model.phase == .idle,
+                    "User resume did not request only the committed input language")
+            }),
             ("a direction switch is refused when the other language is not installed", {
                 let suite = "LiveKoCaption.DirectionSwitchMissingChecks.\(UUID().uuidString)"
                 let defaults = UserDefaults(suiteName: suite)!

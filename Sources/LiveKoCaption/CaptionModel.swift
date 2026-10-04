@@ -20,7 +20,7 @@ final class CaptionModel {
         get { storedPolishEnabled }
         set {
             guard newValue != storedPolishEnabled, phase == .idle, !isPreparing,
-                  !isPreview, !isUISoak, !hasPendingTranslations else { return }
+                  !isPreview, !isUISoak, !isSwitchingDirection, !hasPendingTranslations else { return }
             storedPolishEnabled = newValue
             localPolishReady = false
             preferencesDefaults.set(newValue, forKey: "localPolishEnabled")
@@ -248,7 +248,8 @@ final class CaptionModel {
         guard !inputWarnings.isEmpty else { return text }
         return text + "\n입력 관련 알림 · 누락 가능성\n" + inputWarnings.map { "- \($0)" }.joined(separator: "\n") + "\n"
     }
-    var canStart: Bool { assetsReady && phase == .idle && !isChecking && !isPreparing && !isPreparingLocalModel && (!polishEnabled || localPolishReady) && !isPreview && !hasPendingTranslations }
+    private var startAssetsReady: Bool { assetsReady && phase == .idle && !isChecking && !isPreparing && !isPreparingLocalModel && (!polishEnabled || localPolishReady) && !isPreview && !hasPendingTranslations }
+    var canStart: Bool { !isSwitchingDirection && startAssetsReady }
     /// The direction can flip inside a conversation: while listening, or while
     /// paused with nothing left to translate. Earlier captions keep their own.
     var canSwitchDirection: Bool {
@@ -257,15 +258,16 @@ final class CaptionModel {
     }
     private(set) var isSwitchingDirection = false
     var canChangeSessionSettings: Bool {
-        phase == .idle && !isPreparing && !isPreparingLocalModel && !isPreview && !isUISoak && !hasContent && !hasPendingTranslations
+        phase == .idle && !isPreparing && !isPreparingLocalModel && !isSwitchingDirection && !isPreview && !isUISoak && !hasContent && !hasPendingTranslations
     }
-    var isBusy: Bool { phase == .starting || phase == .stopping || isPreparing || isPreparingLocalModel }
+    var isBusy: Bool { phase == .starting || phase == .stopping || isPreparing || isPreparingLocalModel || isSwitchingDirection }
     var isListening: Bool { phase == .listening }
     var canStop: Bool { phase == .listening || phase == .starting }
     var hasPendingTranslations: Bool { queuedTranslations > 0 || workerTask != nil || polishWorker != nil }
     var statusText: String {
         if isUISoak { return "화면 안정성 검사 · 합성 자막" }
         if isPreview { return "화면 미리보기" }
+        if isSwitchingDirection { return "번역 방향 전환 중" }
         if isPreparing { return "처음 한 번 준비 중" }
         if isChecking { return "사용 가능 여부 확인 중" }
         switch phase {
@@ -521,7 +523,16 @@ final class CaptionModel {
         isSwitchingDirection = true
         defer { isSwitchingDirection = false }
         let next: CaptionDirection = selectedDirection == .englishToKorean ? .koreanToEnglish : .englishToKorean
-        guard await hasInstalledAssets(for: next) else {
+        let installed: Bool
+        do {
+            installed = try await OperationDeadline.run(seconds: 15, name: "번역 방향 확인") {
+                await self.hasInstalledAssets(for: next)
+            }
+        } catch {
+            message = "번역 방향을 확인하지 못해 현재 언어를 유지합니다: \(error.localizedDescription)"
+            return
+        }
+        guard installed else {
             message = "\(next.label) 언어 모델이 아직 준비되지 않아 방향을 바꾸지 못했습니다. 새 대화에서 그 방향을 선택해 한 번 준비해 주세요."
             return
         }
@@ -536,7 +547,7 @@ final class CaptionModel {
         translationConfiguration = nil
         isChecking = false
         assetsReady = true
-        if resume { await start() }
+        if resume { await start(allowDirectionSwitch: true) }
     }
 
     private func readinessIsCurrent(_ token: UUID, direction: CaptionDirection) -> Bool {
@@ -544,7 +555,7 @@ final class CaptionModel {
     }
 
     func requestPreparation() {
-        guard !isPreparing && phase == .idle && !isPreview else { return }
+        guard !isPreparing && !isSwitchingDirection && phase == .idle && !isPreview else { return }
         message = nil
         isPreparing = true
         preparationMessage = "\(directionLabel) 번역 모델 준비"
@@ -586,7 +597,14 @@ final class CaptionModel {
     }
 
     func start() async {
-        guard canStart else { return }
+        await start(allowDirectionSwitch: false)
+    }
+
+    /// Only the owner of a direction transition can resume its new language.
+    /// Public controls remain closed throughout that transition, including
+    /// async asset checks and the restarted input's startup awaits.
+    private func start(allowDirectionSwitch: Bool) async {
+        guard startAssetsReady, !isSwitchingDirection || allowDirectionSwitch else { return }
         phase = .starting
         message = nil
         let token = UUID()
@@ -815,7 +833,7 @@ final class CaptionModel {
     }
 
     func newSession() {
-        guard phase == .idle && !isPreparing else { return }
+        guard phase == .idle && !isPreparing && !isSwitchingDirection else { return }
         workerID = nil
         workerTask?.cancel(); workerTask = nil
         translationTask?.cancel(); translationTask = nil; activeTranslation = nil
@@ -868,7 +886,7 @@ final class CaptionModel {
     }
 
     func retryFailedTranslations() {
-        guard !isPreview, phase == .idle || phase == .listening else { return }
+        guard !isPreview, !isSwitchingDirection, phase == .idle || phase == .listening else { return }
         guard let _ = translationSession else {
             translationSession = TranslationSessionLease(installedSource: sourceLanguage, target: targetLanguage,
                                                     preferredStrategy: .lowLatency)
