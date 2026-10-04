@@ -11,12 +11,15 @@
 #include <mutex>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <thread>
+#include <utility>
 #include <vector>
 
 namespace {
 using Clock = std::chrono::steady_clock;
 constexpr size_t maxPromptBytes = 65'536;
+constexpr size_t maxPromptScalars = 32'768;
 constexpr int prefillBatchSize = 128;
 constexpr int maxOutputTokens = 256;
 constexpr int maximumTimeoutMs = 120'000;
@@ -91,6 +94,8 @@ struct Metrics {
     double prefillMs = 0;
     double decodeMs = 0;
     int promptTokens = 0;
+    int wrapperControlTokens = 0;
+    int bodyControlTokens = 0;
     int outputTokens = 0;
     bool eosReached = false;
     const char * error = "";
@@ -106,6 +111,8 @@ std::string metricsJSON(const Metrics & metrics, uint64_t requestID, int context
          << ",\"prefill_ms\":" << metrics.prefillMs
          << ",\"decode_ms\":" << metrics.decodeMs
          << ",\"prompt_tokens\":" << metrics.promptTokens
+         << ",\"wrapper_control_tokens\":" << metrics.wrapperControlTokens
+         << ",\"body_control_tokens\":" << metrics.bodyControlTokens
          << ",\"output_tokens\":" << metrics.outputTokens
          << ",\"context_tokens\":" << contextSize
          << ",\"cancelled\":" << (result == 1 ? "true" : "false")
@@ -130,6 +137,45 @@ struct Batch {
         }
     }
 };
+
+// These are the pinned models' exact single-user wrappers. A role spelling in
+// source text, dictionary text or context is data, even when identical to one
+// of these tokens. Never enable special parsing for the untrusted body.
+struct PromptParts { std::string_view prefix, body, suffix; };
+bool splitPrompt(std::string_view prompt, PromptParts & parts) {
+    constexpr std::string_view smallPrefix = "<｜hy_begin▁of▁sentence｜><｜hy_User｜>";
+    constexpr std::string_view smallSuffix = "<｜hy_Assistant｜>";
+    constexpr std::string_view densePrefix = "<|startoftext|>";
+    constexpr std::string_view denseSuffix = "<|extra_0|>";
+    for (const auto & wrapper : {std::pair {smallPrefix, smallSuffix}, std::pair {densePrefix, denseSuffix}}) {
+        if (!prompt.starts_with(wrapper.first)) continue;
+        if (!prompt.ends_with(wrapper.second) || prompt.size() <= wrapper.first.size() + wrapper.second.size()) return false;
+        parts = {wrapper.first,
+            prompt.substr(wrapper.first.size(), prompt.size() - wrapper.first.size() - wrapper.second.size()), wrapper.second};
+        return true;
+    }
+    // Existing ABI checks and diagnostics also use unwrapped prompts. They
+    // remain supported as literal text without implicit BOS/EOS insertion.
+    parts = {{}, prompt, {}};
+    return true;
+}
+
+bool tokenizePart(const llama_vocab * vocabulary, std::string_view part, bool special,
+                  std::vector<llama_token> & tokens, int capacity, Metrics & metrics) {
+    if (part.empty()) return true;
+    std::vector<llama_token> piece(capacity);
+    const int count = llama_tokenize(vocabulary, part.data(), static_cast<int>(part.size()),
+        piece.data(), capacity, false, special);
+    if (count <= 0 || count > capacity || static_cast<int>(tokens.size()) + count > capacity) return false;
+    for (int index = 0; index < count; ++index) {
+        if (llama_vocab_is_control(vocabulary, piece[index])) {
+            if (special) ++metrics.wrapperControlTokens;
+            else ++metrics.bodyControlTokens;
+        }
+    }
+    tokens.insert(tokens.end(), piece.begin(), piece.begin() + count);
+    return true;
+}
 } // namespace
 
 extern "C" void * lc_load(const char * modelPath, int gpuLayers, int contextSize,
@@ -186,6 +232,15 @@ extern "C" void * lc_load(const char * modelPath, int gpuLayers, int contextSize
 extern "C" int lc_translate(void * handle, uint64_t requestID, const char * prompt,
                             int maxTokens, int timeoutMs, char * output, int outputCapacity,
                             char * statsJSON, int statsCapacity) {
+    const size_t bytes = prompt ? strnlen(prompt, maxPromptBytes + 1) : 0;
+    return lc_translate_bytes(handle, requestID, prompt, static_cast<int>(bytes), maxTokens,
+        timeoutMs, output, outputCapacity, statsJSON, statsCapacity);
+}
+
+extern "C" int lc_translate_bytes(void * handle, uint64_t requestID, const char * prompt,
+                                  int promptBytes, int maxTokens, int timeoutMs,
+                                  char * output, int outputCapacity,
+                                  char * statsJSON, int statsCapacity) {
     copyString(output, outputCapacity, "");
     copyString(statsJSON, statsCapacity, "");
     Metrics metrics;
@@ -209,7 +264,8 @@ extern "C" int lc_translate(void * handle, uint64_t requestID, const char * prom
             metricsJSON(metrics, requestID, runtime ? runtime->contextSize : 0, result));
         return result;
     };
-    if (!runtime || !requestID || !prompt || !output || outputCapacity < 1 ||
+    if (!runtime || !requestID || !prompt || promptBytes < 1 ||
+        promptBytes > static_cast<int>(maxPromptBytes) || !output || outputCapacity < 1 ||
         maxTokens < 1 || maxTokens > maxOutputTokens || timeoutMs < 1 || timeoutMs > maximumTimeoutMs) {
         metrics.error = "Invalid runtime arguments.";
         return finish();
@@ -229,24 +285,36 @@ extern "C" int lc_translate(void * handle, uint64_t requestID, const char * prom
     runtime->activeRequest.store(requestID, std::memory_order_release);
     inferenceStarted = true;
     try {
-        const size_t promptBytes = strnlen(prompt, maxPromptBytes + 1);
-        if (promptBytes == 0 || promptBytes > maxPromptBytes) {
-            metrics.error = "Prompt is empty or exceeds the byte limit.";
+        const std::string input(prompt, static_cast<size_t>(promptBytes));
+        if (input.find('\0') != std::string::npos || utf8Prefix(input, input.size()) != input.size()) {
+            metrics.error = "Prompt contains NUL or invalid UTF-8.";
+            return finish();
+        }
+        const size_t scalars = std::count_if(input.begin(), input.end(), [](unsigned char byte) {
+            return (byte & 0xc0) != 0x80;
+        });
+        if (scalars > maxPromptScalars) {
+            metrics.error = "Prompt exceeds the Unicode scalar limit.";
+            return finish();
+        }
+        PromptParts parts;
+        if (!splitPrompt(input, parts)) {
+            metrics.error = "Incomplete Hy-MT2 chat wrapper.";
             return finish();
         }
         const llama_vocab * vocabulary = llama_model_get_vocab(runtime->model);
-        // Swift supplies the model's exact chat template, including its BOS.
-        // Parse control tokens without adding a second BOS/EOS automatically.
-        std::vector<llama_token> tokens(runtime->contextSize);
-        const int tokenCount = llama_tokenize(vocabulary, prompt, static_cast<int>(promptBytes),
-            tokens.data(), static_cast<int>(tokens.size()), false, true);
-        if (tokenCount <= 0 || tokenCount + maxTokens > runtime->contextSize) {
+        std::vector<llama_token> tokens;
+        tokens.reserve(runtime->contextSize);
+        if (!tokenizePart(vocabulary, parts.prefix, true, tokens, runtime->contextSize, metrics) ||
+            !tokenizePart(vocabulary, parts.body, false, tokens, runtime->contextSize, metrics) ||
+            !tokenizePart(vocabulary, parts.suffix, true, tokens, runtime->contextSize, metrics) ||
+            metrics.bodyControlTokens != 0 || tokens.empty() || tokens.size() + maxTokens > static_cast<size_t>(runtime->contextSize)) {
             result = -2;
-            metrics.promptTokens = tokenCount > 0 ? tokenCount :
-                (tokenCount != std::numeric_limits<int32_t>::min() ? -tokenCount : 0);
+            metrics.promptTokens = static_cast<int>(tokens.size());
             metrics.error = "Prompt and output budget exceed the fixed context.";
             return finish();
         }
+        const int tokenCount = static_cast<int>(tokens.size());
         metrics.promptTokens = tokenCount;
         llama_memory_clear(llama_get_memory(runtime->context), true);
         llama_perf_context_reset(runtime->context);

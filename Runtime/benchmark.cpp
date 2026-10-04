@@ -98,7 +98,7 @@ int main(int argc, char ** argv) {
                     }
                 });
             }
-            const int result = lc_translate(handle, request, prompt.c_str(), maxTokens, timeoutMs,
+            const int result = lc_translate_bytes(handle, request, prompt.data(), static_cast<int>(prompt.size()), maxTokens, timeoutMs,
                 output.data(), static_cast<int>(output.size()), stats.data(), static_cast<int>(stats.size()));
             { std::lock_guard lock(doneMutex); done = true; }
             doneCondition.notify_one();

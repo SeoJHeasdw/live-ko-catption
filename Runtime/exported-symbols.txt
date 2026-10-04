@@ -1,5 +1,6 @@
 _lc_load
 _lc_translate
+_lc_translate_bytes
 _lc_cancel
 _lc_free
 _lc_version

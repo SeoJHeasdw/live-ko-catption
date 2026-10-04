@@ -31,8 +31,18 @@ The exact official Hy-MT2-1.8B single-user chat format is:
   <｜hy_begin▁of▁sentence｜><｜hy_User｜>PROMPT<｜hy_Assistant｜>
 The response ends with the model's <｜hy_place▁holder▁no▁2｜> EOG token.
 Source: https://huggingface.co/tencent/Hy-MT2-1.8B/raw/main/chat_template.jinja
-The caller supplies this already-formatted UTF-8 prompt. Special-token parsing
-is enabled and automatic BOS insertion is disabled. Initial decoding is greedy.
+The caller supplies this already-formatted UTF-8 prompt. The dense 7B wrapper is
+<|startoftext|>PROMPT<|extra_0|>. Only these exact outer wrappers enable special
+token parsing; all body text is tokenized literally, including role-token
+spellings supplied in source, context or dictionaries. Automatic BOS insertion
+is disabled. Initial decoding is greedy. The app also keeps its fast baseline
+when input contains reserved model markers, without modifying recognized text.
+
+lc_translate_bytes takes the exact UTF-8 byte length and rejects embedded NUL,
+invalid UTF-8, incomplete wrappers and more than 32,768 Unicode scalars. The app
+and benchmark use this entry point, so text cannot be silently cut at a C-string
+boundary. Legacy lc_translate remains available for NUL-terminated clients and
+shares the same literal-body tokenization policy.
 
 One handle has one context and admits one translate call at a time. Context is
 2048 or 4096 tokens; generation is at most 256 tokens; prompts are at most 64KiB
@@ -55,6 +65,7 @@ Every nonzero result is incomplete and must not finalize a caption:
   -4 llama decode/token error; -5 unexpected native exception.
 Output is NUL-terminated UTF-8, trimmed to a complete character on interruption.
 Statistics report actual TTFT, total, prefill and decode milliseconds, prompt
-and output tokens, EOG/completion/cancellation/truncation state. No input/output
+and output tokens, EOG/completion/cancellation/truncation state. Wrapper/body
+control-token counts expose the tokenization boundary for checks. No input/output
 text is written by the dylib. The explicitly invoked benchmark CLI prints its
 supplied test translation and real statistics as JSONL.

@@ -23,6 +23,12 @@ public enum LocalPromptTemplate: String, Sendable {
 /// Small, explicit inputs: no session-history prompt, no network lookup, and no
 /// replacement of ambiguous words in a completed caption.
 public struct LocalTranslationRequest: Sendable, Equatable {
+    public static let sourceByteLimit = 8_192
+    public static let sourceScalarLimit = 2_000
+    public static let contextByteLimit = 2_400
+    public static let contextScalarLimit = 600
+    public static let promptByteLimit = 65_536
+    public static let promptScalarLimit = 32_768
     public var source: String
     public var baseline: String
     public var direction: CaptionDirection
@@ -46,11 +52,34 @@ public struct LocalTranslationRequest: Sendable, Equatable {
                   dictionaries: BuiltInDictionaries.legacy(domain, glossary: glossary), previousSentence: previousSentence)
     }
 
-    public var isWithinBudget: Bool { !source.isEmpty && source.count <= 1_000 }
+    public var isWithinBudget: Bool {
+        guard !source.isEmpty, source.utf8.count <= Self.sourceByteLimit,
+              source.unicodeScalars.count <= Self.sourceScalarLimit, source.count <= 1_000,
+              previousSentence.utf8.count <= Self.contextByteLimit,
+              previousSentence.unicodeScalars.count <= Self.contextScalarLimit,
+              previousSentence.count <= 300 else { return false }
+        // Refinement is optional. Preserve the Apple baseline for model-role
+        // spellings rather than rewriting recognized text or trusting a small
+        // model to translate those spellings without dropping adjacent words.
+        let untrusted = [source, previousSentence] + dictionaries.map(\.context)
+        guard untrusted.allSatisfy({
+            !CaptionGlossary.containsDisallowedControls($0, allowsLineBreaks: true) &&
+                !CaptionGlossary.containsModelControlMarkers($0)
+        }) else { return false }
+        let body = bodyInstructions
+        guard !CaptionGlossary.containsDisallowedControls(body, allowsLineBreaks: true),
+              !CaptionGlossary.containsModelControlMarkers(body) else { return false }
+        let framed = LocalPromptTemplate.hyMT2Small.wrap(body)
+        return framed.utf8.count <= Self.promptByteLimit && framed.unicodeScalars.count <= Self.promptScalarLimit
+    }
 
     public var prompt: String { prompt(template: .hyMT2Small) }
 
     public func prompt(template: LocalPromptTemplate) -> String {
+        template.wrap(bodyInstructions)
+    }
+
+    private var bodyInstructions: String {
         let target = direction == .englishToKorean ? "Korean" : "English"
         var instructions = ""
         let areas = dictionaries.map(\.context).filter { !$0.isEmpty }.joined(separator: " ")
@@ -68,7 +97,7 @@ public struct LocalTranslationRequest: Sendable, Equatable {
         }
         instructions += background.isEmpty && dictionaries.isEmpty ? "\n\n" + source
             : " Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\n" + source
-        return template.wrap(instructions)
+        return instructions
     }
 
     public var relevantTerms: [(String, String)] {

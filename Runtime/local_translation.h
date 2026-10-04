@@ -15,6 +15,13 @@ void * lc_load(const char * modelPath, int gpuLayers, int contextSize,
 int lc_translate(void * handle, uint64_t requestID, const char * prompt,
                  int maxTokens, int timeoutMs, char * output, int outputCapacity,
                  char * statsJSON, int statsCapacity);
+// Length-aware entry point: embedded NUL/invalid UTF-8 is rejected, never silently
+// truncated. Only the exact outer Hy-MT2 chat wrapper parses control tokens; its
+// entire body is tokenized literally. Legacy lc_translate uses this same policy.
+int lc_translate_bytes(void * handle, uint64_t requestID, const char * prompt,
+                       int promptBytes, int maxTokens, int timeoutMs,
+                       char * output, int outputCapacity,
+                       char * statsJSON, int statsCapacity);
 // Cancels only this currently active request, never a later request.
 void lc_cancel(void * handle, uint64_t requestID);
 // Cancels and waits for active native computation before releasing the handle.

@@ -36,7 +36,7 @@ enum LocalTranslationError: LocalizedError {
 /// to a request ID; a canceled Swift task never frees a still-running context.
 final class LocalTranslationEngine: @unchecked Sendable {
     private typealias Load = @convention(c) (UnsafePointer<CChar>?, Int32, Int32, UnsafeMutablePointer<CChar>?, Int32) -> UnsafeMutableRawPointer?
-    private typealias Generate = @convention(c) (UnsafeMutableRawPointer?, UInt64, UnsafePointer<CChar>?, Int32, Int32, UnsafeMutablePointer<CChar>?, Int32, UnsafeMutablePointer<CChar>?, Int32) -> Int32
+    private typealias Generate = @convention(c) (UnsafeMutableRawPointer?, UInt64, UnsafePointer<CChar>?, Int32, Int32, Int32, UnsafeMutablePointer<CChar>?, Int32, UnsafeMutablePointer<CChar>?, Int32) -> Int32
     private typealias Cancel = @convention(c) (UnsafeMutableRawPointer?, UInt64) -> Void
     private typealias Free = @convention(c) (UnsafeMutableRawPointer?) -> Void
     private struct API: @unchecked Sendable { var load: Load; var generate: Generate; var cancel: Cancel; var free: Free }
@@ -116,10 +116,15 @@ final class LocalTranslationEngine: @unchecked Sendable {
                         guard let functions = snapshot.0, let native = snapshot.1 else { throw LocalTranslationError.notPrepared }
                         var output = [CChar](repeating: 0, count: 8_192)
                         var stats = [CChar](repeating: 0, count: 2_048)
-                        let status = request.prompt(template: snapshot.3).withCString { prompt in
+                        let promptText = request.prompt(template: snapshot.3)
+                        let promptBytes = promptText.utf8.count
+                        guard promptBytes <= LocalTranslationRequest.promptByteLimit,
+                              promptText.unicodeScalars.count <= LocalTranslationRequest.promptScalarLimit,
+                              !promptText.utf8.contains(0) else { throw LocalTranslationError.unsafeOutput }
+                        let status = promptText.withCString { prompt in
                             output.withUnsafeMutableBufferPointer { out in
                                 stats.withUnsafeMutableBufferPointer { json in
-                                    functions.generate(native, id, prompt, 192, timeoutMilliseconds,
+                                    functions.generate(native, id, prompt, Int32(promptBytes), 192, timeoutMilliseconds,
                                         out.baseAddress, Int32(out.count), json.baseAddress, Int32(json.count))
                                 }
                             }
@@ -189,7 +194,7 @@ final class LocalTranslationEngine: @unchecked Sendable {
             return unsafeBitCast(raw, to: T.self)
         }
         do {
-            let functions = try API(load: symbol("lc_load", Load.self), generate: symbol("lc_translate", Generate.self),
+            let functions = try API(load: symbol("lc_load", Load.self), generate: symbol("lc_translate_bytes", Generate.self),
                 cancel: symbol("lc_cancel", Cancel.self), free: symbol("lc_free", Free.self))
             self.library = library
             lock.withLock { api = functions }
