@@ -1,0 +1,794 @@
+
+final-build
+-- llama.cpp version: 0.5.0-dev
+CMAKE_BUILD_TYPE=Release
+-- Warning: ccache not found - consider installing it for faster compilation or disable this warning with GGML_CCACHE=OFF
+-- CMAKE_SYSTEM_PROCESSOR: arm64
+-- GGML_SYSTEM_ARCH: ARM
+-- Including CPU backend
+-- Accelerate framework found
+-- ARM detected
+-- Checking for ARM features using flags:
+-- Adding CPU backend variant ggml-cpu:
+-- BLAS found, Libraries: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework
+-- BLAS found, Includes:
+-- Including BLAS backend
+-- Metal framework found
+-- Including METAL backend
+-- ggml version: 0.25.1
+-- ggml commit:  0facd55
+-- Configuring done (0.3s)
+-- Generating done (0.0s)
+-- Build files have been written to: <REPOSITORY>/.build/local-runtime-build
+[1/1] Linking CXX executable <REPOSITORY>/.build/local-runtime/caption-local-benchmark
+<REPOSITORY>/.build/local-runtime/libcaption_local_translation.dylib:
+	@rpath/libcaption_local_translation.dylib (compatibility version 0.0.0, current version 0.0.0)
+	/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.0.0)
+	/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 5027.0.69)
+	/System/Library/Frameworks/Metal.framework/Versions/A/Metal (compatibility version 1.0.0, current version 382.5.3)
+	/System/Library/Frameworks/MetalKit.framework/Versions/A/MetalKit (compatibility version 1.0.0, current version 174.4.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.27.0)
+	/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 5027.0.69)
+	/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)
+<REPOSITORY>/.build/local-runtime/libcaption_local_translation.dylib: replacing existing signature
+<REPOSITORY>/.build/local-runtime/caption-local-benchmark: replacing existing signature
+Local runtime built: <REPOSITORY>/.build/local-runtime/libcaption_local_translation.dylib
+Building for production...
+[0/2] Write swift-version--1AB21518FC5DEDBE.txt
+[1/3] Write sources
+[3/4] Compiling LiveKoCaption AudioCapture.swift
+[3/5] Write Objects.LinkFileList
+[4/5] Linking LiveKoCaption
+Build of product 'LiveKoCaption' complete! (9.78s)
+warning: '--build-system native' has been deprecated and will be removed in a future release; please report an issue at https://github.com/swiftlang/swift-package-manager/issues if you are unable to adopt the default build system.
+warning: '--build-system native' has been deprecated and will be removed in a future release; please report an issue at https://github.com/swiftlang/swift-package-manager/issues if you are unable to adopt the default build system.
+<REPOSITORY>/dist/Live Korean Captions.app/Contents/Frameworks/libcaption_local_translation.dylib: replacing existing signature
+<REPOSITORY>/dist/Live Korean Captions.app: replacing existing signature
+<REPOSITORY>/dist/Live Korean Captions.app
+
+core-and-scheduling
+[0/1] Planning build
+Building for debugging...
+[0/4] Write sources
+[1/4] Write swift-version--1AB21518FC5DEDBE.txt
+[3/6] Compiling CaptionCore LocalTranslationPrompt.swift
+[4/6] Emitting module CaptionCore
+[5/9] Compiling CaptionCoreChecks main.swift
+[6/9] Emitting module CaptionCoreChecks
+[6/9] Write Objects.LinkFileList
+[7/9] Linking CaptionCoreChecks
+[8/9] Applying CaptionCoreChecks
+Build of product 'CaptionCoreChecks' complete! (1.32s)
+PASS: a final baseline preview stays gray and cannot reopen completed captions
+PASS: optional refinement reuses an unchanged partial baseline while finality waits
+PASS: bounded IT context guides classifier terminology without rewriting ordinary recall
+PASS: each model size wraps the same instructions in its own chat template
+PASS: the user's glossary corrects only listed spellings and supplies its terms first
+PASS: selected dictionaries combine subject areas and reference only current-source terms
+PASS: reference terms stay bounded after combining dictionaries in either direction
+PASS: dictionary references match plural and spacing variants without rewriting source
+PASS: personal reference terms override public suggestions regardless of selection order
+PASS: same-priority conflicts are omitted in either direction without depending on checkbox order
+PASS: only unambiguous selected personal aliases can correct recognized source text
+PASS: composed corrections match original text once and prefer the longest listed phrase
+PASS: maximum-size unrelated dictionaries preserve partial text and still correct a last-file alias
+PASS: maximum-size shared-prefix aliases require a complete match and preserve the last valid alias
+PASS: maximum-size reference catalogs preserve late matches and the eight-term budget
+PASS: normalized source variants conflict while exact target spellings remain distinct
+PASS: no dictionary selection supplies no subject or terms and AI preserves everyday recall
+PASS: optional output checks reject obvious number and language corruption
+PASS: translation directions map speech locales and export labels consistently
+PASS: late translation cannot overwrite a revised sentence
+PASS: final source waits for a matching translation
+PASS: confirming an unchanged draft avoids duplicate translation
+PASS: a queued final job skips a draft translation completed in flight
+PASS: revised audio ranges preserve an already final prefix
+PASS: shifted late ranges cannot duplicate or reopen a final caption
+PASS: a final prefix replaces a spanning draft and protects it from later combined drafts
+PASS: jobs must match source text as well as ID and revision
+PASS: invalid text and times do not create captions or final translations
+PASS: following context can correct a final passage without changing ASR records
+PASS: context extends a pair through four chunks then freezes the completed passage
+PASS: an observed correction in the fourth ASR chunk can update the whole recent passage
+PASS: new final source invalidates in-flight context while drafts do not
+PASS: context waits for exact isolated revisions and rejects forged snapshots
+PASS: context is bounded by pause, silence, duration, and source length
+PASS: pending context presentation stays gray without reopening finalized ASR
+PASS: resetting context rejects an outstanding job and preserves completed display
+PASS: late final inside an accepted context gap restores chronological rows and preserves unrelated groups
+PASS: late draft inside an accepted context gap stays gray and preserves unrelated groups
+PASS: bounded live windows preserve context groups and the complete long transcript
+PASS: exports identify unfinished translations
+40 caption checks passed.
+Another instance of SwiftPM (PID: 49874) is already running using '<REPOSITORY>/.build', waiting until that process has finished execution...[0/1] Planning build
+Building for debugging...
+[0/3] Write swift-version--1AB21518FC5DEDBE.txt
+[2/6] Emitting module TranslationSchedulingChecks
+[3/6] Compiling TranslationSchedulingChecks main.swift
+[3/6] Write Objects.LinkFileList
+[4/6] Linking TranslationSchedulingChecks
+[5/6] Applying TranslationSchedulingChecks
+Build of product 'TranslationSchedulingChecks' complete! (0.50s)
+7 translation scheduling checks passed.
+
+leases-deadlines-store
+PASS: logical retirement is immediate; SDK cancellation waits for the actual await to exit
+PASS: physical admission stays bounded across retired/replacement leases; actual completion frees capacity
+PASS: language preparation has the same physical-await retirement protection
+PASS: retirement waits for every native await on the same lease
+PASS: native failures release slots; inactive retirement is idempotent
+5 translation lease checks passed. No Apple language engine or microphone was opened.
+3 lifecycle deadline checks passed.
+LocalModelStoreChecks passed: missing, valid, unchanged refresh, same-size corruption with restored mtime/inode, wrong size, cancellation cleanup, overlapping refresh.
+
+system-audio
+PASS: Capture published the same time origin used by its frame clock
+PASS: Stopping cleared the previous input time origin
+Recognized after the tap started: Testing, testing, one, two, three.  Please check the date carefully because the meeting is on Tuesday, not Thursday.  We should not cancel the appointment unless someone confirms the change.
+PASS: The tapped fixture reached the recognizer through the production capture path
+PASS: The last sentence finalized while capture kept running after playback ended (0.26s after playback ended)
+PASS: Source activity reported playing, then quiet after playback ended: [true, false]
+PASS: A quiet source reported no input problem: []
+PASS: Stopping removed the private tap device
+System audio checks passed; the global tap, its macOS permission prompt and real playback apps were not exercised.
+
+audio-thread-sanitizer
+PASS: foreign audio queue, 48000 Hz / 1 ch → mono Int16; 1600 frames
+PASS: foreign audio queue, 44100 Hz / 2 ch → mono Int16; 1741 frames
+PASS: foreign configuration notification safely reaches main actor
+PASS: stop waits for accepted copy, drains it once, and rejects later input
+PASS: conversion backlog stays below 0.5 s and 94 dropped buffers produce one error
+PASS: slow analyzer retains at most 8 buffers and reports dropped input once
+PASS: interleaved right-channel microphone survives mono conversion and appears on the meter
+PASS: failed microphone copy is counted/reported and still permits shutdown
+PASS: microphone waits at least 20 s, silent input stays healthy, and stop disables heartbeat errors
+PASS: 56 small hardware callbacks retain ~0.6 s input as 7 analyzer buffers, with exact final tail
+PASS: 100 jittered idle ticks retain ten seconds and never refresh the real hardware heartbeat
+PASS: idle/playback boundaries keep exactly 411 ms of elapsed audio and preserve both real buffers
+PASS: a delayed earlier copy keeps real, synthetic silence, and following real audio in order
+PASS: blocked hardware waits off the UI thread, deadline returns, retries stay bounded, and late completion recovers
+PASS: cancellation returns before a stuck driver, and its permit stays held until actual completion
+PASS: production capture startup times out off the UI, rejects retries until late cleanup, and opens no microphone
+PASS: stopping blocked startup cancels its waiter immediately, bounds stop to 0.8 s, and cleans late resources
+PASS: 500 completed hardware reads hand their permit immediately to the next capture
+18 audio callback and hardware control checks passed.
+
+historical-repro-after-fixes
+Reproduction outputs: <REPOSITORY>/.build/adversarial-20261004.HEVrnq
+Never received a real callback; hasReceivedInput= false stalled= false
+100 timer ticks over 10 sec at only 1 us jitter: frames= 160000 audio seconds= 10.0 expected 10 seconds
+Production timer wall elapsed= 3.2043077499838546 audio seconds= 3.2044375
+Producer arrival first +1000, second -1000; analyzer order= [1000, -1000]
+before installed=true
+after installed=false, size preserved=true, inode preserved=true, actual=def, modelURL exposed=false
+source injection acceptedBudget=false, raw control token count=2, arbitrary Korean candidate accepted=true
+NUL present=false, fullPromptBytes=498, C prompt bytes=498, C prompt contains source=true
+array initializer entries=10000, stated limit=300
+fileBytes=20019, entryCount=0, termGraphemes=1, termScalars=10001, originalBytes=599, correctedBytes=599, correctedGraphemes=599, duration_s=2.916785888373852e-07
+local request budget accepted=true
+PASS: 100000 randomized timeline/queue transitions, 25229 accepted source revisions, 100 seeds; frozen-final, stale-job, stale-context, chronological-order, member-count and bounded-window properties.
+SWITCH_WAIT: switching=true, canStart=false, direction=englishToKorean
+START_BLOCKED_DURING_SWITCH: direction=koreanToEnglish
+FINAL_REAPPLY accepted=true, changed=true, final=true
+MIXED_CONTEXT admitted=The server failed. 서버를 복구합니다.
+Live Korean Captions
+2026-10-04T09:30:53Z
+
+[00:00 · 확정]
+EN: The server failed. 서버를 복구합니다.
+KO: Combined Korean and English output
+
+HUGE_TIME_ACCEPTED=true
+{"probe": "malformed timestamp export", "child_returncode": -5}
+These outputs reproduce defects; exit 0 means the probes ran, not that the app passed.
+
+model-integrity-standalone-build
+-- The C compiler identification is AppleClang 21.0.0.21000334
+-- The CXX compiler identification is AppleClang 21.0.0.21000334
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- llama.cpp version: 0.5.0-dev
+CMAKE_BUILD_TYPE=Release
+-- Found Git: /usr/bin/git (found version "2.54.0 (Apple Git-157)")
+-- The ASM compiler identification is AppleClang
+-- Found assembler: /usr/bin/cc
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Warning: ccache not found - consider installing it for faster compilation or disable this warning with GGML_CCACHE=OFF
+-- CMAKE_SYSTEM_PROCESSOR: arm64
+-- GGML_SYSTEM_ARCH: ARM
+-- Including CPU backend
+-- Accelerate framework found
+-- ARM detected
+-- Performing Test GGML_COMPILER_SUPPORTS_FP16_FORMAT_I3E
+-- Performing Test GGML_COMPILER_SUPPORTS_FP16_FORMAT_I3E - Failed
+-- Checking for ARM features using flags:
+-- Performing Test HAVE_DOTPROD
+-- Performing Test HAVE_DOTPROD - Success
+-- Performing Test HAVE_SVE
+-- Performing Test HAVE_SVE - Failed
+-- Performing Test HAVE_MATMUL_INT8
+-- Performing Test HAVE_MATMUL_INT8 - Failed
+-- Performing Test HAVE_FMA
+-- Performing Test HAVE_FMA - Success
+-- Performing Test HAVE_FP16_VECTOR_ARITHMETIC
+-- Performing Test HAVE_FP16_VECTOR_ARITHMETIC - Success
+-- Performing Test HAVE_SME
+-- Performing Test HAVE_SME - Failed
+-- Adding CPU backend variant ggml-cpu:
+-- Looking for dgemm_
+-- Looking for dgemm_ - found
+-- Found BLAS: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework
+-- BLAS found, Libraries: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework
+-- BLAS found, Includes:
+-- Including BLAS backend
+-- Metal framework found
+-- Including METAL backend
+-- ggml version: 0.25.1
+-- ggml commit:  64fec91
+-- Configuring done (2.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: <REPOSITORY>/.build/commit-verification/.build/local-runtime-build
+[1/128] Building C object llama/ggml/src/CMakeFiles/ggml-base.dir/ggml-alloc.c.o
+[2/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-base.dir/ggml.cpp.o
+[3/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-base.dir/ggml-threading.cpp.o
+[4/128] Building C object llama/ggml/src/CMakeFiles/ggml-base.dir/ggml.c.o
+[5/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-base.dir/ggml-opt.cpp.o
+[6/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-base.dir/ggml-backend.cpp.o
+[7/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/ggml-cpu.cpp.o
+[8/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-base.dir/ggml-backend-meta.cpp.o
+[9/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/hbm.cpp.o
+[10/128] Building C object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/ggml-cpu.c.o
+[11/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-base.dir/gguf.cpp.o
+[12/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/iqp.cpp.o
+[13/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/traits.cpp.o
+[14/128] Building C object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/quants.c.o
+[15/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/amx/amx.cpp.o
+[16/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/amx/mmq.cpp.o
+[17/128] Building C object llama/ggml/src/CMakeFiles/ggml-base.dir/ggml-quants.c.o
+[18/128] Linking CXX static library llama/ggml/src/libggml-base.a
+[19/128] Generate embedded Metal library for fa
+[20/128] Generate embedded Metal library for mul_mv
+[21/128] Generate embedded Metal library for mul_mm
+[22/128] Generate embedded Metal library for quantize
+[23/128] Generate embedded Metal library for softmax
+[24/128] Generate embedded Metal library for norm
+[25/128] Generate embedded Metal library for unary
+[26/128] Generate embedded Metal library for binbcast
+[27/128] Generate embedded Metal library for reduce
+[28/128] Generate embedded Metal library for tri
+[29/128] Generate embedded Metal library for ssm
+[30/128] Generate embedded Metal library for wkv
+[31/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/repack.cpp.o
+[32/128] Generate embedded Metal library for gated_delta_net
+[33/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/vec.cpp.o
+[34/128] Generate embedded Metal library for solve_tri
+[35/128] Generate embedded Metal library for rope
+[36/128] Generate embedded Metal library for conv
+[37/128] Generate embedded Metal library for upscale
+[38/128] Generate embedded Metal library for argsort
+[39/128] Generate embedded Metal library for pool
+[40/128] Generate embedded Metal library for misc
+[41/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/binary-ops.cpp.o
+[42/128] Building C object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/arch/arm/quants.c.o
+[43/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/unary-ops.cpp.o
+[44/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/arch/arm/repack.cpp.o
+[45/128] Building CXX object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal.cpp.o
+[46/128] Building C object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal-device.m.o
+[47/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/llamafile/sgemm.cpp.o
+[48/128] Building CXX object llama/ggml/src/ggml-blas/CMakeFiles/ggml-blas.dir/ggml-blas.cpp.o
+[49/128] Building C object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal-context.m.o
+[50/128] Building CXX object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal-device.cpp.o
+[51/128] Building CXX object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal-common.cpp.o
+[52/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa.s.o
+[53/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-mul_mv.s.o
+[54/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-mul_mm.s.o
+[55/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-quantize.s.o
+[56/128] Building CXX object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal-tuning.cpp.o
+[57/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-softmax.s.o
+[58/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-norm.s.o
+[59/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-unary.s.o
+[60/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-binbcast.s.o
+[61/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-reduce.s.o
+[62/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-tri.s.o
+[63/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-ssm.s.o
+[64/128] Building CXX object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal-fusion.cpp.o
+[65/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-wkv.s.o
+[66/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-gated_delta_net.s.o
+[67/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-solve_tri.s.o
+[68/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-rope.s.o
+[69/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-conv.s.o
+[70/128] Building CXX object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal-ops.cpp.o
+[71/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-upscale.s.o
+[72/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-argsort.s.o
+[73/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-pool.s.o
+[74/128] Building ASM object llama/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-misc.s.o
+[75/128] Linking CXX static library llama/ggml/src/ggml-blas/libggml-blas.a
+[76/128] Linking CXX static library llama/ggml/src/ggml-metal/libggml-metal.a
+[77/128] Building CXX object llama/ggml/src/CMakeFiles/ggml.dir/ggml-backend-dl.cpp.o
+[78/128] Building CXX object llama/ggml/src/CMakeFiles/ggml.dir/ggml-backend-reg.cpp.o
+[79/128] Building CXX object llama/src/CMakeFiles/llama.dir/Unity/unity_9_cxx.cxx.o
+[80/128] Building CXX object llama/src/CMakeFiles/llama.dir/Unity/unity_7_cxx.cxx.o
+[81/128] Building CXX object llama/src/CMakeFiles/llama.dir/Unity/unity_6_cxx.cxx.o
+[82/128] Building CXX object llama/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/ops.cpp.o
+[83/128] Building CXX object llama/src/CMakeFiles/llama.dir/Unity/unity_8_cxx.cxx.o
+[84/128] Linking CXX static library llama/ggml/src/libggml-cpu.a
+[85/128] Linking CXX static library llama/ggml/src/libggml.a
+[86/128] Building CXX object llama/src/CMakeFiles/llama.dir/Unity/unity_5_cxx.cxx.o
+[87/128] Building CXX object llama/src/CMakeFiles/llama.dir/Unity/unity_4_cxx.cxx.o
+[88/128] Building CXX object llama/src/CMakeFiles/llama.dir/Unity/unity_2_cxx.cxx.o
+[89/128] Building CXX object llama/src/CMakeFiles/llama.dir/Unity/unity_3_cxx.cxx.o
+[90/128] Building CXX object llama/src/CMakeFiles/llama.dir/Unity/unity_0_cxx.cxx.o
+[91/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama.cpp.o
+[92/128] Building CXX object llama/src/CMakeFiles/llama.dir/Unity/unity_1_cxx.cxx.o
+[93/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-arch.cpp.o
+[94/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-adapter.cpp.o
+[95/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-cparams.cpp.o
+[96/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-chat.cpp.o
+[97/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-batch.cpp.o
+[98/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-hparams.cpp.o
+[99/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-io.cpp.o
+[100/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-impl.cpp.o
+[101/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-context.cpp.o
+[102/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-graph.cpp.o
+[103/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-kv-cache-dsa.cpp.o
+[104/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-kv-cache-iswa.cpp.o
+[105/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-grammar.cpp.o
+[106/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-memory.cpp.o
+[107/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-kv-cache-dsa-iswa.cpp.o
+[108/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-kv-cache-msa.cpp.o
+[109/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-memory-hybrid.cpp.o
+[110/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-memory-hybrid-iswa.cpp.o
+[111/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-mmap.cpp.o
+[112/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-memory-hybrid-idx.cpp.o
+[113/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-memory-recurrent.cpp.o
+[114/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-kv-cache.cpp.o
+[115/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-kv-cache-dsv4.cpp.o
+[116/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-model-saver.cpp.o
+[117/128] Building CXX object llama/src/CMakeFiles/llama.dir/unicode-data.cpp.o
+[118/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-model-loader.cpp.o
+[119/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-quant.cpp.o
+[120/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-sampler.cpp.o
+[121/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-vocab.cpp.o
+[122/128] Building CXX object CMakeFiles/caption_local_translation.dir/local_translation.cpp.o
+[123/128] Building CXX object CMakeFiles/caption-local-benchmark.dir/benchmark.cpp.o
+[124/128] Building CXX object llama/src/CMakeFiles/llama.dir/llama-model.cpp.o
+[125/128] Building CXX object llama/src/CMakeFiles/llama.dir/unicode.cpp.o
+[126/128] Linking CXX static library llama/src/libllama.a
+[127/128] Linking CXX shared library <REPOSITORY>/.build/commit-verification/.build/local-runtime/libcaption_local_translation.dylib
+[128/128] Linking CXX executable <REPOSITORY>/.build/commit-verification/.build/local-runtime/caption-local-benchmark
+<REPOSITORY>/.build/commit-verification/.build/local-runtime/libcaption_local_translation.dylib:
+	@rpath/libcaption_local_translation.dylib (compatibility version 0.0.0, current version 0.0.0)
+	/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.0.0)
+	/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 5027.0.69)
+	/System/Library/Frameworks/Metal.framework/Versions/A/Metal (compatibility version 1.0.0, current version 382.5.3)
+	/System/Library/Frameworks/MetalKit.framework/Versions/A/MetalKit (compatibility version 1.0.0, current version 174.4.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.27.0)
+	/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 5027.0.69)
+	/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)
+<REPOSITORY>/.build/commit-verification/.build/local-runtime/libcaption_local_translation.dylib: replacing existing signature
+<REPOSITORY>/.build/commit-verification/.build/local-runtime/caption-local-benchmark: replacing existing signature
+Local runtime built: <REPOSITORY>/.build/commit-verification/.build/local-runtime/libcaption_local_translation.dylib
+Building for production...
+[0/5] Write sources
+[2/5] Write swift-version--1AB21518FC5DEDBE.txt
+[4/6] Compiling CaptionCore BuiltInDictionaries.swift
+[5/7] Compiling LiveKoCaption AudioCapture.swift
+[5/7] Write Objects.LinkFileList
+[6/7] Linking LiveKoCaption
+Build of product 'LiveKoCaption' complete! (46.97s)
+warning: '--build-system native' has been deprecated and will be removed in a future release; please report an issue at https://github.com/swiftlang/swift-package-manager/issues if you are unable to adopt the default build system.
+warning: '--build-system native' has been deprecated and will be removed in a future release; please report an issue at https://github.com/swiftlang/swift-package-manager/issues if you are unable to adopt the default build system.
+<REPOSITORY>/.build/commit-verification/dist/Live Korean Captions.app/Contents/Frameworks/libcaption_local_translation.dylib: replacing existing signature
+<REPOSITORY>/.build/commit-verification/dist/Live Korean Captions.app: replacing existing signature
+<REPOSITORY>/.build/commit-verification/dist/Live Korean Captions.app
+
+direction-standalone-model-checks
+PASS: saved enabled refinement blocks microphone start until preparation or safe fallback
+PASS: enabling refinement blocks Start synchronously before its preparation task runs
+PASS: fast Apple baseline is visible and gray until exact final refinement completes
+PASS: partials remain Apple-only and an unchanged final is refined exactly once
+PASS: a corrected draft refines only the current final source revision
+PASS: an in-flight unchanged partial confirmed final promotes its single baseline request
+PASS: a new conversation rejects late local refinement output
+PASS: abort releases controls and late refinement cannot overwrite a resumed caption
+PASS: a held refinement never delays a current draft and still finalizes its own sentence
+PASS: a draft queued during Apple work translates at once and the earlier final is still refined
+PASS: following finals show fast baselines while a refinement is held and the waiting limit keeps baselines
+PASS: a final queued during Apple work gets its baseline without waiting for the earlier refinement
+PASS: native local context timeout disables only further context for the current run
+PASS: abort cannot finalize a newer source with a cleared conversation's stale baseline
+PASS: local timeout retains final Apple output and skips further optional work for the run
+PASS: optional refinement failure preserves valid baseline and following caption translation
+PASS: switching direction while paused keeps earlier captions and labels each row with its own languages
+PASS: direction asset checks exclude public resume and conversation edits until the new language is committed
+PASS: a direction switch is refused when the other language is not installed
+PASS: switching while listening finishes the run, flips direction and starts listening again
+PASS: only selected local dictionaries correct listed spellings before translation and guide refinement
+PASS: multiple local files compose their terms and report conflicting translations
+PASS: dictionary reload waits for pending translations and preserves completed captions
+PASS: legacy domains migrate once and an explicit empty selection takes precedence
+PASS: creating a local dictionary selects and restores it while previews keep personal data private
+PASS: invalid leading files do not consume the local limit or displace selected legacy terms on creation
+PASS: direction and multiple dictionary selections persist and freeze for recorded sessions
+PASS: stale readiness cannot enable Start or overwrite the current direction error
+PASS: a canceled startup cannot resurrect itself or overwrite a newer startup
+PASS: an empty audio-input failure immediately restores Start after repeated failures
+PASS: repeated denied starts remain retryable after their asynchronous cleanup
+PASS: an aborted run releases Start despite an uncooperative translation
+PASS: finals preempt a stuck draft, coalesce revisions, and beat queued drafts
+PASS: an unchanged in-flight draft becomes final without a second call
+PASS: final translation interrupts the draft admission wait
+PASS: a burst of draft revisions translates only its newest text without a long wait
+PASS: a steady trickle of draft revisions is translated within the hold limit
+PASS: context waits for a quiet final tail and never starts behind a live draft
+PASS: a current draft preempts held context and does not retry it during live speech
+PASS: compact retains readable phrases during queued finals and clears with a new conversation
+PASS: compact preserves current provisional state and exposes translation errors
+PASS: context goes gray, corrects earlier Korean, and preserves ASR records
+PASS: a new final preempts uncooperative context and rejects its late result
+PASS: a new conversation rejects late old worker output
+PASS: failed final translations retry through the production scheduler
+PASS: unexpected framework cancellation leaves the current final retryable
+PASS: optional context failure preserves exact translations and later context recovers
+PASS: context timeout clears gray state, reports degradation, and keeps live translation working
+PASS: final overload stops input, preserves all sources, and retries every incomplete revision
+PASS: unfinished native capacity stops input, preserves sources and recovers retry
+PASS: stopping has an overall deadline and retains incomplete source
+PASS: deadline and cancellation return even when underlying work ignores cancellation
+52 production model checks passed; no microphone or live engine accuracy was tested.
+
+glossary-boundaries
+PASS: combining-character glossary attack is rejected before correction
+PASS: ordinary Korean, English, accents and joined emoji remain supported
+PASS: NUL and C0/C1 controls cannot enter terms or aliases
+PASS: invalid local headers are explicitly disabled and cannot truncate C prompts
+PASS: model control markers are disabled in dictionary fields
+PASS: header scalar budgets reject grapheme amplification
+PASS: correction overflow preserves the complete original ASR
+PASS: bounded combining terms cannot multiply into an oversized corrected source
+PASS: only selected personal aliases correct either direction without cascading
+9 glossary boundary checks passed. No user file, microphone, language engine or model was opened.
+
+glossary-standalone-model-checks
+PASS: saved enabled refinement blocks microphone start until preparation or safe fallback
+PASS: enabling refinement blocks Start synchronously before its preparation task runs
+PASS: fast Apple baseline is visible and gray until exact final refinement completes
+PASS: partials remain Apple-only and an unchanged final is refined exactly once
+PASS: a corrected draft refines only the current final source revision
+PASS: an in-flight unchanged partial confirmed final promotes its single baseline request
+PASS: a new conversation rejects late local refinement output
+PASS: abort releases controls and late refinement cannot overwrite a resumed caption
+PASS: a held refinement never delays a current draft and still finalizes its own sentence
+PASS: a draft queued during Apple work translates at once and the earlier final is still refined
+PASS: following finals show fast baselines while a refinement is held and the waiting limit keeps baselines
+PASS: a final queued during Apple work gets its baseline without waiting for the earlier refinement
+PASS: native local context timeout disables only further context for the current run
+PASS: abort cannot finalize a newer source with a cleared conversation's stale baseline
+PASS: local timeout retains final Apple output and skips further optional work for the run
+PASS: optional refinement failure preserves valid baseline and following caption translation
+PASS: switching direction while paused keeps earlier captions and labels each row with its own languages
+PASS: direction asset checks exclude public resume and conversation edits until the new language is committed
+PASS: a direction switch is refused when the other language is not installed
+PASS: switching while listening finishes the run, flips direction and starts listening again
+PASS: oversized personal corrections preserve the full ASR and report their fallback
+PASS: invalid personal dictionary headers show a warning and valid terms still translate
+PASS: only selected local dictionaries correct listed spellings before translation and guide refinement
+PASS: multiple local files compose their terms and report conflicting translations
+PASS: dictionary reload waits for pending translations and preserves completed captions
+PASS: legacy domains migrate once and an explicit empty selection takes precedence
+PASS: creating a local dictionary selects and restores it while previews keep personal data private
+PASS: invalid leading files do not consume the local limit or displace selected legacy terms on creation
+PASS: direction and multiple dictionary selections persist and freeze for recorded sessions
+PASS: stale readiness cannot enable Start or overwrite the current direction error
+PASS: a canceled startup cannot resurrect itself or overwrite a newer startup
+PASS: an empty audio-input failure immediately restores Start after repeated failures
+PASS: repeated denied starts remain retryable after their asynchronous cleanup
+PASS: an aborted run releases Start despite an uncooperative translation
+PASS: finals preempt a stuck draft, coalesce revisions, and beat queued drafts
+PASS: an unchanged in-flight draft becomes final without a second call
+PASS: final translation interrupts the draft admission wait
+PASS: a burst of draft revisions translates only its newest text without a long wait
+PASS: a steady trickle of draft revisions is translated within the hold limit
+PASS: context waits for a quiet final tail and never starts behind a live draft
+PASS: a current draft preempts held context and does not retry it during live speech
+PASS: compact retains readable phrases during queued finals and clears with a new conversation
+PASS: compact preserves current provisional state and exposes translation errors
+PASS: context goes gray, corrects earlier Korean, and preserves ASR records
+PASS: a new final preempts uncooperative context and rejects its late result
+PASS: a new conversation rejects late old worker output
+PASS: failed final translations retry through the production scheduler
+PASS: unexpected framework cancellation leaves the current final retryable
+PASS: optional context failure preserves exact translations and later context recovers
+PASS: context timeout clears gray state, reports degradation, and keeps live translation working
+PASS: final overload stops input, preserves all sources, and retries every incomplete revision
+PASS: unfinished native capacity stops input, preserves sources and recovers retry
+PASS: stopping has an overall deadline and retains incomplete source
+PASS: deadline and cancellation return even when underlying work ignores cancellation
+54 production model checks passed; no microphone or live engine accuracy was tested.
+
+prompt-admission
+PASS: prompt admission preserves raw source, falls back for model markers/controls and bounds UTF-8/scalars in both wrappers.
+
+prompt-standalone-model-checks
+PASS: saved enabled refinement blocks microphone start until preparation or safe fallback
+PASS: enabling refinement blocks Start synchronously before its preparation task runs
+PASS: fast Apple baseline is visible and gray until exact final refinement completes
+PASS: partials remain Apple-only and an unchanged final is refined exactly once
+PASS: a corrected draft refines only the current final source revision
+PASS: an in-flight unchanged partial confirmed final promotes its single baseline request
+PASS: a new conversation rejects late local refinement output
+PASS: abort releases controls and late refinement cannot overwrite a resumed caption
+PASS: a held refinement never delays a current draft and still finalizes its own sentence
+PASS: a draft queued during Apple work translates at once and the earlier final is still refined
+PASS: following finals show fast baselines while a refinement is held and the waiting limit keeps baselines
+PASS: a final queued during Apple work gets its baseline without waiting for the earlier refinement
+PASS: native local context timeout disables only further context for the current run
+PASS: abort cannot finalize a newer source with a cleared conversation's stale baseline
+PASS: local timeout retains final Apple output and skips further optional work for the run
+PASS: optional refinement failure preserves valid baseline and following caption translation
+PASS: model-role source keeps its exact fast baseline and following drafts remain available
+PASS: switching direction while paused keeps earlier captions and labels each row with its own languages
+PASS: direction asset checks exclude public resume and conversation edits until the new language is committed
+PASS: a direction switch is refused when the other language is not installed
+PASS: switching while listening finishes the run, flips direction and starts listening again
+PASS: oversized personal corrections preserve the full ASR and report their fallback
+PASS: invalid personal dictionary headers show a warning and valid terms still translate
+PASS: only selected local dictionaries correct listed spellings before translation and guide refinement
+PASS: multiple local files compose their terms and report conflicting translations
+PASS: dictionary reload waits for pending translations and preserves completed captions
+PASS: legacy domains migrate once and an explicit empty selection takes precedence
+PASS: creating a local dictionary selects and restores it while previews keep personal data private
+PASS: invalid leading files do not consume the local limit or displace selected legacy terms on creation
+PASS: direction and multiple dictionary selections persist and freeze for recorded sessions
+PASS: stale readiness cannot enable Start or overwrite the current direction error
+PASS: a canceled startup cannot resurrect itself or overwrite a newer startup
+PASS: an empty audio-input failure immediately restores Start after repeated failures
+PASS: repeated denied starts remain retryable after their asynchronous cleanup
+PASS: an aborted run releases Start despite an uncooperative translation
+PASS: finals preempt a stuck draft, coalesce revisions, and beat queued drafts
+PASS: an unchanged in-flight draft becomes final without a second call
+PASS: final translation interrupts the draft admission wait
+PASS: a burst of draft revisions translates only its newest text without a long wait
+PASS: a steady trickle of draft revisions is translated within the hold limit
+PASS: context waits for a quiet final tail and never starts behind a live draft
+PASS: a current draft preempts held context and does not retry it during live speech
+PASS: compact retains readable phrases during queued finals and clears with a new conversation
+PASS: compact preserves current provisional state and exposes translation errors
+PASS: context goes gray, corrects earlier Korean, and preserves ASR records
+PASS: a new final preempts uncooperative context and rejects its late result
+PASS: a new conversation rejects late old worker output
+PASS: failed final translations retry through the production scheduler
+PASS: unexpected framework cancellation leaves the current final retryable
+PASS: optional context failure preserves exact translations and later context recovers
+PASS: context timeout clears gray state, reports degradation, and keeps live translation working
+PASS: final overload stops input, preserves all sources, and retries every incomplete revision
+PASS: unfinished native capacity stops input, preserves sources and recovers retry
+PASS: stopping has an overall deadline and retains incomplete source
+PASS: deadline and cancellation return even when underlying work ignores cancellation
+55 production model checks passed; no microphone or live engine accuracy was tested.
+
+audio-standalone-callback-checks
+PASS: foreign audio queue, 48000 Hz / 1 ch → mono Int16; 1600 frames
+PASS: foreign audio queue, 44100 Hz / 2 ch → mono Int16; 1741 frames
+PASS: foreign configuration notification safely reaches main actor
+PASS: stop waits for accepted copy, drains it once, and rejects later input
+PASS: conversion backlog stays below 0.5 s and 94 dropped buffers produce one error
+PASS: slow analyzer retains at most 8 buffers and reports dropped input once
+PASS: interleaved right-channel microphone survives mono conversion and appears on the meter
+PASS: failed microphone copy is counted/reported and still permits shutdown
+PASS: microphone waits at least 20 s, silent input stays healthy, and stop disables heartbeat errors
+PASS: 56 small hardware callbacks retain ~0.6 s input as 7 analyzer buffers, with exact final tail
+PASS: 100 jittered idle ticks retain ten seconds and never refresh the real hardware heartbeat
+PASS: idle/playback boundaries keep exactly 411 ms of elapsed audio and preserve both real buffers
+PASS: a delayed earlier copy keeps real, synthetic silence, and following real audio in order
+PASS: blocked hardware waits off the UI thread, deadline returns, retries stay bounded, and late completion recovers
+PASS: cancellation returns before a stuck driver, and its permit stays held until actual completion
+PASS: production capture startup times out off the UI, rejects retries until late cleanup, and opens no microphone
+PASS: stopping blocked startup cancels its waiter immediately, bounds stop to 0.8 s, and cleans late resources
+PASS: 500 completed hardware reads hand their permit immediately to the next capture
+18 audio callback and hardware control checks passed.
+
+audio-standalone-model-checks
+PASS: saved enabled refinement blocks microphone start until preparation or safe fallback
+PASS: enabling refinement blocks Start synchronously before its preparation task runs
+PASS: fast Apple baseline is visible and gray until exact final refinement completes
+PASS: partials remain Apple-only and an unchanged final is refined exactly once
+PASS: a corrected draft refines only the current final source revision
+PASS: an in-flight unchanged partial confirmed final promotes its single baseline request
+PASS: a new conversation rejects late local refinement output
+PASS: abort releases controls and late refinement cannot overwrite a resumed caption
+PASS: a held refinement never delays a current draft and still finalizes its own sentence
+PASS: a draft queued during Apple work translates at once and the earlier final is still refined
+PASS: following finals show fast baselines while a refinement is held and the waiting limit keeps baselines
+PASS: a final queued during Apple work gets its baseline without waiting for the earlier refinement
+PASS: native local context timeout disables only further context for the current run
+PASS: abort cannot finalize a newer source with a cleared conversation's stale baseline
+PASS: local timeout retains final Apple output and skips further optional work for the run
+PASS: optional refinement failure preserves valid baseline and following caption translation
+PASS: model-role source keeps its exact fast baseline and following drafts remain available
+PASS: switching direction while paused keeps earlier captions and labels each row with its own languages
+PASS: direction asset checks exclude public resume and conversation edits until the new language is committed
+PASS: a direction switch is refused when the other language is not installed
+PASS: switching while listening finishes the run, flips direction and starts listening again
+PASS: oversized personal corrections preserve the full ASR and report their fallback
+PASS: invalid personal dictionary headers show a warning and valid terms still translate
+PASS: only selected local dictionaries correct listed spellings before translation and guide refinement
+PASS: multiple local files compose their terms and report conflicting translations
+PASS: dictionary reload waits for pending translations and preserves completed captions
+PASS: legacy domains migrate once and an explicit empty selection takes precedence
+PASS: creating a local dictionary selects and restores it while previews keep personal data private
+PASS: invalid leading files do not consume the local limit or displace selected legacy terms on creation
+PASS: direction and multiple dictionary selections persist and freeze for recorded sessions
+PASS: stale readiness cannot enable Start or overwrite the current direction error
+PASS: a canceled startup cannot resurrect itself or overwrite a newer startup
+PASS: an empty audio-input failure immediately restores Start after repeated failures
+PASS: repeated denied starts remain retryable after their asynchronous cleanup
+PASS: an aborted run releases Start despite an uncooperative translation
+PASS: finals preempt a stuck draft, coalesce revisions, and beat queued drafts
+PASS: an unchanged in-flight draft becomes final without a second call
+PASS: final translation interrupts the draft admission wait
+PASS: a burst of draft revisions translates only its newest text without a long wait
+PASS: a steady trickle of draft revisions is translated within the hold limit
+PASS: context waits for a quiet final tail and never starts behind a live draft
+PASS: a current draft preempts held context and does not retry it during live speech
+PASS: compact retains readable phrases during queued finals and clears with a new conversation
+PASS: compact preserves current provisional state and exposes translation errors
+PASS: context goes gray, corrects earlier Korean, and preserves ASR records
+PASS: a new final preempts uncooperative context and rejects its late result
+PASS: a new conversation rejects late old worker output
+PASS: failed final translations retry through the production scheduler
+PASS: unexpected framework cancellation leaves the current final retryable
+PASS: optional context failure preserves exact translations and later context recovers
+PASS: context timeout clears gray state, reports degradation, and keeps live translation working
+PASS: final overload stops input, preserves all sources, and retries every incomplete revision
+PASS: unfinished native capacity stops input, preserves sources and recovers retry
+PASS: stopping has an overall deadline and retains incomplete source
+PASS: deadline and cancellation return even when underlying work ignores cancellation
+55 production model checks passed; no microphone or live engine accuracy was tested.
+
+audio-clock-checks
+PASS: foreign audio queue, 48000 Hz / 1 ch → mono Int16; 1600 frames
+PASS: foreign audio queue, 44100 Hz / 2 ch → mono Int16; 1741 frames
+PASS: foreign configuration notification safely reaches main actor
+PASS: stop waits for accepted copy, drains it once, and rejects later input
+PASS: conversion backlog stays below 0.5 s and 94 dropped buffers produce one error
+PASS: slow analyzer retains at most 8 buffers and reports dropped input once
+PASS: interleaved right-channel microphone survives mono conversion and appears on the meter
+PASS: failed microphone copy is counted/reported and still permits shutdown
+PASS: microphone waits at least 20 s, silent input stays healthy, and stop disables heartbeat errors
+PASS: 56 small hardware callbacks retain ~0.6 s input as 7 analyzer buffers, with exact final tail
+PASS: 100 jittered idle ticks retain ten seconds and never refresh the real hardware heartbeat
+PASS: idle/playback boundaries keep exactly 411 ms of elapsed audio and preserve both real buffers
+PASS: a delayed earlier copy keeps real, synthetic silence, and following real audio in order
+PASS: blocked hardware waits off the UI thread, deadline returns, retries stay bounded, and late completion recovers
+PASS: cancellation returns before a stuck driver, and its permit stays held until actual completion
+PASS: production capture startup times out off the UI, rejects retries until late cleanup, and opens no microphone
+PASS: stopping blocked startup cancels its waiter immediately, bounds stop to 0.8 s, and cleans late resources
+PASS: 500 completed hardware reads hand their permit immediately to the next capture
+18 audio callback and hardware control checks passed.
+
+audio-clock-model-checks
+PASS: saved enabled refinement blocks microphone start until preparation or safe fallback
+PASS: enabling refinement blocks Start synchronously before its preparation task runs
+PASS: fast Apple baseline is visible and gray until exact final refinement completes
+PASS: partials remain Apple-only and an unchanged final is refined exactly once
+PASS: a corrected draft refines only the current final source revision
+PASS: an in-flight unchanged partial confirmed final promotes its single baseline request
+PASS: a new conversation rejects late local refinement output
+PASS: abort releases controls and late refinement cannot overwrite a resumed caption
+PASS: a held refinement never delays a current draft and still finalizes its own sentence
+PASS: a draft queued during Apple work translates at once and the earlier final is still refined
+PASS: following finals show fast baselines while a refinement is held and the waiting limit keeps baselines
+PASS: a final queued during Apple work gets its baseline without waiting for the earlier refinement
+PASS: native local context timeout disables only further context for the current run
+PASS: abort cannot finalize a newer source with a cleared conversation's stale baseline
+PASS: local timeout retains final Apple output and skips further optional work for the run
+PASS: optional refinement failure preserves valid baseline and following caption translation
+PASS: model-role source keeps its exact fast baseline and following drafts remain available
+PASS: switching direction while paused keeps earlier captions and labels each row with its own languages
+PASS: direction asset checks exclude public resume and conversation edits until the new language is committed
+PASS: a direction switch is refused when the other language is not installed
+PASS: switching while listening finishes the run, flips direction and starts listening again
+PASS: oversized personal corrections preserve the full ASR and report their fallback
+PASS: invalid personal dictionary headers show a warning and valid terms still translate
+PASS: only selected local dictionaries correct listed spellings before translation and guide refinement
+PASS: multiple local files compose their terms and report conflicting translations
+PASS: dictionary reload waits for pending translations and preserves completed captions
+PASS: legacy domains migrate once and an explicit empty selection takes precedence
+PASS: creating a local dictionary selects and restores it while previews keep personal data private
+PASS: invalid leading files do not consume the local limit or displace selected legacy terms on creation
+PASS: direction and multiple dictionary selections persist and freeze for recorded sessions
+PASS: stale readiness cannot enable Start or overwrite the current direction error
+PASS: a canceled startup cannot resurrect itself or overwrite a newer startup
+PASS: an empty audio-input failure immediately restores Start after repeated failures
+PASS: repeated denied starts remain retryable after their asynchronous cleanup
+PASS: an aborted run releases Start despite an uncooperative translation
+PASS: finals preempt a stuck draft, coalesce revisions, and beat queued drafts
+PASS: an unchanged in-flight draft becomes final without a second call
+PASS: final translation interrupts the draft admission wait
+PASS: a burst of draft revisions translates only its newest text without a long wait
+PASS: a steady trickle of draft revisions is translated within the hold limit
+PASS: context waits for a quiet final tail and never starts behind a live draft
+PASS: a current draft preempts held context and does not retry it during live speech
+PASS: compact retains readable phrases during queued finals and clears with a new conversation
+PASS: compact preserves current provisional state and exposes translation errors
+PASS: context goes gray, corrects earlier Korean, and preserves ASR records
+PASS: a new final preempts uncooperative context and rejects its late result
+PASS: a new conversation rejects late old worker output
+PASS: failed final translations retry through the production scheduler
+PASS: unexpected framework cancellation leaves the current final retryable
+PASS: optional context failure preserves exact translations and later context recovers
+PASS: context timeout clears gray state, reports degradation, and keeps live translation working
+PASS: final overload stops input, preserves all sources, and retries every incomplete revision
+PASS: unfinished native capacity stops input, preserves sources and recovers retry
+PASS: stopping has an overall deadline and retains incomplete source
+PASS: deadline and cancellation return even when underlying work ignores cancellation
+55 production model checks passed; no microphone or live engine accuracy was tested.
+
+audio-clock-build
+-- llama.cpp version: 0.5.0-dev
+CMAKE_BUILD_TYPE=Release
+-- Warning: ccache not found - consider installing it for faster compilation or disable this warning with GGML_CCACHE=OFF
+-- CMAKE_SYSTEM_PROCESSOR: arm64
+-- GGML_SYSTEM_ARCH: ARM
+-- Including CPU backend
+-- Accelerate framework found
+-- ARM detected
+-- Checking for ARM features using flags:
+-- Adding CPU backend variant ggml-cpu:
+-- BLAS found, Libraries: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework
+-- BLAS found, Includes:
+-- Including BLAS backend
+-- Metal framework found
+-- Including METAL backend
+-- ggml version: 0.25.1
+-- ggml commit:  0facd55
+-- Configuring done (0.3s)
+-- Generating done (0.0s)
+-- Build files have been written to: <REPOSITORY>/.build/commit-verification/.build/local-runtime-build
+[1/6] Building C object llama/ggml/src/CMakeFiles/ggml-base.dir/ggml.c.o
+[2/6] Linking CXX static library llama/ggml/src/libggml-base.a
+[3/6] Building CXX object CMakeFiles/caption-local-benchmark.dir/benchmark.cpp.o
+[4/6] Building CXX object CMakeFiles/caption_local_translation.dir/local_translation.cpp.o
+[5/6] Linking CXX shared library <REPOSITORY>/.build/commit-verification/.build/local-runtime/libcaption_local_translation.dylib
+[6/6] Linking CXX executable <REPOSITORY>/.build/commit-verification/.build/local-runtime/caption-local-benchmark
+<REPOSITORY>/.build/commit-verification/.build/local-runtime/libcaption_local_translation.dylib:
+	@rpath/libcaption_local_translation.dylib (compatibility version 0.0.0, current version 0.0.0)
+	/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.0.0)
+	/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 5027.0.69)
+	/System/Library/Frameworks/Metal.framework/Versions/A/Metal (compatibility version 1.0.0, current version 382.5.3)
+	/System/Library/Frameworks/MetalKit.framework/Versions/A/MetalKit (compatibility version 1.0.0, current version 174.4.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.27.0)
+	/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 5027.0.69)
+	/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)
+<REPOSITORY>/.build/commit-verification/.build/local-runtime/libcaption_local_translation.dylib: replacing existing signature
+<REPOSITORY>/.build/commit-verification/.build/local-runtime/caption-local-benchmark: replacing existing signature
+Local runtime built: <REPOSITORY>/.build/commit-verification/.build/local-runtime/libcaption_local_translation.dylib
+[0/1] Planning build
+Building for production...
+[0/3] Write sources
+[1/3] Write swift-version--1AB21518FC5DEDBE.txt
+[3/4] Compiling CaptionCore BuiltInDictionaries.swift
+[3/5] Write sources
+[5/6] Compiling LiveKoCaption AudioCapture.swift
+[5/7] Write Objects.LinkFileList
+[6/7] Linking LiveKoCaption
+Build of product 'LiveKoCaption' complete! (12.25s)
+warning: '--build-system native' has been deprecated and will be removed in a future release; please report an issue at https://github.com/swiftlang/swift-package-manager/issues if you are unable to adopt the default build system.
+warning: '--build-system native' has been deprecated and will be removed in a future release; please report an issue at https://github.com/swiftlang/swift-package-manager/issues if you are unable to adopt the default build system.
+<REPOSITORY>/.build/commit-verification/dist/Live Korean Captions.app/Contents/Frameworks/libcaption_local_translation.dylib: replacing existing signature
+<REPOSITORY>/.build/commit-verification/dist/Live Korean Captions.app: replacing existing signature
+<REPOSITORY>/.build/commit-verification/dist/Live Korean Captions.app

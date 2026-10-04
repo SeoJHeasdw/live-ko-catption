@@ -90,7 +90,9 @@ open "dist/Live Korean Captions.app"
 
 오디오 콜백에서는 인식·번역을 실행하지 않습니다. 버퍼를 복사한 뒤 제한된 변환 큐로 전달합니다. 변환 대기는 입력 0.5초 이내, 분석 스트림은 8개 버퍼로 제한하며 누락 횟수를 보고합니다. 짧은 입력은 변환 큐에서 약 100ms 단위로 모읍니다. 정지할 때 마지막 짧은 입력도 배출합니다.
 
-컴퓨터 소리 탭은 재생 중이 아닐 때 버퍼를 보내지 않거나 디지털 무음만 보냅니다. `AudioPump.makeSilenceTimer()`가 입력이 100ms 이상 비면 무음 한 조각을 채워, 인식 시간이 계속 흐르고 마지막 문장이 확정되며 조용한 구간이 입력 중단으로 처리되지 않게 합니다. 이 타이머 핸들러도 외부 큐에서 실행되므로 `AudioPump` 안의 nonisolated 위치에서 만듭니다. 상태의 **컴퓨터 소리를 기다리는 중**은 측정 바닥보다 큰 소리가 1.5초 동안 없었다는 표시이며 오류가 아닙니다.
+컴퓨터 소리 탭은 재생 중이 아닐 때 버퍼를 보내지 않거나 디지털 무음만 보냅니다. `AudioPump.makeSilenceTimer()`는 경과 시간과 실제·합성 입력의 누적 프레임 차이만큼 무음을 보충합니다. 타이머 지터가 구간을 빠뜨리지 않으며 합성 무음은 실제 입력 heartbeat를 갱신하지 않습니다. 이 핸들러도 `AudioPump` 안의 nonisolated 위치에서 만듭니다. 상태의 **컴퓨터 소리를 기다리는 중**은 측정 바닥보다 큰 소리가 1.5초 동안 없었다는 표시이며 오류가 아닙니다.
+
+장치 열거·생성·시작·설정 조회·중지·탭 정리는 전용 제어 큐에서 실행합니다. 전역 하드웨어 실행권은 하나이며 실제 정리가 끝날 때까지 유지합니다. 시작 8초·조회 3초·중지 대기 0.8초 안에 호출자에게 반환하되, 늦은 실제 작업은 자동 정리합니다. `CaptionModel`은 비동기 시작 뒤 실행 토큰을 재확인하고 pump의 시간 기준을 사용하므로, 취소된 시작이 현재 대화를 덮거나 장치 생성 대기가 입력 시간에 섞이지 않습니다. 버퍼는 복사 전 예약한 순서대로 변환 큐에서 소비합니다.
 
 AVFoundation의 외부 스레드 콜백은 nonisolated factory인 `AudioPump.makeTapBlock()`과 `AudioCallbackBridge`로 구성합니다. MainActor 메서드 안에서 `AVAudioNodeTapBlock`을 만들면 Swift 6이 MainActor 실행을 요구하도록 추론할 수 있어 실제 마이크 입력에서 충돌할 수 있습니다. 오디오 변경 뒤에는 `check-audio-callbacks.sh`를 실행합니다.
 
@@ -103,6 +105,8 @@ Swift 작업 취소를 네이티브 작업의 종료로 취급하지 않습니�
 초기 자산 준비 후 추론은 로컬에서 실행합니다. 이 앱은 다른 프로젝트의 설정·의존성·모델 서버·실행 스크립트와 분리합니다. 클라우드 번역은 추가하지 않습니다. 컴퓨터 소리는 사용자가 직접 고른 입력만 비공개 Core Audio 프로세스 탭으로 받고, 마이크와 같은 제한된 펌프에 전달하며 파일로 저장하지 않습니다.
 
 선택 모델은 `~/Library/Application Support/Live Korean Captions/Models/`에 설치합니다. [모델 manifest](../Resources/local-model-manifest.json)와 [검증 상수](../Sources/LiveKoCaption/LocalModelStore.swift)의 고정 파일 크기·SHA-256을 확인한 뒤 원자적으로 설치합니다. 가중치는 Git과 앱 번들에서 제외합니다.
+
+모델 refresh는 metadata 캐시만으로 승인하지 않고 매번 전체 SHA-256을 백그라운드에서 다시 확인합니다. 겹친 요청은 같은 읽기를 공유하며, 열린 파일과 경로의 inode·device·mtime·ctime을 대조합니다. 개인 사전은 문자 수 외 scalar·UTF-8 byte와 제어 문자를 검증하고, 교정 결과가 65,536바이트를 넘으면 원 ASR을 유지해 알립니다. 모델 역할 토큰이 포함된 원문은 선택 보완을 생략하고 빠른 번역을 유지합니다. 네이티브 입력은 길이 기반 `lc_translate_bytes`로 전달하며, 템플릿 외곽만 특수 토큰으로 파싱하고 본문은 literal 토큰화합니다.
 
 대화는 자동 저장하지 않습니다. 앱 종료·업데이트·새 대화 전에 필요한 기록을 수동 저장합니다. 실제 사용자 대화·개인 용어사전과 원본 음성을 공개 fixture, 스크린샷, QA 자료에 옮기지 않습니다.
 
@@ -119,6 +123,8 @@ swift run --build-system native TranslationSchedulingChecks
 ./scripts/check-system-audio.sh
 ./scripts/check-translation-leases.sh
 ./scripts/check-local-model-store.sh
+./scripts/check-glossary-boundaries.sh
+./scripts/check-prompt-safety.sh
 ```
 
 | 검사 | 범위 |

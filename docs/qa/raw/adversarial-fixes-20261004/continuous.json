@@ -1,0 +1,1130 @@
+{
+  "complete": true,
+  "failures": [],
+  "final_source_segments": [
+    {
+      "audio_end": 3.36,
+      "audio_start": 0,
+      "final": true,
+      "korean": "테스트, 테스트, 하나, 둘, 셋.",
+      "revision": 12,
+      "source": "Testing, testing, one, two, three.",
+      "translated_revision": 12
+    },
+    {
+      "audio_end": 7.8,
+      "audio_start": 3.36,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 17,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 17
+    },
+    {
+      "audio_end": 14.82,
+      "audio_start": 7.8,
+      "final": true,
+      "korean": "우리는 누군가가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다. 테스트, 테스트, 하나, 둘, 셋.",
+      "revision": 26,
+      "source": "We should not cancel the appointment unless someone confirms the change testing, testing, one, two, three.",
+      "translated_revision": 26
+    },
+    {
+      "audio_end": 19.32,
+      "audio_start": 14.82,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 26.28,
+      "audio_start": 19.32,
+      "final": true,
+      "korean": "우리는 누군가가 변경, 테스트, 테스트, 1, 2, 3을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "revision": 26,
+      "source": "We should not cancel the appointment unless someone confirms the change, testing, testing, one, 2, 3.",
+      "translated_revision": 26
+    },
+    {
+      "audio_end": 30.84,
+      "audio_start": 26.28,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 37.8,
+      "audio_start": 30.84,
+      "final": true,
+      "korean": "우리는 누군가가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다. 테스트, 테스트, 하나, 둘, 셋.",
+      "revision": 26,
+      "source": "We should not cancel the appointment unless someone confirms the change testing, testing, one, two, three.",
+      "translated_revision": 26
+    },
+    {
+      "audio_end": 42.36,
+      "audio_start": 37.8,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 49.26,
+      "audio_start": 42.36,
+      "final": true,
+      "korean": "우리는 누군가가 변경, 테스트, 테스트, 1, 2, 3을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "revision": 26,
+      "source": "We should not cancel the appointment unless someone confirms the change, testing, testing, one, 2, 3.",
+      "translated_revision": 26
+    },
+    {
+      "audio_end": 53.88,
+      "audio_start": 49.26,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 60.78,
+      "audio_start": 53.88,
+      "final": true,
+      "korean": "우리는 누군가가 변경, 테스트, 테스트, 1, 2, 3을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "revision": 26,
+      "source": "We should not cancel the appointment unless someone confirms the change, testing, testing, one, 2, 3.",
+      "translated_revision": 26
+    },
+    {
+      "audio_end": 65.4,
+      "audio_start": 60.78,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 68.7,
+      "audio_start": 65.4,
+      "final": true,
+      "korean": "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "revision": 14,
+      "source": "We should not cancel the appointment unless someone confirms the change.",
+      "translated_revision": 14
+    },
+    {
+      "audio_end": 72.3,
+      "audio_start": 68.7,
+      "final": true,
+      "korean": "테스트, 테스트, 하나, 둘, 셋.",
+      "revision": 12,
+      "source": "testing, testing, one, two, three.",
+      "translated_revision": 12
+    },
+    {
+      "audio_end": 76.92,
+      "audio_start": 72.3,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 80.22,
+      "audio_start": 76.92,
+      "final": true,
+      "korean": "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "revision": 14,
+      "source": "We should not cancel the appointment unless someone confirms the change.",
+      "translated_revision": 14
+    },
+    {
+      "audio_end": 83.76,
+      "audio_start": 80.22,
+      "final": true,
+      "korean": "테스트, 테스트, 하나, 둘, 셋.",
+      "revision": 12,
+      "source": "testing, testing, one, two, three.",
+      "translated_revision": 12
+    },
+    {
+      "audio_end": 88.44,
+      "audio_start": 83.76,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 91.74,
+      "audio_start": 88.44,
+      "final": true,
+      "korean": "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "revision": 14,
+      "source": "We should not cancel the appointment unless someone confirms the change.",
+      "translated_revision": 14
+    },
+    {
+      "audio_end": 95.28,
+      "audio_start": 91.74,
+      "final": true,
+      "korean": "테스트, 테스트, 하나, 둘, 셋.",
+      "revision": 12,
+      "source": "Testing, testing, one, two, three.",
+      "translated_revision": 12
+    },
+    {
+      "audio_end": 99.96,
+      "audio_start": 95.28,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 103.2,
+      "audio_start": 99.96,
+      "final": true,
+      "korean": "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "revision": 14,
+      "source": "We should not cancel the appointment unless someone confirms the change.",
+      "translated_revision": 14
+    },
+    {
+      "audio_end": 106.74,
+      "audio_start": 103.2,
+      "final": true,
+      "korean": "테스트, 테스트, 하나, 둘, 셋.",
+      "revision": 12,
+      "source": "Testing, testing, one, two, three.",
+      "translated_revision": 12
+    },
+    {
+      "audio_end": 111.12,
+      "audio_start": 106.74,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 118.26,
+      "audio_start": 111.12,
+      "final": true,
+      "korean": "우리는 누군가가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다, 테스트, 테스트, 하나, 둘, 셋.",
+      "revision": 26,
+      "source": "We should not cancel the appointment unless someone confirms the change, testing, testing, one, two, three.",
+      "translated_revision": 26
+    },
+    {
+      "audio_end": 122.58,
+      "audio_start": 118.26,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 129.78,
+      "audio_start": 122.58,
+      "final": true,
+      "korean": "우리는 누군가가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다, 테스트, 테스트, 하나, 둘, 셋.",
+      "revision": 26,
+      "source": "We should not cancel the appointment unless someone confirms the change, testing, testing, one, two, three.",
+      "translated_revision": 26
+    },
+    {
+      "audio_end": 134.1,
+      "audio_start": 129.78,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 141.3,
+      "audio_start": 134.1,
+      "final": true,
+      "korean": "우리는 누군가가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다, 테스트, 테스트, 하나, 둘, 셋.",
+      "revision": 26,
+      "source": "We should not cancel the appointment unless someone confirms the change, testing, testing, one, two, three.",
+      "translated_revision": 26
+    },
+    {
+      "audio_end": 145.56,
+      "audio_start": 141.3,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 152.82,
+      "audio_start": 145.56,
+      "final": true,
+      "korean": "우리는 누군가가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다, 테스트, 테스트, 하나, 둘, 셋.",
+      "revision": 26,
+      "source": "We should not cancel the appointment unless someone confirms the change, testing, testing, one, two, three.",
+      "translated_revision": 26
+    },
+    {
+      "audio_end": 157.08,
+      "audio_start": 152.82,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 164.28,
+      "audio_start": 157.08,
+      "final": true,
+      "korean": "우리는 누군가가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다, 테스트, 테스트, 하나, 둘, 셋.",
+      "revision": 26,
+      "source": "We should not cancel the appointment unless someone confirms the change, testing, testing, one, two, three.",
+      "translated_revision": 26
+    },
+    {
+      "audio_end": 168.6,
+      "audio_start": 164.28,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 175.8,
+      "audio_start": 168.6,
+      "final": true,
+      "korean": "우리는 누군가가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다. 테스트, 테스트, 하나, 둘, 셋.",
+      "revision": 26,
+      "source": "We should not cancel the appointment unless someone confirms the change testing, testing, one, two, three.",
+      "translated_revision": 26
+    },
+    {
+      "audio_end": 179.88,
+      "audio_start": 175.8,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 186.35999999999416,
+      "audio_start": 182.99999999999415,
+      "final": true,
+      "korean": "테스트, 테스트, 하나, 둘, 셋.",
+      "revision": 12,
+      "source": "Testing, testing, one, two, three.",
+      "translated_revision": 12
+    },
+    {
+      "audio_end": 190.79999999999416,
+      "audio_start": 186.35999999999416,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 17,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 17
+    },
+    {
+      "audio_end": 197.81999999999414,
+      "audio_start": 190.79999999999416,
+      "final": true,
+      "korean": "우리는 누군가가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다. 테스트, 테스트, 하나, 둘, 셋.",
+      "revision": 26,
+      "source": "We should not cancel the appointment unless someone confirms the change testing, testing, one, two, three.",
+      "translated_revision": 26
+    },
+    {
+      "audio_end": 202.31999999999414,
+      "audio_start": 197.81999999999414,
+      "final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "revision": 16,
+      "source": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "translated_revision": 16
+    },
+    {
+      "audio_end": 202.99999999999415,
+      "audio_start": 202.31999999999414,
+      "final": true,
+      "korean": "우리는 그렇게 해서는 안 됩니다.",
+      "revision": 4,
+      "source": "We should not.",
+      "translated_revision": 4
+    }
+  ],
+  "limitations": [
+    "No microphone or system-audio device was opened; synthetic file input does not establish real-speaker accuracy or microphone hardware stability.",
+    "The production microphone permission/start path and SwiftUI rendering are not exercised.",
+    "Timing observes state at 200ms and display state at 5 seconds; it excludes SwiftUI draw latency.",
+    "No language assets are downloaded. Network connectivity is not deliberately disabled by this test.",
+    "Exact source-revision matching does not establish semantic correctness.",
+    "CPU/RSS are this harness process; Apple's out-of-process language services are excluded.",
+    "Live sessions are reused and context sessions are created/retired per job, matching the production lease lifetime policy; microphone/start remains bypassed.",
+    "Restart source timestamps include a three-second artificial context boundary; pooled lag statistics include these restart observations."
+  ],
+  "metrics": {
+    "asr_lag_p50_seconds": 0.20252800000528737,
+    "asr_lag_p95_seconds": 0.3196424583373556,
+    "current_rss_mb": 29.046875,
+    "final_asr_segments": 41,
+    "gray_korean_observations": 904,
+    "input_seconds": 199.999999999993,
+    "lag_samples": 238,
+    "maximum_asr_event_gap_seconds": 2.0483687499945518,
+    "maximum_observer_tick_gap_seconds": 0.22369641666591633,
+    "maximum_queue_count": 1,
+    "maximum_rss_mb": 28.859375,
+    "observed_final_to_gray_transitions": 0,
+    "provisional_asr_events": 714,
+    "raw_current_revision_korean_lag_max_seconds": 1.4458955833339076,
+    "raw_current_revision_korean_lag_p50_seconds": 0.4051908749963644,
+    "raw_current_revision_korean_lag_p95_seconds": 1.2944600416615089,
+    "translation": {
+      "active_call_details": [],
+      "active_calls": 0,
+      "calls": 257,
+      "canceled_calls": 9,
+      "completed_calls": 248,
+      "context_calls": 12,
+      "errors": [],
+      "failed_calls": 0,
+      "maximum_active_calls": 2,
+      "maximum_call_seconds": 0.14533200000005309,
+      "physical_context_awaits": 0,
+      "physical_live_awaits": 0
+    },
+    "wall_seconds": 202.06904587498866
+  },
+  "mode": "100ms real-paced looping synthetic audio → real SpeechAnalyzer → production CaptionModel → reused local TranslationSession",
+  "operating_system": "Version 26.7.1 (Build 25G241)",
+  "passed": true,
+  "passes": [
+    {
+      "can_start_after_stop": true,
+      "completed_wall_seconds": 180.9303381666541,
+      "dropped_audio_buffers": 0,
+      "duration_seconds": 180,
+      "idle_after_stop": true,
+      "input_problems": [],
+      "last_message": null,
+      "physical_context_awaits_after_stop": 0,
+      "physical_live_awaits_after_stop": 0
+    },
+    {
+      "can_start_after_stop": true,
+      "completed_wall_seconds": 20.937680833332706,
+      "dropped_audio_buffers": 0,
+      "duration_seconds": 20,
+      "idle_after_stop": true,
+      "input_problems": [],
+      "last_message": null,
+      "physical_context_awaits_after_stop": 0,
+      "physical_live_awaits_after_stop": 0
+    }
+  ],
+  "recorded_at": "2026-10-04T09:29:35Z",
+  "resource_time_series": [
+    {
+      "audio_input_seconds": 0,
+      "caption_count": 0,
+      "cpu_percent_of_one_core": 0.07174810540887695,
+      "elapsed_seconds": 0.005068791666417383,
+      "last_asr_seconds_ago": 0.0050692083314061165,
+      "message": null,
+      "pass": 0,
+      "phase": "idle",
+      "queue_count": 0,
+      "rss_mb": 13.90625,
+      "translation_calls": 0,
+      "visual_final_tail_count": 0
+    },
+    {
+      "audio_input_seconds": 4.999999999999998,
+      "caption_count": 2,
+      "cpu_percent_of_one_core": 1.7809716095140835,
+      "elapsed_seconds": 5.1598894166672835,
+      "last_asr_seconds_ago": 0.1181545833387645,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 26.109375,
+      "translation_calls": 7,
+      "visual_final_tail_count": 1
+    },
+    {
+      "audio_input_seconds": 10.19999999999998,
+      "caption_count": 3,
+      "cpu_percent_of_one_core": 1.0882494648402086,
+      "elapsed_seconds": 10.366953833334264,
+      "last_asr_seconds_ago": 0.5259551666676998,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 26.21875,
+      "translation_calls": 13,
+      "visual_final_tail_count": 2
+    },
+    {
+      "audio_input_seconds": 15.293786848072525,
+      "caption_count": 3,
+      "cpu_percent_of_one_core": 1.0682116767533947,
+      "elapsed_seconds": 15.530867583336658,
+      "last_asr_seconds_ago": 0.7913307083363179,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 26.265625,
+      "translation_calls": 18,
+      "visual_final_tail_count": 2
+    },
+    {
+      "audio_input_seconds": 20.493786848072585,
+      "caption_count": 5,
+      "cpu_percent_of_one_core": 1.302041796249014,
+      "elapsed_seconds": 20.668766541668447,
+      "last_asr_seconds_ago": 0.09249566667131148,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 26.390625,
+      "translation_calls": 27,
+      "visual_final_tail_count": 4
+    },
+    {
+      "audio_input_seconds": 25.68757369614522,
+      "caption_count": 5,
+      "cpu_percent_of_one_core": 2.2975315356567236,
+      "elapsed_seconds": 25.82791170832934,
+      "last_asr_seconds_ago": 0.48955716667114757,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 26.421875,
+      "translation_calls": 32,
+      "visual_final_tail_count": 4
+    },
+    {
+      "audio_input_seconds": 30.78757369614529,
+      "caption_count": 6,
+      "cpu_percent_of_one_core": 2.6623431754091076,
+      "elapsed_seconds": 31.02142575000471,
+      "last_asr_seconds_ago": 0.8793894166738028,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 26.53125,
+      "translation_calls": 39,
+      "visual_final_tail_count": 5
+    },
+    {
+      "audio_input_seconds": 35.98136054421792,
+      "caption_count": 7,
+      "cpu_percent_of_one_core": 3.039909830549677,
+      "elapsed_seconds": 36.219729624994216,
+      "last_asr_seconds_ago": 0.3835371666646097,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 26.53125,
+      "translation_calls": 46,
+      "visual_final_tail_count": 6
+    },
+    {
+      "audio_input_seconds": 41.08136054421799,
+      "caption_count": 8,
+      "cpu_percent_of_one_core": 2.776115721840339,
+      "elapsed_seconds": 41.22461791666865,
+      "last_asr_seconds_ago": 0.5914826666703448,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 26.609375,
+      "translation_calls": 53,
+      "visual_final_tail_count": 7
+    },
+    {
+      "audio_input_seconds": 46.075147392290624,
+      "caption_count": 9,
+      "cpu_percent_of_one_core": 2.83968699762815,
+      "elapsed_seconds": 46.24544683333079,
+      "last_asr_seconds_ago": 0.820048791661975,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 26.671875,
+      "translation_calls": 59,
+      "visual_final_tail_count": 8
+    },
+    {
+      "audio_input_seconds": 51.1751473922907,
+      "caption_count": 10,
+      "cpu_percent_of_one_core": 2.9319481277853474,
+      "elapsed_seconds": 51.41826641667285,
+      "last_asr_seconds_ago": 0.19348912499845028,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 26.6875,
+      "translation_calls": 67,
+      "visual_final_tail_count": 9
+    },
+    {
+      "audio_input_seconds": 56.27514739229077,
+      "caption_count": 11,
+      "cpu_percent_of_one_core": 2.3143448159543487,
+      "elapsed_seconds": 56.42545745833195,
+      "last_asr_seconds_ago": 0.40405737499531824,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 26.6875,
+      "translation_calls": 73,
+      "visual_final_tail_count": 10
+    },
+    {
+      "audio_input_seconds": 61.4689342403634,
+      "caption_count": 11,
+      "cpu_percent_of_one_core": 2.7934086852235582,
+      "elapsed_seconds": 61.61583558333223,
+      "last_asr_seconds_ago": 0.79442995833233,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 26.703125,
+      "translation_calls": 78,
+      "visual_final_tail_count": 10
+    },
+    {
+      "audio_input_seconds": 66.4689342403633,
+      "caption_count": 12,
+      "cpu_percent_of_one_core": 2.9732530559469894,
+      "elapsed_seconds": 66.62889104166243,
+      "last_asr_seconds_ago": 0.0009975416760426015,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 1,
+      "rss_mb": 26.703125,
+      "translation_calls": 85,
+      "visual_final_tail_count": 11
+    },
+    {
+      "audio_input_seconds": 71.46272108843559,
+      "caption_count": 14,
+      "cpu_percent_of_one_core": 3.6058502961876773,
+      "elapsed_seconds": 71.66731325,
+      "last_asr_seconds_ago": 0.247656833336805,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 26.9375,
+      "translation_calls": 93,
+      "visual_final_tail_count": 12
+    },
+    {
+      "audio_input_seconds": 76.66272108843529,
+      "caption_count": 15,
+      "cpu_percent_of_one_core": 2.4976715051004255,
+      "elapsed_seconds": 76.8657074583316,
+      "last_asr_seconds_ago": 0.6458316666685278,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 26.953125,
+      "translation_calls": 99,
+      "visual_final_tail_count": 13
+    },
+    {
+      "audio_input_seconds": 81.65650793650758,
+      "caption_count": 16,
+      "cpu_percent_of_one_core": 3.3745812690153705,
+      "elapsed_seconds": 81.89650437500677,
+      "last_asr_seconds_ago": 0.833269750000909,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 26.984375,
+      "translation_calls": 106,
+      "visual_final_tail_count": 13
+    },
+    {
+      "audio_input_seconds": 86.75650793650729,
+      "caption_count": 18,
+      "cpu_percent_of_one_core": 2.950444738657617,
+      "elapsed_seconds": 86.93670979166927,
+      "last_asr_seconds_ago": 0.22564254167082254,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27,
+      "translation_calls": 113,
+      "visual_final_tail_count": 16
+    },
+    {
+      "audio_input_seconds": 91.756507936507,
+      "caption_count": 19,
+      "cpu_percent_of_one_core": 2.195982842495671,
+      "elapsed_seconds": 91.94122712500393,
+      "last_asr_seconds_ago": 0.43445400000200607,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.03125,
+      "translation_calls": 119,
+      "visual_final_tail_count": 17
+    },
+    {
+      "audio_input_seconds": 96.7502947845793,
+      "caption_count": 21,
+      "cpu_percent_of_one_core": 2.810881701005879,
+      "elapsed_seconds": 96.98662916666945,
+      "last_asr_seconds_ago": 0.6350165000039851,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.078125,
+      "translation_calls": 126,
+      "visual_final_tail_count": 19
+    },
+    {
+      "audio_input_seconds": 101.850294784579,
+      "caption_count": 22,
+      "cpu_percent_of_one_core": 3.1525749640394203,
+      "elapsed_seconds": 102.03009575000033,
+      "last_asr_seconds_ago": 0.8710441666626139,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.125,
+      "translation_calls": 132,
+      "visual_final_tail_count": 20
+    },
+    {
+      "audio_input_seconds": 106.8440816326513,
+      "caption_count": 23,
+      "cpu_percent_of_one_core": 3.889072763339589,
+      "elapsed_seconds": 107.087611583338,
+      "last_asr_seconds_ago": 0.1954868333414197,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.171875,
+      "translation_calls": 139,
+      "visual_final_tail_count": 20
+    },
+    {
+      "audio_input_seconds": 111.944081632651,
+      "caption_count": 24,
+      "cpu_percent_of_one_core": 2.0998687407980046,
+      "elapsed_seconds": 112.11597712499497,
+      "last_asr_seconds_ago": 0.3819379166670842,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 1,
+      "rss_mb": 27.21875,
+      "translation_calls": 145,
+      "visual_final_tail_count": 20
+    },
+    {
+      "audio_input_seconds": 116.9378684807233,
+      "caption_count": 25,
+      "cpu_percent_of_one_core": 2.8199430574093585,
+      "elapsed_seconds": 117.13290791666077,
+      "last_asr_seconds_ago": 0.637643374997424,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.21875,
+      "translation_calls": 151,
+      "visual_final_tail_count": 21
+    },
+    {
+      "audio_input_seconds": 122.137868480723,
+      "caption_count": 26,
+      "cpu_percent_of_one_core": 3.125922770411537,
+      "elapsed_seconds": 122.34039395833679,
+      "last_asr_seconds_ago": 0.1453942083317088,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.265625,
+      "translation_calls": 158,
+      "visual_final_tail_count": 22
+    },
+    {
+      "audio_input_seconds": 127.33165532879528,
+      "caption_count": 27,
+      "cpu_percent_of_one_core": 3.127259512293408,
+      "elapsed_seconds": 127.52193524999893,
+      "last_asr_seconds_ago": 0.536868625000352,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.296875,
+      "translation_calls": 164,
+      "visual_final_tail_count": 22
+    },
+    {
+      "audio_input_seconds": 132.331655328795,
+      "caption_count": 28,
+      "cpu_percent_of_one_core": 2.972692659935312,
+      "elapsed_seconds": 132.52967908333812,
+      "last_asr_seconds_ago": 0.7426840416737832,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.3125,
+      "translation_calls": 170,
+      "visual_final_tail_count": 23
+    },
+    {
+      "audio_input_seconds": 137.5316553287947,
+      "caption_count": 29,
+      "cpu_percent_of_one_core": 2.6314570956421957,
+      "elapsed_seconds": 137.73282454167202,
+      "last_asr_seconds_ago": 0.15329499999643303,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.359375,
+      "translation_calls": 177,
+      "visual_final_tail_count": 23
+    },
+    {
+      "audio_input_seconds": 142.72544217686698,
+      "caption_count": 30,
+      "cpu_percent_of_one_core": 2.164133943139524,
+      "elapsed_seconds": 142.89962850000302,
+      "last_asr_seconds_ago": 0.4375820833374746,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.375,
+      "translation_calls": 183,
+      "visual_final_tail_count": 23
+    },
+    {
+      "audio_input_seconds": 147.92544217686668,
+      "caption_count": 31,
+      "cpu_percent_of_one_core": 3.1110674351869165,
+      "elapsed_seconds": 148.1051446666679,
+      "last_asr_seconds_ago": 0.9377914583310485,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.375,
+      "translation_calls": 189,
+      "visual_final_tail_count": 23
+    },
+    {
+      "audio_input_seconds": 152.91922902493897,
+      "caption_count": 31,
+      "cpu_percent_of_one_core": 2.639755377075646,
+      "elapsed_seconds": 153.12334750000446,
+      "last_asr_seconds_ago": 0.15544120833510533,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.375,
+      "translation_calls": 195,
+      "visual_final_tail_count": 23
+    },
+    {
+      "audio_input_seconds": 157.9192290249387,
+      "caption_count": 32,
+      "cpu_percent_of_one_core": 2.4363044889521355,
+      "elapsed_seconds": 158.14388950000284,
+      "last_asr_seconds_ago": 0.33818762499140576,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 1,
+      "rss_mb": 27.375,
+      "translation_calls": 201,
+      "visual_final_tail_count": 22
+    },
+    {
+      "audio_input_seconds": 163.11301587301097,
+      "caption_count": 33,
+      "cpu_percent_of_one_core": 3.27549413698959,
+      "elapsed_seconds": 163.34145808333415,
+      "last_asr_seconds_ago": 0.7761133750027511,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.40625,
+      "translation_calls": 207,
+      "visual_final_tail_count": 23
+    },
+    {
+      "audio_input_seconds": 168.11301587301068,
+      "caption_count": 34,
+      "cpu_percent_of_one_core": 3.0922053962754665,
+      "elapsed_seconds": 168.34977345833613,
+      "last_asr_seconds_ago": 0.08899429166922346,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.40625,
+      "translation_calls": 214,
+      "visual_final_tail_count": 23
+    },
+    {
+      "audio_input_seconds": 173.40680272108295,
+      "caption_count": 35,
+      "cpu_percent_of_one_core": 1.8474301033379368,
+      "elapsed_seconds": 173.55721116666973,
+      "last_asr_seconds_ago": 0.5076493749947986,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.40625,
+      "translation_calls": 220,
+      "visual_final_tail_count": 23
+    },
+    {
+      "audio_input_seconds": 178.40680272108267,
+      "caption_count": 36,
+      "cpu_percent_of_one_core": 2.106557957926556,
+      "elapsed_seconds": 178.5999931666738,
+      "last_asr_seconds_ago": 0.7495067083218601,
+      "message": null,
+      "pass": 1,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 27.421875,
+      "translation_calls": 226,
+      "visual_final_tail_count": 23
+    },
+    {
+      "audio_input_seconds": 182.599999999994,
+      "caption_count": 37,
+      "cpu_percent_of_one_core": 3.3399701092246854,
+      "elapsed_seconds": 183.80941474999418,
+      "last_asr_seconds_ago": 0.6638928333122749,
+      "message": null,
+      "pass": 2,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 28.765625,
+      "translation_calls": 232,
+      "visual_final_tail_count": 23
+    },
+    {
+      "audio_input_seconds": 187.5999999999937,
+      "caption_count": 38,
+      "cpu_percent_of_one_core": 2.578770001154389,
+      "elapsed_seconds": 188.829018416669,
+      "last_asr_seconds_ago": 0.8807571666548029,
+      "message": null,
+      "pass": 2,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 28.765625,
+      "translation_calls": 238,
+      "visual_final_tail_count": 23
+    },
+    {
+      "audio_input_seconds": 192.693786848066,
+      "caption_count": 39,
+      "cpu_percent_of_one_core": 2.6571065030872703,
+      "elapsed_seconds": 193.84324708333588,
+      "last_asr_seconds_ago": 0.998793166683754,
+      "message": null,
+      "pass": 2,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 28.78125,
+      "translation_calls": 244,
+      "visual_final_tail_count": 23
+    },
+    {
+      "audio_input_seconds": 197.6937868480657,
+      "caption_count": 40,
+      "cpu_percent_of_one_core": 2.986388055850523,
+      "elapsed_seconds": 198.85599633332458,
+      "last_asr_seconds_ago": 0.214501874987036,
+      "message": null,
+      "pass": 2,
+      "phase": "listening",
+      "queue_count": 0,
+      "rss_mb": 28.859375,
+      "translation_calls": 252,
+      "visual_final_tail_count": 23
+    }
+  ],
+  "translation_examples": [
+    {
+      "context": false,
+      "english": "Testing",
+      "korean": "시험"
+    },
+    {
+      "context": false,
+      "english": "Testing, testing,",
+      "korean": "테스트, 테스트,"
+    },
+    {
+      "context": false,
+      "english": "Testing, testing, one, two",
+      "korean": "테스트, 테스트, 하나, 둘"
+    },
+    {
+      "context": false,
+      "english": "Testing, testing, one, two, three",
+      "korean": "테스트, 테스트, 하나, 둘, 셋"
+    },
+    {
+      "context": false,
+      "english": "Testing, testing, one, two, three.",
+      "korean": "테스트, 테스트, 하나, 둘, 셋."
+    },
+    {
+      "context": false,
+      "english": "please",
+      "korean": "제발"
+    },
+    {
+      "context": false,
+      "english": "please check the date care",
+      "korean": "날짜를 확인해 주세요."
+    },
+    {
+      "context": false,
+      "english": "please check the date carefully because the meeting",
+      "korean": "회의 때문에 날짜를 꼼꼼히 확인해 주세요."
+    },
+    {
+      "context": false,
+      "english": "please check the date carefully because the meeting is on Tuesday",
+      "korean": "회의가 화요일에 있기 때문에 날짜를 꼼꼼히 확인해 주세요."
+    },
+    {
+      "context": false,
+      "english": "please check the date carefully because the meeting is on Tuesday, not Thursday",
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요."
+    },
+    {
+      "context": false,
+      "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요."
+    },
+    {
+      "context": false,
+      "english": "We should not",
+      "korean": "우리는 해서는 안 됩니다."
+    },
+    {
+      "context": false,
+      "english": "We should not cancel the appointment",
+      "korean": "우리는 약속을 취소해서는 안 됩니다."
+    },
+    {
+      "context": false,
+      "english": "We should not cancel the appointment unless someone",
+      "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다."
+    },
+    {
+      "context": false,
+      "english": "We should not cancel the appointment unless someone confirms the change",
+      "korean": "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다."
+    },
+    {
+      "context": false,
+      "english": "We should not cancel the appointment unless someone confirms the change, testing,",
+      "korean": "우리는 누군가가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다, 테스트,"
+    },
+    {
+      "context": false,
+      "english": "We should not cancel the appointment unless someone confirms the change, testing, testing, one",
+      "korean": "우리는 누군가가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다, 테스트, 테스트, 하나"
+    },
+    {
+      "context": false,
+      "english": "We should not cancel the appointment unless someone confirms the change, testing, testing, one, two,",
+      "korean": "우리는 누군가가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다, 테스트, 테스트, 하나, 둘,"
+    },
+    {
+      "context": false,
+      "english": "We should not cancel the appointment unless someone confirms the change testing, testing, one, two, three.",
+      "korean": "우리는 누군가가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다. 테스트, 테스트, 하나, 둘, 셋."
+    },
+    {
+      "context": false,
+      "english": "Please",
+      "korean": "제발"
+    },
+    {
+      "context": false,
+      "english": "Please check the date carefully",
+      "korean": "날짜를 꼼꼼히 확인해 주세요."
+    },
+    {
+      "context": false,
+      "english": "Please check the date carefully because the meeting",
+      "korean": "회의가 있기 때문에 날짜를 꼼꼼히 확인해 주세요."
+    },
+    {
+      "context": false,
+      "english": "Please check the date carefully because the meeting is on Tuesday",
+      "korean": "회의가 화요일에 있기 때문에 날짜를 꼼꼼히 확인해 주세요."
+    },
+    {
+      "context": false,
+      "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday",
+      "korean": "회의가 목요일이 아니라 화요일이니 날짜를 꼼꼼히 확인해 주세요."
+    }
+  ]
+}
