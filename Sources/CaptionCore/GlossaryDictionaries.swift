@@ -8,14 +8,21 @@ public struct CaptionDictionary: Identifiable, Equatable, Sendable {
     public let context: String
     public let glossary: CaptionGlossary
     public let isPersonal: Bool
+    public let validationWarnings: [String]
 
     public init(id: String, name: String, context: String = "", glossary: CaptionGlossary,
                 isPersonal: Bool = false) {
         self.id = id
-        self.name = String(name.prefix(60))
-        self.context = String(context.prefix(240))
+        let safeName = CaptionGlossary.isSafeField(name, characterLimit: 60,
+            scalarLimit: 1_024, byteLimit: 4_096)
+        let safeContext = CaptionGlossary.isSafeField(context, characterLimit: 240,
+            scalarLimit: 2_048, byteLimit: 8_192, allowsEmpty: true)
+        self.name = safeName ? name : "개인 용어"
+        self.context = safeContext ? context : ""
         self.glossary = glossary
         self.isPersonal = isPersonal
+        self.validationWarnings = (safeName ? [] : ["이름 필드가 올바르지 않아 기본 이름을 사용합니다."]) +
+            (safeContext ? [] : ["문맥 필드가 올바르지 않아 번역 참고에서 제외합니다."])
     }
 
     public static let preferenceKey = "selectedGlossaryDictionaries"
@@ -23,10 +30,16 @@ public struct CaptionDictionary: Identifiable, Equatable, Sendable {
     public static func localID(fileName: String) -> String { "local:" + fileName }
 
     public static func local(fileName: String, text: String) -> Self {
-        let lines = text.split(whereSeparator: \.isNewline).map { $0.trimmingCharacters(in: .whitespaces) }
+        let lines = text.split(whereSeparator: CaptionGlossary.isFileLineBreak)
+            .map { String($0.drop(while: { $0 == " " || $0 == "\t" })) }
         func header(_ prefix: String) -> String? {
             lines.first(where: { $0.hasPrefix(prefix) })
-                .map { String($0.dropFirst(prefix.count)).trimmingCharacters(in: .whitespaces) }
+                .map { line in
+                    let field = String(line.dropFirst(prefix.count))
+                    // Keep invalid controls for initializer validation instead
+                    // of trimming them away or treating them as extra rows.
+                    return CaptionGlossary.containsDisallowedControls(field) ? field : field.trimmingCharacters(in: .whitespaces)
+                }
                 .flatMap { $0.isEmpty ? nil : $0 }
         }
         let fallback = fileName == "glossary.txt" ? "개인 용어" : (fileName as NSString).deletingPathExtension

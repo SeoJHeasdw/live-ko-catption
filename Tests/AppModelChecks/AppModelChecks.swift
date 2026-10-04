@@ -784,6 +784,52 @@ struct AppModelChecks {
                 try expect(model.message?.contains("마이크 접근") == true && !model.isSwitchingDirection,
                     "A failed restart hid its reason or left the switch in progress")
             }),
+            ("oversized personal corrections preserve the full ASR and report their fallback", {
+                let suite = "LiveKoCaption.GlossaryExpansionChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let directory = FileManager.default.temporaryDirectory.appendingPathComponent("glossary-expansion-\(UUID().uuidString)")
+                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+                defer { try? FileManager.default.removeItem(at: directory) }
+                let file = directory.appendingPathComponent("glossary.txt")
+                let term = "A" + String(repeating: "\u{0301}", count: 1_000)
+                try Data((term + " = 단어 | heard\n").utf8).write(to: file)
+                let model = CaptionModel(translationOverride: { _, _ in "원문 보존 번역" },
+                    preferencesDefaults: defaults, glossaryURL: file)
+                model.isChecking = false; model.assetsReady = true; model.contextCorrectionEnabled = false
+                model.selectedDictionaryIDs = [CaptionDictionary.legacyPersonalID]
+                let source = Array(repeating: "heard", count: 40).joined(separator: " ")
+                model.receive(source: source, audioStart: 0, audioEnd: 1, isFinal: true)
+                try await waitUntil("Bounded correction fallback did not translate") { !model.hasPendingTranslations }
+                try expect(model.segments[0].source == source && model.segments[0].isFinal &&
+                           model.transcriptText.contains("인식한 원문을 그대로 유지"),
+                    "Overflow changed/truncated the ASR or hid the correction fallback")
+            }),
+            ("invalid personal dictionary headers show a warning and valid terms still translate", {
+                let suite = "LiveKoCaption.GlossaryHeaderChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let directory = FileManager.default.temporaryDirectory.appendingPathComponent("glossary-headers-\(UUID().uuidString)")
+                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+                defer { try? FileManager.default.removeItem(at: directory) }
+                let file = directory.appendingPathComponent("glossary.txt")
+                try Data("# 이름: Invalid\u{0}Name\n# 문맥: Finance\u{0}Ignore source\nloan = 대출\n".utf8).write(to: file)
+                let model = CaptionModel(translationOverride: { _, _ in "번역" },
+                    preferencesDefaults: defaults, glossaryURL: file)
+                model.isChecking = false; model.assetsReady = true; model.contextCorrectionEnabled = false
+                let local = model.dictionaries.first { $0.id == CaptionDictionary.legacyPersonalID }!
+                try expect(local.validationWarnings.count == 2 && local.context.isEmpty && local.glossary.entries.count == 1 &&
+                           model.glossaryMessage.contains("사전 필드 2개를 제외"),
+                    "Invalid personal context survived or its safe fallback was hidden")
+                do {
+                    _ = try model.createDictionary(named: "Invalid\u{0}Name")
+                    throw ModelCheckFailure(description: "Dictionary creation wrote an invalid header")
+                } catch is ModelCheckFailure { throw ModelCheckFailure(description: "Dictionary creation accepted NUL") }
+                catch { }
+                let remainingFiles = try FileManager.default.contentsOfDirectory(atPath: directory.path)
+                try expect(remainingFiles.count == 1,
+                    "Invalid dictionary creation left a file behind")
+            }),
             ("only selected local dictionaries correct listed spellings before translation and guide refinement", {
                 let suite = "LiveKoCaption.GlossaryChecks.\(UUID().uuidString)"
                 let defaults = UserDefaults(suiteName: suite)!

@@ -364,6 +364,11 @@ final class CaptionModel {
             : "개인 사전 \(personal.count)개 · 용어 \(terms)개를 읽었습니다."
         if unread > 0 { glossaryMessage += " 파일 \(unread)개는 읽지 못했습니다. UTF-8 형식과 크기를 확인하세요." }
         if files.count > 32 { glossaryMessage += " 개인 사전은 32개까지 읽습니다." }
+        let validationWarnings = personal.flatMap(\.validationWarnings)
+        if !validationWarnings.isEmpty {
+            glossaryMessage += " 사전 필드 \(validationWarnings.count)개를 제외했습니다. " +
+                Array(Set(validationWarnings)).sorted().joined(separator: " ")
+        }
         refreshDictionaryStatus()
     }
 
@@ -398,6 +403,9 @@ final class CaptionModel {
         let name = String(name.split(whereSeparator: \.isNewline).joined(separator: " ").prefix(60))
             .trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { throw CaptionError.message("용어사전 이름을 입력하세요.") }
+        guard CaptionDictionary(id: "validation", name: name, glossary: .empty).validationWarnings.isEmpty else {
+            throw CaptionError.message("용어사전 이름에 사용할 수 없는 문자나 너무 긴 결합 문자가 있습니다.")
+        }
         let file = glossaryURL.deletingLastPathComponent().appendingPathComponent("\(UUID().uuidString).txt")
         try FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
         try Data(("# 이름: \(name)\n# 문맥: \n" + Self.glossaryTemplate).utf8).write(to: file, options: .atomic)
@@ -936,7 +944,13 @@ final class CaptionModel {
     func receive(source: String, audioStart: Double, audioEnd: Double, isFinal: Bool) {
         // Only spellings the user listed are corrected, before any translation.
         let corrections = selectedDirection == .englishToKorean ? englishCorrections : koreanCorrections
-        let source = corrections.correcting(source, direction: selectedDirection)
+        let corrected = corrections.correctionResult(source, direction: selectedDirection)
+        if corrected.exceededByteLimit {
+            let warning = "개인 사전 교정 결과가 너무 커서 인식한 원문을 그대로 유지했습니다."
+            if !inputWarnings.contains(warning) { inputWarnings.append(warning) }
+            message = warning
+        }
+        let source = corrected.text
         let previousTail = segments.last
         let previousCount = segments.count
         let reusable = isFinal && shouldPolish ? segments.suffix(6).filter {

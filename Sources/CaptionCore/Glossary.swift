@@ -14,6 +14,13 @@ public struct GlossaryEntry: Equatable, Sendable {
     }
 }
 
+/// A rejected expansion preserves the original ASR source and can be reported
+/// by the app without silently trimming or partially correcting the sentence.
+public struct GlossaryCorrectionResult: Equatable, Sendable {
+    public let text: String
+    public let exceededByteLimit: Bool
+}
+
 /// Explicit term pairs and listed ASR aliases. Personal files stay on this Mac;
 /// public translation dictionaries use the same parser without ASR aliases.
 /// Only the spellings the owner listed are eligible for source correction.
@@ -24,7 +31,10 @@ public struct GlossaryEntry: Equatable, Sendable {
 public struct CaptionGlossary: Equatable, Sendable {
     public static let entryLimit = 300
     public static let termLengthLimit = 80
+    public static let termScalarLimit = 1_024
+    public static let termByteLimit = 4_096
     public static let heardAsLimit = 8
+    public static let correctedSourceByteLimit = 65_536
     public static let empty = CaptionGlossary(text: "")
 
     public let entries: [GlossaryEntry]
@@ -41,8 +51,12 @@ public struct CaptionGlossary: Equatable, Sendable {
 
     public init(text: String) {
         var parsed: [GlossaryEntry] = []
-        for line in text.split(whereSeparator: \.isNewline) {
+        for line in text.split(whereSeparator: Self.isFileLineBreak) {
             guard parsed.count < Self.entryLimit else { break }
+            // A control token can contain the file's own `|` delimiter. Reject
+            // the whole malformed row before parsing it into misleading fields.
+            guard !Self.containsDisallowedControls(String(line)),
+                  !Self.containsModelControlMarkers(String(line)) else { continue }
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             guard !trimmed.isEmpty, !trimmed.hasPrefix("#") else { continue }
             let halves = trimmed.split(separator: "|", maxSplits: 1, omittingEmptySubsequences: false)
@@ -73,7 +87,42 @@ public struct CaptionGlossary: Equatable, Sendable {
 
     public static func == (a: CaptionGlossary, b: CaptionGlossary) -> Bool { a.entries == b.entries }
 
-    private static func isTerm(_ text: String) -> Bool { !text.isEmpty && text.count <= termLengthLimit }
+    static func isFileLineBreak(_ character: Character) -> Bool {
+        character == "\n" || character == "\r" || character == "\r\n"
+    }
+
+    /// Grapheme limits alone permit one character to contain thousands of
+    /// combining scalars. Keep ordinary accents and joined emoji, but bound the
+    /// bytes and scalars that actually reach the recognizer and model APIs.
+    private static func isTerm(_ text: String) -> Bool {
+        isSafeField(text, characterLimit: termLengthLimit, scalarLimit: termScalarLimit,
+                    byteLimit: termByteLimit)
+    }
+
+    static func isSafeField(_ text: String, characterLimit: Int, scalarLimit: Int,
+                            byteLimit: Int, allowsEmpty: Bool = false) -> Bool {
+        guard allowsEmpty || !text.isEmpty,
+              text.utf8.count <= byteLimit, text.unicodeScalars.count <= scalarLimit,
+              text.count <= characterLimit, !containsDisallowedControls(text) else { return false }
+        return !containsModelControlMarkers(text)
+    }
+
+    static func containsModelControlMarkers(_ text: String) -> Bool {
+        let lowered = text.lowercased()
+        return lowered.contains("<｜hy_") || lowered.contains("<|")
+    }
+
+    /// C0/C1 controls include NUL, which terminates the native C prompt early.
+    /// Do not use CharacterSet.controlCharacters: it also includes the ZWJ
+    /// needed by ordinary joined emoji. Prompt callers may permit whitespace.
+    public static func containsDisallowedControls(_ text: String, allowsLineBreaks: Bool = false) -> Bool {
+        text.unicodeScalars.contains { scalar in
+            let value = scalar.value
+            if allowsLineBreaks && (value == 9 || value == 10 || value == 13) { return false }
+            return value < 0x20 || (0x7F...0x9F).contains(value) ||
+                (!allowsLineBreaks && (value == 0x2028 || value == 0x2029))
+        }
+    }
 
     private static func indexAliases(_ keys: [String]) -> [CorrectionNode] {
         var nodes = [CorrectionNode(label: "")]
@@ -132,7 +181,16 @@ public struct CaptionGlossary: Equatable, Sendable {
     /// Replaces the listed misrecognitions with the term in the spoken
     /// language. Text the owner did not list is returned unchanged.
     public func correcting(_ source: String, direction: CaptionDirection) -> String {
-        guard !corrections.isEmpty else { return source }
+        correctionResult(source, direction: direction).text
+    }
+
+    public func correctionResult(_ source: String, direction: CaptionDirection) -> GlossaryCorrectionResult {
+        func unchanged(limited: Bool = false) -> GlossaryCorrectionResult {
+            GlossaryCorrectionResult(text: source, exceededByteLimit: limited)
+        }
+        guard !corrections.isEmpty else { return unchanged() }
+        let originalByteCount = source.utf8.count
+        guard originalByteCount <= Self.correctedSourceByteLimit else { return unchanged(limited: true) }
         // Follow actual source text through compressed edges. Sharing a common
         // prefix with thousands of aliases never admits those aliases unless
         // their complete spelling is present in this partial.
@@ -172,16 +230,31 @@ public struct CaptionGlossary: Equatable, Sendable {
             patterns.append(pattern)
         }
         guard !patterns.isEmpty,
-              let expression = try? NSRegularExpression(pattern: patterns.joined(separator: "|"), options: .caseInsensitive) else { return source }
+              let expression = try? NSRegularExpression(pattern: patterns.joined(separator: "|"), options: .caseInsensitive) else { return unchanged() }
         // Match the original once. Inserted canonical spellings cannot cascade
         // into a second dictionary's alias. Longest alternatives take priority.
         let original = source as NSString
-        let text = NSMutableString(string: source)
-        for match in expression.matches(in: source, range: NSRange(location: 0, length: original.length)).reversed() {
-            if let term = replacements[original.substring(with: match.range).lowercased()] {
-                text.replaceCharacters(in: match.range, with: term)
-            }
+        let changes = expression.matches(in: source, range: NSRange(location: 0, length: original.length)).compactMap { match -> (NSRange, String)? in
+            let matched = original.substring(with: match.range)
+            guard let term = replacements[matched.lowercased()] else { return nil }
+            return (match.range, term)
         }
-        return text as String
+        guard !changes.isEmpty else { return unchanged() }
+        let finalByteCount = changes.reduce(originalByteCount) { count, change in
+            count + change.1.utf8.count - original.substring(with: change.0).utf8.count
+        }
+        guard finalByteCount <= Self.correctedSourceByteLimit else { return unchanged(limited: true) }
+        // Preflight before allocating expanded text, then construct it once in
+        // source order. No intermediate expansion or cascaded substitution.
+        var text = ""
+        text.reserveCapacity(finalByteCount)
+        var position = 0
+        for (range, term) in changes {
+            text += original.substring(with: NSRange(location: position, length: range.location - position))
+            text += term
+            position = NSMaxRange(range)
+        }
+        text += original.substring(from: position)
+        return GlossaryCorrectionResult(text: text, exceededByteLimit: false)
     }
 }
