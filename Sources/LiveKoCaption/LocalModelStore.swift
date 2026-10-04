@@ -1,4 +1,5 @@
 import CryptoKit
+import Darwin
 import Foundation
 import Observation
 
@@ -18,7 +19,6 @@ final class LocalModelStore {
 
     @ObservationIgnored private let directory: URL
     @ObservationIgnored private let manifest: LocalModelManifest
-    @ObservationIgnored private var validatedStamp: LocalModelFileStamp?
     @ObservationIgnored private var operationID: UUID?
     @ObservationIgnored private var operationTask: Task<Void, Never>?
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
@@ -34,7 +34,8 @@ final class LocalModelStore {
     }
 
     /// Checks the local file only. Hashing is streamed on a background task.
-    /// A previously verified, unchanged file is not hashed again in this process.
+    /// Metadata alone cannot prove that weights still match the pinned digest.
+    /// Every refresh rehashes; concurrent callers share the same bounded read.
     func refresh() async {
         if let refreshTask { await refreshTask.value; return }
         guard !isDownloading else { return }
@@ -47,20 +48,17 @@ final class LocalModelStore {
         message = "로컬 문맥 다듬기 모델 확인 중"
         let file = installedURL
         let descriptor = manifest
-        let cached = validatedStamp
         let task = Task {
-            let result = await Self.verify(file: file, manifest: descriptor, cached: cached, cancellation: flag)
+            let result = await Self.verify(file: file, manifest: descriptor, cancellation: flag)
             guard self.operationID == id else { return }
             self.operationID = nil
             self.cancellation = nil
             self.isVerifying = false
             switch result {
-            case .success(let stamp):
-                self.validatedStamp = stamp
+            case .success:
                 self.isInstalled = true
                 self.message = "문맥 다듬기 모델 준비됨 · 로컬 실행"
             case .failure(let error):
-                self.validatedStamp = nil
                 self.message = error.localizedDescription
             }
         }
@@ -98,7 +96,7 @@ final class LocalModelStore {
                 self.isVerifying = true
                 self.progress = nil
                 self.message = "다운로드한 모델의 무결성 확인 중"
-                let result = await Self.verify(file: file, manifest: descriptor, cached: nil, cancellation: flag)
+                let result = await Self.verify(file: file, manifest: descriptor, cancellation: flag)
                 let stamp = try result.get()
                 try flag.check()
                 guard self.operationID == id else { return }
@@ -107,12 +105,10 @@ final class LocalModelStore {
                 try Self.installVerified(file: file, target: targetURL)
                 let installedStamp = try LocalModelFileStamp.read(targetURL)
                 guard installedStamp.size == stamp.size else { throw LocalModelError.invalidSize }
-                self.validatedStamp = installedStamp
                 self.isInstalled = true
                 self.finish(id: id, message: "문맥 다듬기 모델 준비됨 · 로컬 실행")
             } catch {
                 guard let self, self.operationID == id else { return }
-                self.validatedStamp = nil
                 self.isInstalled = false
                 self.finish(id: id, message: Self.downloadMessage(error))
             }
@@ -154,7 +150,7 @@ final class LocalModelStore {
     }
 
     private nonisolated static func verify(file: URL, manifest: LocalModelManifest,
-                                           cached: LocalModelFileStamp?, cancellation: LocalModelCancellation)
+                                           cancellation: LocalModelCancellation)
         async -> Result<LocalModelFileStamp, any Error> {
         await withTaskCancellationHandler {
             await Task.detached(priority: .utility) {
@@ -162,9 +158,11 @@ final class LocalModelStore {
                     try cancellation.check()
                     let stamp = try LocalModelFileStamp.read(file)
                     guard stamp.size == manifest.byteCount else { throw LocalModelError.invalidSize }
-                    if stamp == cached { return stamp }
                     let handle = try FileHandle(forReadingFrom: file)
                     defer { try? handle.close() }
+                    guard try LocalModelFileStamp.read(descriptor: handle.fileDescriptor) == stamp else {
+                        throw LocalModelError.changedDuringVerification
+                    }
                     var hasher = SHA256()
                     while true {
                         try cancellation.check()
@@ -174,8 +172,10 @@ final class LocalModelStore {
                     }
                     let digest = hasher.finalize().map { String(format: "%02x", $0) }.joined()
                     guard digest == manifest.sha256 else { throw LocalModelError.invalidDigest }
-                    // Do not cache a hash if the file changed while it was read.
-                    guard try LocalModelFileStamp.read(file) == stamp else { throw LocalModelError.changedDuringVerification }
+                    // Check both the open file and its path, including ctime.
+                    // Replacing the path or restoring mtime cannot hide a write.
+                    guard try LocalModelFileStamp.read(descriptor: handle.fileDescriptor) == stamp,
+                          try LocalModelFileStamp.read(file) == stamp else { throw LocalModelError.changedDuringVerification }
                     return stamp
                 }
             }.value
@@ -211,17 +211,40 @@ struct LocalModelManifest: Sendable {
 
 private struct LocalModelFileStamp: Equatable, Sendable {
     let size: UInt64
-    let modificationTime: TimeInterval
+    let modificationSeconds: Int
+    let modificationNanoseconds: Int
     let inode: UInt64
+    let device: UInt64
+    let changeSeconds: Int
+    let changeNanoseconds: Int
 
     static func read(_ file: URL) throws -> Self {
         guard FileManager.default.fileExists(atPath: file.path) else { throw LocalModelError.notInstalled }
-        let attributes = try FileManager.default.attributesOfItem(atPath: file.path)
-        guard attributes[.type] as? FileAttributeType == .typeRegular,
-              let size = attributes[.size] as? NSNumber,
-              let date = attributes[.modificationDate] as? Date,
-              let inode = attributes[.systemFileNumber] as? NSNumber else { throw LocalModelError.invalidFile }
-        return Self(size: size.uint64Value, modificationTime: date.timeIntervalSince1970, inode: inode.uint64Value)
+        var status = stat()
+        guard file.withUnsafeFileSystemRepresentation({ path in
+            guard let path else { return Int32(-1) }
+            return lstat(path, &status)
+        }) == 0 else { throw LocalModelError.invalidFile }
+        return try Self(status)
+    }
+
+    static func read(descriptor: Int32) throws -> Self {
+        var status = stat()
+        guard fstat(descriptor, &status) == 0 else { throw LocalModelError.invalidFile }
+        return try Self(status)
+    }
+
+    private init(_ status: stat) throws {
+        guard status.st_mode & mode_t(S_IFMT) == mode_t(S_IFREG), status.st_size >= 0 else {
+            throw LocalModelError.invalidFile
+        }
+        size = UInt64(status.st_size)
+        inode = UInt64(status.st_ino)
+        device = UInt64(UInt32(bitPattern: status.st_dev))
+        modificationSeconds = status.st_mtimespec.tv_sec
+        modificationNanoseconds = status.st_mtimespec.tv_nsec
+        changeSeconds = status.st_ctimespec.tv_sec
+        changeNanoseconds = status.st_ctimespec.tv_nsec
     }
 }
 

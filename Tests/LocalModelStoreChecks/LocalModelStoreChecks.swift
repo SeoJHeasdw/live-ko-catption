@@ -12,7 +12,7 @@ private struct LocalModelStoreChecks {
     static func main() async {
         do {
             try await run()
-            print("LocalModelStoreChecks passed: missing, valid, unchanged refresh, same-size corruption, wrong size, cancellation cleanup, overlapping refresh.")
+            print("LocalModelStoreChecks passed: missing, valid, unchanged refresh, same-size corruption with restored mtime/inode, wrong size, cancellation cleanup, overlapping refresh.")
         } catch {
             FileHandle.standardError.write(Data("LocalModelStoreChecks failed: \(error.localizedDescription)\n".utf8))
             exit(1)
@@ -35,12 +35,32 @@ private struct LocalModelStoreChecks {
 
         let file = folder.appendingPathComponent(manifest.filename)
         try Data("abc".utf8).write(to: file)
+        // An integral timestamp survives Foundation round trips exactly.
+        try FileManager.default.setAttributes([.modificationDate: Date(timeIntervalSince1970: 100)], ofItemAtPath: file.path)
         await store.refresh()
         try require(store.isInstalled && store.modelURL == file && !store.isVerifying,
                     "Verified local file did not become ready.")
         await store.refresh()
         try require(store.isInstalled && store.modelURL == file,
                     "Unchanged verified file lost readiness on refresh.")
+
+        let original = try FileManager.default.attributesOfItem(atPath: file.path)
+        let overwritten = try FileHandle(forWritingTo: file)
+        try overwritten.write(contentsOf: Data("def".utf8))
+        try overwritten.close()
+        try FileManager.default.setAttributes([.modificationDate: original[.modificationDate]!], ofItemAtPath: file.path)
+        let restored = try FileManager.default.attributesOfItem(atPath: file.path)
+        try require(original[.systemFileNumber] as? NSNumber == restored[.systemFileNumber] as? NSNumber &&
+                    original[.size] as? NSNumber == restored[.size] as? NSNumber &&
+                    original[.modificationDate] as? Date == restored[.modificationDate] as? Date,
+                    "Fixture failed to preserve inode, size and mtime.")
+        await store.refresh()
+        try require(!store.isInstalled && store.modelURL == nil,
+                    "A write with restored metadata bypassed the pinned digest.")
+
+        try Data("abc".utf8).write(to: file)
+        await store.refresh()
+        try require(store.isInstalled, "Restoring pinned bytes did not recover model readiness.")
 
         try Data("def".utf8).write(to: file)
         try FileManager.default.setAttributes([.modificationDate: Date(timeIntervalSince1970: 100)], ofItemAtPath: file.path)
