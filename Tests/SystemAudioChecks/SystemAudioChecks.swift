@@ -55,12 +55,16 @@ struct SystemAudioChecks {
         }
         guard processObject != kAudioObjectUnknown else { throw CaptionError.message("The fixture player never opened audio output.") }
         let capture = AudioCapture()
+        let startingInputAt = ProcessInfo.processInfo.systemUptime
         let stream = try await capture.start(deviceID: nil,
             systemAudio: .init(onlyProcesses: [processObject], muteBehavior: .mutedWhenTapped), target: target,
             onLevel: { _ in },
             onProblem: { problem in Task { @MainActor in problems.append(problem) } },
             onSourceActivity: { activity.append($0) })
         guard let tapDevice = capture.deviceID else { throw CaptionError.message("The tap device was not published after startup.") }
+        let inputOrigin = capture.timeOrigin
+        expect(inputOrigin != nil && inputOrigin! >= startingInputAt && inputOrigin! <= ProcessInfo.processInfo.systemUptime,
+            "Capture published the same time origin used by its frame clock")
         let results = Task { @MainActor in
             for try await result in transcriber.results where result.isFinal {
                 finals.append((String(result.text.characters), ProcessInfo.processInfo.systemUptime))
@@ -81,6 +85,7 @@ struct SystemAudioChecks {
         // The quiet report follows 1.5 s without source audio, checked twice a second.
         for _ in 0..<70 where activity.last != false { try await Task.sleep(for: .milliseconds(50)) }
         await capture.stop()
+        expect(capture.timeOrigin == nil, "Stopping cleared the previous input time origin")
         try await analysis.value
         try await results.value
 

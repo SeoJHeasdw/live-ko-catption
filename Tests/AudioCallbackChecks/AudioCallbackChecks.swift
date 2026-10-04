@@ -539,7 +539,8 @@ struct AudioCallbackChecks {
         let began = ProcessInfo.processInfo.systemUptime
         do { _ = try await starting.value; throw Failure("Blocked capture startup returned success") }
         catch is CaptionError { }
-        guard ProcessInfo.processInfo.systemUptime - began < 1, capture.deviceID == nil, state.errors.isEmpty else {
+        guard ProcessInfo.processInfo.systemUptime - began < 1, capture.deviceID == nil,
+              capture.timeOrigin == nil, state.errors.isEmpty else {
             throw Failure("Blocked startup failed to return safely before hardware preparation")
         }
         for _ in 0..<5 {
@@ -566,7 +567,8 @@ struct AudioCallbackChecks {
         await capture.stop()
         do { _ = try await starting.value; throw Failure("Stopped capture startup resurrected itself") }
         catch is CancellationError { }
-        guard ProcessInfo.processInfo.systemUptime - began < 1.5, capture.deviceID == nil, state.errors.isEmpty else {
+        guard ProcessInfo.processInfo.systemUptime - began < 1.5, capture.deviceID == nil,
+              capture.timeOrigin == nil, state.errors.isEmpty else {
             throw Failure("Stop waited for a blocked startup or published stale hardware")
         }
         do { let extra = try AudioHardwarePermit.claim(); extra.release(); throw Failure("Stop released blocked hardware admission early") }

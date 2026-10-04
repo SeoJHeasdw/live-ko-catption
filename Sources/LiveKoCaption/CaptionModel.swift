@@ -701,9 +701,6 @@ final class CaptionModel {
             // Include previously recorded silence as well as recognized speech.
             // A pause/resume must not move new captions back to an earlier time.
             audioOffset = max(accumulatedDuration, timeline.endTime)
-            runUptime = ProcessInfo.processInfo.systemUptime
-            startedAt = Date()
-            runHasAudio = true
             resultTask = Task { [weak self] in
                 do {
                     for try await result in transcriber.results {
@@ -742,6 +739,11 @@ final class CaptionModel {
                     self.isWaitingForSystemAudio = usesSystemAudio && !active
                 })
             try checkStarting(token)
+            // The pump's frame clock starts after HAL device construction.
+            // Waiting for startup is not accepted audio or caption duration.
+            runUptime = audioCapture.timeOrigin ?? ProcessInfo.processInfo.systemUptime
+            startedAt = Date()
+            runHasAudio = true
             isWaitingForSystemAudio = usesSystemAudio
             // Analyze the live stream in its own task. Do not await a streaming
             // analysis operation before allowing the user to stop the stream.

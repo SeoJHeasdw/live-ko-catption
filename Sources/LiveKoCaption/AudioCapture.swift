@@ -556,6 +556,7 @@ private final class AudioHardwareSession: @unchecked Sendable {
         let pump: AudioPump
         let deviceID: AudioDeviceID
         let format: AVAudioFormat
+        let timeOrigin: TimeInterval
     }
     private let permit: AudioHardwarePermit
     private let cancellationLock = NSLock()
@@ -593,13 +594,16 @@ private final class AudioHardwareSession: @unchecked Sendable {
                 try checkRunning()
                 let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream(
                     bufferingPolicy: .bufferingNewest(AudioPump.analyzerBufferLimit))
+                let timeOrigin = ProcessInfo.processInfo.systemUptime
                 let audioPump = try AudioPump(source: device.format, target: target,
-                    continuation: continuation, onLevel: onLevel, onProblem: onProblem)
+                    continuation: continuation, onLevel: onLevel, onProblem: onProblem,
+                    startedAtUptime: timeOrigin)
                 pump = audioPump
                 try device.start(pump: audioPump, onProblem: onProblem)
                 try checkRunning()
                 if !ticket.complete(.success(Prepared(stream: stream, pump: audioPump,
-                                                      deviceID: device.deviceID, format: device.format))) {
+                                                      deviceID: device.deviceID, format: device.format,
+                                                      timeOrigin: timeOrigin))) {
                     requestStop()
                 }
             } catch {
@@ -665,6 +669,7 @@ final class AudioCapture {
     private var silenceTimer: DispatchSourceTimer?
     private var watchdogTask: Task<Void, Never>?
     private(set) var deviceID: AudioDeviceID?
+    private(set) var timeOrigin: TimeInterval?
     private let hardwareStartDeadline: Double
     private let beforeHardwarePrepare: (@Sendable () -> Void)?
 
@@ -702,6 +707,7 @@ final class AudioCapture {
         let audioPump = prepared.pump
         pump = audioPump
         self.deviceID = prepared.deviceID
+        timeOrigin = prepared.timeOrigin
         if systemAudio != nil {
             let timer = audioPump.makeSilenceTimer()
             timer.resume()
@@ -755,7 +761,7 @@ final class AudioCapture {
         silenceTimer?.cancel(); silenceTimer = nil
         let closingSession = hardwareSession
         let closingPump = pump
-        hardwareSession = nil; pump = nil; deviceID = nil
+        hardwareSession = nil; pump = nil; deviceID = nil; timeOrigin = nil
         await closingSession?.stop()
         Self.logger.notice("Input stop requested: convertedBuffers=\(closingPump?.bufferCount ?? 0), droppedBuffers=\(closingPump?.droppedBufferCount ?? 0)")
     }
