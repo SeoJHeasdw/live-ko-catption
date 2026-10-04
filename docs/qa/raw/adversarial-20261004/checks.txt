@@ -1,0 +1,226 @@
+
+build-core
+-- llama.cpp version: 0.5.0-dev
+CMAKE_BUILD_TYPE=Release
+-- Warning: ccache not found - consider installing it for faster compilation or disable this warning with GGML_CCACHE=OFF
+-- CMAKE_SYSTEM_PROCESSOR: arm64
+-- GGML_SYSTEM_ARCH: ARM
+-- Including CPU backend
+-- Accelerate framework found
+-- ARM detected
+-- Checking for ARM features using flags:
+-- Adding CPU backend variant ggml-cpu:  
+-- BLAS found, Libraries: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework
+-- BLAS found, Includes: 
+-- Including BLAS backend
+-- Metal framework found
+-- Including METAL backend
+-- ggml version: 0.25.1
+-- ggml commit:  9452aa2
+-- Configuring done (1.0s)
+-- Generating done (0.1s)
+-- Build files have been written to: <REPOSITORY>/.build/local-runtime-build
+[1/4] Building C object llama/ggml/src/CMakeFiles/ggml-base.dir/ggml.c.o
+[2/4] Linking CXX static library llama/ggml/src/libggml-base.a
+[3/4] Linking CXX shared library <REPOSITORY>/.build/local-runtime/libcaption_local_translation.dylib
+[4/4] Linking CXX executable <REPOSITORY>/.build/local-runtime/caption-local-benchmark
+<REPOSITORY>/.build/local-runtime/libcaption_local_translation.dylib:
+	@rpath/libcaption_local_translation.dylib (compatibility version 0.0.0, current version 0.0.0)
+	/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.0.0)
+	/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 5027.0.69)
+	/System/Library/Frameworks/Metal.framework/Versions/A/Metal (compatibility version 1.0.0, current version 382.5.3)
+	/System/Library/Frameworks/MetalKit.framework/Versions/A/MetalKit (compatibility version 1.0.0, current version 174.4.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.27.0)
+	/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 5027.0.69)
+	/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)
+<REPOSITORY>/.build/local-runtime/libcaption_local_translation.dylib: replacing existing signature
+<REPOSITORY>/.build/local-runtime/caption-local-benchmark: replacing existing signature
+Local runtime built: <REPOSITORY>/.build/local-runtime/libcaption_local_translation.dylib
+[0/1] Planning build
+Building for production...
+[0/2] Write swift-version--1AB21518FC5DEDBE.txt
+Build of product 'LiveKoCaption' complete! (0.20s)
+warning: '--build-system native' has been deprecated and will be removed in a future release; please report an issue at https://github.com/swiftlang/swift-package-manager/issues if you are unable to adopt the default build system.
+warning: '--build-system native' has been deprecated and will be removed in a future release; please report an issue at https://github.com/swiftlang/swift-package-manager/issues if you are unable to adopt the default build system.
+<REPOSITORY>/dist/Live Korean Captions.app/Contents/Frameworks/libcaption_local_translation.dylib: replacing existing signature
+<REPOSITORY>/dist/Live Korean Captions.app: replacing existing signature
+<REPOSITORY>/dist/Live Korean Captions.app
+[0/1] Planning build
+Building for debugging...
+[0/3] Write swift-version--1AB21518FC5DEDBE.txt
+Build of product 'CaptionCoreChecks' complete! (0.16s)
+PASS: a final baseline preview stays gray and cannot reopen completed captions
+PASS: optional refinement reuses an unchanged partial baseline while finality waits
+PASS: bounded IT context guides classifier terminology without rewriting ordinary recall
+PASS: each model size wraps the same instructions in its own chat template
+PASS: the user's glossary corrects only listed spellings and supplies its terms first
+PASS: selected dictionaries combine subject areas and reference only current-source terms
+PASS: reference terms stay bounded after combining dictionaries in either direction
+PASS: dictionary references match plural and spacing variants without rewriting source
+PASS: personal reference terms override public suggestions regardless of selection order
+PASS: same-priority conflicts are omitted in either direction without depending on checkbox order
+PASS: only unambiguous selected personal aliases can correct recognized source text
+PASS: composed corrections match original text once and prefer the longest listed phrase
+PASS: maximum-size unrelated dictionaries preserve partial text and still correct a last-file alias
+PASS: maximum-size shared-prefix aliases require a complete match and preserve the last valid alias
+PASS: maximum-size reference catalogs preserve late matches and the eight-term budget
+PASS: normalized source variants conflict while exact target spellings remain distinct
+PASS: no dictionary selection supplies no subject or terms and AI preserves everyday recall
+PASS: optional output checks reject obvious number and language corruption
+PASS: translation directions map speech locales and export labels consistently
+PASS: late translation cannot overwrite a revised sentence
+PASS: final source waits for a matching translation
+PASS: confirming an unchanged draft avoids duplicate translation
+PASS: a queued final job skips a draft translation completed in flight
+PASS: revised audio ranges preserve an already final prefix
+PASS: shifted late ranges cannot duplicate or reopen a final caption
+PASS: a final prefix replaces a spanning draft and protects it from later combined drafts
+PASS: jobs must match source text as well as ID and revision
+PASS: invalid text and times do not create captions or final translations
+PASS: following context can correct a final passage without changing ASR records
+PASS: context extends a pair through four chunks then freezes the completed passage
+PASS: an observed correction in the fourth ASR chunk can update the whole recent passage
+PASS: new final source invalidates in-flight context while drafts do not
+PASS: context waits for exact isolated revisions and rejects forged snapshots
+PASS: context is bounded by pause, silence, duration, and source length
+PASS: pending context presentation stays gray without reopening finalized ASR
+PASS: resetting context rejects an outstanding job and preserves completed display
+PASS: late final inside an accepted context gap restores chronological rows and preserves unrelated groups
+PASS: late draft inside an accepted context gap stays gray and preserves unrelated groups
+PASS: bounded live windows preserve context groups and the complete long transcript
+PASS: exports identify unfinished translations
+40 caption checks passed.
+[0/1] Planning build
+Building for debugging...
+[0/3] Write swift-version--1AB21518FC5DEDBE.txt
+[2/5] Emitting module TranslationSchedulingChecks
+[2/5] Write Objects.LinkFileList
+[3/5] Linking TranslationSchedulingChecks
+[4/5] Applying TranslationSchedulingChecks
+Build of product 'TranslationSchedulingChecks' complete! (1.02s)
+7 translation scheduling checks passed.
+
+app-model
+PASS: saved enabled refinement blocks microphone start until preparation or safe fallback
+PASS: enabling refinement blocks Start synchronously before its preparation task runs
+PASS: fast Apple baseline is visible and gray until exact final refinement completes
+PASS: partials remain Apple-only and an unchanged final is refined exactly once
+PASS: a corrected draft refines only the current final source revision
+PASS: an in-flight unchanged partial confirmed final promotes its single baseline request
+PASS: a new conversation rejects late local refinement output
+PASS: abort releases controls and late refinement cannot overwrite a resumed caption
+PASS: a held refinement never delays a current draft and still finalizes its own sentence
+PASS: a draft queued during Apple work translates at once and the earlier final is still refined
+PASS: following finals show fast baselines while a refinement is held and the waiting limit keeps baselines
+PASS: a final queued during Apple work gets its baseline without waiting for the earlier refinement
+PASS: native local context timeout disables only further context for the current run
+PASS: abort cannot finalize a newer source with a cleared conversation's stale baseline
+PASS: local timeout retains final Apple output and skips further optional work for the run
+PASS: optional refinement failure preserves valid baseline and following caption translation
+PASS: switching direction while paused keeps earlier captions and labels each row with its own languages
+PASS: a direction switch is refused when the other language is not installed
+PASS: switching while listening finishes the run, flips direction and starts listening again
+PASS: only selected local dictionaries correct listed spellings before translation and guide refinement
+PASS: multiple local files compose their terms and report conflicting translations
+PASS: dictionary reload waits for pending translations and preserves completed captions
+PASS: legacy domains migrate once and an explicit empty selection takes precedence
+PASS: creating a local dictionary selects and restores it while previews keep personal data private
+PASS: invalid leading files do not consume the local limit or displace selected legacy terms on creation
+PASS: direction and multiple dictionary selections persist and freeze for recorded sessions
+PASS: stale readiness cannot enable Start or overwrite the current direction error
+PASS: a canceled startup cannot resurrect itself or overwrite a newer startup
+PASS: an empty audio-input failure immediately restores Start after repeated failures
+PASS: repeated denied starts remain retryable after their asynchronous cleanup
+PASS: an aborted run releases Start despite an uncooperative translation
+PASS: finals preempt a stuck draft, coalesce revisions, and beat queued drafts
+PASS: an unchanged in-flight draft becomes final without a second call
+PASS: final translation interrupts the draft admission wait
+PASS: a burst of draft revisions translates only its newest text without a long wait
+PASS: a steady trickle of draft revisions is translated within the hold limit
+PASS: context waits for a quiet final tail and never starts behind a live draft
+PASS: a current draft preempts held context and does not retry it during live speech
+PASS: compact retains readable phrases during queued finals and clears with a new conversation
+PASS: compact preserves current provisional state and exposes translation errors
+PASS: context goes gray, corrects earlier Korean, and preserves ASR records
+PASS: a new final preempts uncooperative context and rejects its late result
+PASS: a new conversation rejects late old worker output
+PASS: failed final translations retry through the production scheduler
+PASS: unexpected framework cancellation leaves the current final retryable
+PASS: optional context failure preserves exact translations and later context recovers
+PASS: context timeout clears gray state, reports degradation, and keeps live translation working
+PASS: final overload stops input, preserves all sources, and retries every incomplete revision
+PASS: unfinished native capacity stops input, preserves sources and recovers retry
+PASS: stopping has an overall deadline and retains incomplete source
+PASS: deadline and cancellation return even when underlying work ignores cancellation
+51 production model checks passed; no microphone or live engine accuracy was tested.
+
+audio-callbacks
+PASS: foreign audio queue, 48000 Hz / 1 ch → mono Int16; 1600 frames
+PASS: foreign audio queue, 44100 Hz / 2 ch → mono Int16; 1741 frames
+PASS: foreign configuration notification safely reaches main actor
+PASS: stop waits for accepted copy, drains it once, and rejects later input
+PASS: conversion backlog stays below 0.5 s and 94 dropped buffers produce one error
+PASS: slow analyzer retains at most 8 buffers and reports dropped input once
+PASS: interleaved right-channel microphone survives mono conversion and appears on the meter
+PASS: failed microphone copy is counted/reported and still permits shutdown
+PASS: microphone waits at least 20 s, silent input stays healthy, and stop disables heartbeat errors
+PASS: 56 small hardware callbacks retain ~0.6 s input as 7 analyzer buffers, with exact final tail
+10 audio callback checks passed.
+
+lifecycle
+3 lifecycle deadline checks passed.
+
+translation-leases
+PASS: logical retirement is immediate; SDK cancellation waits for the actual await to exit
+PASS: physical admission stays bounded across retired/replacement leases; actual completion frees capacity
+PASS: language preparation has the same physical-await retirement protection
+PASS: retirement waits for every native await on the same lease
+PASS: native failures release slots; inactive retirement is idempotent
+5 translation lease checks passed. No Apple language engine or microphone was opened.
+
+local-model-store
+LocalModelStoreChecks passed: missing, valid, unchanged refresh, same-size corruption, wrong size, cancellation cleanup, overlapping refresh.
+
+audio-tsan
+PASS: foreign audio queue, 48000 Hz / 1 ch → mono Int16; 1600 frames
+PASS: foreign audio queue, 44100 Hz / 2 ch → mono Int16; 1741 frames
+PASS: foreign configuration notification safely reaches main actor
+PASS: stop waits for accepted copy, drains it once, and rejects later input
+PASS: conversion backlog stays below 0.5 s and 94 dropped buffers produce one error
+PASS: slow analyzer retains at most 8 buffers and reports dropped input once
+PASS: interleaved right-channel microphone survives mono conversion and appears on the meter
+PASS: failed microphone copy is counted/reported and still permits shutdown
+PASS: microphone waits at least 20 s, silent input stays healthy, and stop disables heartbeat errors
+PASS: 56 small hardware callbacks retain ~0.6 s input as 7 analyzer buffers, with exact final tail
+10 audio callback checks passed.
+
+repro-all
+Reproduction outputs: <REPOSITORY>/.build/adversarial-20261004.x7Qa5h
+Never received a real callback; hasReceivedInput= true stalled= false
+100 timer ticks over 10 sec at only 1 us jitter: frames= 80000 audio seconds= 5.0 expected 10 seconds
+Production timer wall elapsed= 3.208604416679009 audio seconds= 2.5
+Producer arrival first +1000, second -1000; analyzer order= [-1000, 1000]
+before installed=true
+after installed=true, size preserved=true, inode preserved=true, actual=def, modelURL exposed=true
+source injection acceptedBudget=true, raw control token count=2, arbitrary Korean candidate accepted=true
+NUL present=true, fullPromptBytes=546, C prompt bytes=79, C prompt contains source=false
+array initializer entries=10000, stated limit=300
+fileBytes=20019, entryCount=1, termGraphemes=1, termScalars=10001, originalBytes=599, correctedBytes=2000199, correctedGraphemes=199, duration_s=0.008295999999972992
+local request budget accepted=true
+PASS: 100000 randomized timeline/queue transitions, 25229 accepted source revisions, 100 seeds; frozen-final, stale-job, stale-context, chronological-order, member-count and bounded-window properties.
+SWITCH_WAIT: switching=true, canStart=true, direction=englishToKorean
+START_DURING_SWITCH: micCalls=1, starting=true, direction=englishToKorean
+SWITCH_FINISHED: direction=englishToKorean, switching=false
+FINAL_REAPPLY accepted=true, changed=true, final=true
+MIXED_CONTEXT admitted=The server failed. 서버를 복구합니다.
+Live Korean Captions
+2026-10-04T08:35:06Z
+
+[00:00 · 확정]
+EN: The server failed. 서버를 복구합니다.
+KO: Combined Korean and English output
+
+HUGE_TIME_ACCEPTED=true
+{"probe": "malformed timestamp export", "child_returncode": -5}
+These outputs reproduce defects; exit 0 means the probes ran, not that the app passed.

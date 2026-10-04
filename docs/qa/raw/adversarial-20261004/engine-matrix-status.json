@@ -1,0 +1,32 @@
+[
+  {
+    "name": "realtime",
+    "exit_code": 0,
+    "elapsed_seconds": 24.23012912500417,
+    "timeout": false
+  },
+  {
+    "name": "file-pipeline",
+    "exit_code": 0,
+    "elapsed_seconds": 1.6573289999942062,
+    "timeout": false
+  },
+  {
+    "name": "bidirectional",
+    "exit_code": 0,
+    "elapsed_seconds": 38.31698366699857,
+    "timeout": false
+  },
+  {
+    "name": "dictionary-translation",
+    "exit_code": 0,
+    "elapsed_seconds": 12.074565375005477,
+    "timeout": false
+  },
+  {
+    "name": "dictionary-realtime",
+    "exit_code": 0,
+    "elapsed_seconds": 173.56198362499708,
+    "timeout": false
+  }
+]

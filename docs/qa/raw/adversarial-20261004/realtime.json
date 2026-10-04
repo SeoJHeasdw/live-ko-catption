@@ -1,0 +1,3918 @@
+{
+  "asr_events": [
+    {
+      "arrived_after_stream_seconds": 1.1217226666776696,
+      "audio_end_seconds": 1.09925,
+      "audio_start_seconds": 0,
+      "english": "T",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 1.1222035833343398,
+      "audio_end_seconds": 1.09925,
+      "audio_start_seconds": 0,
+      "english": "Test",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 1.122323083342053,
+      "audio_end_seconds": 1.09925,
+      "audio_start_seconds": 0,
+      "english": "Testing",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 2.0176199583365815,
+      "audio_end_seconds": 1.99925,
+      "audio_start_seconds": 0,
+      "english": "Testing, test",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 2.017953041678993,
+      "audio_end_seconds": 1.99925,
+      "audio_start_seconds": 0,
+      "english": "Testing, testing",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 2.0180805416748626,
+      "audio_end_seconds": 1.99925,
+      "audio_start_seconds": 0,
+      "english": "Testing, testing,",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 3.017938208344276,
+      "audio_end_seconds": 2.99925,
+      "audio_start_seconds": 0,
+      "english": "Testing, testing, one",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 3.0182758333394304,
+      "audio_end_seconds": 2.99925,
+      "audio_start_seconds": 0,
+      "english": "Testing, testing, one,",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 3.018365083335084,
+      "audio_end_seconds": 2.99925,
+      "audio_start_seconds": 0,
+      "english": "Testing, testing, one, two",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 4.022741208333173,
+      "audio_end_seconds": 3.99925,
+      "audio_start_seconds": 0,
+      "english": "Testing, testing, one, two,",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 4.022955958338571,
+      "audio_end_seconds": 3.99925,
+      "audio_start_seconds": 0,
+      "english": "Testing, testing, one, two, three",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 4.065653958343319,
+      "audio_end_seconds": 3.36,
+      "audio_start_seconds": 0,
+      "english": "Testing, testing, one, two, three.",
+      "is_final": true
+    },
+    {
+      "arrived_after_stream_seconds": 4.0658020000118995,
+      "audio_end_seconds": 3.99925,
+      "audio_start_seconds": 3.36,
+      "english": " please",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 4.919241083334782,
+      "audio_end_seconds": 4.89925,
+      "audio_start_seconds": 3.36,
+      "english": " please check",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 4.919694541677018,
+      "audio_end_seconds": 4.89925,
+      "audio_start_seconds": 3.36,
+      "english": " please check the",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 4.919892208345118,
+      "audio_end_seconds": 4.89925,
+      "audio_start_seconds": 3.36,
+      "english": " please check the date",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 4.920020333345747,
+      "audio_end_seconds": 4.89925,
+      "audio_start_seconds": 3.36,
+      "english": " please check the date care",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 5.916634291672381,
+      "audio_end_seconds": 5.89925,
+      "audio_start_seconds": 3.36,
+      "english": " please check the date carefully",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 5.917113583345781,
+      "audio_end_seconds": 5.89925,
+      "audio_start_seconds": 3.36,
+      "english": " please check the date carefully because",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 5.917386000000988,
+      "audio_end_seconds": 5.89925,
+      "audio_start_seconds": 3.36,
+      "english": " please check the date carefully because the",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 5.917579833345371,
+      "audio_end_seconds": 5.89925,
+      "audio_start_seconds": 3.36,
+      "english": " please check the date carefully because the meeting",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 6.815943458335823,
+      "audio_end_seconds": 6.79925,
+      "audio_start_seconds": 3.36,
+      "english": " please check the date carefully because the meeting is",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 6.816359208343783,
+      "audio_end_seconds": 6.79925,
+      "audio_start_seconds": 3.36,
+      "english": " please check the date carefully because the meeting is on",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 6.816548416667501,
+      "audio_end_seconds": 6.79925,
+      "audio_start_seconds": 3.36,
+      "english": " please check the date carefully because the meeting is on Tuesday",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 7.81452308333246,
+      "audio_end_seconds": 7.79925,
+      "audio_start_seconds": 3.36,
+      "english": " please check the date carefully because the meeting is on Tuesday,",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 7.815099750005174,
+      "audio_end_seconds": 7.79925,
+      "audio_start_seconds": 3.36,
+      "english": " please check the date carefully because the meeting is on Tuesday, not",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 7.815712708339561,
+      "audio_end_seconds": 7.79925,
+      "audio_start_seconds": 3.36,
+      "english": " please check the date carefully because the meeting is on Tuesday, not Thursday",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 8.817021916678641,
+      "audio_end_seconds": 8.79925,
+      "audio_start_seconds": 3.36,
+      "english": " please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 8.869933125009993,
+      "audio_end_seconds": 7.8,
+      "audio_start_seconds": 3.36,
+      "english": " Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "is_final": true
+    },
+    {
+      "arrived_after_stream_seconds": 8.870073041674914,
+      "audio_end_seconds": 8.79925,
+      "audio_start_seconds": 7.8,
+      "english": " We",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 8.870169958332554,
+      "audio_end_seconds": 8.79925,
+      "audio_start_seconds": 7.8,
+      "english": " We should",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 8.870253000000957,
+      "audio_end_seconds": 8.79925,
+      "audio_start_seconds": 7.8,
+      "english": " We should not",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 9.72224700001243,
+      "audio_end_seconds": 9.69925,
+      "audio_start_seconds": 7.8,
+      "english": " We should not cancel",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 9.722505083336728,
+      "audio_end_seconds": 9.69925,
+      "audio_start_seconds": 7.8,
+      "english": " We should not cancel the",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 9.722637291677529,
+      "audio_end_seconds": 9.69925,
+      "audio_start_seconds": 7.8,
+      "english": " We should not cancel the appointment",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 10.71234179167368,
+      "audio_end_seconds": 10.69925,
+      "audio_start_seconds": 7.8,
+      "english": " We should not cancel the appointment unless",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 10.712633125003777,
+      "audio_end_seconds": 10.69925,
+      "audio_start_seconds": 7.8,
+      "english": " We should not cancel the appointment unless someone",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 11.50539312500041,
+      "audio_end_seconds": 11.4938125,
+      "audio_start_seconds": 7.8,
+      "english": " We should not cancel the appointment unless someone conf",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 11.505555333336815,
+      "audio_end_seconds": 11.4938125,
+      "audio_start_seconds": 7.8,
+      "english": " We should not cancel the appointment unless someone confir",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 11.505660125010763,
+      "audio_end_seconds": 11.4938125,
+      "audio_start_seconds": 7.8,
+      "english": " We should not cancel the appointment unless someone confirms",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 11.505762500004494,
+      "audio_end_seconds": 11.4938125,
+      "audio_start_seconds": 7.8,
+      "english": " We should not cancel the appointment unless someone confirms the",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 11.50585200000205,
+      "audio_end_seconds": 11.4938125,
+      "audio_start_seconds": 7.8,
+      "english": " We should not cancel the appointment unless someone confirms the change",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 11.509519541679765,
+      "audio_end_seconds": 11.4938125,
+      "audio_start_seconds": 7.8,
+      "english": " We should not cancel the appointment unless someone confirms the change.",
+      "is_final": false
+    },
+    {
+      "arrived_after_stream_seconds": 11.543755541671999,
+      "audio_end_seconds": 11.4938125,
+      "audio_start_seconds": 7.8,
+      "english": " We should not cancel the appointment unless someone confirms the change.",
+      "is_final": true
+    }
+  ],
+  "audio_chunk_milliseconds": 100,
+  "audio_fixture_filename": "system-audio-fixture.aiff",
+  "completed_source_korean_changes": [
+    {
+      "current_korean": "테스트, 테스트, 하나, 둘, 셋.",
+      "english": "Testing, testing, one, two, three.",
+      "observed_after_stream_seconds": 4.123829250005656,
+      "pending_gray_observed_before_change": false,
+      "previous_korean": "테스트, 테스트, 하나, 둘",
+      "previous_translation_previously_visual_final": false
+    },
+    {
+      "current_korean": "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "english": "We should not cancel the appointment unless someone confirms the change.",
+      "observed_after_stream_seconds": 11.591664208332077,
+      "pending_gray_observed_before_change": true,
+      "previous_korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+      "previous_translation_previously_visual_final": false
+    },
+    {
+      "current_korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요. 누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday. We should not cancel the appointment unless someone confirms the change.",
+      "observed_after_stream_seconds": 12.392286583344685,
+      "pending_gray_observed_before_change": true,
+      "previous_korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "previous_translation_previously_visual_final": true
+    }
+  ],
+  "failures": [],
+  "final_asr_sources": [
+    "Testing, testing, one, two, three.",
+    "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+    "We should not cancel the appointment unless someone confirms the change."
+  ],
+  "final_display_segments": [
+    {
+      "audio_end_seconds": 3.36,
+      "audio_start_seconds": 0,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing, testing, one, two, three.",
+      "id": "C3A42607-4342-4531-A334-079CC4098A83",
+      "is_visual_final": true,
+      "korean": "테스트, 테스트, 하나, 둘, 셋.",
+      "source_is_final": true,
+      "source_revision": 12,
+      "translated_revision": 12,
+      "translation_error": null
+    },
+    {
+      "audio_end_seconds": 11.4938125,
+      "audio_start_seconds": 3.36,
+      "context_is_pending": false,
+      "context_segment_count": 2,
+      "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday. We should not cancel the appointment unless someone confirms the change.",
+      "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+      "is_visual_final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요. 누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "source_is_final": true,
+      "source_revision": 17,
+      "translated_revision": 17,
+      "translation_error": null
+    }
+  ],
+  "final_source_segments": [
+    {
+      "audio_end_seconds": 3.36,
+      "audio_start_seconds": 0,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing, testing, one, two, three.",
+      "id": "C3A42607-4342-4531-A334-079CC4098A83",
+      "is_visual_final": true,
+      "korean": "테스트, 테스트, 하나, 둘, 셋.",
+      "source_is_final": true,
+      "source_revision": 12,
+      "translated_revision": 12,
+      "translation_error": null
+    },
+    {
+      "audio_end_seconds": 7.8,
+      "audio_start_seconds": 3.36,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+      "is_visual_final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "source_is_final": true,
+      "source_revision": 17,
+      "translated_revision": 17,
+      "translation_error": null
+    },
+    {
+      "audio_end_seconds": 11.4938125,
+      "audio_start_seconds": 7.8,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "We should not cancel the appointment unless someone confirms the change.",
+      "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+      "is_visual_final": true,
+      "korean": "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "source_is_final": true,
+      "source_revision": 14,
+      "translated_revision": 14,
+      "translation_error": null
+    }
+  ],
+  "fixture_seconds": 11.493786848072562,
+  "korean_updates": [
+    {
+      "after_corresponding_audio_end_seconds": 0.10194733334286132,
+      "audio_end_seconds": 1.09925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing",
+      "is_visual_final": false,
+      "korean": "시험",
+      "observed_after_stream_seconds": 1.2011973333428614,
+      "source_revision": 3,
+      "translated_revision": 3
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.018576875002356275,
+      "audio_end_seconds": 1.99925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing, test",
+      "is_visual_final": false,
+      "korean": "시험",
+      "observed_after_stream_seconds": 2.0178268750023562,
+      "source_revision": 4,
+      "translated_revision": 3
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.018752916665864205,
+      "audio_end_seconds": 1.99925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing, testing",
+      "is_visual_final": false,
+      "korean": "시험",
+      "observed_after_stream_seconds": 2.018002916665864,
+      "source_revision": 5,
+      "translated_revision": 3
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.018874791677109926,
+      "audio_end_seconds": 1.99925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing, testing,",
+      "is_visual_final": false,
+      "korean": "시험",
+      "observed_after_stream_seconds": 2.01812479167711,
+      "source_revision": 6,
+      "translated_revision": 3
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.10730237500031947,
+      "audio_end_seconds": 1.99925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing, testing,",
+      "is_visual_final": false,
+      "korean": "테스트, 테스트,",
+      "observed_after_stream_seconds": 2.1065523750003194,
+      "source_revision": 6,
+      "translated_revision": 6
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.01890533333865463,
+      "audio_end_seconds": 2.99925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing, testing, one",
+      "is_visual_final": false,
+      "korean": "테스트, 테스트,",
+      "observed_after_stream_seconds": 3.0181553333386546,
+      "source_revision": 7,
+      "translated_revision": 6
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.019065166671527578,
+      "audio_end_seconds": 2.99925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing, testing, one,",
+      "is_visual_final": false,
+      "korean": "테스트, 테스트,",
+      "observed_after_stream_seconds": 3.0183151666715275,
+      "source_revision": 8,
+      "translated_revision": 6
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.019143791673588595,
+      "audio_end_seconds": 2.99925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing, testing, one, two",
+      "is_visual_final": false,
+      "korean": "테스트, 테스트,",
+      "observed_after_stream_seconds": 3.0183937916735886,
+      "source_revision": 9,
+      "translated_revision": 6
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.12470383333205248,
+      "audio_end_seconds": 2.99925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing, testing, one, two",
+      "is_visual_final": false,
+      "korean": "테스트, 테스트, 하나, 둘",
+      "observed_after_stream_seconds": 3.1239538333320525,
+      "source_revision": 9,
+      "translated_revision": 9
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.023620833345223247,
+      "audio_end_seconds": 3.99925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing, testing, one, two,",
+      "is_visual_final": false,
+      "korean": "테스트, 테스트, 하나, 둘",
+      "observed_after_stream_seconds": 4.022870833345223,
+      "source_revision": 10,
+      "translated_revision": 9
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.023745125007582857,
+      "audio_end_seconds": 3.99925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing, testing, one, two, three",
+      "is_visual_final": false,
+      "korean": "테스트, 테스트, 하나, 둘",
+      "observed_after_stream_seconds": 4.022995125007583,
+      "source_revision": 11,
+      "translated_revision": 9
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.7057180833368331,
+      "audio_end_seconds": 3.36,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing, testing, one, two, three.",
+      "is_visual_final": false,
+      "korean": "테스트, 테스트, 하나, 둘",
+      "observed_after_stream_seconds": 4.065718083336833,
+      "source_revision": 12,
+      "translated_revision": 9
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.763829250005656,
+      "audio_end_seconds": 3.36,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing, testing, one, two, three.",
+      "is_visual_final": true,
+      "korean": "테스트, 테스트, 하나, 둘, 셋.",
+      "observed_after_stream_seconds": 4.123829250005656,
+      "source_revision": 12,
+      "translated_revision": 12
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.15297200000425804,
+      "audio_end_seconds": 3.99925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please",
+      "is_visual_final": false,
+      "korean": "제발",
+      "observed_after_stream_seconds": 4.152222000004258,
+      "source_revision": 1,
+      "translated_revision": 1
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.020236291677457885,
+      "audio_end_seconds": 4.89925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check",
+      "is_visual_final": false,
+      "korean": "제발",
+      "observed_after_stream_seconds": 4.919486291677458,
+      "source_revision": 2,
+      "translated_revision": 1
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.020522916677174763,
+      "audio_end_seconds": 4.89925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the",
+      "is_visual_final": false,
+      "korean": "제발",
+      "observed_after_stream_seconds": 4.919772916677175,
+      "source_revision": 3,
+      "translated_revision": 1
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.020683958342880615,
+      "audio_end_seconds": 4.89925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date",
+      "is_visual_final": false,
+      "korean": "제발",
+      "observed_after_stream_seconds": 4.919933958342881,
+      "source_revision": 4,
+      "translated_revision": 1
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.020807166673359134,
+      "audio_end_seconds": 4.89925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date care",
+      "is_visual_final": false,
+      "korean": "제발",
+      "observed_after_stream_seconds": 4.9200571666733595,
+      "source_revision": 5,
+      "translated_revision": 1
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.13667870834108875,
+      "audio_end_seconds": 4.89925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date care",
+      "is_visual_final": false,
+      "korean": "날짜를 확인해 주세요.",
+      "observed_after_stream_seconds": 5.035928708341089,
+      "source_revision": 5,
+      "translated_revision": 5
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.01765945833397531,
+      "audio_end_seconds": 5.89925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date carefully",
+      "is_visual_final": false,
+      "korean": "날짜를 확인해 주세요.",
+      "observed_after_stream_seconds": 5.916909458333976,
+      "source_revision": 6,
+      "translated_revision": 5
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.017922041677985945,
+      "audio_end_seconds": 5.89925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date carefully because",
+      "is_visual_final": false,
+      "korean": "날짜를 확인해 주세요.",
+      "observed_after_stream_seconds": 5.917172041677986,
+      "source_revision": 7,
+      "translated_revision": 5
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.018195916667929524,
+      "audio_end_seconds": 5.89925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date carefully because the",
+      "is_visual_final": false,
+      "korean": "날짜를 확인해 주세요.",
+      "observed_after_stream_seconds": 5.91744591666793,
+      "source_revision": 8,
+      "translated_revision": 5
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.0183817916717377,
+      "audio_end_seconds": 5.89925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date carefully because the meeting",
+      "is_visual_final": false,
+      "korean": "날짜를 확인해 주세요.",
+      "observed_after_stream_seconds": 5.917631791671738,
+      "source_revision": 9,
+      "translated_revision": 5
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.12163125000591357,
+      "audio_end_seconds": 5.89925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date carefully because the meeting",
+      "is_visual_final": false,
+      "korean": "회의 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds": 6.020881250005914,
+      "source_revision": 9,
+      "translated_revision": 9
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.016833416677429547,
+      "audio_end_seconds": 6.79925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date carefully because the meeting is",
+      "is_visual_final": false,
+      "korean": "회의 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds": 6.816083416677429,
+      "source_revision": 10,
+      "translated_revision": 9
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.017169958340702784,
+      "audio_end_seconds": 6.79925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date carefully because the meeting is on",
+      "is_visual_final": false,
+      "korean": "회의 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds": 6.816419958340703,
+      "source_revision": 11,
+      "translated_revision": 9
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.017353375002159943,
+      "audio_end_seconds": 6.79925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date carefully because the meeting is on Tuesday",
+      "is_visual_final": false,
+      "korean": "회의 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds": 6.81660337500216,
+      "source_revision": 12,
+      "translated_revision": 9
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.13584083334356567,
+      "audio_end_seconds": 6.79925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date carefully because the meeting is on Tuesday",
+      "is_visual_final": false,
+      "korean": "회의가 화요일에 있기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds": 6.9350908333435655,
+      "source_revision": 12,
+      "translated_revision": 12
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.01545641666965114,
+      "audio_end_seconds": 7.79925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date carefully because the meeting is on Tuesday,",
+      "is_visual_final": false,
+      "korean": "회의가 화요일에 있기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds": 7.814706416669651,
+      "source_revision": 13,
+      "translated_revision": 12
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.015960500004468692,
+      "audio_end_seconds": 7.79925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date carefully because the meeting is on Tuesday, not",
+      "is_visual_final": false,
+      "korean": "회의가 화요일에 있기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds": 7.8152105000044685,
+      "source_revision": 14,
+      "translated_revision": 12
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.016520083339885083,
+      "audio_end_seconds": 7.79925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date carefully because the meeting is on Tuesday, not Thursday",
+      "is_visual_final": false,
+      "korean": "회의가 화요일에 있기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds": 7.815770083339885,
+      "source_revision": 15,
+      "translated_revision": 12
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.1280522083361868,
+      "audio_end_seconds": 7.79925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date carefully because the meeting is on Tuesday, not Thursday",
+      "is_visual_final": false,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds": 7.927302208336187,
+      "source_revision": 15,
+      "translated_revision": 15
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.018100833342060696,
+      "audio_end_seconds": 8.79925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "is_visual_final": false,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds": 8.817350833342061,
+      "source_revision": 16,
+      "translated_revision": 15
+    },
+    {
+      "after_corresponding_audio_end_seconds": 1.069995791668771,
+      "audio_end_seconds": 7.8,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "is_visual_final": false,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "observed_after_stream_seconds": 8.86999579166877,
+      "source_revision": 17,
+      "translated_revision": 15
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.17910929167922518,
+      "audio_end_seconds": 8.79925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "We should not",
+      "is_visual_final": false,
+      "korean": "우리는 해서는 안 됩니다.",
+      "observed_after_stream_seconds": 8.978359291679226,
+      "source_revision": 3,
+      "translated_revision": 3
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.02311633334250729,
+      "audio_end_seconds": 9.69925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "We should not cancel",
+      "is_visual_final": false,
+      "korean": "우리는 해서는 안 됩니다.",
+      "observed_after_stream_seconds": 9.722366333342507,
+      "source_revision": 4,
+      "translated_revision": 3
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.023291208335315616,
+      "audio_end_seconds": 9.69925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "We should not cancel the",
+      "is_visual_final": false,
+      "korean": "우리는 해서는 안 됩니다.",
+      "observed_after_stream_seconds": 9.722541208335315,
+      "source_revision": 5,
+      "translated_revision": 3
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.02341991667857002,
+      "audio_end_seconds": 9.69925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "We should not cancel the appointment",
+      "is_visual_final": false,
+      "korean": "우리는 해서는 안 됩니다.",
+      "observed_after_stream_seconds": 9.72266991667857,
+      "source_revision": 6,
+      "translated_revision": 3
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.13240912500408086,
+      "audio_end_seconds": 9.69925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "We should not cancel the appointment",
+      "is_visual_final": false,
+      "korean": "우리는 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds": 9.83165912500408,
+      "source_revision": 6,
+      "translated_revision": 6
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.013244583334774518,
+      "audio_end_seconds": 10.69925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "We should not cancel the appointment unless",
+      "is_visual_final": false,
+      "korean": "우리는 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds": 10.712494583334774,
+      "source_revision": 7,
+      "translated_revision": 6
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.013419541666401358,
+      "audio_end_seconds": 10.69925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "We should not cancel the appointment unless someone",
+      "is_visual_final": false,
+      "korean": "우리는 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds": 10.7126695416664,
+      "source_revision": 8,
+      "translated_revision": 6
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.10797529167542308,
+      "audio_end_seconds": 10.69925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "We should not cancel the appointment unless someone",
+      "is_visual_final": false,
+      "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds": 10.807225291675422,
+      "source_revision": 8,
+      "translated_revision": 8
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.011651916666654216,
+      "audio_end_seconds": 11.4938125,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "We should not cancel the appointment unless someone conf",
+      "is_visual_final": false,
+      "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds": 11.505464416666655,
+      "source_revision": 9,
+      "translated_revision": 8
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.011775833340710307,
+      "audio_end_seconds": 11.4938125,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "We should not cancel the appointment unless someone confir",
+      "is_visual_final": false,
+      "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds": 11.505588333340711,
+      "source_revision": 10,
+      "translated_revision": 8
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.011881916671757864,
+      "audio_end_seconds": 11.4938125,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "We should not cancel the appointment unless someone confirms",
+      "is_visual_final": false,
+      "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds": 11.505694416671759,
+      "source_revision": 11,
+      "translated_revision": 8
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.011981208332930038,
+      "audio_end_seconds": 11.4938125,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "We should not cancel the appointment unless someone confirms the",
+      "is_visual_final": false,
+      "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds": 11.50579370833293,
+      "source_revision": 12,
+      "translated_revision": 8
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.012061583333764503,
+      "audio_end_seconds": 11.4938125,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "We should not cancel the appointment unless someone confirms the change",
+      "is_visual_final": false,
+      "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds": 11.505874083333765,
+      "source_revision": 13,
+      "translated_revision": 8
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.015750625000567453,
+      "audio_end_seconds": 11.4938125,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "We should not cancel the appointment unless someone confirms the change.",
+      "is_visual_final": false,
+      "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds": 11.509563125000568,
+      "source_revision": 14,
+      "translated_revision": 8
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.09785170833207602,
+      "audio_end_seconds": 11.4938125,
+      "context_is_pending": true,
+      "context_segment_count": 1,
+      "english": "We should not cancel the appointment unless someone confirms the change.",
+      "is_visual_final": false,
+      "korean": "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds": 11.591664208332077,
+      "source_revision": 14,
+      "translated_revision": 14
+    },
+    {
+      "after_corresponding_audio_end_seconds": 0.8984740833446843,
+      "audio_end_seconds": 11.4938125,
+      "context_is_pending": false,
+      "context_segment_count": 2,
+      "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday. We should not cancel the appointment unless someone confirms the change.",
+      "is_visual_final": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요. 누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "observed_after_stream_seconds": 12.392286583344685,
+      "source_revision": 17,
+      "translated_revision": 17
+    }
+  ],
+  "limitations": [
+    "No microphone was opened. Fixture-stream timing excludes microphone hardware and is not microphone latency.",
+    "Timing captures model state at 20ms intervals and does not include SwiftUI drawing.",
+    "A translation matching an exact source revision can still be semantically wrong.",
+    "Requested highFidelity may use Apple's documented traditional-model fallback.",
+    "Model start/permission/device selection was bypassed; production receive, queues, context correction and stop were exercised.",
+    "The injected real translator uses the production lease and creates/retires a session per call; the app normally reuses lowLatency and creates highFidelity per context job.",
+    "This check does not verify network-disabled operation or real-speaker accuracy."
+  ],
+  "metrics": {
+    "active_local_translation_calls_after_stop": 0,
+    "completed_context_calls": 1,
+    "context_pending_observations": 4,
+    "context_translation_calls": 1,
+    "current_revision_korean_delay_max_seconds": 0.8984740833446843,
+    "current_revision_korean_delay_median_seconds": 0.13240912500408086,
+    "current_revision_korean_delay_sample_count": 13,
+    "dropped_audio_buffers": 0,
+    "dropped_state_snapshots": 0,
+    "final_asr_segments": 3,
+    "final_context_groups": 1,
+    "first_english_after_stream_seconds": 1.1217226666776696,
+    "first_exact_current_revision_korean_observation": {
+      "after_corresponding_audio_end_seconds": 0.10194733334286132,
+      "audio_end_seconds": 1.09925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing",
+      "is_visual_final": false,
+      "korean": "시험",
+      "observed_after_stream_seconds": 1.2011973333428614,
+      "source_revision": 3,
+      "translated_revision": 3
+    },
+    "first_korean_observation": {
+      "after_corresponding_audio_end_seconds": 0.10194733334286132,
+      "audio_end_seconds": 1.09925,
+      "context_is_pending": false,
+      "context_segment_count": 1,
+      "english": "Testing",
+      "is_visual_final": false,
+      "korean": "시험",
+      "observed_after_stream_seconds": 1.2011973333428614,
+      "source_revision": 3,
+      "translated_revision": 3
+    },
+    "fixture_has_eligible_adjacent_context": true,
+    "gray_korean_observations": 66,
+    "has_pending_translations_after_stop": false,
+    "input_and_asr_finished_after_stream_seconds": 11.553007250011433,
+    "latency_sample_filter": "only translatedRevision == revision, contextIsPending == false, and a matching completed actual source/target call",
+    "maximum_queued_translations_observed": 2,
+    "pending_context_korean_updates": 1,
+    "physical_context_awaits_after_stop": 0,
+    "physical_live_awaits_after_stop": 0,
+    "production_stop_drained_after_stream_seconds": 12.393531458335929,
+    "provisional_asr_events": 41,
+    "stale_korean_updates": 36,
+    "visual_final_to_gray_transitions": 1
+  },
+  "mode": "paced audio file → actual local ASR → production CaptionModel scheduler → actual local Korean translation",
+  "operating_system": "Version 26.7.1 (Build 25G241)",
+  "passed": true,
+  "production_message": null,
+  "recorded_at": "2026-10-04T08:33:19Z",
+  "state_observation_resolution_milliseconds": 20,
+  "state_snapshots": [
+    {
+      "has_pending_translations": false,
+      "observed_after_stream_seconds": 0.0002483333373675123,
+      "queued_translations": 0,
+      "rows": [],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 1.1220720000128495,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 1.09925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "T",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": null,
+          "source_is_final": false,
+          "source_revision": 1,
+          "translated_revision": null,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 1.1222730416775448,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 1.09925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Test",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": null,
+          "source_is_final": false,
+          "source_revision": 2,
+          "translated_revision": null,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 1.1223867500084452,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 1.09925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": null,
+          "source_is_final": false,
+          "source_revision": 3,
+          "translated_revision": null,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": false,
+      "observed_after_stream_seconds": 1.2011973333428614,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 1.09925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "시험",
+          "source_is_final": false,
+          "source_revision": 3,
+          "translated_revision": 3,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 2.0178268750023562,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 1.99925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, test",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "시험",
+          "source_is_final": false,
+          "source_revision": 4,
+          "translated_revision": 3,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 2.018002916665864,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 1.99925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "시험",
+          "source_is_final": false,
+          "source_revision": 5,
+          "translated_revision": 3,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 2.01812479167711,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 1.99925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing,",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "시험",
+          "source_is_final": false,
+          "source_revision": 6,
+          "translated_revision": 3,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 2.07701837499917,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 1.99925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing,",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "시험",
+          "source_is_final": false,
+          "source_revision": 6,
+          "translated_revision": 3,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": false,
+      "observed_after_stream_seconds": 2.1065523750003194,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 1.99925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing,",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "테스트, 테스트,",
+          "source_is_final": false,
+          "source_revision": 6,
+          "translated_revision": 6,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 3.0181553333386546,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 2.99925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "테스트, 테스트,",
+          "source_is_final": false,
+          "source_revision": 7,
+          "translated_revision": 6,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 3.0183151666715275,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 2.99925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one,",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "테스트, 테스트,",
+          "source_is_final": false,
+          "source_revision": 8,
+          "translated_revision": 6,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 3.0183937916735886,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 2.99925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "테스트, 테스트,",
+          "source_is_final": false,
+          "source_revision": 9,
+          "translated_revision": 6,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 3.0764073333411943,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 2.99925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "테스트, 테스트,",
+          "source_is_final": false,
+          "source_revision": 9,
+          "translated_revision": 6,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": false,
+      "observed_after_stream_seconds": 3.1239538333320525,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 2.99925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "테스트, 테스트, 하나, 둘",
+          "source_is_final": false,
+          "source_revision": 9,
+          "translated_revision": 9,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 4.022870833345223,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.99925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two,",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "테스트, 테스트, 하나, 둘",
+          "source_is_final": false,
+          "source_revision": 10,
+          "translated_revision": 9,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 4.022995125007583,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.99925,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "테스트, 테스트, 하나, 둘",
+          "source_is_final": false,
+          "source_revision": 11,
+          "translated_revision": 9,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 4.065718083336833,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "테스트, 테스트, 하나, 둘",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 9,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 4.0658419166720705,
+      "queued_translations": 2,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "테스트, 테스트, 하나, 둘",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 9,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 3.99925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": null,
+          "source_is_final": false,
+          "source_revision": 1,
+          "translated_revision": null,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 4.0819912500010105,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": false,
+          "korean": "테스트, 테스트, 하나, 둘",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 9,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 3.99925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": null,
+          "source_is_final": false,
+          "source_revision": 1,
+          "translated_revision": null,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 4.123829250005656,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 3.99925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": null,
+          "source_is_final": false,
+          "source_revision": 1,
+          "translated_revision": null,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": false,
+      "observed_after_stream_seconds": 4.152222000004258,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 3.99925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "제발",
+          "source_is_final": false,
+          "source_revision": 1,
+          "translated_revision": 1,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 4.919486291677458,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 4.89925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "제발",
+          "source_is_final": false,
+          "source_revision": 2,
+          "translated_revision": 1,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 4.919772916677175,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 4.89925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "제발",
+          "source_is_final": false,
+          "source_revision": 3,
+          "translated_revision": 1,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 4.919933958342881,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 4.89925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "제발",
+          "source_is_final": false,
+          "source_revision": 4,
+          "translated_revision": 1,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 4.9200571666733595,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 4.89925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date care",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "제발",
+          "source_is_final": false,
+          "source_revision": 5,
+          "translated_revision": 1,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 5.005784500011941,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 4.89925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date care",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "제발",
+          "source_is_final": false,
+          "source_revision": 5,
+          "translated_revision": 1,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": false,
+      "observed_after_stream_seconds": 5.035928708341089,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 4.89925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date care",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "날짜를 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 5,
+          "translated_revision": 5,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 5.916909458333976,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 5.89925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "날짜를 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 6,
+          "translated_revision": 5,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 5.917172041677986,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 5.89925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "날짜를 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 7,
+          "translated_revision": 5,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 5.91744591666793,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 5.89925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because the",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "날짜를 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 8,
+          "translated_revision": 5,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 5.917631791671738,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 5.89925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because the meeting",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "날짜를 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 9,
+          "translated_revision": 5,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 5.994692083346308,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 5.89925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because the meeting",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "날짜를 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 9,
+          "translated_revision": 5,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": false,
+      "observed_after_stream_seconds": 6.020881250005914,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 5.89925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because the meeting",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 9,
+          "translated_revision": 9,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 6.816083416677429,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 6.79925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because the meeting is",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 10,
+          "translated_revision": 9,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 6.816419958340703,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 6.79925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because the meeting is on",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 11,
+          "translated_revision": 9,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 6.81660337500216,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 6.79925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because the meeting is on Tuesday",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 12,
+          "translated_revision": 9,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 6.887299666675972,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 6.79925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because the meeting is on Tuesday",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 12,
+          "translated_revision": 9,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": false,
+      "observed_after_stream_seconds": 6.9350908333435655,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 6.79925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because the meeting is on Tuesday",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의가 화요일에 있기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 7.814706416669651,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.79925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because the meeting is on Tuesday,",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의가 화요일에 있기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 13,
+          "translated_revision": 12,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 7.8152105000044685,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.79925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because the meeting is on Tuesday, not",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의가 화요일에 있기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 14,
+          "translated_revision": 12,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 7.815770083339885,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.79925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because the meeting is on Tuesday, not Thursday",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의가 화요일에 있기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 15,
+          "translated_revision": 12,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 7.878696708343341,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.79925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because the meeting is on Tuesday, not Thursday",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의가 화요일에 있기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 15,
+          "translated_revision": 12,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": false,
+      "observed_after_stream_seconds": 7.927302208336187,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.79925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because the meeting is on Tuesday, not Thursday",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 15,
+          "translated_revision": 15,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 8.817350833342061,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 8.79925,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": false,
+          "source_revision": 16,
+          "translated_revision": 15,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 8.86999579166877,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 15,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 8.870109958341345,
+      "queued_translations": 2,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 15,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 8.79925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": null,
+          "source_is_final": false,
+          "source_revision": 1,
+          "translated_revision": null,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 8.870201416677446,
+      "queued_translations": 2,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 15,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 8.79925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": null,
+          "source_is_final": false,
+          "source_revision": 2,
+          "translated_revision": null,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 8.870289291677182,
+      "queued_translations": 2,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 15,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 8.79925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": null,
+          "source_is_final": false,
+          "source_revision": 3,
+          "translated_revision": null,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 8.893491791677661,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 15,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 8.79925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": null,
+          "source_is_final": false,
+          "source_revision": 3,
+          "translated_revision": null,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 8.919136458338471,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 8.79925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": null,
+          "source_is_final": false,
+          "source_revision": 3,
+          "translated_revision": null,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 8.948149500007275,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 8.79925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": null,
+          "source_is_final": false,
+          "source_revision": 3,
+          "translated_revision": null,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": false,
+      "observed_after_stream_seconds": 8.978359291679226,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 8.79925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 3,
+          "translated_revision": 3,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 9.722366333342507,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 9.69925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 4,
+          "translated_revision": 3,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 9.722541208335315,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 9.69925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel the",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 5,
+          "translated_revision": 3,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 9.72266991667857,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 9.69925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 6,
+          "translated_revision": 3,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 9.785641583337565,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 9.69925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 6,
+          "translated_revision": 3,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": false,
+      "observed_after_stream_seconds": 9.83165912500408,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 9.69925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 6,
+          "translated_revision": 6,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 10.712494583334774,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 10.69925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment unless",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 7,
+          "translated_revision": 6,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 10.7126695416664,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 10.69925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment unless someone",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 8,
+          "translated_revision": 6,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 10.785656250009197,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 10.69925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment unless someone",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 약속을 취소해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 8,
+          "translated_revision": 6,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": false,
+      "observed_after_stream_seconds": 10.807225291675422,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 10.69925,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment unless someone",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 8,
+          "translated_revision": 8,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 11.505464416666655,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 11.4938125,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment unless someone conf",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 9,
+          "translated_revision": 8,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 11.505588333340711,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 11.4938125,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment unless someone confir",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 10,
+          "translated_revision": 8,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 11.505694416671759,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 11.4938125,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment unless someone confirms",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 11,
+          "translated_revision": 8,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 11.50579370833293,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 11.4938125,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment unless someone confirms the",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 12,
+          "translated_revision": 8,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 11.505874083333765,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 11.4938125,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment unless someone confirms the change",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 13,
+          "translated_revision": 8,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 11.509563125000568,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 11.4938125,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment unless someone confirms the change.",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+          "source_is_final": false,
+          "source_revision": 14,
+          "translated_revision": 8,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 11.543825666667544,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 11.4938125,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment unless someone confirms the change.",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+          "source_is_final": true,
+          "source_revision": 14,
+          "translated_revision": 8,
+          "translation_error": null
+        }
+      ],
+      "trigger": "actual ASR event"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 11.591664208332077,
+      "queued_translations": 1,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": true,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 11.4938125,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": true,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment unless someone confirms the change.",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+          "source_is_final": true,
+          "source_revision": 14,
+          "translated_revision": 14,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": true,
+      "observed_after_stream_seconds": 12.323908416670747,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 7.8,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": true,
+          "context_segment_count": 1,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": false,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 11.4938125,
+          "audio_start_seconds": 7.8,
+          "context_is_pending": true,
+          "context_segment_count": 1,
+          "english": "We should not cancel the appointment unless someone confirms the change.",
+          "id": "667F5406-BFC7-4CC4-8436-E51AA1A01532",
+          "is_visual_final": false,
+          "korean": "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+          "source_is_final": true,
+          "source_revision": 14,
+          "translated_revision": 14,
+          "translation_error": null
+        }
+      ],
+      "trigger": "20ms state observation"
+    },
+    {
+      "has_pending_translations": false,
+      "observed_after_stream_seconds": 12.392286583344685,
+      "queued_translations": 0,
+      "rows": [
+        {
+          "audio_end_seconds": 3.36,
+          "audio_start_seconds": 0,
+          "context_is_pending": false,
+          "context_segment_count": 1,
+          "english": "Testing, testing, one, two, three.",
+          "id": "C3A42607-4342-4531-A334-079CC4098A83",
+          "is_visual_final": true,
+          "korean": "테스트, 테스트, 하나, 둘, 셋.",
+          "source_is_final": true,
+          "source_revision": 12,
+          "translated_revision": 12,
+          "translation_error": null
+        },
+        {
+          "audio_end_seconds": 11.4938125,
+          "audio_start_seconds": 3.36,
+          "context_is_pending": false,
+          "context_segment_count": 2,
+          "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday. We should not cancel the appointment unless someone confirms the change.",
+          "id": "DA8B01BE-6D2B-4007-B2C3-EA5D63C01B1C",
+          "is_visual_final": true,
+          "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요. 누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+          "source_is_final": true,
+          "source_revision": 17,
+          "translated_revision": 17,
+          "translation_error": null
+        }
+      ],
+      "trigger": "production stop drained"
+    }
+  ],
+  "translation_calls": [
+    {
+      "english": "Testing",
+      "id": "0910CEB2-D076-441D-946E-E53AFFC1FFD2",
+      "is_context": false,
+      "korean": "시험",
+      "requested_strategy": "lowLatency",
+      "started_after_stream_seconds": 1.1794997916731518,
+      "status": "completed",
+      "text_translation_seconds": 0.018085458330460824
+    },
+    {
+      "english": "Testing, testing,",
+      "id": "4ABC9A4F-0022-4CA6-8A16-AB0C84B4FD2E",
+      "is_context": false,
+      "korean": "테스트, 테스트,",
+      "requested_strategy": "lowLatency",
+      "started_after_stream_seconds": 2.068643750011688,
+      "status": "completed",
+      "text_translation_seconds": 0.027085333320428617
+    },
+    {
+      "english": "Testing, testing, one, two",
+      "id": "03006F6D-6672-4819-A022-52238291A2E0",
+      "is_context": false,
+      "korean": "테스트, 테스트, 하나, 둘",
+      "requested_strategy": "lowLatency",
+      "started_after_stream_seconds": 3.0799249166739173,
+      "status": "completed",
+      "text_translation_seconds": 0.03765524999471381
+    },
+    {
+      "english": "Testing, testing, one, two, three.",
+      "id": "3454D3EE-D0DF-4E71-8AE6-AAACCB7D7BBA",
+      "is_context": false,
+      "korean": "테스트, 테스트, 하나, 둘, 셋.",
+      "requested_strategy": "lowLatency",
+      "started_after_stream_seconds": 4.077330125001026,
+      "status": "completed",
+      "text_translation_seconds": 0.02589612500742078
+    },
+    {
+      "english": "please",
+      "id": "8456CD86-B43C-496A-8469-5CF81C78BC8C",
+      "is_context": false,
+      "korean": "제발",
+      "requested_strategy": "lowLatency",
+      "started_after_stream_seconds": 4.119090791675262,
+      "status": "completed",
+      "text_translation_seconds": 0.00612462499702815
+    },
+    {
+      "english": "please check the date care",
+      "id": "E9A7D2F3-5DC5-4290-9EC1-AAF8F1D9F43D",
+      "is_context": false,
+      "korean": "날짜를 확인해 주세요.",
+      "requested_strategy": "lowLatency",
+      "started_after_stream_seconds": 4.978167749999557,
+      "status": "completed",
+      "text_translation_seconds": 0.03569450000941288
+    },
+    {
+      "english": "please check the date carefully because the meeting",
+      "id": "64D9238A-EBDE-481E-83DB-1A892BCE3D03",
+      "is_context": false,
+      "korean": "회의 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "requested_strategy": "lowLatency",
+      "started_after_stream_seconds": 5.9728460000042105,
+      "status": "completed",
+      "text_translation_seconds": 0.03871416667243466
+    },
+    {
+      "english": "please check the date carefully because the meeting is on Tuesday",
+      "id": "6004C620-86B7-43B7-92E2-17349AEE58EA",
+      "is_context": false,
+      "korean": "회의가 화요일에 있기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "requested_strategy": "lowLatency",
+      "started_after_stream_seconds": 6.8705802083422896,
+      "status": "completed",
+      "text_translation_seconds": 0.04380583332385868
+    },
+    {
+      "english": "please check the date carefully because the meeting is on Tuesday, not Thursday",
+      "id": "10079C10-16AB-4BC2-9C2D-BF7A76D19A9E",
+      "is_context": false,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "requested_strategy": "lowLatency",
+      "started_after_stream_seconds": 7.868320208333898,
+      "status": "completed",
+      "text_translation_seconds": 0.04686841666989494
+    },
+    {
+      "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday.",
+      "id": "BC0BAC8E-0C29-40F1-AB0D-2B3F6B73587D",
+      "is_context": false,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요.",
+      "requested_strategy": "lowLatency",
+      "started_after_stream_seconds": 8.870700500003295,
+      "status": "completed",
+      "text_translation_seconds": 0.03173929166223388
+    },
+    {
+      "english": "We should not",
+      "id": "3F408221-1C9D-40A0-B9D4-80C748974C25",
+      "is_context": false,
+      "korean": "우리는 해서는 안 됩니다.",
+      "requested_strategy": "lowLatency",
+      "started_after_stream_seconds": 8.92170716667897,
+      "status": "completed",
+      "text_translation_seconds": 0.03253949999634642
+    },
+    {
+      "english": "We should not cancel the appointment",
+      "id": "54889292-8ED1-4F36-8F20-55DBC8033FAD",
+      "is_context": false,
+      "korean": "우리는 약속을 취소해서는 안 됩니다.",
+      "requested_strategy": "lowLatency",
+      "started_after_stream_seconds": 9.775590583332814,
+      "status": "completed",
+      "text_translation_seconds": 0.037177208345383406
+    },
+    {
+      "english": "We should not cancel the appointment unless someone",
+      "id": "DDE962C7-016C-4C59-9D36-F8AA0E4186D0",
+      "is_context": false,
+      "korean": "우리는 누군가가 없는 한 약속을 취소해서는 안 됩니다.",
+      "requested_strategy": "lowLatency",
+      "started_after_stream_seconds": 10.764015666674823,
+      "status": "completed",
+      "text_translation_seconds": 0.028630375003558584
+    },
+    {
+      "english": "We should not cancel the appointment unless someone confirms the change.",
+      "id": "C0B3A087-820D-43E7-BCB5-7776284DFFCE",
+      "is_context": false,
+      "korean": "누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "requested_strategy": "lowLatency",
+      "started_after_stream_seconds": 11.562982000003103,
+      "status": "completed",
+      "text_translation_seconds": 0.02841574999911245
+    },
+    {
+      "english": "Please check the date carefully because the meeting is on Tuesday, not Thursday. We should not cancel the appointment unless someone confirms the change.",
+      "id": "A1875ECC-5E36-4E6A-8E3D-F9E8159CEF34",
+      "is_context": true,
+      "korean": "회의가 목요일이 아니라 화요일이기 때문에 날짜를 꼼꼼히 확인해 주세요. 누군가 변경을 확인하지 않는 한 약속을 취소해서는 안 됩니다.",
+      "requested_strategy": "highFidelity",
+      "started_after_stream_seconds": 12.294899250002345,
+      "status": "completed",
+      "text_translation_seconds": 0.09703299999819137
+    }
+  ]
+}

@@ -1,0 +1,1076 @@
+{
+  "attempts": [
+    {
+      "condition": "none",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai"
+        ],
+        "direction": "englishToKorean",
+        "id": "ai-en",
+        "meaningExpectation": "Documents are supplied to the model using RAG; do not claim retraining or improved accuracy.",
+        "referenceExpectation": "Preserve the meanings of retrieval-augmented generation and large language model.",
+        "source": "We use retrieval-augmented generation to provide relevant documents to a large language model."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\nWe use retrieval-augmented generation to provide relevant documents to a large language model.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 40,
+        "prompt_tokens": 41,
+        "timed_out": false,
+        "total_ms": 337.885,
+        "truncated": false,
+        "ttft_ms": 47.864
+      },
+      "text": "우리는 검색을 통해 관련된 문서들을 대규모 언어 모델에 제공하기 위해 ‘검색을 활용한 생성’ 방식을 사용합니다.",
+      "wall_ms": 338.42279166856315
+    },
+    {
+      "condition": "contextOnly",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai"
+        ],
+        "direction": "englishToKorean",
+        "id": "ai-en",
+        "meaningExpectation": "Documents are supplied to the model using RAG; do not claim retraining or improved accuracy.",
+        "referenceExpectation": "Preserve the meanings of retrieval-augmented generation and large language model.",
+        "source": "We use retrieval-augmented generation to provide relevant documents to a large language model."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nAI, machine learning and generative AI terminology.\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\nWe use retrieval-augmented generation to provide relevant documents to a large language model.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [
+        "AI"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 31,
+        "prompt_tokens": 90,
+        "timed_out": false,
+        "total_ms": 268.739,
+        "truncated": false,
+        "ttft_ms": 43.602
+      },
+      "text": "우리는 검색을 통한 생성 방식을 사용하여 대규모 언어 모델에 관련된 문서들을 제공합니다.",
+      "wall_ms": 269.00712501083035
+    },
+    {
+      "condition": "contextAndTerms",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai"
+        ],
+        "direction": "englishToKorean",
+        "id": "ai-en",
+        "meaningExpectation": "Documents are supplied to the model using RAG; do not claim retraining or improved accuracy.",
+        "referenceExpectation": "Preserve the meanings of retrieval-augmented generation and large language model.",
+        "source": "We use retrieval-augmented generation to provide relevant documents to a large language model."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nAI, machine learning and generative AI terminology.\n\nReference the following translations:\nlarge language model translates to 대규모 언어 모델\nretrieval-augmented generation translates to 검색 증강 생성\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\nWe use retrieval-augmented generation to provide relevant documents to a large language model.<｜hy_Assistant｜>",
+      "referencePairs": [
+        {
+          "source": "large language model",
+          "target": "대규모 언어 모델"
+        },
+        {
+          "source": "retrieval-augmented generation",
+          "target": "검색 증강 생성"
+        }
+      ],
+      "selectedDictionaryNames": [
+        "AI"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 27,
+        "prompt_tokens": 126,
+        "timed_out": false,
+        "total_ms": 251.584,
+        "truncated": false,
+        "ttft_ms": 54.928
+      },
+      "text": "검색 증강 생성을 사용하여 대규모 언어 모델에 관련된 문서를 제공합니다.",
+      "wall_ms": 252.17062499723397
+    },
+    {
+      "condition": "none",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai"
+        ],
+        "direction": "koreanToEnglish",
+        "id": "ai-ko",
+        "meaningExpectation": "A proposal to supply relevant documents to the model using RAG; retain the proposal tone.",
+        "referenceExpectation": "Use the correct RAG and large language model terminology where matched.",
+        "source": "검색 증강 생성으로 관련 문서를 대규모 언어 모델에 제공합시다."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\n검색 증강 생성으로 관련 문서를 대규모 언어 모델에 제공합시다.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 16,
+        "prompt_tokens": 51,
+        "timed_out": false,
+        "total_ms": 150.586,
+        "truncated": false,
+        "ttft_ms": 33.252
+      },
+      "text": "Let’s provide relevant documents to the large language model through enhanced search generation.",
+      "wall_ms": 150.8553333405871
+    },
+    {
+      "condition": "contextOnly",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai"
+        ],
+        "direction": "koreanToEnglish",
+        "id": "ai-ko",
+        "meaningExpectation": "A proposal to supply relevant documents to the model using RAG; retain the proposal tone.",
+        "referenceExpectation": "Use the correct RAG and large language model terminology where matched.",
+        "source": "검색 증강 생성으로 관련 문서를 대규모 언어 모델에 제공합시다."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nAI, machine learning and generative AI terminology.\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\n검색 증강 생성으로 관련 문서를 대규모 언어 모델에 제공합시다.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [
+        "AI"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 17,
+        "prompt_tokens": 100,
+        "timed_out": false,
+        "total_ms": 179.028,
+        "truncated": false,
+        "ttft_ms": 53.041
+      },
+      "text": "Let’s provide related documents to the large language model through search-enhanced generation.",
+      "wall_ms": 179.29358333640266
+    },
+    {
+      "condition": "contextAndTerms",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai"
+        ],
+        "direction": "koreanToEnglish",
+        "id": "ai-ko",
+        "meaningExpectation": "A proposal to supply relevant documents to the model using RAG; retain the proposal tone.",
+        "referenceExpectation": "Use the correct RAG and large language model terminology where matched.",
+        "source": "검색 증강 생성으로 관련 문서를 대규모 언어 모델에 제공합시다."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nAI, machine learning and generative AI terminology.\n\nReference the following translations:\n대규모 언어 모델 translates to large language model\n검색 증강 생성 translates to retrieval-augmented generation\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\n검색 증강 생성으로 관련 문서를 대규모 언어 모델에 제공합시다.<｜hy_Assistant｜>",
+      "referencePairs": [
+        {
+          "source": "대규모 언어 모델",
+          "target": "large language model"
+        },
+        {
+          "source": "검색 증강 생성",
+          "target": "retrieval-augmented generation"
+        }
+      ],
+      "selectedDictionaryNames": [
+        "AI"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 19,
+        "prompt_tokens": 135,
+        "timed_out": false,
+        "total_ms": 221.286,
+        "truncated": false,
+        "ttft_ms": 83.324
+      },
+      "text": "Let’s provide the relevant documents to the large language model using retrieval-augmented generation.",
+      "wall_ms": 221.634041678044
+    },
+    {
+      "condition": "none",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ibm"
+        ],
+        "direction": "englishToKorean",
+        "id": "ibm-en",
+        "meaningExpectation": "A proposal to use two named products in a demo and subsequently review a plan.",
+        "referenceExpectation": "Preserve IBM watsonx.ai and IBM Db2 product names; preserve disaster recovery meaning.",
+        "source": "Let's use IBM watsonx.ai and IBM Db2 in the demo, then review the disaster recovery plan."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\nLet's use IBM watsonx.ai and IBM Db2 in the demo, then review the disaster recovery plan.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 35,
+        "prompt_tokens": 47,
+        "timed_out": false,
+        "total_ms": 288.625,
+        "truncated": false,
+        "ttft_ms": 32.811
+      },
+      "text": "데모에서는 IBM Watsonx.ai와 IBM Db2를 사용해 보겠습니다. 그런 다음 재해 복구 계획을 검토해 보겠습니다.",
+      "wall_ms": 289.2242083325982
+    },
+    {
+      "condition": "contextOnly",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ibm"
+        ],
+        "direction": "englishToKorean",
+        "id": "ibm-en",
+        "meaningExpectation": "A proposal to use two named products in a demo and subsequently review a plan.",
+        "referenceExpectation": "Preserve IBM watsonx.ai and IBM Db2 product names; preserve disaster recovery meaning.",
+        "source": "Let's use IBM watsonx.ai and IBM Db2 in the demo, then review the disaster recovery plan."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nIBM enterprise software, hybrid cloud and infrastructure; keep official IBM product names.\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\nLet's use IBM watsonx.ai and IBM Db2 in the demo, then review the disaster recovery plan.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [
+        "IBM"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 36,
+        "prompt_tokens": 102,
+        "timed_out": false,
+        "total_ms": 320.185,
+        "truncated": false,
+        "ttft_ms": 53.251
+      },
+      "text": "데모에서는 IBM watsonx.ai와 IBM Db2를 사용해 보겠습니다. 그 다음, 재해 복구 계획을 검토해 보겠습니다.",
+      "wall_ms": 320.54516665812116
+    },
+    {
+      "condition": "contextAndTerms",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ibm"
+        ],
+        "direction": "englishToKorean",
+        "id": "ibm-en",
+        "meaningExpectation": "A proposal to use two named products in a demo and subsequently review a plan.",
+        "referenceExpectation": "Preserve IBM watsonx.ai and IBM Db2 product names; preserve disaster recovery meaning.",
+        "source": "Let's use IBM watsonx.ai and IBM Db2 in the demo, then review the disaster recovery plan."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nIBM enterprise software, hybrid cloud and infrastructure; keep official IBM product names.\n\nReference the following translations:\nwatsonx.ai translates to watsonx.ai\nDb2 translates to Db2\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\nLet's use IBM watsonx.ai and IBM Db2 in the demo, then review the disaster recovery plan.<｜hy_Assistant｜>",
+      "referencePairs": [
+        {
+          "source": "watsonx.ai",
+          "target": "watsonx.ai"
+        },
+        {
+          "source": "Db2",
+          "target": "Db2"
+        }
+      ],
+      "selectedDictionaryNames": [
+        "IBM"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 36,
+        "prompt_tokens": 125,
+        "timed_out": false,
+        "total_ms": 319.883,
+        "truncated": false,
+        "ttft_ms": 53.717
+      },
+      "text": "데모에서는 IBM watsonx.ai와 IBM Db2를 사용해 보겠습니다. 그런 다음 재해 복구 계획을 검토해 보겠습니다.",
+      "wall_ms": 320.76633334509097
+    },
+    {
+      "condition": "none",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ibm"
+        ],
+        "direction": "koreanToEnglish",
+        "id": "ibm-ko",
+        "meaningExpectation": "A proposal, with demo use followed by review of the disaster recovery plan.",
+        "referenceExpectation": "Preserve IBM watsonx.ai and IBM Db2 product names.",
+        "source": "데모에서 IBM watsonx.ai와 IBM Db2를 사용한 다음 재해 복구 계획을 검토합시다."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\n데모에서 IBM watsonx.ai와 IBM Db2를 사용한 다음 재해 복구 계획을 검토합시다.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 23,
+        "prompt_tokens": 53,
+        "timed_out": false,
+        "total_ms": 200.608,
+        "truncated": false,
+        "ttft_ms": 32.161
+      },
+      "text": "In the demo, we’ll use IBM Watsonx.ai and IBM Db2 to review our disaster recovery plans.",
+      "wall_ms": 200.91458332899492
+    },
+    {
+      "condition": "contextOnly",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ibm"
+        ],
+        "direction": "koreanToEnglish",
+        "id": "ibm-ko",
+        "meaningExpectation": "A proposal, with demo use followed by review of the disaster recovery plan.",
+        "referenceExpectation": "Preserve IBM watsonx.ai and IBM Db2 product names.",
+        "source": "데모에서 IBM watsonx.ai와 IBM Db2를 사용한 다음 재해 복구 계획을 검토합시다."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nIBM enterprise software, hybrid cloud and infrastructure; keep official IBM product names.\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\n데모에서 IBM watsonx.ai와 IBM Db2를 사용한 다음 재해 복구 계획을 검토합시다.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [
+        "IBM"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 23,
+        "prompt_tokens": 108,
+        "timed_out": false,
+        "total_ms": 213.937,
+        "truncated": false,
+        "ttft_ms": 54.679
+      },
+      "text": "In the demo, let’s use IBM Watsonx.ai and IBM Db2 to review the disaster recovery plan.",
+      "wall_ms": 214.34070833493024
+    },
+    {
+      "condition": "contextAndTerms",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ibm"
+        ],
+        "direction": "koreanToEnglish",
+        "id": "ibm-ko",
+        "meaningExpectation": "A proposal, with demo use followed by review of the disaster recovery plan.",
+        "referenceExpectation": "Preserve IBM watsonx.ai and IBM Db2 product names.",
+        "source": "데모에서 IBM watsonx.ai와 IBM Db2를 사용한 다음 재해 복구 계획을 검토합시다."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nIBM enterprise software, hybrid cloud and infrastructure; keep official IBM product names.\n\nReference the following translations:\nwatsonx.ai translates to watsonx.ai\nDb2 translates to Db2\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\n데모에서 IBM watsonx.ai와 IBM Db2를 사용한 다음 재해 복구 계획을 검토합시다.<｜hy_Assistant｜>",
+      "referencePairs": [
+        {
+          "source": "watsonx.ai",
+          "target": "watsonx.ai"
+        },
+        {
+          "source": "Db2",
+          "target": "Db2"
+        }
+      ],
+      "selectedDictionaryNames": [
+        "IBM"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 24,
+        "prompt_tokens": 131,
+        "timed_out": false,
+        "total_ms": 246.82,
+        "truncated": false,
+        "ttft_ms": 71.043
+      },
+      "text": "In the demo, let’s use IBM watsonx.ai and IBM Db2 to review the disaster recovery plan.",
+      "wall_ms": 247.35762500495184
+    },
+    {
+      "condition": "none",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:finance"
+        ],
+        "direction": "englishToKorean",
+        "id": "finance-en",
+        "meaningExpectation": "Review the AML workflow and credit risk before discussion of LCR; preserve the order.",
+        "referenceExpectation": "Keep AML, credit risk and liquidity coverage ratio distinct; do not invent ratios.",
+        "source": "Review the anti-money laundering workflow and credit risk before discussing the liquidity coverage ratio."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\nReview the anti-money laundering workflow and credit risk before discussing the liquidity coverage ratio.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 43,
+        "prompt_tokens": 41,
+        "timed_out": false,
+        "total_ms": 349.266,
+        "truncated": false,
+        "ttft_ms": 32.23
+      },
+      "text": "유동성 커버리지 비율을 논의하기 전에, 자금 세탁 방지 프로세스와 신용 위험에 대해 먼저 검토해 보세요.",
+      "wall_ms": 349.5237916649785
+    },
+    {
+      "condition": "contextOnly",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:finance"
+        ],
+        "direction": "englishToKorean",
+        "id": "finance-en",
+        "meaningExpectation": "Review the AML workflow and credit risk before discussion of LCR; preserve the order.",
+        "referenceExpectation": "Keep AML, credit risk and liquidity coverage ratio distinct; do not invent ratios.",
+        "source": "Review the anti-money laundering workflow and credit risk before discussing the liquidity coverage ratio."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nBanking and financial services: payments, risk management and regulatory compliance.\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\nReview the anti-money laundering workflow and credit risk before discussing the liquidity coverage ratio.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [
+        "금융권"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 39,
+        "prompt_tokens": 95,
+        "timed_out": false,
+        "total_ms": 326.758,
+        "truncated": false,
+        "ttft_ms": 43.658
+      },
+      "text": "유동성 커버리지 비율에 대해 논의하기 전에, 자금 세탁 방지 프로세스와 신용 위험을 검토해야 합니다.",
+      "wall_ms": 327.0429166586837
+    },
+    {
+      "condition": "contextAndTerms",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:finance"
+        ],
+        "direction": "englishToKorean",
+        "id": "finance-en",
+        "meaningExpectation": "Review the AML workflow and credit risk before discussion of LCR; preserve the order.",
+        "referenceExpectation": "Keep AML, credit risk and liquidity coverage ratio distinct; do not invent ratios.",
+        "source": "Review the anti-money laundering workflow and credit risk before discussing the liquidity coverage ratio."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nBanking and financial services: payments, risk management and regulatory compliance.\n\nReference the following translations:\nanti-money laundering translates to 자금세탁방지\ncredit risk translates to 신용위험\nliquidity coverage ratio translates to 유동성커버리지비율\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\nReview the anti-money laundering workflow and credit risk before discussing the liquidity coverage ratio.<｜hy_Assistant｜>",
+      "referencePairs": [
+        {
+          "source": "anti-money laundering",
+          "target": "자금세탁방지"
+        },
+        {
+          "source": "credit risk",
+          "target": "신용위험"
+        },
+        {
+          "source": "liquidity coverage ratio",
+          "target": "유동성커버리지비율"
+        }
+      ],
+      "selectedDictionaryNames": [
+        "금융권"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 44,
+        "prompt_tokens": 139,
+        "timed_out": false,
+        "total_ms": 395.897,
+        "truncated": false,
+        "ttft_ms": 78.006
+      },
+      "text": "유동성 커버리지비율에 대해 논의하기 전에, 자금세탁방지 및 신용위험에 대한 절차를 먼저 검토해 보세요.",
+      "wall_ms": 396.54454166884534
+    },
+    {
+      "condition": "none",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:finance"
+        ],
+        "direction": "koreanToEnglish",
+        "id": "finance-ko",
+        "meaningExpectation": "A proposal to review AML work and credit risk before the LCR discussion.",
+        "referenceExpectation": "Translate the financial phrases in their banking sense; inspect exact matched references.",
+        "source": "유동성커버리지비율을 논의하기 전에 자금 세탁 방지 업무와 신용위험을 검토합시다."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\n유동성커버리지비율을 논의하기 전에 자금 세탁 방지 업무와 신용위험을 검토합시다.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 20,
+        "prompt_tokens": 61,
+        "timed_out": false,
+        "total_ms": 177.143,
+        "truncated": false,
+        "ttft_ms": 33.363
+      },
+      "text": "Before discussing the liquidity coverage ratio, let’s first examine money laundering prevention measures and credit risk.",
+      "wall_ms": 177.57020832505077
+    },
+    {
+      "condition": "contextOnly",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:finance"
+        ],
+        "direction": "koreanToEnglish",
+        "id": "finance-ko",
+        "meaningExpectation": "A proposal to review AML work and credit risk before the LCR discussion.",
+        "referenceExpectation": "Translate the financial phrases in their banking sense; inspect exact matched references.",
+        "source": "유동성커버리지비율을 논의하기 전에 자금 세탁 방지 업무와 신용위험을 검토합시다."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nBanking and financial services: payments, risk management and regulatory compliance.\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\n유동성커버리지비율을 논의하기 전에 자금 세탁 방지 업무와 신용위험을 검토합시다.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [
+        "금융권"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 19,
+        "prompt_tokens": 115,
+        "timed_out": false,
+        "total_ms": 190.429,
+        "truncated": false,
+        "ttft_ms": 52.605
+      },
+      "text": "Before discussing the liquidity coverage ratio, let’s first examine money laundering prevention and credit risk.",
+      "wall_ms": 190.759999997681
+    },
+    {
+      "condition": "contextAndTerms",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:finance"
+        ],
+        "direction": "koreanToEnglish",
+        "id": "finance-ko",
+        "meaningExpectation": "A proposal to review AML work and credit risk before the LCR discussion.",
+        "referenceExpectation": "Translate the financial phrases in their banking sense; inspect exact matched references.",
+        "source": "유동성커버리지비율을 논의하기 전에 자금 세탁 방지 업무와 신용위험을 검토합시다."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nBanking and financial services: payments, risk management and regulatory compliance.\n\nReference the following translations:\n자금세탁방지 translates to anti-money laundering\n신용위험 translates to credit risk\n유동성커버리지비율 translates to liquidity coverage ratio\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\n유동성커버리지비율을 논의하기 전에 자금 세탁 방지 업무와 신용위험을 검토합시다.<｜hy_Assistant｜>",
+      "referencePairs": [
+        {
+          "source": "자금세탁방지",
+          "target": "anti-money laundering"
+        },
+        {
+          "source": "신용위험",
+          "target": "credit risk"
+        },
+        {
+          "source": "유동성커버리지비율",
+          "target": "liquidity coverage ratio"
+        }
+      ],
+      "selectedDictionaryNames": [
+        "금융권"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 20,
+        "prompt_tokens": 158,
+        "timed_out": false,
+        "total_ms": 222.434,
+        "truncated": false,
+        "ttft_ms": 77.939
+      },
+      "text": "Before discussing the liquidity coverage ratio, let’s first examine anti-money laundering and credit risk.",
+      "wall_ms": 222.93445833201986
+    },
+    {
+      "condition": "none",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai",
+          "builtin:ibm",
+          "builtin:finance"
+        ],
+        "direction": "englishToKorean",
+        "id": "mixed-en",
+        "meaningExpectation": "A proposal to evaluate technologies for document review; do not assert an existing deployment.",
+        "referenceExpectation": "Keep the product name and model term, and use customer onboarding in the banking sense.",
+        "source": "Let's evaluate IBM watsonx.ai and a large language model for reviewing customer onboarding documents."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\nLet's evaluate IBM watsonx.ai and a large language model for reviewing customer onboarding documents.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 35,
+        "prompt_tokens": 44,
+        "timed_out": false,
+        "total_ms": 283.071,
+        "truncated": false,
+        "ttft_ms": 31.39
+      },
+      "text": "IBM Watsonx.ai와 대규모 언어 모델을 활용하여 고객 온보딩 문서를 검토해 보도록 하겠습니다.",
+      "wall_ms": 283.29587500775233
+    },
+    {
+      "condition": "contextOnly",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai",
+          "builtin:ibm",
+          "builtin:finance"
+        ],
+        "direction": "englishToKorean",
+        "id": "mixed-en",
+        "meaningExpectation": "A proposal to evaluate technologies for document review; do not assert an existing deployment.",
+        "referenceExpectation": "Keep the product name and model term, and use customer onboarding in the banking sense.",
+        "source": "Let's evaluate IBM watsonx.ai and a large language model for reviewing customer onboarding documents."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nAI, machine learning and generative AI terminology. IBM enterprise software, hybrid cloud and infrastructure; keep official IBM product names. Banking and financial services: payments, risk management and regulatory compliance.\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\nLet's evaluate IBM watsonx.ai and a large language model for reviewing customer onboarding documents.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [
+        "AI",
+        "IBM",
+        "금융권"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 33,
+        "prompt_tokens": 121,
+        "timed_out": false,
+        "total_ms": 291.652,
+        "truncated": false,
+        "ttft_ms": 53.139
+      },
+      "text": "IBM Watsonx.ai와 대규모 언어 모델을 평가하여 고객 온보딩 문서를 검토해 보겠습니다.",
+      "wall_ms": 291.91562499909196
+    },
+    {
+      "condition": "contextAndTerms",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai",
+          "builtin:ibm",
+          "builtin:finance"
+        ],
+        "direction": "englishToKorean",
+        "id": "mixed-en",
+        "meaningExpectation": "A proposal to evaluate technologies for document review; do not assert an existing deployment.",
+        "referenceExpectation": "Keep the product name and model term, and use customer onboarding in the banking sense.",
+        "source": "Let's evaluate IBM watsonx.ai and a large language model for reviewing customer onboarding documents."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nAI, machine learning and generative AI terminology. IBM enterprise software, hybrid cloud and infrastructure; keep official IBM product names. Banking and financial services: payments, risk management and regulatory compliance.\n\nReference the following translations:\nlarge language model translates to 대규모 언어 모델\nwatsonx.ai translates to watsonx.ai\ncustomer onboarding translates to 고객 온보딩\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\nLet's evaluate IBM watsonx.ai and a large language model for reviewing customer onboarding documents.<｜hy_Assistant｜>",
+      "referencePairs": [
+        {
+          "source": "large language model",
+          "target": "대규모 언어 모델"
+        },
+        {
+          "source": "watsonx.ai",
+          "target": "watsonx.ai"
+        },
+        {
+          "source": "customer onboarding",
+          "target": "고객 온보딩"
+        }
+      ],
+      "selectedDictionaryNames": [
+        "AI",
+        "IBM",
+        "금융권"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 34,
+        "prompt_tokens": 163,
+        "timed_out": false,
+        "total_ms": 327.516,
+        "truncated": false,
+        "ttft_ms": 84.903
+      },
+      "text": "IBM watsonx.ai와 대규모 언어 모델을 활용하여 고객 온보딩 문서를 검토해 보겠습니다.",
+      "wall_ms": 328.35283334134147
+    },
+    {
+      "condition": "none",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai",
+          "builtin:ibm",
+          "builtin:finance"
+        ],
+        "direction": "koreanToEnglish",
+        "id": "mixed-ko",
+        "meaningExpectation": "A proposal to assess whether to use technologies for customer document review.",
+        "referenceExpectation": "Keep product, AI and customer onboarding terminology while retaining uncertainty.",
+        "source": "고객 온보딩 문서 검토에 IBM watsonx.ai와 대규모 언어 모델을 사용할지 평가합시다."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\n고객 온보딩 문서 검토에 IBM watsonx.ai와 대규모 언어 모델을 사용할지 평가합시다.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 22,
+        "prompt_tokens": 60,
+        "timed_out": false,
+        "total_ms": 192.875,
+        "truncated": false,
+        "ttft_ms": 32.658
+      },
+      "text": "Let’s evaluate whether to use IBM Watsonx.ai and large language models for reviewing customer onboarding documents.",
+      "wall_ms": 193.17399999999907
+    },
+    {
+      "condition": "contextOnly",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai",
+          "builtin:ibm",
+          "builtin:finance"
+        ],
+        "direction": "koreanToEnglish",
+        "id": "mixed-ko",
+        "meaningExpectation": "A proposal to assess whether to use technologies for customer document review.",
+        "referenceExpectation": "Keep product, AI and customer onboarding terminology while retaining uncertainty.",
+        "source": "고객 온보딩 문서 검토에 IBM watsonx.ai와 대규모 언어 모델을 사용할지 평가합시다."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nAI, machine learning and generative AI terminology. IBM enterprise software, hybrid cloud and infrastructure; keep official IBM product names. Banking and financial services: payments, risk management and regulatory compliance.\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\n고객 온보딩 문서 검토에 IBM watsonx.ai와 대규모 언어 모델을 사용할지 평가합시다.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [
+        "AI",
+        "IBM",
+        "금융권"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 22,
+        "prompt_tokens": 137,
+        "timed_out": false,
+        "total_ms": 237.742,
+        "truncated": false,
+        "ttft_ms": 75.74
+      },
+      "text": "Let’s evaluate whether to use IBM Watsonx.ai and large language models for reviewing customer onboarding documents.",
+      "wall_ms": 238.0622916680295
+    },
+    {
+      "condition": "contextAndTerms",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai",
+          "builtin:ibm",
+          "builtin:finance"
+        ],
+        "direction": "koreanToEnglish",
+        "id": "mixed-ko",
+        "meaningExpectation": "A proposal to assess whether to use technologies for customer document review.",
+        "referenceExpectation": "Keep product, AI and customer onboarding terminology while retaining uncertainty.",
+        "source": "고객 온보딩 문서 검토에 IBM watsonx.ai와 대규모 언어 모델을 사용할지 평가합시다."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nAI, machine learning and generative AI terminology. IBM enterprise software, hybrid cloud and infrastructure; keep official IBM product names. Banking and financial services: payments, risk management and regulatory compliance.\n\nReference the following translations:\n대규모 언어 모델 translates to large language model\nwatsonx.ai translates to watsonx.ai\n고객 온보딩 translates to customer onboarding\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\n고객 온보딩 문서 검토에 IBM watsonx.ai와 대규모 언어 모델을 사용할지 평가합시다.<｜hy_Assistant｜>",
+      "referencePairs": [
+        {
+          "source": "대규모 언어 모델",
+          "target": "large language model"
+        },
+        {
+          "source": "watsonx.ai",
+          "target": "watsonx.ai"
+        },
+        {
+          "source": "고객 온보딩",
+          "target": "customer onboarding"
+        }
+      ],
+      "selectedDictionaryNames": [
+        "AI",
+        "IBM",
+        "금융권"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 23,
+        "prompt_tokens": 180,
+        "timed_out": false,
+        "total_ms": 254.508,
+        "truncated": false,
+        "ttft_ms": 84.69
+      },
+      "text": "Let’s evaluate whether to use IBM watsonx.ai and large language models for reviewing customer onboarding documents.",
+      "wall_ms": 255.22166666632984
+    },
+    {
+      "condition": "none",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai",
+          "builtin:ibm",
+          "builtin:finance"
+        ],
+        "direction": "englishToKorean",
+        "id": "ordinary-en",
+        "meaningExpectation": "The speaker remembers a meeting and is curious about weekend plans; recall is not an AI metric and interest is not bank interest.",
+        "referenceExpectation": "Do not introduce 재현율 or 금리/이자; ordinary recall and interest should have no glossary reference.",
+        "source": "I recall our last meeting, and I have an interest in learning more about your weekend plans."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\nI recall our last meeting, and I have an interest in learning more about your weekend plans.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 30,
+        "prompt_tokens": 43,
+        "timed_out": false,
+        "total_ms": 249.002,
+        "truncated": false,
+        "ttft_ms": 32.105
+      },
+      "text": "우리의 마지막 회의가 떠오르네요. 당신의 주말 계획에 대해 더 알고 싶습니다.",
+      "wall_ms": 249.35458332765847
+    },
+    {
+      "condition": "contextOnly",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai",
+          "builtin:ibm",
+          "builtin:finance"
+        ],
+        "direction": "englishToKorean",
+        "id": "ordinary-en",
+        "meaningExpectation": "The speaker remembers a meeting and is curious about weekend plans; recall is not an AI metric and interest is not bank interest.",
+        "referenceExpectation": "Do not introduce 재현율 or 금리/이자; ordinary recall and interest should have no glossary reference.",
+        "source": "I recall our last meeting, and I have an interest in learning more about your weekend plans."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nAI, machine learning and generative AI terminology. IBM enterprise software, hybrid cloud and infrastructure; keep official IBM product names. Banking and financial services: payments, risk management and regulatory compliance.\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\nI recall our last meeting, and I have an interest in learning more about your weekend plans.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [
+        "AI",
+        "IBM",
+        "금융권"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 23,
+        "prompt_tokens": 120,
+        "timed_out": false,
+        "total_ms": 221.477,
+        "truncated": false,
+        "ttft_ms": 53.56
+      },
+      "text": "지난 회의를 기억합니다. 당신의 주말 계획에 대해 더 알고 싶습니다.",
+      "wall_ms": 221.74554166849703
+    },
+    {
+      "condition": "contextAndTerms",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai",
+          "builtin:ibm",
+          "builtin:finance"
+        ],
+        "direction": "englishToKorean",
+        "id": "ordinary-en",
+        "meaningExpectation": "The speaker remembers a meeting and is curious about weekend plans; recall is not an AI metric and interest is not bank interest.",
+        "referenceExpectation": "Do not introduce 재현율 or 금리/이자; ordinary recall and interest should have no glossary reference.",
+        "source": "I recall our last meeting, and I have an interest in learning more about your weekend plans."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nAI, machine learning and generative AI terminology. IBM enterprise software, hybrid cloud and infrastructure; keep official IBM product names. Banking and financial services: payments, risk management and regulatory compliance.\n\nTranslate the following segment into Korean, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\nI recall our last meeting, and I have an interest in learning more about your weekend plans.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [
+        "AI",
+        "IBM",
+        "금융권"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 23,
+        "prompt_tokens": 120,
+        "timed_out": false,
+        "total_ms": 219.004,
+        "truncated": false,
+        "ttft_ms": 52.935
+      },
+      "text": "지난 회의를 기억합니다. 당신의 주말 계획에 대해 더 알고 싶습니다.",
+      "wall_ms": 219.6506249892991
+    },
+    {
+      "condition": "none",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai",
+          "builtin:ibm",
+          "builtin:finance"
+        ],
+        "direction": "koreanToEnglish",
+        "id": "ordinary-ko",
+        "meaningExpectation": "Remembering a meeting and wanting to know more about weekend plans, with no financial or AI metric meaning.",
+        "referenceExpectation": "Keep the ordinary meaning without adding technical or financial content.",
+        "source": "지난 회의가 기억나고, 당신의 주말 계획을 더 알고 싶습니다."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>Translate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning.\n\n지난 회의가 기억나고, 당신의 주말 계획을 더 알고 싶습니다.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 21,
+        "prompt_tokens": 47,
+        "timed_out": false,
+        "total_ms": 183.078,
+        "truncated": false,
+        "ttft_ms": 32.266
+      },
+      "text": "I remember the last meeting, and I’d like to know more about your plans for the weekend.",
+      "wall_ms": 183.32554165681358
+    },
+    {
+      "condition": "contextOnly",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai",
+          "builtin:ibm",
+          "builtin:finance"
+        ],
+        "direction": "koreanToEnglish",
+        "id": "ordinary-ko",
+        "meaningExpectation": "Remembering a meeting and wanting to know more about weekend plans, with no financial or AI metric meaning.",
+        "referenceExpectation": "Keep the ordinary meaning without adding technical or financial content.",
+        "source": "지난 회의가 기억나고, 당신의 주말 계획을 더 알고 싶습니다."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nAI, machine learning and generative AI terminology. IBM enterprise software, hybrid cloud and infrastructure; keep official IBM product names. Banking and financial services: payments, risk management and regulatory compliance.\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\n지난 회의가 기억나고, 당신의 주말 계획을 더 알고 싶습니다.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [
+        "AI",
+        "IBM",
+        "금융권"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 18,
+        "prompt_tokens": 124,
+        "timed_out": false,
+        "total_ms": 181.005,
+        "truncated": false,
+        "ttft_ms": 53.42
+      },
+      "text": "I remember last meeting, and I’d like to know more about your weekend plans.",
+      "wall_ms": 181.37624999508262
+    },
+    {
+      "condition": "contextAndTerms",
+      "fixture": {
+        "dictionaryIDs": [
+          "builtin:ai",
+          "builtin:ibm",
+          "builtin:finance"
+        ],
+        "direction": "koreanToEnglish",
+        "id": "ordinary-ko",
+        "meaningExpectation": "Remembering a meeting and wanting to know more about weekend plans, with no financial or AI metric meaning.",
+        "referenceExpectation": "Keep the ordinary meaning without adding technical or financial content.",
+        "source": "지난 회의가 기억나고, 당신의 주말 계획을 더 알고 싶습니다."
+      },
+      "guardAccepted": true,
+      "nativeStatus": 0,
+      "prompt": "<｜hy_begin▁of▁sentence｜><｜hy_User｜>[Background Information]\nAI, machine learning and generative AI terminology. IBM enterprise software, hybrid cloud and infrastructure; keep official IBM product names. Banking and financial services: payments, risk management and regulatory compliance.\n\nTranslate the following segment into English, without additional explanation. Use natural subtitle phrasing and preserve all meaning. Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise. Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\n지난 회의가 기억나고, 당신의 주말 계획을 더 알고 싶습니다.<｜hy_Assistant｜>",
+      "referencePairs": [],
+      "selectedDictionaryNames": [
+        "AI",
+        "IBM",
+        "금융권"
+      ],
+      "statistics": {
+        "cancelled": false,
+        "output_tokens": 18,
+        "prompt_tokens": 124,
+        "timed_out": false,
+        "total_ms": 182.078,
+        "truncated": false,
+        "ttft_ms": 54.894
+      },
+      "text": "I remember last meeting, and I’d like to know more about your weekend plans.",
+      "wall_ms": 182.58750000677537
+    }
+  ],
+  "conditions": [
+    "none: the source and explicit translation direction, with no dictionaries.",
+    "contextOnly: the same selected public dictionaries cloned with empty glossaries.",
+    "contextAndTerms: the same selected public dictionaries with their current reviewed terms.",
+    "One prepared local engine; all attempts are serial. No previous sentence or private glossary is supplied.",
+    "No Apple translation, audio capture, network requests, downloads, or application preference changes.",
+    "Raw candidates use validateResult=false; the production output guard is recorded separately with source text as its numeric baseline."
+  ],
+  "fixtureSHA256": "dd1d6584be4e691c69867fb1922f6b08f7f44a3879f7eadf5a1cfaf5f9c4bfcf",
+  "generatedAt": "2026-10-04T08:34:03Z",
+  "limitations": [
+    "Ten authored public synthetic sentences are an exploratory comparison, not a representative accuracy benchmark.",
+    "Guard acceptance checks output format, script and numbers, not meaning preservation, fluency, or terminology accuracy.",
+    "The 6000 ms default is a quality comparison timeout, not evidence that the production 1500 ms budget is met.",
+    "Candidate wording and timing may vary across runs; condition order is fixed and there are no repeated samples.",
+    "A reviewer must inspect meaningExpectation, referenceExpectation, matched referencePairs, and raw text.",
+    "This runner does not establish live microphone accuracy, end-to-end caption latency, or Apple baseline behavior."
+  ],
+  "model": {
+    "actualByteCount": 1474785120,
+    "actualSHA256": "d98fe604dec1f28f58f80d7d560f7177e584d3b8e5835862687660e5ff97cb40",
+    "digestSource": "Sources/LiveKoCaption/LocalModelStore.swift: LocalModelManifest.hyMT2.sha256",
+    "expectedByteCount": 1474785120,
+    "expectedSHA256": "d98fe604dec1f28f58f80d7d560f7177e584d3b8e5835862687660e5ff97cb40",
+    "name": "Tencent Hy-MT2-1.8B",
+    "path": "<USER_HOME>/Library/Application Support/Live Korean Captions/Models/Hy-MT2-1.8B-Q6_K.gguf",
+    "quantization": "Q6_K",
+    "repository": "tencent/Hy-MT2-1.8B-GGUF",
+    "revision": "a0c709d9fac510f2c807aa3af52872340dc37a4a"
+  },
+  "platform": "Version 26.7.1 (Build 25G241)",
+  "runtimePath": "<REPOSITORY>/.build/local-runtime/libcaption_local_translation.dylib",
+  "schemaVersion": 1,
+  "timeoutMilliseconds": 6000
+}

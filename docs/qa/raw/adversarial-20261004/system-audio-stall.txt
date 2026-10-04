@@ -1,0 +1,50 @@
+SystemAudioChecks was terminated after the production device-selection call blocked the main thread for more than 100 seconds. This is a failed run, not a passed permission/global-tap test.
+
+Call graph:
+    887 Thread_4943390   DispatchQueue_1: com.apple.main-thread  (serial)
+    + 887 completeTaskWithClosure(swift::AsyncContext*, swift::SwiftError*)  (in libswift_Concurrency.dylib) + 1  [0x28a23fec5]
+    +   887 partial apply for thunk for @escaping @convention(thin) @async () -> ()  (in SystemAudioChecks) + 1  [0x102b37841]
+    +     887 thunk for @escaping @convention(thin) @async () -> ()  (in SystemAudioChecks) + 1  [0x102b37725]
+    +       887 async_MainTQ0_  (in SystemAudioChecks) + 1  [0x102b375e9]
+    +         887 static SystemAudioChecks.$main()  (in SystemAudioChecks) + 1  [0x102b374b9]
+    +           887 static SystemAudioChecks.main()  (in SystemAudioChecks) + 1  [0x102b2c0bd]
+    +             887 static SystemAudioChecks.run(_:)  (in SystemAudioChecks) + 1028  [0x102b2f4d0]
+    +               887 AudioCapture.start(deviceID:systemAudio:target:onLevel:onProblem:onSourceActivity:)  (in SystemAudioChecks) + 1276  [0x102b1a2a4]
+    +                 887 AudioDeviceCapture.__allocating_init(deviceID:)  (in SystemAudioChecks) + 100  [0x102b259d4]
+    +                   887 AudioDeviceCapture.init(deviceID:)  (in SystemAudioChecks) + 1356  [0x102b25f68]
+    +                     887 AudioUnitSetProperty  (in AudioToolboxCore) + 484  [0x187c58464]
+    +                       887 ???  (in CoreAudio)  load address 0x102c6c000 + 0x10b1a0  [0x102d771a0]
+    +                         887 ???  (in CoreAudio)  load address 0x102c6c000 + 0x1066b0  [0x102d726b0]
+    +                           887 ???  (in CoreAudio)  load address 0x102c6c000 + 0x86b4  [0x102c746b4]
+    +                             887 ???  (in CoreAudio)  load address 0x102c6c000 + 0x9614  [0x102c75614]
+    +                               887 ???  (in CoreAudio)  load address 0x102c6c000 + 0xa7b8  [0x102c767b8]
+    +                                 887 AudioDeviceGetProperty  (in CoreAudio) + 204  [0x18827cd30]
+    +                                   887 HALPlugIn::ObjectHasProperty(HALObject const&, AudioObjectPropertyAddress const&) const  (in CoreAudio) + 44  [0x187f6705c]
+    +                                     887 HAL_HardwarePlugIn_ObjectHasProperty(AudioHardwarePlugInInterface**, unsigned int, AudioObjectPropertyAddress const*)  (in CoreAudio) + 480  [0x188120164]
+    +                                       887 HALC_ShellObject::HasProperty(unsigned int, AudioObjectPropertyAddress const&, bool&) const  (in CoreAudio) + 560  [0x1882842b4]
+    +                                         887 HALC_ProxyObject::HasProperty(AudioObjectPropertyAddress const&, bool&) const  (in CoreAudio) + 160  [0x1883653fc]
+    +                                           887 mach_msg  (in libsystem_kernel.dylib) + 24  [0x184dc7fc0]
+    +                                             887 mach_msg_overwrite  (in libsystem_kernel.dylib) + 480  [0x184dd09c0]
+    +                                               887 mach_msg2_internal  (in libsystem_kernel.dylib) + 76  [0x184dda5a4]
+    +                                                 887 mach_msg2_trap  (in libsystem_kernel.dylib) + 8  [0x184dc7c34]
+    887 Thread_4943600: caulk.messenger.shared:17
+    + 887 thread_start  (in libsystem_pthread.dylib) + 8  [0x184e06c1c]
+    +   887 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x184e0bc58]
+    +     887 caulk::thread_proxy<std::tuple<caulk::thread::attributes, void (caulk::concurrent::details::worker_thread::*)(), std::tuple<caulk::concurrent::details::worker_thread*>>>(void*)  (in caulk) + 96  [0x19175e94c]
+    +       887 caulk::concurrent::details::worker_thread::run()  (in caulk) + 32  [0x19175ecac]
+    +         887 caulk::semaphore::timed_wait(double)  (in caulk) + 224  [0x19175ee00]
+    +           887 semaphore_wait_trap  (in libsystem_kernel.dylib) + 8  [0x184dc7bb0]
+    887 Thread_4943601: caulk.messenger.shared:high
+      887 thread_start  (in libsystem_pthread.dylib) + 8  [0x184e06c1c]
+        887 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x184e0bc58]
+          887 caulk::thread_proxy<std::tuple<caulk::thread::attributes, void (caulk::concurrent::details::worker_thread::*)(), std::tuple<caulk::concurrent::details::worker_thread*>>>(void*)  (in caulk) + 96  [0x19175e94c]
+            887 caulk::concurrent::details::worker_thread::run()  (in caulk) + 32  [0x19175ecac]
+              887 caulk::semaphore::timed_wait(double)  (in caulk) + 224  [0x19175ee00]
+                887 semaphore_wait_trap  (in libsystem_kernel.dylib) + 8  [0x184dc7bb0]
+
+Total number in stack (recursive counted multiple, when >=5):
+
+Sort by top of stack, same collapsed (when >= 5):
+        semaphore_wait_trap  (in libsystem_kernel.dylib)        1774
+        mach_msg2_trap  (in libsystem_kernel.dylib)        887
+

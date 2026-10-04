@@ -1,0 +1,413 @@
+{
+  "cases": [
+    {
+      "category": "ambiguous word",
+      "english": "I saw her duck.",
+      "id": "duck_alone",
+      "korean": "저는 그녀의 오리를 보았습니다.",
+      "manual_review_guide": "문맥 없이는 그녀의 오리와 몸을 숙이는 동작 모두 가능하다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.15871224999136757
+    },
+    {
+      "category": "following context",
+      "english": "I saw her duck. It was swimming in the pond.",
+      "id": "duck_animal_context",
+      "korean": "저는 그녀의 오리를 보았습니다. 그것은 연못에서 헤엄치고 있었습니다.",
+      "manual_review_guide": "연못에서 헤엄치는 오리다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.04674216666899156
+    },
+    {
+      "category": "following context",
+      "english": "I saw her duck. She bent down to avoid the ball.",
+      "id": "duck_action_context",
+      "korean": "저는 그녀의 오리를 보았습니다. 그녀는 공을 피하기 위해 몸을 숙였습니다.",
+      "manual_review_guide": "앞 문장의 duck도 공을 피하려고 몸을 숙인 동작이어야 한다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.04971754166763276
+    },
+    {
+      "category": "negation",
+      "english": "We cannot approve this plan yet, but we don't rule out approving it next month.",
+      "id": "negation",
+      "korean": "우리는 아직 이 계획을 승인할 수 없지만, 다음 달에 승인할 가능성을 배제하지 않습니다.",
+      "manual_review_guide": "지금은 승인 불가지만 다음 달 승인 가능성은 열려 있다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.059929333336185664
+    },
+    {
+      "category": "negation",
+      "english": "I don't think he didn't know about it.",
+      "id": "double_negation",
+      "korean": "그가 그것에 대해 몰랐다고는 생각하지 않습니다.",
+      "manual_review_guide": "그가 몰랐다는 주장에 동의하지 않는다. 부정을 반대로 바꾸면 안 된다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.031472583330469206
+    },
+    {
+      "category": "numbers and units",
+      "english": "The budget is thirteen million dollars, not thirty million. We need a 0.5 percent increase, not five percent.",
+      "id": "numbers",
+      "korean": "예산은 1천3백만 달러이며, 3천만 달러가 아닙니다. 우리는 0.5% 인상이 필요합니다, 5%가 아니라.",
+      "manual_review_guide": "1,300만 달러와 3,000만 달러, 0.5%와 5%를 구별해야 한다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.059922499989625067
+    },
+    {
+      "category": "idiom",
+      "english": "We need to break the ice before getting the ball rolling. Let's not throw anyone under the bus.",
+      "id": "idiom",
+      "korean": "우리는 일을 시작하기 전에 어색함을 깨야 합니다. 누구도 희생시키지 맙시다.",
+      "manual_review_guide": "어색함을 풀고 일을 시작하자는 뜻이다. 다른 사람에게 책임을 떠넘기거나 희생시키지 말자는 뜻이다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.05334512500849087
+    },
+    {
+      "category": "unfinished source",
+      "english": "The proposal is not",
+      "id": "meaning_reversal_fragment",
+      "korean": "제안은 아닙니다",
+      "manual_review_guide": "미완성 원문이므로 단정적인 부정 번역을 확정해서는 안 된다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.019408499996643513
+    },
+    {
+      "category": "unfinished source continuation",
+      "english": "The proposal is not only cheaper but also safer.",
+      "id": "meaning_reversal_complete",
+      "korean": "그 제안은 더 저렴할 뿐만 아니라 더 안전합니다.",
+      "manual_review_guide": "제안은 더 저렴하고 더 안전하다. 앞부분의 부정 해석이 수정되어야 한다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.028325166669674218
+    },
+    {
+      "category": "speech context",
+      "english": "I used to think this was a good idea.",
+      "id": "continuation_first",
+      "korean": "저는 이것이 좋은 생각이라고 생각하곤 했습니다.",
+      "manual_review_guide": "예전에는 좋은 생각이라고 여겼다는 뜻이다. 지금도 그렇다고 단정하지 않는다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.02619195832812693
+    },
+    {
+      "category": "speech context",
+      "english": "I used to think this was a good idea. But after seeing the results, I changed my mind.",
+      "id": "continuation_both",
+      "korean": "저는 이것이 좋은 생각이라고 생각하곤 했습니다. 하지만 결과를 보고 나서 저는 생각을 바꾸었습니다.",
+      "manual_review_guide": "결과를 본 뒤 생각을 바꿨다. 현재도 좋은 생각이라고 여긴다는 뜻이 아니다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.04560345833306201
+    },
+    {
+      "category": "speaker correction",
+      "english": "The meeting is on Thursday, sorry, I mean Tuesday, at three fifteen.",
+      "id": "self_correction",
+      "korean": "회의는 목요일이며, 죄송합니다. 제 말은 화요일이며, 오후 3시 15분입니다.",
+      "manual_review_guide": "화자가 목요일을 화요일로 정정했다. 최종 요일은 화요일이며 오전·오후는 원문에 없다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.037860249998630024
+    },
+    {
+      "category": "idiom",
+      "english": "We should table this discussion until next week.",
+      "id": "table_discussion",
+      "korean": "우리는 이 논의를 다음 주까지 보류해야 합니다.",
+      "manual_review_guide": "다음 주까지 논의를 보류하자는 뜻이다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.02754766667203512
+    },
+    {
+      "category": "pronoun and idiom",
+      "english": "She said she couldn't make it.",
+      "id": "pronouns_alone",
+      "korean": "그녀는 참석할 수 없다고 말했습니다.",
+      "manual_review_guide": "make it은 물건을 만들 수 없다는 뜻이 아니라 참석할 수 없다는 뜻이다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.020395750005263835
+    },
+    {
+      "category": "pronoun and idiom",
+      "english": "Maya has a scheduling conflict. She said she couldn't make it.",
+      "id": "pronouns_context",
+      "korean": "마야는 일정 충돌이 있습니다. 그녀는 참석할 수 없다고 말했습니다.",
+      "manual_review_guide": "마야는 일정이 겹쳐 참석할 수 없다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.04041775000223424
+    },
+    {
+      "category": "ambiguous idiom",
+      "english": "It is a piece of cake.",
+      "id": "cake_idiom",
+      "korean": "그것은 식은 죽 먹기입니다.",
+      "manual_review_guide": "이 문장만 있으면 쉽다는 관용 표현으로 읽힐 수 있다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.02071354165673256
+    },
+    {
+      "category": "following context",
+      "english": "It is a piece of cake. Put it in the fridge before the frosting melts.",
+      "id": "cake_food",
+      "korean": "그것은 식은 죽 먹기입니다. 프로스팅이 녹기 전에 냉장고에 넣어 주세요.",
+      "manual_review_guide": "다음 문맥으로 실제 케이크 조각임이 드러난다. 식은 죽 먹기라고 확정하면 오역이다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.04441587500332389
+    },
+    {
+      "category": "terminology and relation",
+      "english": "The model's recall improved, but its precision dropped. The p-value is below 0.05; that doesn't prove causation.",
+      "id": "technical",
+      "korean": "모델의 리콜은 개선되었지만 정확도는 감소했습니다. P값이 0.05 이하이며, 이는 인과를 증명하지 않습니다.",
+      "manual_review_guide": "재현율 증가와 정밀도 감소를 구별한다. below는 미만이다. 유의성만으로 인과를 증명하지 않는다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.05782929166161921
+    },
+    {
+      "category": "names and currency",
+      "english": "Ask Dr. Lee whether we owe Acme twelve hundred euros or twelve thousand euros.",
+      "id": "currency_names",
+      "korean": "의사에게 물어보세요. Lee, 우리가 Acme에게 1,200유로를 빚지고 있는지 12,000유로를 빚지고 있는지.",
+      "manual_review_guide": "Lee와 Acme 고유명사, 1,200유로와 12,000유로를 보존해야 한다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.047513750003417954
+    },
+    {
+      "category": "condition and uncertainty",
+      "english": "If demand falls, we may cut production; we have not decided to close the factory.",
+      "id": "conditional",
+      "korean": "수요가 감소하면 생산을 축소할 수 있으며, 공장을 폐쇄하기로 결정하지 않았습니다.",
+      "manual_review_guide": "수요 감소를 조건으로 생산 감축 가능성이 있으며 공장 폐쇄를 결정한 것은 아니다.",
+      "requested_strategy": "lowLatency",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.03334862500196323
+    },
+    {
+      "category": "ambiguous word",
+      "english": "I saw her duck.",
+      "id": "duck_alone",
+      "korean": "저는 그녀의 오리를 보았습니다.",
+      "manual_review_guide": "문맥 없이는 그녀의 오리와 몸을 숙이는 동작 모두 가능하다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.07376062500406988
+    },
+    {
+      "category": "following context",
+      "english": "I saw her duck. It was swimming in the pond.",
+      "id": "duck_animal_context",
+      "korean": "저는 그녀의 오리를 보았습니다. 그것은 연못에서 헤엄치고 있었습니다.",
+      "manual_review_guide": "연못에서 헤엄치는 오리다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.08549479166686069
+    },
+    {
+      "category": "following context",
+      "english": "I saw her duck. She bent down to avoid the ball.",
+      "id": "duck_action_context",
+      "korean": "저는 그녀의 오리를 보았습니다. 그녀는 공을 피하기 위해 몸을 숙였습니다.",
+      "manual_review_guide": "앞 문장의 duck도 공을 피하려고 몸을 숙인 동작이어야 한다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.07147487500333227
+    },
+    {
+      "category": "negation",
+      "english": "We cannot approve this plan yet, but we don't rule out approving it next month.",
+      "id": "negation",
+      "korean": "우리는 아직 이 계획을 승인할 수 없지만, 다음 달에 승인할 가능성을 배제하지 않습니다.",
+      "manual_review_guide": "지금은 승인 불가지만 다음 달 승인 가능성은 열려 있다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.07207562500843778
+    },
+    {
+      "category": "negation",
+      "english": "I don't think he didn't know about it.",
+      "id": "double_negation",
+      "korean": "그가 그것에 대해 몰랐다고는 생각하지 않습니다.",
+      "manual_review_guide": "그가 몰랐다는 주장에 동의하지 않는다. 부정을 반대로 바꾸면 안 된다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.059873750011320226
+    },
+    {
+      "category": "numbers and units",
+      "english": "The budget is thirteen million dollars, not thirty million. We need a 0.5 percent increase, not five percent.",
+      "id": "numbers",
+      "korean": "예산은 1천3백만 달러이며, 3천만 달러가 아닙니다. 우리는 0.5% 인상이 필요합니다, 5%가 아니라.",
+      "manual_review_guide": "1,300만 달러와 3,000만 달러, 0.5%와 5%를 구별해야 한다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.08373429166385904
+    },
+    {
+      "category": "idiom",
+      "english": "We need to break the ice before getting the ball rolling. Let's not throw anyone under the bus.",
+      "id": "idiom",
+      "korean": "우리는 일을 시작하기 전에 어색함을 깨야 합니다. 누구도 희생시키지 맙시다.",
+      "manual_review_guide": "어색함을 풀고 일을 시작하자는 뜻이다. 다른 사람에게 책임을 떠넘기거나 희생시키지 말자는 뜻이다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.07957429166708607
+    },
+    {
+      "category": "unfinished source",
+      "english": "The proposal is not",
+      "id": "meaning_reversal_fragment",
+      "korean": "제안은 아닙니다",
+      "manual_review_guide": "미완성 원문이므로 단정적인 부정 번역을 확정해서는 안 된다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.05339579166320618
+    },
+    {
+      "category": "unfinished source continuation",
+      "english": "The proposal is not only cheaper but also safer.",
+      "id": "meaning_reversal_complete",
+      "korean": "그 제안은 더 저렴할 뿐만 아니라 더 안전합니다.",
+      "manual_review_guide": "제안은 더 저렴하고 더 안전하다. 앞부분의 부정 해석이 수정되어야 한다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.06114883333793841
+    },
+    {
+      "category": "speech context",
+      "english": "I used to think this was a good idea.",
+      "id": "continuation_first",
+      "korean": "저는 이것이 좋은 생각이라고 생각하곤 했습니다.",
+      "manual_review_guide": "예전에는 좋은 생각이라고 여겼다는 뜻이다. 지금도 그렇다고 단정하지 않는다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.05730987500282936
+    },
+    {
+      "category": "speech context",
+      "english": "I used to think this was a good idea. But after seeing the results, I changed my mind.",
+      "id": "continuation_both",
+      "korean": "저는 이것이 좋은 생각이라고 생각하곤 했습니다. 하지만 결과를 보고 나서 저는 생각을 바꾸었습니다.",
+      "manual_review_guide": "결과를 본 뒤 생각을 바꿨다. 현재도 좋은 생각이라고 여긴다는 뜻이 아니다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.07547004165826365
+    },
+    {
+      "category": "speaker correction",
+      "english": "The meeting is on Thursday, sorry, I mean Tuesday, at three fifteen.",
+      "id": "self_correction",
+      "korean": "회의는 목요일이며, 죄송합니다. 제 말은 화요일이며, 오후 3시 15분입니다.",
+      "manual_review_guide": "화자가 목요일을 화요일로 정정했다. 최종 요일은 화요일이며 오전·오후는 원문에 없다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.07133866666117683
+    },
+    {
+      "category": "idiom",
+      "english": "We should table this discussion until next week.",
+      "id": "table_discussion",
+      "korean": "우리는 이 논의를 다음 주까지 보류해야 합니다.",
+      "manual_review_guide": "다음 주까지 논의를 보류하자는 뜻이다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.05985304166097194
+    },
+    {
+      "category": "pronoun and idiom",
+      "english": "She said she couldn't make it.",
+      "id": "pronouns_alone",
+      "korean": "그녀는 참석할 수 없다고 말했습니다.",
+      "manual_review_guide": "make it은 물건을 만들 수 없다는 뜻이 아니라 참석할 수 없다는 뜻이다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.058156708342721686
+    },
+    {
+      "category": "pronoun and idiom",
+      "english": "Maya has a scheduling conflict. She said she couldn't make it.",
+      "id": "pronouns_context",
+      "korean": "마야는 일정 충돌이 있습니다. 그녀는 참석할 수 없다고 말했습니다.",
+      "manual_review_guide": "마야는 일정이 겹쳐 참석할 수 없다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.07067366666160524
+    },
+    {
+      "category": "ambiguous idiom",
+      "english": "It is a piece of cake.",
+      "id": "cake_idiom",
+      "korean": "그것은 식은 죽 먹기입니다.",
+      "manual_review_guide": "이 문장만 있으면 쉽다는 관용 표현으로 읽힐 수 있다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.05551495833788067
+    },
+    {
+      "category": "following context",
+      "english": "It is a piece of cake. Put it in the fridge before the frosting melts.",
+      "id": "cake_food",
+      "korean": "그것은 식은 죽 먹기입니다. 프로스팅이 녹기 전에 냉장고에 넣어 주세요.",
+      "manual_review_guide": "다음 문맥으로 실제 케이크 조각임이 드러난다. 식은 죽 먹기라고 확정하면 오역이다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.08201808333978988
+    },
+    {
+      "category": "terminology and relation",
+      "english": "The model's recall improved, but its precision dropped. The p-value is below 0.05; that doesn't prove causation.",
+      "id": "technical",
+      "korean": "모델의 리콜은 개선되었지만 정확도는 감소했습니다. P값이 0.05 이하이며, 이는 인과를 증명하지 않습니다.",
+      "manual_review_guide": "재현율 증가와 정밀도 감소를 구별한다. below는 미만이다. 유의성만으로 인과를 증명하지 않는다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.0884045833372511
+    },
+    {
+      "category": "names and currency",
+      "english": "Ask Dr. Lee whether we owe Acme twelve hundred euros or twelve thousand euros.",
+      "id": "currency_names",
+      "korean": "의사에게 물어보세요. Lee, 우리가 Acme에게 1,200유로를 빚지고 있는지 12,000유로를 빚지고 있는지.",
+      "manual_review_guide": "Lee와 Acme 고유명사, 1,200유로와 12,000유로를 보존해야 한다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.08335720833565574
+    },
+    {
+      "category": "condition and uncertainty",
+      "english": "If demand falls, we may cut production; we have not decided to close the factory.",
+      "id": "conditional",
+      "korean": "수요가 감소하면 생산을 축소할 수 있으며, 공장을 폐쇄하기로 결정하지 않았습니다.",
+      "manual_review_guide": "수요 감소를 조건으로 생산 감축 가능성이 있으며 공장 폐쇄를 결정한 것은 아니다.",
+      "requested_strategy": "highFidelity",
+      "status": "manual_review_required",
+      "text_translation_seconds": 0.06942733333562501
+    }
+  ],
+  "limitations": [
+    "No microphone, ASR, live latency, or offline-network isolation was tested.",
+    "Requested highFidelity can fall back to traditional models; this report does not identify the actual engine.",
+    "Split and joined text pairs deliberately expose missing context; nonempty output is not proof of accuracy."
+  ],
+  "mode": "local adversarial text translation corpus; semantic quality requires human review",
+  "operating_system": "Version 26.7.1 (Build 25G241)",
+  "recorded_at": "2026-10-04T08:25:55Z",
+  "unavailable_strategies": []
+}
