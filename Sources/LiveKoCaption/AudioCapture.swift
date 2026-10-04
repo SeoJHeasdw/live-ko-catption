@@ -13,6 +13,12 @@ struct AudioInputDevice: Identifiable, Equatable, Sendable {
     let uid: String
     let name: String
 
+    /// HAL property reads can wait for an audio driver. Never enumerate on the
+    /// UI actor, and admit only one hardware operation/session at a time.
+    static func available() async throws -> [AudioInputDevice] {
+        try await AudioHardwarePermit.perform(operation: "오디오 장치 확인") { try all() }
+    }
+
     static func all() throws -> [AudioInputDevice] {
         var address = AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDevices,
                                                 mScope: kAudioObjectPropertyScopeGlobal,
@@ -61,6 +67,95 @@ enum CaptionError: LocalizedError {
     }
 }
 
+/// A stuck HAL call retains its permit until it actually returns. Retrying
+/// therefore cannot create an unbounded collection of blocked control workers.
+final class AudioHardwarePermit: @unchecked Sendable {
+    private static let admissionLock = NSLock()
+    nonisolated(unsafe) private static var occupied = false
+    private static let controlQueue = DispatchQueue(label: "io.javis.live-ko-caption.hardware-control", qos: .userInitiated)
+    private let releaseLock = NSLock()
+    private var released = false
+    var queue: DispatchQueue { Self.controlQueue }
+
+    static func claim() throws -> AudioHardwarePermit {
+        try admissionLock.withLock {
+            guard !occupied else {
+                throw CaptionError.message("이전 오디오 입력을 정리하거나 장치를 확인하는 중입니다. 잠시 뒤 다시 시작해 주세요.")
+            }
+            occupied = true
+            return AudioHardwarePermit()
+        }
+    }
+
+    static func perform<Value: Sendable>(seconds: Double = 3, operation: String,
+        work: @escaping @Sendable () throws -> Value) async throws -> Value {
+        let permit = try claim()
+        let ticket = AudioControlTicket<Value>()
+        permit.queue.async {
+            let result: Result<Value, any Error>
+            do { result = .success(try work()) }
+            catch { result = .failure(error) }
+            // A resumed caller may immediately start capture after enumeration.
+            // Publish completion only after its temporary permit is available.
+            permit.release()
+            ticket.complete(result)
+        }
+        return try await ticket.value(seconds: seconds, operation: operation)
+    }
+
+    func release() {
+        let release = releaseLock.withLock {
+            guard !released else { return false }
+            released = true
+            return true
+        }
+        if release { Self.admissionLock.withLock { Self.occupied = false } }
+    }
+}
+
+/// Races a synchronous driver's eventual result without waiting for that driver
+/// to honor task cancellation. Its caller keeps hardware resources/permits alive.
+final class AudioControlTicket<Value: Sendable>: @unchecked Sendable {
+    private let lock = NSLock()
+    private var outcome: Result<Value, any Error>?
+    private var continuation: CheckedContinuation<Value, any Error>?
+
+    @discardableResult
+    func complete(_ result: Result<Value, any Error>) -> Bool {
+        let completion = lock.withLock { () -> (Bool, CheckedContinuation<Value, any Error>?) in
+            guard outcome == nil else { return (false, nil) }
+            outcome = result
+            let done = continuation
+            continuation = nil
+            return (true, done)
+        }
+        completion.1?.resume(with: result)
+        return completion.0
+    }
+
+    func value(seconds: Double, operation: String,
+               onAbandon: @escaping @Sendable () -> Void = {}) async throws -> Value {
+        let timer = Task.detached { [self] in
+            do { try await Task.sleep(for: .seconds(seconds)) } catch { return }
+            if complete(.failure(CaptionError.message("\(operation) 응답 시간이 초과됐습니다."))) { onAbandon() }
+        }
+        defer { timer.cancel() }
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { done in
+                let ready = lock.withLock { () -> Result<Value, any Error>? in
+                    if let outcome { return outcome }
+                    precondition(continuation == nil, "A control ticket has only one waiter")
+                    continuation = done
+                    return nil
+                }
+                if let ready { done.resume(with: ready) }
+            }
+        } onCancel: { [self] in
+            if complete(.failure(CancellationError())) { onAbandon() }
+        }
+    }
+}
+
 /// Owns buffers copied out of the audio tap. Conversion runs on one bounded queue,
 /// rather than performing recognition or translation on the audio callback.
 final class AudioPump: @unchecked Sendable {
@@ -80,6 +175,7 @@ final class AudioPump: @unchecked Sendable {
     static let runningInputWait: TimeInterval = 20
     private let startedAtUptime: TimeInterval
     private var lastInputUptime: TimeInterval
+    private var acceptedInputFrames: Int64 = 0
     private var lastAudibleUptime: TimeInterval = 0
     private var finished = false
     private var closingScheduled = false
@@ -91,7 +187,6 @@ final class AudioPump: @unchecked Sendable {
     private let converter: AVAudioConverter
     private let sourceFormat: AVAudioFormat
     private let sourceBatch: AVAudioPCMBuffer
-    private let silentBatch: AVAudioPCMBuffer
     private let maximumPendingInputFrames: Int64
     private let target: AVAudioFormat
     private let continuation: AsyncStream<AnalyzerInput>.Continuation
@@ -100,6 +195,12 @@ final class AudioPump: @unchecked Sendable {
     private let copyBuffer: @Sendable (AVAudioPCMBuffer) -> AVAudioPCMBuffer?
     private var nextFrame: Int64 = 0
     private var lastMeterTime: TimeInterval = 0
+    private var nextInputSequence = 0
+    // Only the conversion queue accesses completed copies. Reservations stay
+    // pending until consumed, so a slow earlier copy cannot grow this map.
+    private enum CopiedInput: @unchecked Sendable { case buffer(AVAudioPCMBuffer, Int64), skipped(Int64) }
+    private var completedCopies: [Int: CopiedInput] = [:]
+    private var nextCopyToConsume = 0
 
     init(source: AVAudioFormat, target: AVAudioFormat,
          continuation: AsyncStream<AnalyzerInput>.Continuation,
@@ -114,13 +215,6 @@ final class AudioPump: @unchecked Sendable {
         guard let sourceBatch = AVAudioPCMBuffer(pcmFormat: source, frameCapacity: batchFrames) else {
             throw CaptionError.message("마이크 입력을 모을 메모리가 부족합니다.")
         }
-        guard let silentBatch = AVAudioPCMBuffer(pcmFormat: source, frameCapacity: batchFrames) else {
-            throw CaptionError.message("입력을 모을 메모리가 부족합니다.")
-        }
-        silentBatch.frameLength = batchFrames
-        for plane in UnsafeMutableAudioBufferListPointer(silentBatch.mutableAudioBufferList) {
-            if let data = plane.mData { memset(data, 0, Int(plane.mDataByteSize)) }
-        }
         // The converter defaults to remapping, which selects only channel 0
         // for mono output. A stereo receiver carrying the speaker on its right
         // channel must remain audible to recognition.
@@ -128,7 +222,6 @@ final class AudioPump: @unchecked Sendable {
         self.converter = converter
         self.sourceFormat = source
         self.sourceBatch = sourceBatch
-        self.silentBatch = silentBatch
         self.maximumPendingInputFrames = Int64(source.sampleRate / 2)
         self.target = target
         self.continuation = continuation
@@ -170,8 +263,32 @@ final class AudioPump: @unchecked Sendable {
     /// silence per idle chunk interval keeps recognition time moving, so a
     /// last sentence can finalize and a quiet source is not a stalled device.
     func enqueueSilenceIfIdle(at uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) {
-        guard lock.withLock({ !finished && uptime - lastInputUptime >= Self.analyzerChunkDuration }) else { return }
-        enqueue(silentBatch, at: uptime)
+        lock.lock()
+        guard !finished, uptime - lastInputUptime >= Self.analyzerChunkDuration else { lock.unlock(); return }
+        // Fill elapsed time, including early/late timer ticks, rather than
+        // emitting one fixed chunk and resetting a 100 ms threshold each tick.
+        let elapsedFrames = floor(max(0, uptime - startedAtUptime) * sourceFormat.sampleRate + 0.000001)
+        let owed = max(0, elapsedFrames - Double(acceptedInputFrames))
+        let frameCount = Int64(min(owed, Double(maximumPendingInputFrames)))
+        guard frameCount > 0 else { lock.unlock(); return }
+        guard let sequence = reserveInput(frameCount: frameCount) else {
+            lock.unlock()
+            reportProblem("음성 처리가 밀려 일부 입력이 누락됐습니다. 잠시 멈춘 뒤 다시 시작해 주세요.")
+            return
+        }
+        lock.unlock()
+        guard let silence = AVAudioPCMBuffer(pcmFormat: sourceFormat, frameCapacity: AVAudioFrameCount(frameCount)) else {
+            submitCopy(.skipped(frameCount), sequence: sequence)
+            lock.withLock { droppedBuffers += 1 }
+            reportProblem("입력을 모을 메모리가 부족합니다.")
+            return
+        }
+        silence.frameLength = AVAudioFrameCount(frameCount)
+        for plane in UnsafeMutableAudioBufferListPointer(silence.mutableAudioBufferList) {
+            if let data = plane.mData { memset(data, 0, Int(plane.mDataByteSize)) }
+        }
+        // The timer owns this buffer already; there is no callback storage to copy.
+        submitCopy(.buffer(silence, frameCount), sequence: sequence)
     }
 
     // Like the tap block, this handler runs on a foreign queue. Building it in
@@ -188,35 +305,57 @@ final class AudioPump: @unchecked Sendable {
         guard original.frameLength > 0 else { return }
         lock.lock()
         if finished { lock.unlock(); return }
-        // Silence is healthy input. Only missing nonempty tap buffers indicate
-        // a stalled device; the watchdog never depends on speech or loudness.
+        // This clock counts real hardware callbacks, including digital silence.
+        // Synthesized idle silence must not claim that a device delivered input.
         lastInputUptime = uptime
         let frameCount = Int64(original.frameLength)
+        guard let sequence = reserveInput(frameCount: frameCount) else {
+            lock.unlock()
+            reportProblem("음성 처리가 밀려 일부 입력이 누락됐습니다. 잠시 멈춘 뒤 다시 시작해 주세요.")
+            return
+        }
+        receivedInput = true
+        lock.unlock()
+
+        guard original.format.isEqual(sourceFormat), let copy = copyBuffer(original) else {
+            lock.withLock { droppedBuffers += 1 }
+            submitCopy(.skipped(frameCount), sequence: sequence)
+            reportProblem("마이크 입력을 읽을 수 없습니다. 입력 장치의 연결과 음성 형식을 확인해 주세요.")
+            return
+        }
+        submitCopy(.buffer(copy, frameCount), sequence: sequence)
+    }
+
+    /// Called while holding lock, before a producer starts copying its buffer.
+    private func reserveInput(frameCount: Int64) -> Int? {
         // Tap sizes can differ from the requested 1024 frames. Bound queued
         // audio by duration as well as count so a slow device does not create
         // several seconds of stale captions before overflow is noticed.
         guard pending < 32,
               pendingInputFrames + frameCount <= maximumPendingInputFrames else {
             droppedBuffers += 1
-            lock.unlock()
-            reportProblem("음성 처리가 밀려 일부 입력이 누락됐습니다. 잠시 멈춘 뒤 다시 시작해 주세요.")
-            return
+            return nil
         }
         pending += 1
         pendingInputFrames += frameCount
-        receivedInput = true
-        lock.unlock()
+        acceptedInputFrames += frameCount
+        let sequence = nextInputSequence
+        nextInputSequence += 1
+        return sequence
+    }
 
-        guard original.format.isEqual(sourceFormat), let copy = copyBuffer(original) else {
-            lock.withLock { droppedBuffers += 1 }
-            decrementPending(frameCount: frameCount)
-            reportProblem("마이크 입력을 읽을 수 없습니다. 입력 장치의 연결과 음성 형식을 확인해 주세요.")
-            return
-        }
-
-        queue.async { [self, copy] in
-            defer { decrementPending(frameCount: frameCount) }
-            consume(copy)
+    private func submitCopy(_ input: CopiedInput, sequence: Int) {
+        queue.async { [self] in
+            completedCopies[sequence] = input
+            while let next = completedCopies.removeValue(forKey: nextCopyToConsume) {
+                nextCopyToConsume += 1
+                switch next {
+                case .buffer(let copy, let frames):
+                    consume(copy)
+                    decrementPending(frameCount: frames)
+                case .skipped(let frames): decrementPending(frameCount: frames)
+                }
+            }
         }
     }
 
@@ -411,52 +550,159 @@ enum AudioCallbackBridge {
     }
 }
 
+private final class AudioHardwareSession: @unchecked Sendable {
+    struct Prepared: @unchecked Sendable {
+        let stream: AsyncStream<AnalyzerInput>
+        let pump: AudioPump
+        let deviceID: AudioDeviceID
+        let format: AVAudioFormat
+    }
+    private let permit: AudioHardwarePermit
+    private let cancellationLock = NSLock()
+    private var stopRequested = false
+    private var startupTicket: AudioControlTicket<Prepared>?
+    // The control queue exclusively owns these resources.
+    private var source: AudioDeviceCapture?
+    private var tap: SystemAudioTap?
+    private var pump: AudioPump?
+    private var cleaned = false
+    private let stopped = AudioControlTicket<Void>()
+
+    init() throws { permit = try AudioHardwarePermit.claim() }
+
+    private func checkRunning() throws {
+        if cancellationLock.withLock({ stopRequested }) { throw CancellationError() }
+    }
+
+    func prepare(deviceID: AudioDeviceID?, systemAudio: SystemAudioTap.Configuration?, target: AVAudioFormat,
+                 onLevel: @escaping @Sendable (Double) -> Void,
+                 onProblem: @escaping @Sendable (String) -> Void,
+                 seconds: Double, beforeHardwarePrepare: (@Sendable () -> Void)?) async throws -> Prepared {
+        let ticket = AudioControlTicket<Prepared>()
+        cancellationLock.withLock { startupTicket = ticket }
+        defer { cancellationLock.withLock { startupTicket = nil } }
+        permit.queue.async { [self] in
+            do {
+                try checkRunning()
+                beforeHardwarePrepare?()
+                try checkRunning()
+                if let systemAudio { tap = try SystemAudioTap(configuration: systemAudio) }
+                try checkRunning()
+                let device = try AudioDeviceCapture(deviceID: tap?.deviceID ?? deviceID)
+                source = device
+                try checkRunning()
+                let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream(
+                    bufferingPolicy: .bufferingNewest(AudioPump.analyzerBufferLimit))
+                let audioPump = try AudioPump(source: device.format, target: target,
+                    continuation: continuation, onLevel: onLevel, onProblem: onProblem)
+                pump = audioPump
+                try device.start(pump: audioPump, onProblem: onProblem)
+                try checkRunning()
+                if !ticket.complete(.success(Prepared(stream: stream, pump: audioPump,
+                                                      deviceID: device.deviceID, format: device.format))) {
+                    requestStop()
+                }
+            } catch {
+                ticket.complete(.failure(error))
+                cleanup()
+            }
+        }
+        return try await ticket.value(seconds: seconds, operation: "오디오 입력 시작", onAbandon: { [self] in requestStop() })
+    }
+
+    func configurationProblem() async throws -> String? {
+        let ticket = AudioControlTicket<String?>()
+        permit.queue.async { [self] in
+            do {
+                try checkRunning()
+                ticket.complete(.success(source?.configurationProblem()))
+            } catch { ticket.complete(.failure(error)) }
+        }
+        return try await ticket.value(seconds: 3, operation: "오디오 입력 상태 확인", onAbandon: { [self] in requestStop() })
+    }
+
+    func requestStop() {
+        let request = cancellationLock.withLock { () -> (Bool, AudioControlTicket<Prepared>?) in
+            guard !stopRequested else { return (false, nil) }
+            stopRequested = true
+            let ticket = startupTicket
+            startupTicket = nil
+            return (true, ticket)
+        }
+        request.1?.complete(.failure(CancellationError()))
+        if request.0 { permit.queue.async { [self] in cleanup() } }
+    }
+
+    func stop() async {
+        requestStop()
+        // Hardware teardown may still be waiting after this returns. The permit
+        // stays held, and cleanup completes automatically when the driver returns.
+        _ = try? await stopped.value(seconds: 0.8, operation: "오디오 입력 정지")
+    }
+
+    private func cleanup() {
+        guard !cleaned else { return }
+        cleaned = true
+        source?.stop()
+        source = nil
+        tap?.destroy()
+        tap = nil
+        let closingPump = pump
+        pump = nil
+        permit.release()
+        Task.detached { [stopped] in
+            await closingPump?.finish()
+            stopped.complete(.success(()))
+        }
+    }
+}
+
 @MainActor
 final class AudioCapture {
     private static let logger = Logger(subsystem: "io.javis.live-ko-caption", category: "audio")
-    private let stopQueue = DispatchQueue(label: "io.javis.live-ko-caption.device-stop")
-    private var deviceCapture: AudioDeviceCapture?
+    private var hardwareSession: AudioHardwareSession?
     private var pump: AudioPump?
-    private var systemAudio: SystemAudioTap?
     private var silenceTimer: DispatchSourceTimer?
     private var watchdogTask: Task<Void, Never>?
+    private(set) var deviceID: AudioDeviceID?
+    private let hardwareStartDeadline: Double
+    private let beforeHardwarePrepare: (@Sendable () -> Void)?
 
-    /// A system audio tap replaces the microphone device for this run. This
-    /// capture owns the tap and destroys it after the unit has stopped.
-    func start(deviceID: AudioDeviceID?, systemAudio tap: SystemAudioTap? = nil, target: AVAudioFormat,
+    /// Checks inject a blocked control call before any microphone/tap is opened.
+    init(hardwareStartDeadline: Double = 8, beforeHardwarePrepare: (@Sendable () -> Void)? = nil) {
+        self.hardwareStartDeadline = hardwareStartDeadline
+        self.beforeHardwarePrepare = beforeHardwarePrepare
+    }
+
+    deinit { hardwareSession?.requestStop() }
+
+    /// Only option values cross the UI actor. HAL creation, startup, health
+    /// queries and destruction all run on the admitted hardware control queue.
+    func start(deviceID: AudioDeviceID?, systemAudio: SystemAudioTap.Configuration? = nil, target: AVAudioFormat,
                onLevel: @escaping @Sendable (Double) -> Void,
                onProblem: @escaping @Sendable (String) -> Void,
-               onSourceActivity: (@MainActor @Sendable (Bool) -> Void)? = nil) throws -> AsyncStream<AnalyzerInput> {
-        guard deviceCapture == nil, pump == nil else {
-            tap?.destroy()
+               onSourceActivity: (@MainActor @Sendable (Bool) -> Void)? = nil) async throws -> AsyncStream<AnalyzerInput> {
+        guard hardwareSession == nil, pump == nil else {
             throw CaptionError.message("입력이 이미 실행 중입니다. 잠시 멈춘 뒤 다시 시작해 주세요.")
         }
-        // A dedicated input-only AudioUnit keeps the selected input independent
-        // of AVAudioEngine's default input/output aggregate-device rebuilding.
-        let source: AudioDeviceCapture
-        do { source = try AudioDeviceCapture(deviceID: tap?.deviceID ?? deviceID) }
-        catch { tap?.destroy(); throw error }
-        let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream(
-            bufferingPolicy: .bufferingNewest(AudioPump.analyzerBufferLimit))
-        let audioPump: AudioPump
+        let session = try AudioHardwareSession()
+        hardwareSession = session
+        let prepared: AudioHardwareSession.Prepared
         do {
-            audioPump = try AudioPump(source: source.format, target: target,
-                continuation: continuation, onLevel: onLevel, onProblem: onProblem)
-        } catch { source.stop(); tap?.destroy(); continuation.finish(); throw error }
-        deviceCapture = source
-        pump = audioPump
-        systemAudio = tap
-        do { try source.start(pump: audioPump, onProblem: onProblem) }
-        catch {
-            deviceCapture = nil
-            pump = nil
-            systemAudio = nil
-            source.stop()
-            tap?.destroy()
-            continuation.finish()
+            prepared = try await session.prepare(deviceID: deviceID, systemAudio: systemAudio,
+                target: target, onLevel: onLevel, onProblem: onProblem,
+                seconds: hardwareStartDeadline, beforeHardwarePrepare: beforeHardwarePrepare)
+            try Task.checkCancellation()
+            guard hardwareSession === session else { throw CancellationError() }
+        } catch {
+            session.requestStop()
+            if hardwareSession === session { hardwareSession = nil }
             throw error
         }
-        if tap != nil {
+        let audioPump = prepared.pump
+        pump = audioPump
+        self.deviceID = prepared.deviceID
+        if systemAudio != nil {
             let timer = audioPump.makeSilenceTimer()
             timer.resume()
             silenceTimer = timer
@@ -466,7 +712,7 @@ final class AudioCapture {
             var sourceWasActive: Bool?
             while !Task.isCancelled {
                 do { try await Task.sleep(for: .milliseconds(500)) } catch { return }
-                guard !Task.isCancelled, let self, self.deviceCapture === source,
+                guard !Task.isCancelled, let self, self.hardwareSession === session,
                       self.pump === audioPump else { return }
                 let sourceIsActive = audioPump.hasAudibleInput(within: 1.5)
                 if sourceIsActive != sourceWasActive {
@@ -475,42 +721,42 @@ final class AudioCapture {
                 }
                 if audioPump.hasReceivedInput && !reportedFirstInput {
                     reportedFirstInput = true
-                    Self.logger.notice("Selected microphone receiving input: device=\(source.deviceID), convertedBuffers=\(audioPump.bufferCount)")
+                    Self.logger.notice("Selected input receiving real hardware buffers: device=\(prepared.deviceID), convertedBuffers=\(audioPump.bufferCount)")
                 }
-                if let problem = source.configurationProblem() {
-                    Self.logger.error("Selected microphone configuration changed: \(problem)")
-                    onProblem(problem)
+                do {
+                    let problem = try await session.configurationProblem()
+                    guard !Task.isCancelled, self.hardwareSession === session else { return }
+                    if let problem {
+                        Self.logger.error("Selected input configuration changed: \(problem)")
+                        onProblem(problem)
+                        return
+                    }
+                } catch is CancellationError { return }
+                catch {
+                    guard !Task.isCancelled, self.hardwareSession === session else { return }
+                    onProblem(error.localizedDescription)
                     return
                 }
-                guard audioPump.hasStalledInput() else { continue }
-                Self.logger.error("Selected microphone has not delivered buffers for over twenty seconds; running=\(source.isRunning)")
+                // A system tap normally has no callbacks during idle playback.
+                // Its hardware running/alive state is checked separately above.
+                guard systemAudio == nil, audioPump.hasStalledInput() else { continue }
                 onProblem(audioPump.hasReceivedInput
                     ? "마이크의 오디오 입력이 20초 이상 중단됐습니다. 입력 장치를 확인한 뒤 다시 시작해 주세요."
                     : "마이크 입력을 20초 동안 기다렸지만 연결되지 않았습니다. 입력 장치를 확인한 뒤 다시 시작해 주세요.")
                 return
             }
         }
-        Self.logger.notice("Selected microphone started: device=\(source.deviceID), rate=\(source.format.sampleRate), channels=\(source.format.channelCount), target=\(target.sampleRate)")
-        return stream
+        Self.logger.notice("Selected input started: device=\(prepared.deviceID), rate=\(prepared.format.sampleRate), channels=\(prepared.format.channelCount), target=\(target.sampleRate)")
+        return prepared.stream
     }
 
     func stop() async {
         watchdogTask?.cancel(); watchdogTask = nil
-        let closingSource = deviceCapture
-        let closingPump = pump
-        let closingTap = systemAudio
-        deviceCapture = nil; pump = nil; systemAudio = nil
         silenceTimer?.cancel(); silenceTimer = nil
-        // Hardware stop can wait for its callback. Keep it off the UI actor so
-        // input failure cannot freeze the Start button or the stop deadline.
-        await withCheckedContinuation { done in
-            stopQueue.async {
-                closingSource?.stop()
-                closingTap?.destroy()
-                done.resume()
-            }
-        }
-        await closingPump?.finish()
-        Self.logger.notice("Microphone stopped: convertedBuffers=\(closingPump?.bufferCount ?? 0), droppedBuffers=\(closingPump?.droppedBufferCount ?? 0)")
+        let closingSession = hardwareSession
+        let closingPump = pump
+        hardwareSession = nil; pump = nil; deviceID = nil
+        await closingSession?.stop()
+        Self.logger.notice("Input stop requested: convertedBuffers=\(closingPump?.bufferCount ?? 0), droppedBuffers=\(closingPump?.droppedBufferCount ?? 0)")
     }
 }

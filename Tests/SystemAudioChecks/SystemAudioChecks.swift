@@ -50,18 +50,17 @@ struct SystemAudioChecks {
         // The audio process object exists once the player has opened an output.
         var processObject = AudioObjectID(kAudioObjectUnknown)
         for _ in 0..<100 where processObject == kAudioObjectUnknown {
-            if let found = try? SystemAudioTap.processObject(forPID: player.processIdentifier) { processObject = found }
+            if let found = try? await SystemAudioTap.processObject(forPID: player.processIdentifier) { processObject = found }
             else { try await Task.sleep(for: .milliseconds(20)) }
         }
         guard processObject != kAudioObjectUnknown else { throw CaptionError.message("The fixture player never opened audio output.") }
-        let tap = try SystemAudioTap(onlyProcesses: [processObject], muteBehavior: .mutedWhenTapped)
-        let tapDevice = tap.deviceID
-
         let capture = AudioCapture()
-        let stream = try capture.start(deviceID: nil, systemAudio: tap, target: target,
+        let stream = try await capture.start(deviceID: nil,
+            systemAudio: .init(onlyProcesses: [processObject], muteBehavior: .mutedWhenTapped), target: target,
             onLevel: { _ in },
             onProblem: { problem in Task { @MainActor in problems.append(problem) } },
             onSourceActivity: { activity.append($0) })
+        guard let tapDevice = capture.deviceID else { throw CaptionError.message("The tap device was not published after startup.") }
         let results = Task { @MainActor in
             for try await result in transcriber.results where result.isFinal {
                 finals.append((String(result.text.characters), ProcessInfo.processInfo.systemUptime))
@@ -95,11 +94,7 @@ struct SystemAudioChecks {
         expect(activity.first == true && activity.last == false,
             "Source activity reported playing, then quiet after playback ended: \(activity)")
         expect(problems.isEmpty, "A quiet source reported no input problem: \(problems)")
-        var alive: UInt32 = 0
-        var size = UInt32(MemoryLayout<UInt32>.size)
-        var address = AudioObjectPropertyAddress(mSelector: kAudioDevicePropertyDeviceIsAlive,
-            mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMain)
-        let status = AudioObjectGetPropertyData(tapDevice, &address, 0, nil, &size, &alive)
-        expect(status != noErr || alive == 0, "Stopping removed the private tap device")
+        let stillAlive = try await SystemAudioTap.deviceIsAlive(tapDevice)
+        expect(!stillAlive, "Stopping removed the private tap device")
     }
 }

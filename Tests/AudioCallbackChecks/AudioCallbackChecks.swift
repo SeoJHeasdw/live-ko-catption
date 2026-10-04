@@ -55,7 +55,15 @@ struct AudioCallbackChecks {
             try await checkCopyFailure()
             try await checkInputHeartbeat()
             try await checkSmallHardwareBuffers()
-            print("10 audio callback checks passed.")
+            try await checkIdleSilenceTime()
+            try await checkPlaybackIdleBoundaries()
+            try await checkConcurrentInputOrder()
+            try await checkHardwareDeadlineAdmission()
+            try await checkHardwareCancellationAdmission()
+            try await checkCaptureStartupDeadline()
+            try await checkCaptureStartupStop()
+            try await checkHardwarePermitHandoff()
+            print("18 audio callback and hardware control checks passed.")
             if CommandLine.arguments.dropFirst().first == "--conversion-soak" {
                 try await checkConversionSoak()
             } else if CommandLine.arguments.count == 2 {
@@ -345,6 +353,239 @@ struct AudioCallbackChecks {
             throw Failure("Hardware-sized callbacks lost audio during bounded analyzer pause: frames=\(frames), buffers=\(buffers), dropped=\(pump.droppedBufferCount), errors=\(state.errors)")
         }
         print("PASS: 56 small hardware callbacks retain ~0.6 s input as \(buffers) analyzer buffers, with exact final tail")
+    }
+
+    private static func checkIdleSilenceTime() async throws {
+        let source = AVAudioFormat(standardFormatWithSampleRate: 48000, channels: 1)!
+        let target = AVAudioFormat(commonFormat: .pcmFormatInt16, sampleRate: 16000, channels: 1, interleaved: false)!
+        let state = CallbackState()
+        let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
+        let pump = try AudioPump(source: source, target: target, continuation: continuation,
+            onLevel: { _ in }, onProblem: { state.report($0) }, startedAtUptime: 100)
+        let reader = Task.detached { () -> Int64 in
+            var frames: Int64 = 0
+            for await input in stream { frames += Int64(input.buffer.frameLength) }
+            return frames
+        }
+        for tick in 1...100 {
+            // A one-microsecond alternation previously discarded every other
+            // timer tick and converted ten seconds of silence into five.
+            let jitter = tick.isMultiple(of: 2) ? 0.0 : 0.000001
+            pump.enqueueSilenceIfIdle(at: 100 + Double(tick) * 0.1 + jitter)
+            try await Task.sleep(for: .milliseconds(1))
+        }
+        guard !pump.hasReceivedInput, pump.hasStalledInput(at: 121) else {
+            throw Failure("Synthesized silence pretended a real device delivered buffers")
+        }
+        await pump.finish()
+        let frames = await reader.value
+        guard frames == 160_000, pump.droppedBufferCount == 0, state.errors.isEmpty else {
+            throw Failure("Idle timer jitter lost elapsed audio time: frames=\(frames), errors=\(state.errors)")
+        }
+        print("PASS: 100 jittered idle ticks retain ten seconds and never refresh the real hardware heartbeat")
+    }
+
+    private static func checkConcurrentInputOrder() async throws {
+        let format = AVAudioFormat(commonFormat: .pcmFormatInt16, sampleRate: 16000, channels: 1, interleaved: false)!
+        let first = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 1600)!
+        let second = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 1600)!
+        first.frameLength = 1600; second.frameLength = 1600
+        for frame in 0..<1600 {
+            first.int16ChannelData![0][frame] = 1000
+            second.int16ChannelData![0][frame] = -1000
+        }
+        let gate = CallbackGate()
+        defer { gate.release.signal() }
+        let state = CallbackState()
+        let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
+        let pump = try AudioPump(source: format, target: format, continuation: continuation,
+            onLevel: { _ in }, onProblem: { state.report($0) },
+            copyBuffer: { input in gate.blockOnce(); return AudioPump.copy(input) }, startedAtUptime: 100)
+        let earlier = Task.detached { pump.enqueue(first, at: 100.1) }
+        guard await waitForGate(gate) else { throw Failure("Earlier audio copy never reached its gate") }
+        // The real callback and system-idle timer are separate producers.
+        pump.enqueueSilenceIfIdle(at: 100.2)
+        pump.enqueue(second, at: 100.3)
+        gate.release.signal()
+        await earlier.value
+        await pump.finish()
+        var order: [Int16] = []
+        for await input in stream { order.append(input.buffer.int16ChannelData![0][0]) }
+        guard order == [1000, 0, -1000], pump.droppedBufferCount == 0, state.errors.isEmpty else {
+            throw Failure("Concurrent copying reordered real and synthetic input: \(order)")
+        }
+        print("PASS: a delayed earlier copy keeps real, synthetic silence, and following real audio in order")
+    }
+
+    private static func checkPlaybackIdleBoundaries() async throws {
+        let (format, buffer) = try fixture()
+        buffer.frameLength = 512
+        let state = CallbackState()
+        let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
+        let pump = try AudioPump(source: format, target: format, continuation: continuation,
+            onLevel: { _ in }, onProblem: { state.report($0) }, startedAtUptime: 100)
+        let reader = Task.detached { () -> (Int, Int) in
+            var frames = 0
+            var audibleFrames = 0
+            for await input in stream {
+                frames += Int(input.buffer.frameLength)
+                for frame in 0..<Int(input.buffer.frameLength) where input.buffer.floatChannelData![0][frame] != 0 {
+                    audibleFrames += 1
+                }
+            }
+            return (frames, audibleFrames)
+        }
+        pump.enqueueSilenceIfIdle(at: 100.1)
+        pump.enqueueSilenceIfIdle(at: 100.2)
+        // A real callback arriving just after an idle tick must be credited to
+        // the same frame clock, so the next gap does not count it a second time.
+        pump.enqueue(buffer, at: 100.205)
+        try await Task.sleep(for: .milliseconds(5))
+        pump.enqueueSilenceIfIdle(at: 100.305)
+        pump.enqueue(buffer, at: 100.31)
+        try await Task.sleep(for: .milliseconds(5))
+        pump.enqueueSilenceIfIdle(at: 100.411)
+        await pump.finish()
+        let (frames, audibleFrames) = await reader.value
+        guard frames == 6576, audibleFrames == 1024, pump.droppedBufferCount == 0, state.errors.isEmpty else {
+            throw Failure("Playback/idle transitions duplicated or lost time/speech: frames=\(frames), audible=\(audibleFrames)")
+        }
+        print("PASS: idle/playback boundaries keep exactly 411 ms of elapsed audio and preserve both real buffers")
+    }
+
+    private static func checkHardwareDeadlineAdmission() async throws {
+        let gate = CallbackGate()
+        defer { gate.release.signal() }
+        let state = CallbackState()
+        let permit = try AudioHardwarePermit.claim()
+        let ticket = AudioControlTicket<Int>()
+        permit.queue.async {
+            if Thread.isMainThread { state.report("Hardware control ran on the UI thread") }
+            gate.blockOnce()
+            ticket.complete(.success(42))
+            permit.release()
+            state.markFinished()
+        }
+        guard await waitForGate(gate) else { throw Failure("Blocked hardware fixture never started") }
+        let began = ProcessInfo.processInfo.systemUptime
+        do {
+            _ = try await ticket.value(seconds: 0.04, operation: "blocked driver")
+            throw Failure("A blocked driver escaped its deadline")
+        } catch is CaptionError { }
+        guard ProcessInfo.processInfo.systemUptime - began < 1 else { throw Failure("Blocked driver froze the UI deadline") }
+        for _ in 0..<10 {
+            do { let extra = try AudioHardwarePermit.claim(); extra.release(); throw Failure("A stuck driver admitted another worker") }
+            catch is CaptionError { }
+        }
+        gate.release.signal()
+        for _ in 0..<200 where !state.isFinished { try await Task.sleep(for: .milliseconds(5)) }
+        guard state.isFinished, state.errors.isEmpty else { throw Failure("Late hardware completion did not release its admission") }
+        let recovered = try AudioHardwarePermit.claim()
+        recovered.release()
+        print("PASS: blocked hardware waits off the UI thread, deadline returns, retries stay bounded, and late completion recovers")
+    }
+
+    private static func checkHardwareCancellationAdmission() async throws {
+        let gate = CallbackGate()
+        defer { gate.release.signal() }
+        let state = CallbackState()
+        let operation = Task {
+            try await AudioHardwarePermit.perform(seconds: 10, operation: "canceled driver") {
+                gate.blockOnce()
+                state.markFinished()
+                return 42
+            }
+        }
+        guard await waitForGate(gate) else { throw Failure("Canceled hardware fixture never started") }
+        let began = ProcessInfo.processInfo.systemUptime
+        operation.cancel()
+        do { _ = try await operation.value; throw Failure("Canceled driver returned success") }
+        catch is CancellationError { }
+        guard ProcessInfo.processInfo.systemUptime - began < 1 else { throw Failure("Cancellation waited for the driver") }
+        do { let extra = try AudioHardwarePermit.claim(); extra.release(); throw Failure("Canceling wait released a still-blocked driver") }
+        catch is CaptionError { }
+        gate.release.signal()
+        for _ in 0..<200 where !state.isFinished { try await Task.sleep(for: .milliseconds(5)) }
+        // perform releases immediately after the fixture returns; wait for that
+        // tiny interval without scheduling a second hardware job.
+        var recovered = false
+        for _ in 0..<200 where !recovered {
+            if let permit = try? AudioHardwarePermit.claim() { permit.release(); recovered = true }
+            else { try await Task.sleep(for: .milliseconds(5)) }
+        }
+        guard recovered else { throw Failure("Canceled driver's late completion kept admission occupied") }
+        print("PASS: cancellation returns before a stuck driver, and its permit stays held until actual completion")
+    }
+
+    private static func waitForHardwareRelease() async throws {
+        for _ in 0..<200 {
+            if let permit = try? AudioHardwarePermit.claim() { permit.release(); return }
+            try await Task.sleep(for: .milliseconds(5))
+        }
+        throw Failure("Late capture cleanup kept hardware admission occupied")
+    }
+
+    private static func checkCaptureStartupDeadline() async throws {
+        let (format, _) = try fixture()
+        let gate = CallbackGate()
+        defer { gate.release.signal() }
+        let state = CallbackState()
+        let capture = AudioCapture(hardwareStartDeadline: 0.04, beforeHardwarePrepare: {
+            if Thread.isMainThread { state.report("Capture preparation ran on the UI thread") }
+            gate.blockOnce()
+        })
+        let starting = Task { try await capture.start(deviceID: nil, target: format, onLevel: { _ in }, onProblem: { state.report($0) }) }
+        guard await waitForGate(gate) else { throw Failure("Capture startup did not enter its control worker") }
+        let began = ProcessInfo.processInfo.systemUptime
+        do { _ = try await starting.value; throw Failure("Blocked capture startup returned success") }
+        catch is CaptionError { }
+        guard ProcessInfo.processInfo.systemUptime - began < 1, capture.deviceID == nil, state.errors.isEmpty else {
+            throw Failure("Blocked startup failed to return safely before hardware preparation")
+        }
+        for _ in 0..<5 {
+            do {
+                _ = try await capture.start(deviceID: nil, target: format, onLevel: { _ in }, onProblem: { state.report($0) })
+                throw Failure("Timed-out capture admitted another hardware startup")
+            } catch is CaptionError { }
+        }
+        gate.release.signal()
+        try await waitForHardwareRelease()
+        await capture.stop()
+        print("PASS: production capture startup times out off the UI, rejects retries until late cleanup, and opens no microphone")
+    }
+
+    private static func checkCaptureStartupStop() async throws {
+        let (format, _) = try fixture()
+        let gate = CallbackGate()
+        defer { gate.release.signal() }
+        let state = CallbackState()
+        let capture = AudioCapture(beforeHardwarePrepare: { gate.blockOnce() })
+        let starting = Task { try await capture.start(deviceID: nil, target: format, onLevel: { _ in }, onProblem: { state.report($0) }) }
+        guard await waitForGate(gate) else { throw Failure("Capture stop fixture never entered startup") }
+        let began = ProcessInfo.processInfo.systemUptime
+        await capture.stop()
+        do { _ = try await starting.value; throw Failure("Stopped capture startup resurrected itself") }
+        catch is CancellationError { }
+        guard ProcessInfo.processInfo.systemUptime - began < 1.5, capture.deviceID == nil, state.errors.isEmpty else {
+            throw Failure("Stop waited for a blocked startup or published stale hardware")
+        }
+        do { let extra = try AudioHardwarePermit.claim(); extra.release(); throw Failure("Stop released blocked hardware admission early") }
+        catch is CaptionError { }
+        gate.release.signal()
+        try await waitForHardwareRelease()
+        print("PASS: stopping blocked startup cancels its waiter immediately, bounds stop to 0.8 s, and cleans late resources")
+    }
+
+    private static func checkHardwarePermitHandoff() async throws {
+        for _ in 0..<500 {
+            let value = try await AudioHardwarePermit.perform(operation: "device handoff fixture") { 42 }
+            guard value == 42 else { throw Failure("Control operation changed its result") }
+            // Enumeration completes immediately before capture claims a permit.
+            // Completion must never be published while the old permit is held.
+            let capturePermit = try AudioHardwarePermit.claim()
+            capturePermit.release()
+        }
+        print("PASS: 500 completed hardware reads hand their permit immediately to the next capture")
     }
 
     private static func checkConversionSoak() async throws {

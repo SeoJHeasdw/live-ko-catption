@@ -143,6 +143,13 @@ final class AudioDeviceCapture: @unchecked Sendable {
                       alive != 0 else {
                     return "선택한 마이크의 연결이 끊겼습니다. 다시 연결하거나 다른 입력 장치를 선택해 주세요."
                 }
+                var isRunning: UInt32 = 0
+                size = UInt32(MemoryLayout<UInt32>.size)
+                try Self.check(AudioUnitGetProperty(unit, kAudioOutputUnitProperty_IsRunning,
+                    kAudioUnitScope_Global, 0, &isRunning, &size), "오디오 입력 실행 상태를 확인할 수 없습니다")
+                guard isRunning != 0 else {
+                    return "오디오 입력이 중단됐습니다. 입력 장치를 확인한 뒤 다시 시작해 주세요."
+                }
                 try verifySelectedDevice()
                 let currentFormat = try Self.hardwareFormat(deviceID)
                 guard currentFormat.sampleRate == format.sampleRate,
@@ -254,6 +261,10 @@ final class AudioDeviceCapture: @unchecked Sendable {
 /// microphone, so recognition, queues and callbacks stay on one path. The tap
 /// neither changes the output route nor mutes or records anything to disk.
 final class SystemAudioTap: @unchecked Sendable {
+    struct Configuration: Sendable {
+        var onlyProcesses: [AudioObjectID] = []
+        var muteBehavior: CATapMuteBehavior = .unmuted
+    }
     let deviceID: AudioDeviceID
     private let tapID: AudioObjectID
     private let lock = NSLock()
@@ -261,14 +272,15 @@ final class SystemAudioTap: @unchecked Sendable {
 
     /// An empty process list taps everything the Mac plays. Checks pass one
     /// process and mute it while tapped, so a fixture is captured silently.
-    init(onlyProcesses processes: [AudioObjectID] = [], muteBehavior: CATapMuteBehavior = .unmuted) throws {
+    init(configuration: Configuration = .init()) throws {
+        let processes = configuration.onlyProcesses
         let description = processes.isEmpty
             ? CATapDescription(stereoGlobalTapButExcludeProcesses: [])
             : CATapDescription(stereoMixdownOfProcesses: processes)
         description.uuid = UUID()
         description.name = "Live Korean Captions"
         description.isPrivate = true
-        description.muteBehavior = muteBehavior
+        description.muteBehavior = configuration.muteBehavior
         var tap = AudioObjectID(kAudioObjectUnknown)
         try Self.check(AudioHardwareCreateProcessTap(description, &tap), "컴퓨터 소리를 받을 준비를 할 수 없습니다")
         // Only the tap is in this private device, so it does not depend on
@@ -294,7 +306,23 @@ final class SystemAudioTap: @unchecked Sendable {
         deviceID = device
     }
 
-    static func processObject(forPID pid: pid_t) throws -> AudioObjectID {
+    static func processObject(forPID pid: pid_t) async throws -> AudioObjectID {
+        try await AudioHardwarePermit.perform(operation: "소리 재생 프로세스 확인") {
+            try lookupProcessObject(forPID: pid)
+        }
+    }
+
+    static func deviceIsAlive(_ device: AudioDeviceID) async throws -> Bool {
+        try await AudioHardwarePermit.perform(operation: "오디오 입력 정리 확인") {
+            var alive: UInt32 = 0
+            var size = UInt32(MemoryLayout<UInt32>.size)
+            var address = AudioObjectPropertyAddress(mSelector: kAudioDevicePropertyDeviceIsAlive,
+                mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMain)
+            return AudioObjectGetPropertyData(device, &address, 0, nil, &size, &alive) == noErr && alive != 0
+        }
+    }
+
+    private static func lookupProcessObject(forPID pid: pid_t) throws -> AudioObjectID {
         var address = AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyTranslatePIDToProcessObject,
             mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMain)
         var process = AudioObjectID(kAudioObjectUnknown)

@@ -104,6 +104,11 @@ final class CaptionModel {
 
         """
     var devices: [AudioInputDevice] = []
+    private struct DeviceQuery {
+        let id = UUID()
+        let task: Task<[AudioInputDevice], any Error>
+    }
+    private var deviceQuery: DeviceQuery?
     var selectedDeviceUID: String {
         didSet { UserDefaults.standard.set(selectedDeviceUID, forKey: "inputDeviceUID") }
     }
@@ -319,7 +324,7 @@ final class CaptionModel {
         isPreview = preview
         timeline.direction = storedDirection
         reloadGlossary()
-        refreshDevices()
+        if translationOverride == nil { refreshDevices(reportFailure: false) }
         if preview { loadPreview() }
     }
 
@@ -431,9 +436,38 @@ final class CaptionModel {
         catch { glossaryMessage = error.localizedDescription }
     }
 
-    func refreshDevices() {
-        do { devices = try AudioInputDevice.all() }
-        catch { message = error.localizedDescription }
+    func refreshDevices(reportFailure: Bool = true) {
+        guard phase == .idle, !isPreview, !isUISoak, deviceQuery == nil else { return }
+        // Reserve this model's query before scheduling a task so repeated
+        // settings events cannot queue additional hardware lookups.
+        let query = beginDeviceQuery()
+        Task { [weak self] in
+            do {
+                let values = try await query.task.value
+                guard let self, self.deviceQuery?.id == query.id else { return }
+                self.deviceQuery = nil
+                self.devices = values
+            } catch {
+                guard let self, self.deviceQuery?.id == query.id else { return }
+                self.deviceQuery = nil
+                if reportFailure, self.phase == .idle { self.message = error.localizedDescription }
+            }
+        }
+    }
+
+    private func beginDeviceQuery() -> DeviceQuery {
+        if let deviceQuery { return deviceQuery }
+        let query = DeviceQuery(task: Task { try await AudioInputDevice.available() })
+        deviceQuery = query
+        return query
+    }
+
+    private func currentDevices() async throws -> [AudioInputDevice] {
+        let query = beginDeviceQuery()
+        defer { if deviceQuery?.id == query.id { deviceQuery = nil } }
+        let values = try await query.task.value
+        if deviceQuery?.id == query.id { devices = values }
+        return values
     }
 
     func checkReadiness() async {
@@ -626,10 +660,11 @@ final class CaptionModel {
         lastAcceptedSourceUptime = 0
         reloadGlossary()
         let requestedDeviceUID = selectedDeviceUID
-        refreshDevices()
         let usesSystemAudio = requestedDeviceUID == AudioInputDevice.systemAudioUID
         do {
-            guard requestedDeviceUID.isEmpty || usesSystemAudio || devices.contains(where: { $0.uid == requestedDeviceUID }) else {
+            let inputDevices = try await currentDevices()
+            try checkStarting(token)
+            guard requestedDeviceUID.isEmpty || usesSystemAudio || inputDevices.contains(where: { $0.uid == requestedDeviceUID }) else {
                 throw CaptionError.message("선택한 마이크가 연결되지 않았습니다. 다시 연결하거나 입력 장치를 직접 선택해 주세요.")
             }
             // Computer sound opens no microphone. macOS asks for its own
@@ -688,9 +723,9 @@ final class CaptionModel {
             }
             let audioCapture = AudioCapture()
             capture = audioCapture
-            let deviceID = devices.first(where: { $0.uid == selectedDeviceUID })?.id
-            let stream = try audioCapture.start(deviceID: deviceID,
-                systemAudio: usesSystemAudio ? try SystemAudioTap() : nil, target: format,
+            let deviceID = inputDevices.first(where: { $0.uid == requestedDeviceUID })?.id
+            let stream = try await audioCapture.start(deviceID: deviceID,
+                systemAudio: usesSystemAudio ? .init() : nil, target: format,
                 onLevel: { [weak self] level in
                     Task { @MainActor in
                         guard self?.runID == token else { return }
@@ -706,6 +741,7 @@ final class CaptionModel {
                     guard let self, self.runID == token else { return }
                     self.isWaitingForSystemAudio = usesSystemAudio && !active
                 })
+            try checkStarting(token)
             isWaitingForSystemAudio = usesSystemAudio
             // Analyze the live stream in its own task. Do not await a streaming
             // analysis operation before allowing the user to stop the stream.
