@@ -108,7 +108,7 @@ Swift 작업 취소를 네이티브 작업의 종료로 취급하지 않습니�
 
 선택 모델은 `~/Library/Application Support/Live Korean Captions/Models/`에 설치합니다. [모델 manifest](../Resources/local-model-manifest.json)와 [검증 상수](../Sources/LiveKoCaption/LocalModelStore.swift)의 고정 파일 크기·SHA-256을 확인한 뒤 원자적으로 설치합니다. 가중치는 Git과 앱 번들에서 제외합니다.
 
-모델 refresh는 metadata 캐시만으로 승인하지 않고 매번 전체 SHA-256을 백그라운드에서 다시 확인합니다. 겹친 요청은 같은 읽기를 공유하며, 열린 파일과 경로의 inode·device·mtime·ctime을 대조합니다. 개인 사전은 문자 수 외 scalar·UTF-8 byte와 제어 문자를 검증하고, 교정 결과가 65,536바이트를 넘으면 원 ASR을 유지해 알립니다. 모델 역할 토큰이 포함된 원문은 선택 보완을 생략하고 빠른 번역을 유지합니다. 네이티브 입력은 길이 기반 `lc_translate_bytes`로 전달하며, 템플릿 외곽만 특수 토큰으로 파싱하고 본문은 literal 토큰화합니다.
+모델 refresh는 metadata 캐시만으로 승인하지 않고 매번 전체 SHA-256을 백그라운드에서 다시 확인합니다. 앱 시작은 문장 다듬기가 켜져 있을 때만 모델을 확인·로드하고, 꺼져 있으면 1.47 GB 파일을 읽지 않습니다. 설정 화면은 처음 볼 때 한 번만 `refreshIfNeeded()`로 설치 여부를 확인하며, 모델을 로드하기 전에는 항상 전체 `refresh()`를 거칩니다. 겹친 요청은 같은 읽기를 공유하며, 열린 파일과 경로의 inode·device·mtime·ctime을 대조합니다. 개인 사전은 문자 수 외 scalar·UTF-8 byte와 제어 문자를 검증하고, 교정 결과가 65,536바이트를 넘으면 원 ASR을 유지해 알립니다. 모델 역할 토큰이 포함된 원문은 선택 보완을 생략하고 빠른 번역을 유지합니다. 네이티브 입력은 길이 기반 `lc_translate_bytes`로 전달하며, 템플릿 외곽만 특수 토큰으로 파싱하고 본문은 literal 토큰화합니다.
 
 대화는 자동 저장하지 않습니다. 앱 종료·업데이트·새 대화 전에 필요한 기록을 수동 저장합니다. 실제 사용자 대화·개인 용어사전과 원본 음성을 공개 fixture, 스크린샷, QA 자료에 옮기지 않습니다.
 

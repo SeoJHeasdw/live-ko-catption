@@ -47,9 +47,9 @@ struct CaptionView: View {
         .ignoresSafeArea(.container, edges: .top)
         .background(CaptionWindowAttachment(windows: windows, model: model))
         .task {
-            async let localCheck: Void = LocalModelStore.shared.refresh()
             await model.checkReadiness()
-            await localCheck
+            // The model is verified and loaded only when sentence polishing is
+            // on. Otherwise launch does not read the 1.47 GB file at all.
             if model.polishEnabled { await model.prepareLocalModel() }
         }
         .translationTask(model.translationConfiguration) { session in
@@ -578,6 +578,10 @@ private struct LocalPolishControls: View {
     @Bindable var store: LocalModelStore
 
     var body: some View {
+        content.task { await store.refreshIfNeeded() }
+    }
+
+    private var content: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text("문장 다듬기").font(CaptionType.section)

@@ -36,6 +36,14 @@ final class LocalModelStore {
     /// Checks the local file only. Hashing is streamed on a background task.
     /// Metadata alone cannot prove that weights still match the pinned digest.
     /// Every refresh rehashes; concurrent callers share the same bounded read.
+    /// Settings only needs to know whether a verified model is installed.
+    /// Launch no longer hashes a model nobody asked to use; the first time
+    /// Settings shows it, this verifies once. Loading always calls `refresh()`.
+    func refreshIfNeeded() async {
+        guard !isInstalled, !isDownloading else { return }
+        await refresh()
+    }
+
     func refresh() async {
         if let refreshTask { await refreshTask.value; return }
         guard !isDownloading else { return }

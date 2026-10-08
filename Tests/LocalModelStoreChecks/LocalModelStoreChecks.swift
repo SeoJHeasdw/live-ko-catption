@@ -72,6 +72,24 @@ private struct LocalModelStoreChecks {
         try require(!store.isInstalled && store.modelURL == nil,
                     "Wrong-sized file became ready.")
 
+        // Settings learns the installed state without rehashing a model it has
+        // already verified; only a refresh before loading rechecks the bytes.
+        try Data("abc".utf8).write(to: file)
+        try FileManager.default.setAttributes([.modificationDate: Date(timeIntervalSince1970: 100)], ofItemAtPath: file.path)
+        let settingsStore = LocalModelStore(directory: folder, manifest: manifest)
+        try require(!settingsStore.isInstalled && !settingsStore.isVerifying,
+                    "A new store claimed readiness or hashed before anything asked.")
+        await settingsStore.refreshIfNeeded()
+        try require(settingsStore.isInstalled && settingsStore.modelURL == file,
+                    "The first Settings view did not verify the installed model.")
+        try Data("def".utf8).write(to: file)
+        try FileManager.default.setAttributes([.modificationDate: Date(timeIntervalSince1970: 100)], ofItemAtPath: file.path)
+        await settingsStore.refreshIfNeeded()
+        try require(settingsStore.isInstalled, "A later Settings view rehashed a model it had already verified.")
+        await settingsStore.refresh()
+        try require(!settingsStore.isInstalled && settingsStore.modelURL == nil,
+                    "The refresh that precedes loading missed a changed model.")
+
         try FileManager.default.removeItem(at: file)
         store.requestDownload()
         try require(store.isDownloading, "Explicit download did not enter the in-progress state.")
