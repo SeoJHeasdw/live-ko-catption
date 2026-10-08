@@ -59,7 +59,11 @@ struct CaptionView: View {
             CaptionUISoakRunner.start(model: model)
         }
         .onChange(of: model.phase) { oldPhase, newPhase in
-            if oldPhase == .starting && newPhase == .listening { windows.showCompact() }
+            // Only a new conversation opens the floating window. Resuming and
+            // direction switches stay in whichever window the person is using.
+            if oldPhase == .starting && newPhase == .listening && model.latestStartBeganConversation {
+                windows.showCompact()
+            }
         }
         .sheet(item: $settingsTab) { tab in
             CaptionSettingsPopover(model: model, initialTab: tab) { settingsTab = nil }

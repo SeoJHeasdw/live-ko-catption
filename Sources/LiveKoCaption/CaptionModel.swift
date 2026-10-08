@@ -262,6 +262,10 @@ final class CaptionModel {
             (phase == .listening || (phase == .idle && !isChecking && !hasPendingTranslations))
     }
     private(set) var isSwitchingDirection = false
+    /// True when the latest start began an empty conversation. Resuming a paused
+    /// conversation or restarting for a direction switch keeps the window the
+    /// person is already using.
+    private(set) var latestStartBeganConversation = false
     var canChangeSessionSettings: Bool {
         phase == .idle && !isPreparing && !isPreparingLocalModel && !isSwitchingDirection && !isPreview && !isUISoak && !hasContent && !hasPendingTranslations
     }
@@ -647,6 +651,7 @@ final class CaptionModel {
     /// async asset checks and the restarted input's startup awaits.
     private func start(allowDirectionSwitch: Bool) async {
         guard startAssetsReady, !isSwitchingDirection || allowDirectionSwitch else { return }
+        latestStartBeganConversation = !allowDirectionSwitch && !hasContent
         phase = .starting
         message = nil
         let token = UUID()

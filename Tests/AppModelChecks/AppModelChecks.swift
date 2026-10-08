@@ -803,6 +803,40 @@ struct AppModelChecks {
                 try expect(model.message?.contains("마이크 접근") == true && !model.isSwitchingDirection,
                     "A failed restart hid its reason or left the switch in progress")
             }),
+            ("only a new conversation asks for the floating window; resume and direction switches keep the current one", {
+                let suite = "LiveKoCaption.StartWindowChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                // Denying the microphone ends every start before any audio
+                // device or language engine is opened by this check.
+                @MainActor func makeModel() -> CaptionModel {
+                    let model = CaptionModel(translationOverride: { source, _ in "KO: " + source },
+                        microphoneAccessOverride: { false }, readinessOverride: { _ in true }, preferencesDefaults: defaults)
+                    model.isChecking = false; model.assetsReady = true; model.contextCorrectionEnabled = false
+                    model.selectedDeviceUID = ""
+                    return model
+                }
+                let model = makeModel()
+                try expect(!model.latestStartBeganConversation, "A model that never started claimed to begin a conversation")
+                await model.start()
+                try expect(model.latestStartBeganConversation,
+                    "Starting an empty conversation did not ask for the floating window")
+                model.receive(source: "Keep this window.", audioStart: 0, audioEnd: 1, isFinal: true)
+                try await waitUntil("Caption did not finish") { model.segments.first?.isFinal == true && !model.hasPendingTranslations }
+                await model.start()
+                try expect(!model.latestStartBeganConversation,
+                    "Resuming a paused conversation moved the person out of the window they were using")
+
+                // The restart owned by a direction switch must not look like a
+                // new conversation even when nothing has been captioned yet.
+                let empty = makeModel()
+                await empty.start()
+                try expect(empty.latestStartBeganConversation, "The empty conversation did not begin as a new one")
+                empty.phase = .listening
+                await empty.switchDirection()
+                try expect(empty.selectedDirection == .koreanToEnglish && !empty.latestStartBeganConversation,
+                    "A direction switch in an empty conversation moved the person to the floating window")
+            }),
             ("oversized personal corrections preserve the full ASR and report their fallback", {
                 let suite = "LiveKoCaption.GlossaryExpansionChecks.\(UUID().uuidString)"
                 let defaults = UserDefaults(suiteName: suite)!
