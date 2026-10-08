@@ -132,6 +132,14 @@ struct AudioCallbackChecks {
         print("PASS: foreign configuration notification safely reaches main actor")
     }
 
+    /// Speech's preferred input, and the format production converts to. macOS 27
+    /// traps when a Float32 buffer reaches `AnalyzerInput`, so no fixture hands
+    /// it one. Read samples through a held `input.buffer`: each access returns
+    /// a new buffer, so a channel pointer taken from a temporary dangles.
+    private static func analyzerFormat() -> AVAudioFormat {
+        AVAudioFormat(commonFormat: .pcmFormatInt16, sampleRate: 16000, channels: 1, interleaved: true)!
+    }
+
     private static func fixture() throws -> (AVAudioFormat, AVAudioPCMBuffer) {
         guard let format = AVAudioFormat(standardFormatWithSampleRate: 16000, channels: 1),
               let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 1024) else {
@@ -156,7 +164,7 @@ struct AudioCallbackChecks {
         let gate = CallbackGate()
         defer { gate.release.signal() }
         let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
-        let pump = try AudioPump(source: format, target: format, continuation: continuation,
+        let pump = try AudioPump(source: format, target: analyzerFormat(), continuation: continuation,
                                  onLevel: { _ in }, onProblem: { state.report($0) },
                                  copyBuffer: { original in
                                      gate.blockOnce()
@@ -196,7 +204,7 @@ struct AudioCallbackChecks {
         let gate = CallbackGate()
         defer { gate.release.signal() }
         let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
-        let pump = try AudioPump(source: format, target: format, continuation: continuation,
+        let pump = try AudioPump(source: format, target: analyzerFormat(), continuation: continuation,
                                  onLevel: { _ in gate.blockOnce() }, onProblem: { state.report($0) })
         pump.enqueue(buffer)
         guard await waitForGate(gate) else { throw Failure("Conversion did not reach its meter gate") }
@@ -216,7 +224,7 @@ struct AudioCallbackChecks {
         let (format, buffer) = try fixture()
         let state = CallbackState()
         let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream(bufferingPolicy: .bufferingNewest(AudioPump.analyzerBufferLimit))
-        let pump = try AudioPump(source: format, target: format, continuation: continuation,
+        let pump = try AudioPump(source: format, target: analyzerFormat(), continuation: continuation,
                                  onLevel: { _ in }, onProblem: { state.report($0) })
         for _ in 0..<20 {
             pump.enqueue(buffer)
@@ -236,7 +244,6 @@ struct AudioCallbackChecks {
     private static func checkRightChannelMeter() async throws {
         guard let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16000,
                                          channels: 2, interleaved: true),
-              let target = AVAudioFormat(standardFormatWithSampleRate: 16000, channels: 1),
               let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 1024) else {
             throw Failure("Could not allocate stereo meter fixture")
         }
@@ -247,16 +254,17 @@ struct AudioCallbackChecks {
         }
         let state = CallbackState()
         let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
-        let pump = try AudioPump(source: format, target: target, continuation: continuation,
+        let pump = try AudioPump(source: format, target: analyzerFormat(), continuation: continuation,
                                  onLevel: { state.meter($0) }, onProblem: { state.report($0) })
         pump.enqueue(buffer)
         await pump.finish()
-        var peak: Float = 0
+        var peak: Int32 = 0
         for await input in stream {
-            guard let samples = input.buffer.floatChannelData?[0] else { continue }
-            for frame in 0..<Int(input.buffer.frameLength) { peak = max(peak, abs(samples[frame])) }
+            let converted = input.buffer
+            guard let samples = converted.int16ChannelData?[0] else { continue }
+            for frame in 0..<Int(converted.frameLength) { peak = max(peak, abs(Int32(samples[frame]))) }
         }
-        guard let level = state.levels.first, level > 0.5, peak > 0.01, state.errors.isEmpty else {
+        guard let level = state.levels.first, level > 0.5, peak > 300, state.errors.isEmpty else {
             throw Failure("A right-channel microphone appeared silent or was lost in the mono conversion")
         }
         print("PASS: interleaved right-channel microphone survives mono conversion and appears on the meter")
@@ -266,7 +274,7 @@ struct AudioCallbackChecks {
         let (format, buffer) = try fixture()
         let state = CallbackState()
         let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
-        let pump = try AudioPump(source: format, target: format, continuation: continuation,
+        let pump = try AudioPump(source: format, target: analyzerFormat(), continuation: continuation,
                                  onLevel: { _ in }, onProblem: { state.report($0) },
                                  copyBuffer: { _ in nil })
         pump.enqueue(buffer)
@@ -285,7 +293,7 @@ struct AudioCallbackChecks {
         for frame in 0..<Int(buffer.frameLength) { buffer.floatChannelData![0][frame] = 0 }
         let state = CallbackState()
         let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
-        let pump = try AudioPump(source: format, target: format, continuation: continuation,
+        let pump = try AudioPump(source: format, target: analyzerFormat(), continuation: continuation,
                                  onLevel: { _ in }, onProblem: { state.report($0) },
                                  startedAtUptime: 100)
         guard !pump.hasStalledInput(at: 103), !pump.hasStalledInput(at: 119.9), !pump.hasStalledInput(at: 120),
@@ -410,7 +418,10 @@ struct AudioCallbackChecks {
         await earlier.value
         await pump.finish()
         var order: [Int16] = []
-        for await input in stream { order.append(input.buffer.int16ChannelData![0][0]) }
+        for await input in stream {
+            let converted = input.buffer
+            order.append(converted.int16ChannelData![0][0])
+        }
         guard order == [1000, 0, -1000], pump.droppedBufferCount == 0, state.errors.isEmpty else {
             throw Failure("Concurrent copying reordered real and synthetic input: \(order)")
         }
@@ -422,14 +433,15 @@ struct AudioCallbackChecks {
         buffer.frameLength = 512
         let state = CallbackState()
         let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
-        let pump = try AudioPump(source: format, target: format, continuation: continuation,
+        let pump = try AudioPump(source: format, target: analyzerFormat(), continuation: continuation,
             onLevel: { _ in }, onProblem: { state.report($0) }, startedAtUptime: 100)
         let reader = Task.detached { () -> (Int, Int) in
             var frames = 0
             var audibleFrames = 0
             for await input in stream {
-                frames += Int(input.buffer.frameLength)
-                for frame in 0..<Int(input.buffer.frameLength) where input.buffer.floatChannelData![0][frame] != 0 {
+                let converted = input.buffer
+                frames += Int(converted.frameLength)
+                for frame in 0..<Int(converted.frameLength) where converted.int16ChannelData![0][frame] != 0 {
                     audibleFrames += 1
                 }
             }
