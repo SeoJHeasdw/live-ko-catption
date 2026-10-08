@@ -837,6 +837,25 @@ struct AppModelChecks {
                 try expect(empty.selectedDirection == .koreanToEnglish && !empty.latestStartBeganConversation,
                     "A direction switch in an empty conversation moved the person to the floating window")
             }),
+            ("Stop is available while listening or on a paused conversation, and never on an empty or finishing one", {
+                let suite = "LiveKoCaption.EndConversationChecks.\(UUID().uuidString)"
+                let defaults = UserDefaults(suiteName: suite)!
+                defer { defaults.removePersistentDomain(forName: suite) }
+                let model = CaptionModel(translationOverride: { source, _ in "KO: " + source },
+                    microphoneAccessOverride: { false }, readinessOverride: { _ in true }, preferencesDefaults: defaults)
+                model.isChecking = false; model.assetsReady = true; model.contextCorrectionEnabled = false
+                try expect(!model.canEndConversation, "An empty conversation offered Stop")
+                model.receive(source: "Close this conversation.", audioStart: 0, audioEnd: 1, isFinal: true)
+                try await waitUntil("Caption did not finish") { model.segments.first?.isFinal == true && !model.hasPendingTranslations }
+                try expect(model.canEndConversation, "A paused conversation with captions did not offer Stop")
+                model.phase = .listening
+                try expect(model.canEndConversation, "A listening session did not offer Stop")
+                model.phase = .stopping
+                try expect(!model.canEndConversation, "Stop was offered while the last sentence was still finishing")
+                model.phase = .idle
+                model.newSession()
+                try expect(!model.canEndConversation && !model.hasContent, "Stop stayed available after the conversation was cleared")
+            }),
             ("oversized personal corrections preserve the full ASR and report their fallback", {
                 let suite = "LiveKoCaption.GlossaryExpansionChecks.\(UUID().uuidString)"
                 let defaults = UserDefaults(suiteName: suite)!

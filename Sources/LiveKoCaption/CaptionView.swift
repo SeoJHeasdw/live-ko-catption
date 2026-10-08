@@ -18,6 +18,7 @@ struct CaptionView: View {
     @Bindable var model: CaptionModel
     let windows: CaptionWindowCoordinator
     @ViewState private var confirmsNewSession = false
+    @ViewState private var endsConversation = false
     @ViewState private var settingsTab: CaptionSettingsTab?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -36,7 +37,7 @@ struct CaptionView: View {
                 CaptionArea(model: model)
             }.frame(maxHeight: .infinity)
             Rectangle().fill(CaptionPalette.border).frame(height: 1)
-            CaptionFooter(model: model)
+            CaptionFooter(model: model, windows: windows)
         }
         .background(CaptionPalette.background)
         .foregroundStyle(CaptionPalette.ink)
@@ -68,13 +69,26 @@ struct CaptionView: View {
         .sheet(item: $settingsTab) { tab in
             CaptionSettingsPopover(model: model, initialTab: tab) { settingsTab = nil }
         }
-        .alert("새 대화를 시작할까요?", isPresented: $confirmsNewSession) {
-            Button("취소", role: .cancel) {}
+        .onChange(of: windows.endConversationRequested) { _, requested in
+            guard requested else { return }
+            windows.endConversationRequested = false
+            endsConversation = true
+            confirmsNewSession = true
+        }
+        .alert(endsConversation ? "대화를 마무리할까요?" : "새 대화를 시작할까요?", isPresented: $confirmsNewSession) {
+            Button(endsConversation ? "일시정지 상태로 두기" : "취소", role: .cancel) {}
             Button("저장 후 새 대화") {
                 if model.exportTranscript() { model.newSession() }
             }
             Button("저장하지 않고 새 대화", role: .destructive) { model.newSession() }
-        } message: { Text("새 대화를 시작하면 현재 기록이 지워집니다. 원문과 자막을 먼저 저장할 수 있습니다.") }
+        } message: {
+            Text(endsConversation
+                ? "소리 입력을 멈췄습니다. 기록을 저장한 뒤 새 대화를 시작할 수 있습니다. 새 대화를 시작하면 현재 기록이 지워지며, 그대로 두면 일시정지 상태로 이어서 사용할 수 있습니다."
+                : "새 대화를 시작하면 현재 기록이 지워집니다. 원문과 자막을 먼저 저장할 수 있습니다.")
+        }
+        .onChange(of: confirmsNewSession) { _, showing in
+            if !showing { endsConversation = false }
+        }
     }
 }
 
@@ -463,6 +477,36 @@ private struct CaptionSessionButton: View {
     }
 }
 
+/// Pause keeps the conversation going; Stop ends it and asks how to finish.
+private struct CaptionStopButton: View {
+    let model: CaptionModel
+    let windows: CaptionWindowCoordinator
+    @SwiftUI.FocusState private var isFocused: Bool
+    @Environment(\.isEnabled) private var isEnabled
+
+    var body: some View {
+        Button {
+            Task { await windows.stopAndShowDetailed() }
+        } label: {
+            Image(systemName: "stop.fill").font(.system(size: 14, weight: .semibold))
+                .frame(width: 44, height: 40)
+                .foregroundStyle(CaptionPalette.ink.opacity(isEnabled ? 1 : 0.5))
+                .background(Color.white.opacity(isEnabled ? 0.13 : 0.06), in: RoundedRectangle(cornerRadius: 10))
+                .contentShape(RoundedRectangle(cornerRadius: 10))
+        }.buttonStyle(.plain)
+            .disabled(!model.canEndConversation)
+            .focused($isFocused)
+            .overlay {
+                RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(isFocused ? CaptionPalette.blue : .clear, lineWidth: 2)
+                    .padding(-3).allowsHitTesting(false)
+            }
+            .accessibilityLabel("정지")
+            .accessibilityHint("소리 입력을 멈추고 대화를 마무리합니다. 저장하거나 새 대화를 시작할 수 있습니다.")
+            .help("정지 · ⌘.\n소리 입력을 멈추고 대화를 마무리합니다. 저장하거나 새 대화를 시작할 수 있고, 취소하면 일시정지 상태로 기록이 남습니다.")
+    }
+}
+
 private struct CaptionSessionButtonStyle: ButtonStyle {
     let isRunning: Bool
     @Environment(\.isEnabled) private var isEnabled
@@ -723,6 +767,7 @@ private struct CaptionMessage: View {
 
 private struct CaptionFooter: View {
     let model: CaptionModel
+    let windows: CaptionWindowCoordinator
     @ViewState private var showsTiming = false
 
     private var hasTiming: Bool {
@@ -759,7 +804,10 @@ private struct CaptionFooter: View {
                         timingDetails.padding(22).frame(width: 340).preferredColorScheme(.dark)
                     }
             }
-            CaptionSessionButton(model: model).frame(width: 166)
+            HStack(spacing: 8) {
+                CaptionStopButton(model: model, windows: windows)
+                CaptionSessionButton(model: model).frame(width: 166)
+            }
         }.font(CaptionType.supporting).foregroundStyle(CaptionPalette.secondary)
             .padding(.horizontal, 24).padding(.vertical, 12)
     }

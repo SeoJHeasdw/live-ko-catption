@@ -272,6 +272,13 @@ final class CaptionModel {
     var isBusy: Bool { phase == .starting || phase == .stopping || isPreparing || isPreparingLocalModel || isSwitchingDirection }
     var isListening: Bool { phase == .listening }
     var canStop: Bool { phase == .listening || phase == .starting }
+    /// Stop ends the conversation: it halts input while listening, or closes a
+    /// paused conversation that still has captions. Nothing is cleared until
+    /// the person chooses to save or start a new conversation.
+    var canEndConversation: Bool {
+        guard !isPreview, !isUISoak, !isSwitchingDirection else { return false }
+        return canStop || (phase == .idle && hasContent && !isPreparing && !isPreparingLocalModel)
+    }
     var hasPendingTranslations: Bool { queuedTranslations > 0 || workerTask != nil || polishWorker != nil }
     var statusText: String {
         if isUISoak { return "화면 안정성 검사 · 합성 자막" }

@@ -31,9 +31,9 @@ struct LiveKoCaptionApp: App {
                 Button(controlTitle) {
                     Task { await windows.pauseOrResume() }
                 }.disabled(!model.canStart && !model.canStop)
-                Button("일시정지하고 상세 보기") {
+                Button("정지하고 대화 마무리") {
                     Task { await windows.stopAndShowDetailed() }
-                }.keyboardShortcut(".", modifiers: .command)
+                }.keyboardShortcut(".", modifiers: .command).disabled(!model.canEndConversation)
                 Divider()
                 Button("번역 방향 전환") {
                     Task { await model.switchDirection() }

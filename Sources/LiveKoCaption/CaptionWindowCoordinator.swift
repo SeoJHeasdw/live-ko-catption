@@ -7,6 +7,8 @@ import SwiftUI
 @MainActor @Observable
 final class CaptionWindowCoordinator: NSObject, NSWindowDelegate {
     private(set) var isCompact = false
+    /// Set by Stop; the detailed window consumes it to ask how to finish.
+    var endConversationRequested = false
     var sidebarExpanded = UserDefaults.standard.object(forKey: "captionSidebarExpanded") as? Bool ?? true {
         didSet { UserDefaults.standard.set(sidebarExpanded, forKey: "captionSidebarExpanded") }
     }
@@ -99,12 +101,14 @@ final class CaptionWindowCoordinator: NSObject, NSWindowDelegate {
         else if model.canStart { await model.start() }
     }
 
+    /// Stop: halts input, brings the preserved transcript and any finalization
+    /// error into view, and offers to save or start a new conversation. This
+    /// never clears history itself; cancelling leaves the conversation paused.
     func stopAndShowDetailed() async {
         guard let model else { return }
-        // Bring the preserved transcript and any finalization error into view.
-        // This never clears history, including a pause already in progress.
         showDetailed()
         if model.canStop { await model.stop() }
+        if model.phase == .idle && model.hasContent { endConversationRequested = true }
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {

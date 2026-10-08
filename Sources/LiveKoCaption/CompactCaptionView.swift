@@ -112,11 +112,11 @@ private struct CompactCaptionHeader: View {
                     help: controlHelp, shortcutHint: "스페이스 바") {
                     Task { await windows.pauseOrResume() }
                 }.disabled(!model.canStart && !model.canStop)
-                control("일시정지하고 상세 보기", symbol: "stop.fill", shortcut: nil,
-                    help: "상세 창으로 돌아가며 소리 입력을 일시정지합니다. 대화 기록은 유지됩니다.",
+                control("정지", symbol: "stop.fill", shortcut: nil,
+                    help: "소리 입력을 멈추고 상세 창에서 대화를 마무리합니다. 저장하거나 새 대화를 시작할 수 있고, 취소하면 일시정지 상태로 기록이 남습니다.",
                     shortcutHint: "⌘.") {
                     Task { await windows.stopAndShowDetailed() }
-                }
+                }.disabled(!model.canEndConversation)
             }
             // Keep the hit regions stable as the pointer crosses the header.
             .opacity(controlsVisible ? 1 : 0)
