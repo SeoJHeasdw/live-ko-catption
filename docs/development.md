@@ -80,7 +80,7 @@ open "dist/Live Korean Captions.app"
 - 상세·간략 자막의 네이티브 갱신은 직전 갱신에서 1/30초가 지났으면 바로 그리고, 그 안의 연속 갱신은 최신 내용 하나로 묶습니다. 상세 화면의 최신 따라가기 스크롤은 0.2초 간격을 유지합니다.
 - 문맥 작업은 마지막 원문 구절이 확정되고 750ms 동안 새 원문 갱신이 없을 때 시작합니다. 뒤에 미확정 구절이 있으면 이전 문맥 작업을 대기열에 다시 넣지 않습니다.
 - 선택한 사전에서 해당 원문에 관련된 제한된 용어를 프롬프트에 제공합니다. 인식·번역 결과를 앱이 정한 단어 치환으로 덮어쓰지 않습니다.
-- **용어사전 적용**은 `CaptionDictionary` ID 집합으로 여러 분야/개인 파일을 선택합니다. `BuiltInDictionaries`는 AI·IBM·금융권의 공개 공식 용어 62개와 짧은 영어 분야 설명을 제공합니다. 출처: [AI](research/ai-glossary-20261002.md), [IBM](research/ibm-glossary-20261002.md), [금융권](research/finance-glossary-20261002.md). 분야 설명은 공식 `[Background Information]` 형식에, 현재 원문은 `[Source Text]`에 나누어 넣습니다. 원문에 관련된 번역 참고는 최대 8개입니다. 원문 정규화는 한 번 수행하고, 무관한 용어는 정규식 전에 제외하며 8개를 찾으면 멈춥니다. 영어 복수 `s` 및 공백/하이픈, 한국어 띄어쓰기 변형은 참고 용어 매칭에만 사용하고 원문을 치환하지 않습니다.
+- **용어사전 적용**은 `CaptionDictionary` ID 집합으로 여러 분야/개인 파일을 선택합니다. `BuiltInDictionaries`는 AI·IBM·금융권의 공개 공식 용어 62개와 짧은 영어 분야 설명을 제공합니다. 출처: [AI](research/ai-glossary-20261002.md), [IBM](research/ibm-glossary-20261002.md), [금융권](research/finance-glossary-20261002.md). 분야 설명은 모델의 공식 번역 지시문 안에 `from a talk about …` 구절로 넣고(300자까지, 설명 단위로), 원문은 지시문 뒤에 그대로 둡니다. 공식 `[Background Information]` 형식은 그 블록까지 번역해 돌려주는 구조화 데이터용이어서 쓰지 않습니다([검증](qa/prompt-leak-20261013.md)). 줄바꿈·대괄호 라벨이 원문에 없는데 출력에 있거나 원문 대비 지나치게 긴 출력은 거부하고 빠른 번역을 유지합니다. 원문에 관련된 번역 참고는 최대 8개입니다. 원문 정규화는 한 번 수행하고, 무관한 용어는 정규식 전에 제외하며 8개를 찾으면 멈춥니다. 영어 복수 `s` 및 공백/하이픈, 한국어 띄어쓰기 변형은 참고 용어 매칭에만 사용하고 원문을 치환하지 않습니다.
 - 개인 사전은 `~/Library/Application Support/Live Korean Captions/Glossary/`의 UTF-8 `.txt` 파일입니다. 이름/문맥은 `# 이름:`/`# 문맥:` 헤더로 선택적으로 지정하며, 파일당 256 KiB·300개 용어·32개 파일로 제한합니다. 심볼릭 링크는 읽지 않습니다. 번역 대기 중에는 다시 읽지 않고 시작 시 재로딩합니다. 미리보기는 개인 파일과 이름을 읽지 않습니다. 기존 파일과 구 설정을 이행하며, 명시적인 새 빈 선택이 이전 설정보다 우선합니다.
 - `DictionaryTerms`는 양방향으로 개인 지정 번역을 공개 용어보다 우선하고, 같은 우선순위의 다른 번역은 제외/표시합니다. `heardAs`는 선택한 개인 파일에 직접 적힌 표기만 사용하며, 같은 별칭의 서로 다른 교정 목적지는 제외합니다. 원래 입력을 압축 radix 인덱스로 검색해 실제 존재하는 완전한 별칭만 한 번 매칭하여 교정의 연쇄 적용과 매 부분 자막의 전체 정규식 순회를 피합니다. 공개 사전은 Apple 빠른 번역에 용어쌍을 전달하거나 원문/번역을 직접 치환하지 않습니다. `AnalysisContext.contextualStrings`는 이전 합성 검사에서 결과를 바꾸지 못해 사용하지 않습니다.
 - `TranslationDomain`과 `BuiltInDictionaries.legacy`는 과거 QA fixture의 재현 입력용입니다. 앱 UI와 실제 요청은 사전 목록을 사용합니다. 구 preference `general`은 빈 목록, `it`는 AI, `custom`은 AI와 기존 개인 파일 ID로 이행하며, 누락된 개인 파일 ID는 보존하고 경고합니다.
@@ -170,6 +170,8 @@ swift run --build-system native LocalPipelineCheck --translation-quality --compa
 ```
 
 첫 명령은 공개 텍스트 예문 비교입니다. `--soak-seconds 1800`을 추가하면 네이티브 번역을 약 2초 간격으로 반복합니다. 마이크·화면·팬 소음의 30분 검사가 아닙니다.
+
+프롬프트나 사전의 분야 설명을 바꾸면 `./scripts/check-prompt-leak.sh`를 실행합니다. 지어낸 영어·한국어 문장과 2~4문장 묶음 873개를 설치된 모델로 번역해, 지시문이나 분야 설명이 번역되어 나온 출력이 있으면 실패합니다. 약 3분이 걸리고 결과는 `.build/prompt-leak-checks/report.json`에 저장합니다.
 
 두 번째 명령은 설치된 macOS 음성 Samantha·Yuna로 공개 예문 파일을 합성해 양방향의 실제 음성 인식·Apple 번역·선택 모델 경로를 검사합니다. 모델·런타임·언어 자산·음성을 새로 다운로드하지 않습니다. 모델과 런타임 경로는 `CAPTION_PIPELINE_MODEL_PATH`, `CAPTION_PIPELINE_RUNTIME_PATH`로 지정할 수 있습니다.
 

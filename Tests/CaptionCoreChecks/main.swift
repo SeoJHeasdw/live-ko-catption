@@ -244,9 +244,8 @@ let checks: [(String, () throws -> Void)] = [
             english.relevantTerms.contains { $0.0 == "retrieval-augmented generation" },
             "Plural or hyphen variants were missed")
         try expect(english.source == "Large language models use retrieval augmented generation." &&
-            english.prompt.contains("Translate ONLY [Source Text]") &&
-            english.prompt.contains("[Source Text]\n" + english.source),
-            "Reference matching rewrote source or failed to isolate it from background")
+            english.prompt.hasSuffix("without any additional explanation:\n\n" + english.source + "<｜hy_Assistant｜>"),
+            "Reference matching rewrote source or moved it away from the end of the instruction")
         let korean = LocalTranslationRequest(source: "머신러닝과 자금 세탁 방지를 논의합니다.",
             direction: .koreanToEnglish, dictionaries: [BuiltInDictionaries.ai, BuiltInDictionaries.finance])
         try expect(korean.relevantTerms.contains { $0.1 == "machine learning" } &&
@@ -254,6 +253,39 @@ let checks: [(String, () throws -> Void)] = [
             "Korean spacing variants were missed")
         try expect(!english.accepts("[Subject Areas] AI terminology") &&
             !english.accepts("[Background Information] AI terminology"), "Leaked prompt labels were accepted")
+    }),
+    ("subject areas stay inside the instruction and a translated prompt is never a caption", {
+        // The real model returned its [Background Information] block in Korean
+        // for about one sentence in eleven, once without any source translation.
+        let request = LocalTranslationRequest(source: "Let me pause here for a moment.",
+            baseline: "여기서 잠시 멈추겠습니다.", direction: .englishToKorean,
+            dictionaries: [BuiltInDictionaries.ai, BuiltInDictionaries.ibm])
+        try expect(request.isWithinBudget && !request.prompt.contains("[") && !request.prompt.contains("\n\n\n") &&
+            request.prompt.contains("Translate the following text from a talk about AI, machine learning and generative AI; " +
+                "IBM enterprise software, hybrid cloud and infrastructure into Korean. Note that you should only output"),
+            "Selected subject areas were not one phrase of the translation instruction: \(request.prompt)")
+        let area = "AI, 머신러닝, 생성형 AI에 관련된 용어들. IBM의 엔터프라이즈 소프트웨어, 하이브리드 클라우드 및 인프라"
+        for leak in ["[배경 정보]  \n" + area, "[배경 정보] " + area, area + "\n\n[원문]\n잠시 멈추겠습니다.",
+                     "잠시 멈추겠습니다.\n" + area, "【背景信息】 잠시 멈추겠습니다.", area + "에 관한 강연의 내용입니다. 잠시 멈추겠습니다."] {
+            try expect(!request.accepts(leak), "A translated prompt was accepted as a caption: \(leak)")
+        }
+        try expect(request.accepts("여기서 잠깐 멈추겠습니다.") && request.accepts("잠시만요."),
+            "An ordinary one-line refinement was rejected")
+        let bracketed = LocalTranslationRequest(source: "Press [Enter] to continue.", baseline: "[Enter]를 누르세요.",
+            direction: .englishToKorean)
+        try expect(bracketed.accepts("계속하려면 [Enter]를 누르세요."), "A bracket from the source was rejected")
+        let reverse = LocalTranslationRequest(source: "오늘 시간 내 주셔서 감사합니다.", baseline: "Thank you for your time today.",
+            direction: .koreanToEnglish, dictionaries: BuiltInDictionaries.all)
+        try expect(reverse.prompt.contains(" into English. Note that you should only output") &&
+            reverse.accepts("Thank you for taking the time today.") &&
+            !reverse.accepts("Thank you for taking time today to speak about AI, machine learning, and generative AI; " +
+                "IBM enterprise software, hybrid cloud, and infrastructure. Note that you should only output the translated result."),
+            "A Korean source accepted an echoed instruction or lost its ordinary refinement")
+        let many = (0..<32).map { CaptionDictionary(id: "test:\($0)", name: "Area \($0)",
+            context: String(repeating: "subject \($0) ", count: 12), glossary: .empty) }
+        let bounded = LocalTranslationRequest(source: "Current source.", direction: .englishToKorean, dictionaries: many)
+        try expect(bounded.prompt.contains("subject 0 subject 0") && !bounded.prompt.contains("subject 9 ") &&
+            bounded.prompt.count < 700, "Combined subject areas were not bounded to whole descriptions")
     }),
     ("personal reference terms override public suggestions regardless of selection order", {
         guard let publicRisk = BuiltInDictionaries.finance.glossary.entries.first(where: { $0.english == "credit risk" }) else {

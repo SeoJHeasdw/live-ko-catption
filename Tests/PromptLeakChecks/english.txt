@@ -1,0 +1,93 @@
+# Invented talk sentences. Adjacent lines are also joined into groups of two to four,
+# the way the context lane joins recent captions. No user speech or customer term.
+Okay.
+So.
+Right.
+Yeah.
+Thank you.
+Next slide, please.
+Any questions?
+Let's move on.
+Okay, ask the assistant.
+You can ask the assistant.
+So that's it.
+And that's the idea.
+This is the context of the request.
+So here we have the hub.
+All right, so let me show you the demo.
+You can ask the assistant about any document in the workspace.
+The model uses the context window to keep track of the conversation.
+We connect the catalog to the governance layer so every asset has an owner.
+Good afternoon, everyone, and thanks for making the time today.
+My name is Alex and I lead the platform team at Northwind.
+Today I want to walk you through three things.
+First, where we are with the data platform.
+Second, what we learned from the pilot last quarter.
+And third, what we would like to do together next year.
+Let me start with a quick recap.
+Last year we moved about forty percent of our workloads to the cloud.
+The rest still runs on premises, mostly for regulatory reasons.
+That creates a problem, because the data lives in two places.
+Our analysts spend a lot of time just finding the right table.
+So we built a single catalog that covers both environments.
+Every data asset is registered with an owner and a description.
+You can search for it the same way you search the web.
+And you can ask a question in plain language.
+The assistant translates the question into a query and runs it.
+It also shows you which sources it used, so you can check the answer.
+We think that transparency is the most important part.
+If people do not trust the answer, they will not use the tool.
+Now let me show you how this works in practice.
+I am going to open the workspace and type a question.
+How many new customers did we onboard in the third quarter?
+As you can see, it takes a couple of seconds.
+The answer is one thousand two hundred and thirty.
+It also gives me a chart and the underlying rows.
+If I click here, I can see the lineage of that number.
+It comes from three tables that are refreshed every night.
+One of them had a quality issue two weeks ago.
+The system flagged it automatically and notified the owner.
+That used to take us days, and now it takes minutes.
+Let me pause here for a moment.
+Does anyone have a question so far?
+That is a great question, thank you.
+The short answer is yes, but there is a caveat.
+We do not send any customer data outside our own environment.
+The large language model runs inside our private cluster.
+We use retrieval-augmented generation, so the model only sees the documents it needs.
+We did some fine-tuning on our own terminology, but not on customer records.
+Generative AI is useful here, but it is not magic.
+It still makes mistakes, and we measure them every week.
+Our accuracy on the internal test set is about ninety-two percent.
+The remaining eight percent are mostly ambiguous questions.
+For those, the assistant asks a follow-up question instead of guessing.
+We store the embeddings in a vector database next to the catalog.
+An AI agent can chain several of these steps together.
+For example, it can find the data, clean it, and build a report.
+We run this on IBM Cloud today and we are evaluating watsonx.ai for the next phase.
+Governance is handled by a separate policy engine.
+Every request is checked against the access rules before it runs.
+If you are not allowed to see a column, it is masked.
+The audit log records who asked what and when.
+That was a key requirement from our compliance team.
+Let me talk about the pilot now.
+We started with two business units and about sixty users.
+After eight weeks, weekly active usage was above seventy percent.
+The most common use case was ad hoc reporting.
+People stopped asking the data team for simple numbers.
+That freed up roughly one day a week for each analyst.
+There were also some things that did not go well.
+The first version was too slow for large tables.
+We fixed that by caching the most common queries.
+The second issue was naming.
+Different teams used different names for the same thing.
+So we added a business glossary and linked it to the catalog.
+Now the assistant understands both names.
+I think that brings us to the roadmap.
+In the first half of next year, we want to roll this out to everyone.
+In the second half, we plan to add support for unstructured documents.
+That includes contracts, emails, and meeting notes.
+We will need your help with the security review.
+And we would like to agree on a timeline before the end of the month.
+I will stop there and open it up for discussion.
+Thanks again for your time.

@@ -981,8 +981,7 @@ struct AppModelChecks {
                     "The selected files did not compose source corrections and translation references")
                 try expect(request?.prompt.contains("Northwind translates to 노스윈드") == true &&
                     request?.prompt.contains("OpenShift translates to OpenShift") == true &&
-                    request?.prompt.contains("Technical team names.") == true &&
-                    request?.prompt.contains("Product platform names.") == true &&
+                    request?.prompt.contains("; Technical team names; Product platform names into Korean.") == true &&
                     request?.relevantTerms.contains(where: { $0.0 == "Harbor" }) == false,
                     "A selected term/context was lost or a conflicting term was passed to refinement")
             }),

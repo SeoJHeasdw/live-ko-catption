@@ -2,13 +2,14 @@ import Foundation
 
 /// Reviewed public terminology. Provenance is recorded in docs/research.
 /// These entries are model references, never substitutions in source/output.
+/// Each context is a noun phrase that completes "a talk about …".
 public enum BuiltInDictionaries {
     public static let aiID = "builtin:ai"
     public static let ibmID = "builtin:ibm"
     public static let financeID = "builtin:finance"
 
     public static let ai = CaptionDictionary(id: aiID, name: "AI",
-        context: "AI, machine learning and generative AI terminology.",
+        context: "AI, machine learning and generative AI",
         glossary: CaptionGlossary(text: """
         large language model = 대규모 언어 모델
         generative AI = 생성형 AI
@@ -32,7 +33,7 @@ public enum BuiltInDictionaries {
         context window = 컨텍스트 윈도우
         """))
     public static let ibm = CaptionDictionary(id: ibmID, name: "IBM",
-        context: "IBM enterprise software, hybrid cloud and infrastructure; keep official IBM product names.",
+        context: "IBM enterprise software, hybrid cloud and infrastructure",
         glossary: CaptionGlossary(text: """
         watsonx.ai = watsonx.ai
         watsonx.data = watsonx.data
@@ -56,7 +57,7 @@ public enum BuiltInDictionaries {
         Cloud Pak for Business Automation = Cloud Pak for Business Automation
         """))
     public static let finance = CaptionDictionary(id: financeID, name: "금융권",
-        context: "Banking and financial services: payments, risk management and regulatory compliance.",
+        context: "banking and financial services: payments, risk management and regulatory compliance",
         glossary: CaptionGlossary(text: """
         anti-money laundering = 자금세탁방지
         know your customer = 고객확인
@@ -87,7 +88,7 @@ public enum BuiltInDictionaries {
     public static func legacy(_ domain: TranslationDomain, glossary: [GlossaryEntry] = []) -> [CaptionDictionary] {
         guard domain != .general else { return [] }
         let it = CaptionDictionary(id: "legacy:it", name: "IT",
-            context: domain == .it ? "This is an IT discussion." : "",
+            context: domain == .it ? "IT" : "",
             glossary: CaptionGlossary(text: """
             deployment = 배포
             rollback = 롤백

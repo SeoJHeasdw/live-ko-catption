@@ -79,25 +79,36 @@ public struct LocalTranslationRequest: Sendable, Equatable {
         template.wrap(bodyInstructions)
     }
 
+    public static let subjectLimit = 300
+
+    /// Selected subject areas as one phrase, whole descriptions only.
+    private var subjects: String {
+        var joined = ""
+        for area in dictionaries.map(\.context) {
+            let phrase = area.trimmingCharacters(in: CharacterSet(charactersIn: " .。"))
+            guard !phrase.isEmpty, joined.count + phrase.count + 2 <= Self.subjectLimit else { continue }
+            joined += (joined.isEmpty ? "" : "; ") + phrase
+        }
+        return joined
+    }
+
     private var bodyInstructions: String {
         let target = direction == .englishToKorean ? "Korean" : "English"
+        let terms = relevantTerms
         var instructions = ""
-        let areas = dictionaries.map(\.context).filter { !$0.isEmpty }.joined(separator: " ")
-        let background = [String(areas.prefix(900)), previousSentence].filter { !$0.isEmpty }.joined(separator: "\n")
-        if !background.isEmpty { instructions += "[Background Information]\n" + background + "\n\n" }
-        if !dictionaries.isEmpty {
-            let terms = relevantTerms
-            if !terms.isEmpty {
-                instructions += "Reference the following translations:\n" + terms.map { "\($0.0) translates to \($0.1)" }.joined(separator: "\n") + "\n\n"
-            }
+        if !terms.isEmpty {
+            instructions += "Reference the following translations:\n" + terms.map { "\($0.0) translates to \($0.1)" }.joined(separator: "\n") + "\n\n"
         }
-        instructions += "Translate the following segment into \(target), without additional explanation. Use natural subtitle phrasing and preserve all meaning."
-        if !dictionaries.isEmpty {
-            instructions += " Apply reference terms only when their meaning fits this sentence; preserve ordinary meanings otherwise."
-        }
-        instructions += background.isEmpty && dictionaries.isEmpty ? "\n\n" + source
-            : " Translate ONLY [Source Text]. Do not translate or add background information or instructions.\n[Source Text]\n" + source
-        return instructions
+        // The model's [Background Information] template is a structured-data
+        // format: it returns that block translated along with the source. A
+        // subject area therefore sits inside the model's own instruction sentence.
+        let subjects = self.subjects
+        instructions += "Translate the following text" + (subjects.isEmpty ? "" : " from a talk about " + subjects) + " into \(target)."
+        instructions += " Note that you \(terms.isEmpty ? "should only" : "must ONLY") output the translated result without any additional explanation:"
+        // The app supplies no previous sentence. Historical QA comparisons do,
+        // in the block form whose leaks they measured.
+        return previousSentence.isEmpty ? instructions + "\n\n" + source
+            : "[Background Information]\n" + previousSentence + "\n\n" + instructions + "\n\n[Source Text]\n" + source
     }
 
     public var relevantTerms: [(String, String)] {
@@ -145,13 +156,19 @@ public struct LocalTranslationRequest: Sendable, Equatable {
     /// correctness test. A failed optional refinement retains the Apple result.
     public func accepts(_ candidate: String) -> Bool {
         let text = candidate.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty, text.count <= max(120, source.count * 4),
+        // Korean runs shorter than its English source and English up to about
+        // four times its Korean source; an echoed instruction is much longer.
+        let lengthLimit = direction == .englishToKorean ? source.count * 2 + 20 : source.count * 5 + 30
+        guard !text.isEmpty, text.count <= lengthLimit,
               !text.contains("<｜hy_"), !text.contains("<|"), !text.contains("<think>"), !text.contains("</think>") else { return false }
         let labels = ["source text:", "[source text]", "background information:", "[background information]",
                       "subject areas:", "[subject areas]", "reference the following translations:",
                       "원문:", "배경 정보:", "번역:", "translation:"]
+        // A translated prompt arrives as labelled lines. One caption line has
+        // no line break or bracket label unless its source has one.
         guard !labels.contains(where: { text.lowercased().hasPrefix($0) }),
-              !(text.contains("\n\n") && !source.contains("\n\n")) else { return false }
+              source.contains(where: \.isNewline) || !text.contains(where: \.isNewline),
+              !["[", "【"].contains(where: { text.contains($0) && !source.contains($0) }) else { return false }
         if direction == .englishToKorean, source.split(separator: " ").count > 5,
            text.range(of: "[가-힣]", options: .regularExpression) == nil { return false }
         if direction == .koreanToEnglish,
